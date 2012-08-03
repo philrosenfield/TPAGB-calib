@@ -1,24 +1,26 @@
 import cmdUtils
 from TrilegalUtils import get_stage_label
-from LFUtils import *
-from mk_sims import *
+import LFUtils
+import mk_sims
 from multiprocessing import Pool
 import itertools
 import time
 from TPAGBparams import *
-#import pdb; pdb.set_trace()
+import GenUtils
+import numpy as np
+import pdb; pdb.set_trace()
 
 
 def tag_cmds(IDs):
     '''
-    only need to do this once hopefully. Just went though and added integer tags to each
+    only need to do this once, hopefully. Just went though and added integer tags to each
     fits table so that it would be like trilegal output with the -l option.
     '''
     seqs = ['MS','RHeB','RGB']
     if type(IDs) == str:
-        fits = get_afile(fits_src,'*'+'*'.join((IDs,'IR','.fits')))
+        fits = GenUtils.get_afile(fits_src,'*'+'*'.join((IDs,'IR','.fits')))
     else:
-        fits = np.squeeze([get_afile(fits_src,'*'+'*'.join((ID,'IR','.fits'))) for ID in IDs]) 
+        fits = np.squeeze([GenUtils.get_afile(fits_src,'*'+'*'.join((ID,'IR','.fits'))) for ID in IDs]) 
     cmdUtils.define_color_mag_region(fits,seqs)
     return
     
@@ -48,12 +50,12 @@ def read_tagged_phot(tagged_file):
     
 def get_trgb_fitsname(ID,band):
     if band == 'opt':
-        fits = get_afile(fits_src,'*'+'*'.join((ID,'trim','.fits')))[0]
+        fits = GenUtils.get_afile(fits_src,'*'+'*'.join((ID,'trim','.fits')))[0]
         trgb = get_tab5_trgb_Av_dmod(ID)[0]
     elif band == 'ir':
         # read data
-        fits, = get_afile(fits_src,'*'+'*'.join((ID,'IR','.fits')))
-        trgb = get_trgb_ir_nAGB(ID)[0]
+        fits, = GenUtils.get_afile(fits_src,'*'+'*'.join((ID,'IR','.fits')))
+        trgb = LFUtils.get_trgb_ir_nAGB(ID)[0]
     else: 
         print 'choose opt or ir'
         sys.exit()
@@ -101,14 +103,14 @@ class galaxy(object):
         self.color = self.data['mag1']-self.data['mag2']
         self.stage = self.data['stage']
         self.trgb = get_trgb_fitsname(ID,band)[0]
-        self.z = get_key_fromtable(ID,'Z')
+        self.z = LFUtils.get_key_fromtable(ID,'Z')
         
     def stage_inds(self,stage_name):
         return get_stage_inds(self.data,stage_name)
         
 class simgalaxy(object):
     def __init__(self,trilegal_out,filter1,filter2):
-        self.data = read_table(trilegal_out)
+        self.data = GenUtils.read_table(trilegal_out)
         self.diff1 = self.data.get_col('diff_'+filter1)
         self.diff2 = self.data.get_col('diff_'+filter2)
         self.recovered1 = np.nonzero(abs(self.diff1)<90.)[0]
@@ -136,7 +138,7 @@ class simgalaxy(object):
          
 def load_galaxy_tagged(ID,band):
     trgb,fitsname = get_trgb_fitsname(ID,band) 
-    tagged_fits = read_tagged_phot(cmdUtils.GenUtils.replace_ext(fitsname,'.dat'))
+    tagged_fits = read_tagged_phot(GenUtils.replace_ext(fitsname,'.dat'))
        
     target, filt1,filt2 = cmdUtils.get_fileinfo(fitsname)
     mag1 = tagged_fits['mag1']
@@ -174,7 +176,7 @@ def main(ID,model):
         if go != 0: object_mass = object_mass*5.
         go +=1
         print 'Trying %s %s, Mass = %g, Attempt %i'%(ID,model,object_mass,go)
-        trilegal_out = mk_sims(ID,model,object_mass=object_mass,over_write=over_write)
+        trilegal_out = mk_sims.mk_sims(ID,model,object_mass=object_mass,over_write=over_write)
         #print 'trilegal_out has %i lines'%len(open(trilegal_out,'r').readlines())
         sgal = simgalaxy(trilegal_out,gal.filter1,gal.filter2)
         sgal.ID = ID
@@ -183,14 +185,15 @@ def main(ID,model):
         # how far below trgb?
         offset = 1.5
         maglims = (gal.trgb+offset,gal.trgb+0.5)
-        ind,p_value,normalization = calc_LF(gal,sgal,maglims)
+        p_value = LFUtils.calc_LF(gal,sgal,maglims)
+        normalization = sgal.normalization
         over_write = 1
         print 'normalization',normalization
 
     print 'necessary object_mass = %g'%object_mass
-    out.write('%s %s %.3f %i %i %i %i %e\n' %(ID,model,p_value,gal.nRGB,gal.nAGB,sgal.nRGBn,sgal.nAGBn,object_mass))
-    diagnostic_cmd(sgal,gal.trgb,figname=os.path.join(plt_dir,'%s_%s_diag.png'%(ID,model)))
-    plot_LFIR(gal,sgal,ind,p_value,maglims)
+    out.write('%s %s %.3f %i %i %i %i %e\n' %(ID,model,p_value,gal.irgb.size,gal.iagb.size,sgal.rel_rgb.size,sgal.rel_agb.size,object_mass))
+    LFUtils.diagnostic_cmd(sgal,gal.trgb,figname=os.path.join(plt_dir,'%s_%s_diag.png'%(ID,model)))
+    LFUtils.plot_LFIR(gal,sgal,p_value,maglims)
     out.close()
 
 
@@ -228,7 +231,7 @@ if __name__=="__main__":
     
         
 
-    #for ID in IDs: mk_sims(ID,models)
+    #for ID in IDs: mk_sims.mk_sims(ID,models)
     #sys.exit()
     #run_all(IDs,models)
     for ID,model in itertools.product(IDs,models):

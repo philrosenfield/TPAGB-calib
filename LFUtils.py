@@ -13,8 +13,7 @@ rc('text',usetex=True)
 
 from scipy.stats import ks_2samp
 # Phil's functions:
-from MatchUtils import readbintab
-from GenUtils import Table,read_table,get_afile,discrete_colors
+import GenUtils
 from Astronomy import get_tab5_trgb_Av_dmod
 from TPAGBparams import *
 from TrilegalUtils import get_stage_label, get_label_stage
@@ -23,26 +22,6 @@ from matplotlib.patheffects import withStroke
 import brewer2mpl
 myeffect = withStroke(foreground="w", linewidth=3)
 kwargs = dict(path_effects=[myeffect])
-
-def read_irtable_data(tab=os.path.join(table_src,'IR_NAGBs.dat')):
-    '''OLD'''
-    lines = open(tab,'r').readlines()
-    col_keys = lines[0].replace('#','').strip().split()
-    d = {}
-    for line in lines:
-        if line.startswith('#'): continue
-        ID = line.split('_')[1]
-        if ID not in d.keys(): d[ID] = {}
-        data = line.strip().split()[1:]
-        for i,v in enumerate(data):
-            j = i+1
-            if col_keys[j] not in d[ID].keys(): d[ID][col_keys[j]] = {}
-            d[ID][col_keys[j]] = GenUtils.is_numeric(v)
-    return d
-
-def get_irtable_data(Target):
-    tab = read_irtable_data()
-    return tab[Target]
 
 def read_mettable():
     tab = '/Users/phil/research/TP-AGBcalib/SNAP/tables/IR_NAGBs.dat'
@@ -60,41 +39,23 @@ def get_key_fromtable(ID,key):
 def get_trgb_ir_nAGB(Target):
     trgb_ir = get_key_fromtable(Target,'IR_TRGB')
     nAGB = get_key_fromtable(Target,'N_AGB')
-    '''
-    table = open(os.path.join(table_src,'IR_NAGBs.dat'),'r')
-    i = 0
-    for line in table.readlines():
-        if line.startswith('#'): continue
-        a = line.strip().split()
-        fitsfile,strgb_ir,snAGB = a[0:3]
-        ID = fitsfile.split('_')[1]
-        if Target != ID: continue
-        i = 1
-        trgb_ir = float(strgb_ir)
-        nAGB = int(snAGB)
-    if i == 0: 
-        print 'No listing of',Target,'in',table_src
-        trgb_ir = 99.99
-        nAGB = 0
-    '''
     return trgb_ir,nAGB
 
-def brighter_trgb(mag2,trgb,inds=None):
+def brighter(mag2,trgb,inds=None):
     # number of stars brighter than trgb, make sure mag2 is 
     # the same filter as trgb!
-    if inds==None:
-        i, = np.nonzero(mag2 < trgb)
-    else:
-        j, = np.nonzero(mag2 < trgb)
-        i = list(set(j) & set(inds))
-    return i,len(i)
+    i, = np.nonzero(mag2 < trgb)
+    if inds!=None: i = np.intersect1d(i,inds)
+    return i
 
 def get_chi2(obs,exp):
     return np.sum((obs-exp)**2/(exp))
 
-def nbetween(arr,mdim,mbrt):
-    n, = np.nonzero((arr<mdim) & (arr>mbrt))
-    return n.size
+def between(arr,mdim,mbrt,inds=None):
+    i, = np.nonzero((arr<mdim) & (arr>mbrt))
+    if inds!=None:
+        i = np.intersect1d(i,inds)
+    return i
 
 def calc_LF(gal,sgal,maglims,res=0.1):
     '''
@@ -110,56 +71,62 @@ def calc_LF(gal,sgal,maglims,res=0.1):
     normalization: scaling used to determine ind and scale LFs (added attributes to 
     objects)
     '''
-            
+    
+    # data
     mag = gal.mag2
+    color = gal.color
     dim,bright = maglims
     # when hand picking cmd_regions, RGB includes AGB!
     gal.irgb = gal.stage_inds('RGB')
-        
+    gal.iagb = brighter(mag,gal.trgb,inds=gal.irgb)
+    
+    # simulation
     smag = sgal.ast_mag2
+    scolor = sgal.ast_color
     sgal.irgb = sgal.stage_inds('RGB')
-    
-    gal.iAGB,gal.nAGB = brighter_trgb(mag,bright,inds=gal.irgb)
-    
-    #res = 0.1 # LF resolution in dex
-    nbins = (mag.max() - mag.min()) / res
-    
+        
     # The RGB stars used for normalization
-    gal.nRGB = float(nbetween(mag[gal.irgb],dim,bright))
-    #nRGB = nbetween(mag,norm,trgb)
+    gal.rgb_norm = between(mag,dim,bright,inds=gal.irgb)
     
     # The Simulated RGB stars
-    sgal.nRGB = float(nbetween(smag[sgal.irgb],dim,bright))
+    #!! Not used!!
+    #sgal.rgb_in_norm = between(smag,dim,bright,inds=sgal.irgb)
     
-    normalization = gal.nRGB/sgal.nRGB # here is the normalization!!
-    if normalization > 0.75:
-        print normalization
+    # all sim stars in cmd region of rgb data norm stars.
+    sgal.norm = GenUtils.inside(color[gal.rgb_norm],mag[gal.rgb_norm],
+                                scolor,smag,)
+    
+    # here is the normalization!!
+    sgal.normalization = float(gal.rgb_norm.size)/float(sgal.norm.size)
+    if sgal.normalization > 0.75:
+        print sgal.normalization
         print 'Too few model stars'
+    
+    # LF resolution in dex
+    nbins = (mag.max() - mag.min()) / res
     
     # the LFs
     gal.LF,gal.bins = np.histogram(mag,nbins)
     sgal.LF,sgal.bins = np.histogram(smag,bins=gal.bins)
     
     # normalize the simulated LF
-    sgal.LFn = sgal.LF*normalization 
+    sgal.LFn = sgal.LF*sgal.normalization 
     
     # for plotting random simulated stars to match number of obs.
-    # jesus fucking christ. should this be smag.size or smag[sgal.irgb].size?!
-    #rands = np.random.random(smag.size)
-    rands = np.random.random(smag[sgal.irgb].size)
-    ind, = np.nonzero(rands<normalization)
+    rands = np.random.random(smag.size)
+    ind, = np.nonzero(rands < sgal.normalization)
+    sgal.rel_ind = ind
     
-    # number of simulated RGB stars (now normalized to match the relative number of RGBs)
-    sgal.nRGBn = nbetween(smag[ind],dim,bright)
+    # simulated normalized RGB stars 
+    sgal.rel_rgb = between(smag[ind],dim,gal.trgb)
+    
+    # simulated normalized stars brighter than trgb.
+    sgal.rel_agb = brighter(smag[ind],gal.trgb)
+    
+    KS_D,p_value = ks_2samp(mag[gal.iagb],smag[sgal.rel_agb])
 
-    # the indices and number of simulated (and normalized) stars brighter than the trgb
-    sgal.iAGBn,sgal.nAGBn = brighter_trgb(smag[ind],bright)
-    
-    KS_D,p_value = ks_2samp(mag[gal.iAGB],smag[sgal.iAGBn])
-    #print ps_nNorm,nNorm,s_nNorm,np.sqrt(nNorm),ps_nNorm-nNorm
-    #print ps_nB_AGBm,nB_AGB
     # want to add some lines for the flux and the mass loss rates.
-    return ind,p_value,normalization
+    return p_value
 
     
 def setup_lfplot(gal):
@@ -209,7 +176,7 @@ def diagnostic_cmd(sgal,trgb,figname=None):
     nplots = ustage.size+1.
     cols = brewer2mpl.get_map('RdBu','diverging',len(ustage)).mpl_colors
     subplots_kwargs = {'sharex':1,'sharey':1,'figsize':(12, 8)}
-    fig, axs = setup_multiplot(nplots,**subplots_kwargs)
+    fig, (axs) = setup_multiplot(nplots,**subplots_kwargs)
     
     for ax in axs.ravel():
         ax.set_xlim(-0.5,sgal.color.max())
@@ -224,7 +191,7 @@ def diagnostic_cmd(sgal,trgb,figname=None):
             label = get_label_stage(int(st))
             ind = sgal.stage_inds(label)
             if len(ind)==0: continue
-            ax.plot(color[ind],mag2[ind],'.',color=cols[i],mew=0,label=label)
+            ax.plot(color[ind],mag2[ind],'.',color=cols[i],mew=0)
             ax.set_title(label,**{'color':cols[i]})
             i+=1
         if figname:
@@ -275,12 +242,12 @@ def make_title(gal,fig):
     x = fig.text(0.5,0.96,title,**text_kwargs)
     return
     
-def plot_LFIR(gal,sgal,ind,p_value,maglims):
+def plot_LFIR(gal,sgal,p_value,maglims):
     dim,bright = maglims
 
-    mstars = list(set(sgal.imstar) & set(ind))
-    cstars = list(set(sgal.icstar) & set(ind))
-    nRGBs = len(sgal.ast_color[ind]) - len(mstars) - len(cstars)
+    mstars = list(set(sgal.imstar) & set(sgal.rel_ind))
+    cstars = list(set(sgal.icstar) & set(sgal.rel_ind))
+    #nRGBs = len(sgal.ast_color[sgal.rel_agb]) - len(mstars) - len(cstars)
    
     mhist,b = np.histogram(sgal.mag2[mstars],bins=sgal.bins)
     chist,b = np.histogram(sgal.mag2[cstars],bins=sgal.bins)
@@ -291,34 +258,42 @@ def plot_LFIR(gal,sgal,ind,p_value,maglims):
     
     # plot data
     axData.plot(gal.color,gal.mag2,'.',mew=0,color='grey',mec='grey')
-    axData.plot(gal.color[gal.irgb],gal.mag2[gal.irgb],'.',mew=0,color='black')
+    # data used for normalization
+    axData.plot(gal.color[gal.rgb_norm],gal.mag2[gal.rgb_norm],'.',mew=0,color='black')
     
-    axModel.plot(sgal.ast_color[ind],sgal.ast_mag2[ind],'.',
-                 color='red',mew=0,label=r'$RGB=%i$'%(nRGBs))
+    # plot model
+    axModel.plot(sgal.ast_color[sgal.rel_ind],sgal.ast_mag2[sgal.rel_ind],'.',
+                 color='red',mew=0)#,label=r'$RGB=%i$'%(nRGBs))                 
+                 
+    # model used for normalization
+    norm_inds = list(set(sgal.norm) & set(sgal.rel_ind))
+    axModel.plot(sgal.ast_color[norm_inds],sgal.ast_mag2[norm_inds],'.',
+                 color='black',mew=0)#,label=r'$RGB=%i$'%(len(norm_inds)))
+
     axModel.plot(sgal.ast_color[mstars],sgal.ast_mag2[mstars],'.',
                  color='darkgreen',mew=0,label=r'$M=%i$'%(len(mstars)))
+
     axModel.plot(sgal.ast_color[cstars],sgal.ast_mag2[cstars],'.',
                  color='darkblue',mew=0,label=r'$C=%i$'%(len(cstars)))
-
-      
-      
+    
     axModel.legend(frameon=False,loc=2,numpoints=1)
     
-    [plot_lines([axData,axModel],axData.get_xlim(),m) for m in (dim,bright)]
+    #[plot_lines([axData,axModel],axData.get_xlim(),m) for m in (dim,bright)]
     # also?
-    # plot_lines([axData,axModel],gal.color.min(),gal.color.max(),trgb)
+    plot_lines([axData,axModel],axData.get_xlim(),gal.trgb)
     
     kwargs['color'] = 'black'
-    text_offset =0.02
+    text_offset = 0.02
     xpos = axData.get_xlim()[0]+2*text_offset
     yposs = np.asarray(maglims)-text_offset
-    plot_numbs(axData,gal.nAGB,xpos,yposs[1],**kwargs)
-    plot_numbs(axData,gal.nRGB,xpos,yposs[0],**kwargs)
+    ypos = gal.trgb-text_offset
+    plot_numbs(axData,gal.iagb.size,xpos,ypos,**kwargs)
+    plot_numbs(axData,gal.rgb_norm.size,xpos,yposs[0],**kwargs)
     
     kwargs['color'] = 'red'
     xpos = axModel.get_xlim()[0]+text_offset
-    plot_numbs(axModel,sgal.nAGBn,xpos,yposs[1],**kwargs)
-    plot_numbs(axModel,sgal.nRGBn,xpos,yposs[0],**kwargs)
+    plot_numbs(axModel,sgal.rel_agb.size,xpos,ypos,**kwargs)
+    plot_numbs(axModel,len(norm_inds),xpos,yposs[0],**kwargs)
     
     # plot hists
     #hist,bins,patches = axHist.hist(mag2,nbins,histtype='step',orientation='horizontal',log=True,color='black')
