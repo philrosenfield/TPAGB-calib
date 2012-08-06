@@ -57,19 +57,53 @@ def between(arr,mdim,mbrt,inds=None):
         i = np.intersect1d(i,inds)
     return i
 
-def calc_LF(gal,sgal,maglims,res=0.1):
+def calc_LF(gal,sgal,maglims,res=0.1,normalize=True):
     '''
-    usage: galaxy object, simgalaxy object, offset (mags below trgb), LF bin resolution
+    usage: 
+    gal: galaxy object 
+    sgal: simgalaxy object
+    maglims: tuple (region in mag to normalize)
+    res: LF bin resolution [0.1]
+    normalize: bool [True] do the normalization
+
+    adds attributes to gal and sgal:
+        irgb: indices of "rgb" stars (and agb stars, relys on tagged data)
+        iagb: indices of "rgb" stars brighter than trgb
+        bins: LF bins
+        LF: Luminosity function
+
+    ------
+    adds attributes to gal:
+    rgb_norm: indices of rgb stars between maglims
     
+    ------
+    adds attributes to sgal:    
+
+    norm:
+        (only if normalization) 
+        indices of all stars in same cmd space as data's rgb_norm
+    
+    rel_ind: 
+        if normalize = True: indices of simulation cmd that are picked so they 
+                             mimic the number of rgb stars between maglims
+        else: the entire array.
+
+    normalization: 
+        (only if normalization)
+        scaling used to determine ind and scale LFs (added attributes to 
+        objects)
+    
+    LFn:
+        (only if normalization) LF scaled by normalization
+    rel_rgb:
+        indices of rgb stars randomly picked from normalization
+    rel_agb:
+        indices of agb stars randomly picked from normalization
+        
     returns:
-    ind: indices of simulation cmd that are picked so they mimic the number of rgb stars
-    between trgb and trgb+offset
+    p_value: ks test probability comparing simulated stars brighter than trgb 
+             to data of the same
 
-    p_value: ks test probability comparing simulated stars brighter than trgb to data of
-    the same
-
-    normalization: scaling used to determine ind and scale LFs (added attributes to 
-    objects)
     '''
     
     # data
@@ -84,24 +118,7 @@ def calc_LF(gal,sgal,maglims,res=0.1):
     smag = sgal.ast_mag2
     scolor = sgal.ast_color
     sgal.irgb = sgal.stage_inds('RGB')
-        
-    # The RGB stars used for normalization
-    gal.rgb_norm = between(mag,dim,bright,inds=gal.irgb)
-    
-    # The Simulated RGB stars
-    #!! Not used!!
-    #sgal.rgb_in_norm = between(smag,dim,bright,inds=sgal.irgb)
-    
-    # all sim stars in cmd region of rgb data norm stars.
-    sgal.norm = GenUtils.inside(color[gal.rgb_norm],mag[gal.rgb_norm],
-                                scolor,smag,)
-    
-    # here is the normalization!!
-    sgal.normalization = float(gal.rgb_norm.size)/float(sgal.norm.size)
-    if sgal.normalization > 0.75:
-        print sgal.normalization
-        print 'Too few model stars'
-    
+
     # LF resolution in dex
     nbins = (mag.max() - mag.min()) / res
     
@@ -109,14 +126,35 @@ def calc_LF(gal,sgal,maglims,res=0.1):
     gal.LF,gal.bins = np.histogram(mag,nbins)
     sgal.LF,sgal.bins = np.histogram(smag,bins=gal.bins)
     
-    # normalize the simulated LF
-    sgal.LFn = sgal.LF*sgal.normalization 
-    
-    # for plotting random simulated stars to match number of obs.
-    rands = np.random.random(smag.size)
-    ind, = np.nonzero(rands < sgal.normalization)
-    sgal.rel_ind = ind
-    
+    if normalize == True:    
+        # The RGB stars used for normalization
+        gal.rgb_norm = between(mag,dim,bright,inds=gal.irgb)
+        
+        # The Simulated RGB stars
+        #!! Not used!!
+        #sgal.rgb_in_norm = between(smag,dim,bright,inds=sgal.irgb)
+        
+        # all sim stars in cmd region of rgb data norm stars.
+        sgal.norm = GenUtils.inside(color[gal.rgb_norm],mag[gal.rgb_norm],
+                                    scolor,smag,)
+        
+        # here is the normalization!!
+        sgal.normalization = float(gal.rgb_norm.size)/float(sgal.norm.size)
+        if sgal.normalization > 0.75:
+            print sgal.normalization
+            print 'Too few model stars'
+        
+        
+        # normalize the simulated LF
+        sgal.LFn = sgal.LF*sgal.normalization 
+        
+        # for plotting random simulated stars to match number of obs.
+        rands = np.random.random(smag.size)
+        ind, = np.nonzero(rands < sgal.normalization)
+        sgal.rel_ind = ind
+    else:
+        ind = range(smag.size)
+            
     # simulated normalized RGB stars 
     sgal.rel_rgb = between(smag[ind],dim,gal.trgb)
     
@@ -124,7 +162,7 @@ def calc_LF(gal,sgal,maglims,res=0.1):
     sgal.rel_agb = brighter(smag[ind],gal.trgb)
     
     KS_D,p_value = ks_2samp(mag[gal.iagb],smag[sgal.rel_agb])
-
+    
     # want to add some lines for the flux and the mass loss rates.
     return p_value
 
