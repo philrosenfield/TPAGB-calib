@@ -816,5 +816,5 @@ if __name__ == "__main__":
         os.chdir(here)
     # Scripts to make LF compared to data
     if kwargs.get('IDs'):
-        galaxy_tests.run_all(kwargs['IDs'],[track_set+'.dat'])
+        galaxy_tests.main(kwargs['IDs'],[track_set+'.dat'])
         pass

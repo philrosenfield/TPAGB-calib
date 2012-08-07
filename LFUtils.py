@@ -4,28 +4,30 @@
 #
 #  Created by Philip Rosenfield on 11/22/10.
 #
-import sys,os,re
+import os
 import numpy as np
+import brewer2mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import NullFormatter
+from matplotlib.patheffects import withStroke
 from matplotlib import rc
+myeffect = withStroke(foreground="w", linewidth=3)
+kwargs = dict(path_effects=[myeffect])
 rc('text',usetex=True)
 
 from scipy.stats import ks_2samp
+
 # Phil's functions:
 import GenUtils
 from Astronomy import get_tab5_trgb_Av_dmod
-from TPAGBparams import *
 from TrilegalUtils import get_stage_label, get_label_stage
-from matplotlib.patheffects import withStroke
-
-import brewer2mpl
-myeffect = withStroke(foreground="w", linewidth=3)
-kwargs = dict(path_effects=[myeffect])
-
+from TPAGBparams import *
+    
 def read_mettable():
-    tab = '/Users/phil/research/TP-AGBcalib/SNAP/tables/IR_NAGBs.dat'
-    dtype=[('fitstable', '|S46'), ('IR_TRGB', '<f8'), ('N_AGB', '<f8'), ('logOH', '<f8'), ('OHerr', '<f8'), ('Z', '<f8'), ('FeH', '<f8'), ('Ttype', '<f8')]
+    tab = os.path.join(table_src,'IR_NAGBs.dat')
+    dtype=[('fitstable', '|S46'), ('IR_TRGB', '<f8'), ('N_AGB', '<f8'), 
+           ('logOH', '<f8'), ('OHerr', '<f8'), ('Z', '<f8'), ('FeH', '<f8'), 
+           ('Ttype', '<f8')]
     table = np.genfromtxt(tab,dtype=dtype,delimiter=',')
     return table
 
@@ -34,7 +36,6 @@ def get_key_fromtable(ID,key):
     names = list(tab['fitstable'])
     i, = [names.index(i) for i in names if ID in i]
     return tab[key][i]
-
 
 def get_trgb_ir_nAGB(Target):
     trgb_ir = get_key_fromtable(Target,'IR_TRGB')
@@ -166,7 +167,6 @@ def calc_LF(gal,sgal,maglims,res=0.1,normalize=True):
     # want to add some lines for the flux and the mass loss rates.
     return p_value
 
-    
 def setup_lfplot(gal):
             
     # plot limits
@@ -209,29 +209,42 @@ def plot_numbs(ax,item,xpos,ypos,**kwargs):
     x= ax.annotate(r'$%i$' % item,xy=(xpos,ypos),ha='left',size=20,**kwargs)
     return
 
-def diagnostic_cmd(sgal,trgb,figname=None):
-    ustage = np.unique(sgal.stage)
+def diagnostic_cmd(sgal,trgb,figname=None,inds=None):
+    if inds!=None:
+        ustage = np.unique(sgal.stage[inds])
+    else:
+        ustage = np.unique(sgal.stage)
     nplots = ustage.size+1.
-    cols = brewer2mpl.get_map('RdBu','diverging',len(ustage)).mpl_colors
+    cols = brewer2mpl.get_map('Paired','qualitative',len(ustage)).mpl_colors
     subplots_kwargs = {'sharex':1,'sharey':1,'figsize':(12, 8)}
-    fig, (axs) = setup_multiplot(nplots,**subplots_kwargs)
-    
-    for ax in axs.ravel():
-        ax.set_xlim(-0.5,sgal.color.max())
-        ax.set_ylim(25.5,18.5)
-                
     j=0
     for color,mag2 in zip((sgal.color,sgal.ast_color),(sgal.mag2,sgal.ast_mag2)):
-        ax0,cols = colorplot_by_stage(axs.ravel()[0],color,mag2,'.',sgal.stage,cols=cols)
+        if inds != None:
+            stage = sgal.stage[inds]
+        fig, (axs) = setup_multiplot(nplots,**subplots_kwargs)
+        
+        for ax in axs.ravel():
+            ax.set_xlim(-0.5,sgal.color.max())
+            ax.set_ylim(25.5,18.5)
+                 
+    
+        ax0,cols = colorplot_by_stage(axs.ravel()[0],color,mag2,'.',stage,cols=cols)
         i=0
         for ax,st in zip(axs.ravel()[1:],ustage): 
             plot_lines([ax],ax.get_xlim(),trgb)
             label = get_label_stage(int(st))
             ind = sgal.stage_inds(label)
+            if inds!=None:
+                ind = list(set(ind) & set(inds))
             if len(ind)==0: continue
-            ax.plot(color[ind],mag2[ind],'.',color=cols[i],mew=0)
+            ax.plot(color[ind],mag2[ind],'.',color=cols[i],mew=0,label='N=%i'%len(ind))
+            kwargs['color'] = 'black'
+            text_offset = 0.02
+            xpos = ax.get_xlim()[0]+2*text_offset
+            plot_numbs(ax,brighter(mag2,trgb,inds=ind).size,xpos,trgb-text_offset,**kwargs)
             ax.set_title(label,**{'color':cols[i]})
             i+=1
+            ax.legend(loc=1,numpoints=1,frameon=False)
         if figname:
             if j==0: 
                 extra = ''
@@ -239,12 +252,11 @@ def diagnostic_cmd(sgal,trgb,figname=None):
                 extra = '_spread'
             plt.savefig(figname.replace('.png','%s.png'%extra))
             print 'wrote %s'%figname.replace('.png','%s.png'%extra)
-
+            plt.close()
         else:
             plt.show()
         j+=1
-    plt.close()
-    return
+    return figname.replace('.png','%s.png'%extra)
     
 def setup_multiplot(nplots,**subplots_kwargs):
     nx = np.round(np.sqrt(nplots))
@@ -266,8 +278,7 @@ def colorplot_by_stage(ax,x,y,marker,stages,cols=None):
     for i,s in enumerate(np.unique(stages)):
         ind, = np.nonzero(stages == s)
         if ind.size == 0: continue
-        ax.plot(x[ind],y[ind],marker,color=cols[i],mew=0,label=get_label_stage(int(s)))
-    plt.legend()
+        ax.plot(x[ind],y[ind],marker,color=cols[i],mew=0)
     return ax,cols
 
 def make_title(gal,fig):
@@ -285,10 +296,12 @@ def plot_LFIR(gal,sgal,p_value,maglims):
 
     mstars = list(set(sgal.imstar) & set(sgal.rel_ind))
     cstars = list(set(sgal.icstar) & set(sgal.rel_ind))
+    bright_rgb = brighter(sgal.ast_mag2,gal.trgb,inds = sgal.rel_rgb)
+    nbright_rgb = bright_rgb.size
     #nRGBs = len(sgal.ast_color[sgal.rel_agb]) - len(mstars) - len(cstars)
    
-    mhist,b = np.histogram(sgal.mag2[mstars],bins=sgal.bins)
-    chist,b = np.histogram(sgal.mag2[cstars],bins=sgal.bins)
+    mhist,b = np.histogram(sgal.ast_mag2[mstars],bins=sgal.bins)
+    chist,b = np.histogram(sgal.ast_mag2[cstars],bins=sgal.bins)
     
     fig,axData,axModel,axHist = setup_lfplot(gal)    
 
@@ -301,8 +314,8 @@ def plot_LFIR(gal,sgal,p_value,maglims):
     
     # plot model
     axModel.plot(sgal.ast_color[sgal.rel_ind],sgal.ast_mag2[sgal.rel_ind],'.',
-                 color='red',mew=0)#,label=r'$RGB=%i$'%(nRGBs))                 
-                 
+                 color='red',mew=0,label=r'$RGB=%i$'%(nbright_rgb))                 
+    
     # model used for normalization
     norm_inds = list(set(sgal.norm) & set(sgal.rel_ind))
     axModel.plot(sgal.ast_color[norm_inds],sgal.ast_mag2[norm_inds],'.',
@@ -339,10 +352,10 @@ def plot_LFIR(gal,sgal,p_value,maglims):
     #axHist.semilogx(hist,bins[:-1],drawstyle='steps',color='black')
 
     
-    axHist.semilogx(mhist,b[:-1],drawstyle='steps',color='darkgreen')
-    axHist.semilogx(chist,b[:-1],drawstyle='steps',color='darkblue')
-    axHist.semilogx(gal.LF,b[:-1],drawstyle='steps',color='black')
-    axHist.semilogx(sgal.LFn,b[:-1],drawstyle='steps',color='red')
+    axHist.semilogx(mhist,b[:-1],drawstyle='steps',color='darkgreen',alpha=0.4)
+    axHist.semilogx(chist,b[:-1],drawstyle='steps',color='darkblue',alpha=0.4)
+    axHist.semilogx(gal.LF,b[:-1],drawstyle='steps',color='black',lw=2)
+    axHist.semilogx(sgal.LFn,b[:-1],drawstyle='steps',color='red',lw=2)
     kwargs['color']='black'
     axHist.annotate(r'$p=%.3f$' % p_value,xy=(.9,.95), xycoords='axes fraction',ha='right',size=20,**kwargs)
     
@@ -350,84 +363,12 @@ def plot_LFIR(gal,sgal,p_value,maglims):
     nullfmt   =  NullFormatter() # no labels
     [ax.yaxis.set_major_formatter(nullfmt) for ax in (axHist,axModel)]
     
-    filename= '_'.join((gal.target,sgal.model,gal.filter1,gal.filter2))
+    filename= '_'.join((gal.target,sgal.model_name,gal.filter1,gal.filter2))
     #plt.savefig(os.path.join(plt_dir,filename+'_LF.ps'))
-    plt.savefig(os.path.join(plt_dir,filename+'_LF.png'))
+    plt.savefig(os.path.join(plt_dir,sgal.mix,sgal.model_name,filename+'_LF.png'))
     print 'Wrote ',filename+'_LF.png'
     plt.close()
-    return
-    
-def write_cmd_forJason(filename,color,mag,filt1,filt2):
-    # For Jason
-    if not os.path.isdir('JASON'): os.mkdir('JASON')
-    outfile = open('JASON/'+filename+'_cmd.dat','w')
-    outfile.write('#%s-%s %s\n'%(filt1,filt2,filt2))
-    [outfile.write('%f %f\n'%(color[i],mag[i])) for i in range(len(mag))]
-    outfile.close()
-    print 'wrote JASON/'+filename+'_cmd.dat'
-    return
+    return filename+'_LF.png'
 
-
-def make_galaxy_params_table(Target):
-    for line in open('/Users/Phil/research/Italy/WFC3SNAP/PHIL/table.dat','r').readlines():
-        if line.startswith('#'): continue
-        Target,dmod,av,camera,mag50,filt50 =  line.split()
-        trgb,av,dmod = get_tab5_trgb_Av_dmod(Target)
-        if Target == 'NGC0404-DEEP': Target = 'NGC404'
-        trgb_ir,Nagb = get_trgb_ir_nAGB(Target)
-        print Target,dmod,av,camera,mag50,filt50,trgb,trgb_ir
-        
 if __name__ == '__main__':
-    
-    if len(sys.argv) < 2:
-        print 'usage: (opt or ir)'
-        print 'python LFUtils.py band Target trilegal_output_AST_corrected model'
-        print 'python LFUtils.py ir IC2574-SGS output_IC2574-SGS_spread_IR.dat cmd_input_gi10_rev.dat'
-    band = sys.argv[1]
-    Target = sys.argv[2]
-    trilegal_out = sys.argv[3]
-    model  = sys.argv[4]
-    
-    if band == 'opt':
-        fits = get_afile(fits_src,'*'+'*'.join((Target,'trim','.fits')))[0]
-        trgb = get_tab5_trgb_Av_dmod(Target)[0]
-    elif band == 'ir':
-        # read data
-        fits = get_afile(fits_src,'*'+'*'.join((Target,'IR','.fits')))[0]
-        trgb,nAGB = get_trgb_ir_nAGB(Target)
-    else: 
-        print 'choose opt or ir'
-        sys.exit()
-    if trilegal_out == None:
-        trilegal_out = get_afile(output_src,'*'+'*'.join(('ast',Target,model))+'*')[0] # and ast...
-        print 'no trilegal output file supplied, using',trilegal_out
-    
-    ## INPUT ##
-    # read data
-    f = readbintab(fits)
-    filt1 = f['names'][-1].split('.')[0].split('_')[-2]
-    filt2 = f['names'][-1].split('.')[0].split('_')[-1]
-    print 'fitstable =',f['names'][-1]
-    mag1 = f['Mag1']
-    mag2 = f['Mag2']
-    color = mag1-mag2
-    
-    # read model
-    print 'reading', trilegal_out
-    synthcmd = get_numeric_data(trilegal_out)
-    print 'ok.'
-    s_mag1 = synthcmd.get_col(filt1) + synthcmd.get_col('diff_'+filt1.strip())
-    s_mag2 = synthcmd.get_col(filt2) + synthcmd.get_col('diff_'+filt2.strip())
-    
-    s_mag1 = s_mag1[np.nonzero(abs(synthcmd.get_col('diff_'+filt1.strip())) < 90.)[0]]
-    s_mag2 = s_mag2[np.nonzero(abs(synthcmd.get_col('diff_'+filt1.strip())) < 90.)[0]]
-    s_color = s_mag1-s_mag2
-    
-    Norm = trgb + 1.5
-    ind,nB_AGB,nNorm,ps_nNorm,ps_nB_AGBm,hist,bins,s_hist_normed,p_value,normalization = calc_LF(mag2,s_mag2,Norm,trgb)
-    filename= '_'.join((Target,model,filt1,filt2))
-    write_cmd_forJason(filename,s_color[ind],s_mag2[ind],filt1,filt2)
-    plot_LFIR(Target,model,trgb,Norm,filt1,filt2,color,mag2,s_color,s_mag2,ind,nB_AGB,nNorm,ps_nNorm,ps_nB_AGBm,hist,bins,s_hist_normed,p_value,normalization)
-    
-    
-
+    print 'use galaxy_test.py'

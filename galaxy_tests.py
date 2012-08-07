@@ -11,6 +11,7 @@ import GenUtils
 import numpy as np
 import pdb; pdb.set_trace()
 import matplotlib.pyplot as plt
+import GoogleSitesTable as gst
 
 def tag_cmds(IDs):
     '''
@@ -42,7 +43,7 @@ def read_tagged_phot(tagged_file):
     reads a file created by cmdUtils.define_color_mag_region. ascii with 7 columns.
     '''
     if type(tagged_file) == str:
-        print 'reading tagged_file catalog'
+        #print 'reading %s'%tagged_file
         cols = ['ra','dec','mag1','mag2','mag1err','mag2err','stage']
         fits = np.genfromtxt(tagged_file,names=cols)
     else:
@@ -244,7 +245,9 @@ class simgalaxy(object):
         '''
         [self.__setattr__(d,self.__dict__[d][slice_inds]) for d in data_to_slice]
         
-        
+    def mix_modelname(self,model):
+        self.mix,self.model_name = get_mix_modelname(model)
+    
     def delete_data(self):
         '''
         for wrapper functions, I don't want gigs of data stored when they
@@ -281,7 +284,11 @@ class simgalaxy(object):
             self.__setattr__('i%s'%stage.lower(), i)
         return
 
-         
+def get_mix_modelname(model):
+    mix = model.split('.')[0].split('_')[2]
+    model_name = '_'.join(model.split('.')[0].split('_')[3:])
+    return mix,model_name
+
 def load_galaxy_tagged(ID,band):
     trgb,fitsname = get_trgb_fitsname(ID,band) 
     tagged_fits = read_tagged_phot(GenUtils.replace_ext(fitsname,'.dat'))
@@ -299,8 +306,7 @@ def get_stage_inds(fits,stage_name):
     inds, = np.nonzero(fits['stage'] == get_stage_label(stage_name))
     return inds
 
-
-def make_normalized_simulations(ID,model,**kwargs):
+def make_normalized_simulation(ID,model,**kwargs):
     '''
     Wrapper for running trilegal and LFUtils.calc_LF 
     Will continue to run trilegal until galaxy is high enough mass to have 
@@ -369,6 +375,7 @@ def make_normalized_simulations(ID,model,**kwargs):
         sgal = simgalaxy(trilegal_out,gal.filter1,gal.filter2)
         sgal.ID = ID
         sgal.model = model
+        sgal.mix_modelname(model)
         
         # calcuate the LFs
         p_value = LFUtils.calc_LF(gal,sgal,maglims)
@@ -410,15 +417,16 @@ def all_IDs():
         "DDO71"]
     return IDs
 
-def main(make_plots=False):
+def main(make_plots=False,publish_plots=False):
+
+    # load all targets
     IDs = all_IDs()
     #IDs = [IDs[0]]
+    
+    # load all models
     models = ["cmd_input_CAF09_S_SCS.dat",
               "cmd_input_CAF09_S_SCSFG.dat",
               "cmd_input_CAF09_S_SCSFG_ETA2.dat"]
-    
-    for model in models:
-        compare_sims(IDs,model)
     
     outfile = 'result_tab.dat'
     if os.path.isfile(outfile): 
@@ -428,15 +436,22 @@ def main(make_plots=False):
         out = open(outfile,'w')
         out.write('# ID model p_value NRGB_data NAGB_data NRGB_model NAGB_model  \n')
     
-    gals,sgals = [],[]
     for ID,model in itertools.product(IDs,models):
-        gal, sgal, p_value, maglims = make_normalized_simulations(ID,model)
+        gal, sgal, p_value, maglims = make_normalized_simulation(ID,model)
         write_spread_catalog(sgal)
         
         if make_plots:
-            figname=os.path.join(plt_dir,'%s_%s_diag.png'%(ID,model))
-            LFUtils.diagnostic_cmd(sgal,gal.trgb)
+            fig_loc = os.path.join(plt_dir,sgal.mix,sgal.model_name)
+            diag_loc = os.path.join(fig_loc,'diag')
+            GenUtils.ensure_dir(diag_loc+'/')
+            
+            figname=os.path.join(diag_loc,'%s_%s_diag.png'%(ID,sgal.model_name))
+            LFUtils.diagnostic_cmd(sgal,gal.trgb,figname=figname,inds=sgal.rel_ind)
+            # should take fig_loc...
             LFUtils.plot_LFIR(gal,sgal,p_value,maglims)
+            
+            
+            
         
         out.write('%s %s %.3f %i %i %i %i\n' %(sgal.ID,
                                                sgal.model,
@@ -447,19 +462,34 @@ def main(make_plots=False):
                                                sgal.rel_agb.size))
     
     out.close()    
+
     
-    #SGals = galaxies(sgals)
-    #Gals = galaxies(gals)
-    return gals, sgals
+    for model in models:
+        compare_sims(IDs,model)
+        if publish_plots:
+            html_file = os.path.join(diag_loc,sgal.model_name+'_diag.html')
+            gst.side_by_side(diag_loc,sgal.model_name,html_file)
+            
+            html_file = os.path.join(fig_loc,sgal.model_name+'.html')
+            gst.one_col(fig_loc,sgal.model_name,html_file)
     
+    return 
+
+
+
+
 def compare_sims(IDs,model):
     sgals = []
     gals = []
     IDs = all_IDs()
     for ID in IDs:
         spread_file = os.path.join(model_src,'spread','spread_output_%s_model_%s'%(ID,model))
+        #spread_file = os.path.join(model_src,'ast','ast_output_%s_model_%s'%(ID,model))
         gal = galaxy(ID,'ir')
         sgal = simgalaxy(spread_file,gal.filter1,gal.filter2)
+        sgal.ID = ID
+        sgal.model = model
+        sgal.mix_modelname(model)
         maglims = (np.nan,np.nan)
         p_value = LFUtils.calc_LF(gal,sgal,maglims,normalize=False)
         sgals.append(sgal)
@@ -483,25 +513,33 @@ def compare_sims(IDs,model):
     for z,g,s in zip(zs,galsz_sort,sgalsz):
         ax.plot(z,float(s.rel_agb.size)/float(g.iagb.size),
                          'o',ms=5,color='black')
+        bright_rgb = LFUtils.brighter(s.ast_mag2,g.trgb,inds = s.irgb)
+        ax.plot(z,float((s.rel_agb.size-bright_rgb.size))/float(g.iagb.size),
+                         'o',ms=5,color='red')        
+        ax.annotate(g.target,xy=(z,float((s.rel_agb.size-bright_rgb.size))/float(g.iagb.size)+0.01),ha='center')
         ax.annotate(g.target,xy=(z,float(s.rel_agb.size)/float(g.iagb.size)+0.01),ha='center')
     ax.set_ylabel(r'$N_{AGB,model}/N_{AGB,data}$',fontsize=20)
     ax.set_xlabel(r'$Z$',fontsize=20)
-    ax.set_title(r'$\rm{%s}$'%model.replace('cmd_input','').replace('_','\ ').replace('.dat',''))
-    plt.savefig(model+'.png')
+    ax.set_title(r'$\rm{%s}$'%sgal.model_name.replace('_','\ '))
+    GenUtils.ensure_dir(os.path.join(plt_dir,sgal.mix))
+    fig_name = os.path.join(plt_dir,sgal.mix,sgal.model_name+'.png')
+    plt.savefig(fig_name)
     plt.close()
+    print 'wrote %s'%fig_name
+    return sgal,gal
     
-def write_spread_catalog(sgal):
-
-    outfile = os.path.join(model_src,'spread',sgal.name.replace('ast','spread'))
+def write_spread_catalog(sgal,outfile=None):
+    '''
+    writes a slice of the trilegal output catalog.
+    slice is on ast recovered stars that are randomly selected by normalization.
+    i.e sgal.rec and sgal.rel_ind.
+    returns string outfile name.
+    '''
+    if outfile==None:
+        outfile = os.path.join(model_src,'spread',sgal.name.replace('ast','spread'))
+    
     if not os.path.isfile(outfile):
         out = open(outfile,'w')
-        '''
-        for i in sgal.rel_ind:
-            out.write('%f %f %i\n'%(sgal.ast_mag1[i],sgal.ast_mag2[i],sgal.stage[i]))
-    
-        out.close()
-        print 'wrote %s'%outfile
-        '''
         # get the header
         sort_keys = sorted(sgal.data.key_dict.iteritems(), key=operator.itemgetter(1))
         col_keys =  [k[0] for k in sort_keys]
@@ -511,10 +549,29 @@ def write_spread_catalog(sgal):
         
         out.write('# {}\n'.format(' '.join(col_keys)))
         np.savetxt(out, data_slice, fmt='%-7.6f')
-        
         print 'wrote %s'%outfile
-    
+    else:
+        print '%s exists. Write spread catalog will not overwrite.'%outfile
+
     return outfile
 
 if __name__=="__main__":
-    main()
+    #main(make_plots=True,publish_plots=True)
+    
+    # load all targets
+    IDs = all_IDs()
+    #IDs = [IDs[0]]
+    
+    # load all models
+    models = ["cmd_input_CAF09_S_SCS.dat",
+              "cmd_input_CAF09_S_SCSFG.dat",
+              "cmd_input_CAF09_S_SCSFG_ETA2.dat"]
+    
+    for model in models:
+        sgal,gal = compare_sims(IDs,model)
+        fig_loc = os.path.join(plt_dir,sgal.mix,sgal.model_name)
+        diag_loc = os.path.join(fig_loc,'diag')
+        html_file = os.path.join(diag_loc,sgal.model_name+'_diag.html')
+        gst.side_by_side(diag_loc,sgal.model_name,html_file)
+        html_file = os.path.join(fig_loc,sgal.model_name+'.html')
+        gst.one_col(fig_loc,sgal.model_name,html_file)
