@@ -1,4 +1,5 @@
 import operator
+import brewer2mpl
 import cmdUtils
 from TrilegalUtils import get_stage_label
 import LFUtils
@@ -271,6 +272,16 @@ class simgalaxy(object):
         self.color = self.mag1-self.mag2
         simgalaxy.load_ic_mstar(self)
         
+    def get_fits(self):
+        match_out_dir = os.path.join(os.path.split(self.base)[0],'match','output')
+        fit_file_name = '%s_%s_%s.fit'%(self.ID,self.mix,self.model_name)
+        try:
+            fit_file, = GenUtils.get_afile(match_out_dir,fit_file_name)
+            self.chi2,self.fit = MatchUtils.get_fit(fit_file)
+        except ValueError:
+            print 'no match output for %s.'%fit_file_name
+        return
+        
     def load_ast_corrections(self):
         diff1 = self.data.get_col('diff_'+self.filter1)
         diff2 = self.data.get_col('diff_'+self.filter2)
@@ -495,7 +506,7 @@ def main(IDs=None,models=None,**kwargs):
         sim_kwargs = {'mk_sims_args':mk_sims_args}
         gal, sgal, p_value, maglims = make_normalized_simulation(ID,model,
                                                                  **sim_kwargs)
-        write_spread_catalog(sgal)
+        write_spread_catalog(sgal,**mk_sims_args)
         
         if make_plots:
             fig_loc = os.path.join(plt_dir,sgal.mix,sgal.model_name)
@@ -532,18 +543,20 @@ def main(IDs=None,models=None,**kwargs):
     
     return 
 
-def load_galaxies(IDs,model):
+def load_galaxies(IDs,model,**kwargs):
     sgals = []
     gals = []
-    IDs = all_IDs()
+    #IDs = all_IDs()
+    out_dir = kwargs.get('out_dir',model_src)
+    #for ID,model in itertools.product(IDs,models):
     for ID in IDs:
-        spread_file = os.path.join(model_src,'spread','spread_output_%s_model_%s'%(ID,model))
-        #spread_file = os.path.join(model_src,'ast','ast_output_%s_model_%s'%(ID,model))
+        spread_file = os.path.join(out_dir,'spread','spread_output_%s_model_%s'%(ID,model))
         gal = galaxy(ID,'ir')
         sgal = simgalaxy(spread_file,gal.filter1,gal.filter2)
         sgal.ID = ID
         sgal.model = model
         sgal.mix_modelname(model)
+        sgal.get_fits()
         maglims = (np.nan,np.nan)
         p_value = LFUtils.calc_LF(gal,sgal,maglims,normalize=False)
         sgal.file_ast = mk_sims.get_fakFILE(ID)
@@ -555,8 +568,8 @@ def load_galaxies(IDs,model):
     Gals = galaxies(gals)
     return Gals,SGals
     
-def compare_sims(IDs,model,fig_name=None):
 
+def load_galaxies_by_z(IDs,model):
     Gals,SGals = load_galaxies(IDs,model)
     # select on the ones with measured z:
     galsz = Gals.finite_key('z')
@@ -569,6 +582,9 @@ def compare_sims(IDs,model,fig_name=None):
         sgalsz += [sg for sg in SGals.galaxies if sg.target == g.target]
     
     zs = [g.z for g in galsz_sort]
+    return zs,galsz_sort,sgalsz
+def compare_sims(IDs,model,fig_name=None):
+    zs,galsz_sort,sgalsz = load_galaxies_by_z(IDs,model)
     ax = plt.axes()
     for z,g,s in zip(zs,galsz_sort,sgalsz):
         ax.plot(z,float(s.rel_agb.size)/float(g.iagb.size),
@@ -580,25 +596,45 @@ def compare_sims(IDs,model,fig_name=None):
         ax.annotate(g.target,xy=(z,float(s.rel_agb.size)/float(g.iagb.size)+0.01),ha='center')
     ax.set_ylabel(r'$N_{AGB,model}/N_{AGB,data}$',fontsize=20)
     ax.set_xlabel(r'$Z$',fontsize=20)
-    ax.set_title(r'$\rm{%s}$'%sgal.model_name.replace('_','\ '))
-    GenUtils.ensure_dir(os.path.join(plt_dir,sgal.mix))
+    ax.set_title(r'$\rm{%s}$'%s.model_name.replace('_','\ '))
+    GenUtils.ensure_dir(os.path.join(plt_dir,s.mix))
     if not fig_name:
-        fig_name = os.path.join(plt_dir,sgal.mix,sgal.model_name+'.png')
+        fig_name = os.path.join(plt_dir,s.mix,s.model_name+'.png')
     plt.savefig(fig_name)
     plt.close()
     print 'wrote %s'%fig_name
-    return sgal,gal
+    return
     
-def write_spread_catalog(sgal,outfile=None):
+def chi2_plot(IDs,models):
+    ax = plt.axes()
+    cols = brewer2mpl.get_map('Dark2','qualitative',len(models)).mpl_colors
+    l=0.
+    for i,model in enumerate(models):
+        l+=.004
+        zs,galsz_sort,sgalsz = load_galaxies_by_z(IDs,model)
+        for z,g,s in zip(zs,galsz_sort,sgalsz):
+            ax.plot(z,s.chi2,'o',ms=5,color=cols[i])
+            ax.annotate(g.target,xy=(z+0.0001,s.chi2+0.01),ha='left',va='center',fontsize='8')
+        ax.annotate('$%s$'%s.model_name.replace('_','\ '),xy=(l,3),color=cols[i],fontsize=20)
+    ax.set_ylabel(r'$\chi^2$',fontsize=20)
+    ax.set_xlabel(r'$Z$',fontsize=20)
+    fig_name = os.path.join(plt_dir,s.mix,'chi2.png')
+    ax.set_ylim(2,18)
+    plt.savefig(fig_name)
+    plt.close()   
+    return
+    
+def write_spread_catalog(sgal,outfile=None,**kwargs):
     '''
     writes a slice of the trilegal output catalog.
     slice is on ast recovered stars that are randomly selected by normalization.
     i.e sgal.rec and sgal.rel_ind.
     returns string outfile name.
     '''
+    out_dir = kwargs.get('outdir',model_src)
     if outfile==None:
-        outfile = os.path.join(model_src,'spread',sgal.name.replace('ast','spread'))
-    
+        outfile = os.path.join(out_dir,'spread',sgal.name.replace('ast','spread'))
+        GenUtils.ensure_dir(outfile)
     if not os.path.isfile(outfile):
         out = open(outfile,'w')
         # get the header
@@ -617,31 +653,55 @@ def write_spread_catalog(sgal,outfile=None):
     return outfile
 
 
-def setup_matchdirs():
-    match_dir = os.path.join(model_src,'match')
-    msg_dir = os.path.join(match_dir,'msgs')
-    match_out_dir = os.path.join(match_dir,'output')
-    match_plots = os.path.join(match_dir,'plots')
-    match_par_dir = os.path.join(match_dir,'pars')
-    [GenUtils.ensure_dir(f+'/') for f in (match_dir,match_out_dir,msg_dir,match_plots,match_par_dir)]
-    return match_dir,msg_dir,match_out_dir,match_plots,match_par_dir
+def setup_match(name_fmt,bg_name=None,phot_name=None,**kwargs):
+    '''
+    sets up the match directory structure 
+    '''
+    if bg_name != None and phot_name != None:
+        mdirs = {'msgs':'.msg',
+                 'output':'.fit',
+                 'plots':'',
+                 'pars':'.par',
+                 'bg':bg_name,
+                 'phot':phot_name}
+        match_dir = os.path.join(model_src,'match')
+    else:
+        match_dir = kwargs.get('match_dir')
+        kwargs.pop('match_dir')
+        mdirs = kwargs
+        
+    mdirdict = {}
+    for d,ext in mdirs.items():
+        new_dir = os.path.join(match_dir,d+'/')
+        GenUtils.ensure_dir(new_dir)
+        # if no extension, return the plot directory
+        if len(ext)==0:
+            mdirdict[d] = new_dir
+            continue
+        # if extension less than 5 chars, use name_fmt.ext
+        if len(ext)<=5:
+            mdirdict[d]=os.path.join(new_dir,'%s%s'%(name_fmt,ext))
+        # if more than 5 characters, assume it's a file name.
+        else:
+            mdirdict[d]=os.path.join(new_dir,ext)
     
+    return mdirdict
+    
+
 def match_tests(IDs,model):
-    match_dir, msg_dir, match_out_dir, match_plots, match_par_dir = setup_matchdirs()
     Gals,SGals = load_galaxies(IDs,model)
     for g,s in zip(Gals.galaxies,SGals.galaxies):
         name_fmt = '%s_%s_%s'%(s.ID,s.mix,s.model_name)
-        match_out = os.path.join(match_out_dir,'%s.fit'%name_fmt)
-        msg = os.path.join(msg_dir,'%s.msg'%name_fmt)
-        par = os.path.join(match_par_dir,'%s.par'%name_fmt)
-        match_bg = os.path.join(match_dir,s.name.replace('spread','bg'))
+        bg_name = s.name.replace('spread','bg')
+        phot_name = GenUtils.replace_ext(os.path.split(g.name)[1],'.match')
+        match_dict = setup_match(name_fmt,bg_name,phot_name)
+        match_dict['plots'] = os.path.join(match_dict['plots'],s.mix,s.model_name)
+        GenUtils.ensure_dir(match_dict['plots']+'/')
+        
         match_bg =  MatchUtils.make_match_bg_cmd(s.ast_mag1,s.ast_mag2,
-                                                 outfile=match_bg)
-        
-        phot_file = GenUtils.replace_ext(os.path.split(g.name)[1],'.match')
-        phot_file = os.path.join(model_src,'match',phot_file)
-        
-        phot = MatchUtils.make_match_bg_cmd(g.mag1,g.mag2,outfile=phot_file)
+                                                 outfile=match_dict['bg'])
+        print match_bg
+        phot = MatchUtils.make_match_bg_cmd(g.mag1,g.mag2,outfile=match_dict['phot'])
         
         match_kwargs = {'dmod':s.data.get_col('m-M0')[0],
                         'Av': s.data.get_col('Av')[0],
@@ -649,41 +709,69 @@ def match_tests(IDs,model):
                         'filter2': s.filter2.replace('F','IR'),
                         'color': s.ast_color,
                         'mag': s.ast_mag2,
-                        'pmfile': par}
+                        'pmfile': match_dict['pars']}
+                        
         pm_file  = MatchUtils.make_calcsfh_param_file(match_bg,**match_kwargs)    
         # run match
-        match_out = MatchUtils.call_match(pm_file,phot,s.file_ast,match_out,msg)
-    
+        
+        match_out = MatchUtils.call_match(pm_file,match_dict['phot'],s.file_ast,
+                                          match_dict['output'],match_dict['msgs'])
+        chi,fit = MatchUtils.get_fit(match_out)
         # make plot
-        alabel = s.model_name.replace('_','\ ')
+        alabel = '$\mathrm{%s}'%s.model_name.replace('_','\ ')
         metallicity = g.z
-        if not np.isfinite(g.z): metallicity = '...'
-        alabel += ' Z=%.4f'%g.z
+        if not np.isfinite(g.z): 
+            metallicity = '...'
+            alabel +='\ Z = %s$'%metallicity
+        else:
+            alabel += '\ Z = %.4f$'%metallicity
         cmdgrid = match_out+'.cmd'
-        grid = MatchUtils.pgcmd(cmdgrid,labels=[s.ID,alabel,'Diff','Sig'],
-                                out_dir=match_plots,saveplot=True)
-    
-    return
+        grid = MatchUtils.pgcmd(cmdgrid,labels=['$%s$'%s.ID,alabel,'$\mathrm{Diff}$','$\chi^2=%g\ \mathrm{Sig}$'%chi])
+        grid[2].set_ylabel(r'$%s$'%g.filter2,fontsize=20)
+        grid[2].set_xlabel(r'$%s-%s$'%(g.filter1,g.filter2),fontsize=20)
+        figname = os.path.join(match_dict['plots'],os.path.split(cmdgrid)[1])
+        print figname
+        plt.savefig('%s.png'%figname)
+        plt.close()
+        s.chi = chi
+        s.fit = fit
+    return Gals,SGals
+
+
+
 
 if __name__=="__main__":
-    #sfr_dir = os.path.join(data_src,'sfh-0.3dex')
-    #out_dir = os.path.join(model_src,'0.3dex')
-    #plt_dir ...
-    # load all targets
+    
+    
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
     logger.addHandler(ch)
     logger.info('start of run')
     IDs = all_IDs()
     #IDs = [IDs[0]]
-    model = "cmd_input_CAF09_S_SCS.dat"
-    match_tests(IDs,model)
-
-    #kwargs = {'make_plots':True,
-    #          'publish_plots':True,
-    #          'sfr_dir':sfr_dir,
-    #          'out_dir':out_dir}
-    #main(IDs=IDs,**kwargs)
+    #model = "cmd_input_CAF09_S_SCS.dat"
+    
+    models = ["cmd_input_CAF09_S_SCS.dat",
+              "cmd_input_CAF09_S_SCSFG.dat",
+              "cmd_input_CAF09_S_SCSFG_ETA2.dat"]
+    #for model in models:
+    #    match_tests(IDs,model)
+    #    compare_sims(IDs,model)
+    chi2_plot(IDs,models)
+        
+    
+    
+    '''
+    sfr_dir = os.path.join(data_src,'sfh-0.3dex')
+    out_dir = os.path.join(model_src,'0.3dex')
+    #plt_dir ...
+    kwargs = {'make_plots':True,
+              'publish_plots':True,
+              'sfr_dir':sfr_dir,
+              'out_dir':out_dir}
+    main(IDs=IDs,**kwargs)
+    '''
+    
     '''    
     for model in models:
         sgal,gal = compare_sims(IDs,model)
