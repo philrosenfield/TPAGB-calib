@@ -12,6 +12,47 @@ import numpy as np
 import pdb; pdb.set_trace()
 import matplotlib.pyplot as plt
 import GoogleSitesTable as gst
+import MatchUtils
+import logging
+logger = logging.getLogger()
+
+def edit_sfh(ID,new_sfr_dir,orig_sfr_dir=None,**changes):
+    '''
+    add or subtract a value from each bin in sfr file.
+    
+    possible changes:
+    age
+    sfr
+    z
+    feh (dex)
+    zdisp -- not yet.
+    
+    example:
+    IDs = all_IDs()
+    new_sfr_dir = os.path.join(data_src,'sfh-0.3dex')
+    new_sfrs = [edit_sfh(ID,new_sfr_dir,**{'FeH':-0.3}) for ID in IDs]
+    '''
+    z_sun=0.01524
+    sfr_file = mk_sims.get_sfrFILE(ID,sfr_dir=orig_sfr_dir)
+    orig_sfr = np.genfromtxt(sfr_file,names=['age','sfr','z'])
+    new_sfr = orig_sfr.copy()
+    for key in changes.keys():
+        if key in new_sfr.dtype.names:
+            new_sfr[key] += changes[key]
+        elif key.lower() == 'feh':
+            z = new_sfr['z']
+            feh = np.log10(z/z_sun)
+            new_feh = feh+changes[key]
+            new_sfr['z'] = z_sun*10**new_feh
+        else: 
+            print '%s not found in %s'%(key,sfr_file)
+            return -1
+       
+    GenUtils.ensure_dir(new_sfr_dir)
+    new_sfr_file = os.path.join(new_sfr_dir,os.path.split(sfr_file)[1])
+    np.savetxt(new_sfr_file, new_sfr,fmt='%2.6f')
+    return new_sfr_file
+
 
 def tag_cmds(IDs):
     '''
@@ -344,6 +385,7 @@ def make_normalized_simulation(ID,model,**kwargs):
     object_mass = kwargs.get('object_mass',5e6)
     maglims = kwargs.get('maglims','trgb')
     offsets = kwargs.get('offsets',(1.5,0.5))
+    mk_sims_args = kwargs.get('mk_sims_args',{})
     
     # data galaxy instance
     gal = galaxy(ID,band)
@@ -367,9 +409,9 @@ def make_normalized_simulation(ID,model,**kwargs):
         # run trilegal
         if over_write:
             print 'Trying %s %s, Mass = %g, Attempt %i'%(ID,model,object_mass,go)
-        trilegal_out = mk_sims.mk_sims(ID,model,
-                                       object_mass=object_mass,
-                                       over_write=over_write)
+        mk_sims_args['object_mass'] = object_mass
+        mk_sims_args['over_write'] = over_write
+        trilegal_out = mk_sims.mk_sims(ID,model,**mk_sims_args)
         
         # load simgalaxy
         sgal = simgalaxy(trilegal_out,gal.filter1,gal.filter2)
@@ -417,18 +459,30 @@ def all_IDs():
         "DDO71"]
     return IDs
 
-def main(make_plots=False,publish_plots=False):
-
-    # load all targets
-    IDs = all_IDs()
-    #IDs = [IDs[0]]
+def main(IDs=None,models=None,**kwargs):
+    '''
+    big wrapper for galaxy tests
     
-    # load all models
-    models = ["cmd_input_CAF09_S_SCS.dat",
-              "cmd_input_CAF09_S_SCSFG.dat",
-              "cmd_input_CAF09_S_SCSFG_ETA2.dat"]
+    kwargs:
+    make_plots: LFUtils.plotLFIR and .diagnostic_cmd
+    publish_plots: call GoogleSitesTable
+    '''
+    make_plots = kwargs.get('make_plots')
+    publish_plots = kwargs.get('publish_plots')
+    sfr_dir = kwargs.get('sfr_dir')
+    out_dir = kwargs.get('out_dir')
+    if IDs==None:
+        # load all targets
+        IDs = all_IDs()
+        #IDs = [IDs[0]]
     
-    outfile = 'result_tab.dat'
+    if models == None:
+        # load all models   
+        models = ["cmd_input_CAF09_S_SCS.dat",
+                  "cmd_input_CAF09_S_SCSFG.dat",
+                  "cmd_input_CAF09_S_SCSFG_ETA2.dat"]
+    
+    outfile = kwargs.get('outfile','result_tab.dat')
     if os.path.isfile(outfile): 
         print outfile,'exists. appending.'
         out = open(outfile,'a')
@@ -437,7 +491,10 @@ def main(make_plots=False,publish_plots=False):
         out.write('# ID model p_value NRGB_data NAGB_data NRGB_model NAGB_model  \n')
     
     for ID,model in itertools.product(IDs,models):
-        gal, sgal, p_value, maglims = make_normalized_simulation(ID,model)
+        mk_sims_args = {'sfr_dir':sfr_dir,'outdir':out_dir}
+        sim_kwargs = {'mk_sims_args':mk_sims_args}
+        gal, sgal, p_value, maglims = make_normalized_simulation(ID,model,
+                                                                 **sim_kwargs)
         write_spread_catalog(sgal)
         
         if make_plots:
@@ -475,10 +532,7 @@ def main(make_plots=False,publish_plots=False):
     
     return 
 
-
-
-
-def compare_sims(IDs,model):
+def load_galaxies(IDs,model):
     sgals = []
     gals = []
     IDs = all_IDs()
@@ -492,12 +546,18 @@ def compare_sims(IDs,model):
         sgal.mix_modelname(model)
         maglims = (np.nan,np.nan)
         p_value = LFUtils.calc_LF(gal,sgal,maglims,normalize=False)
+        sgal.file_ast = mk_sims.get_fakFILE(ID)
         sgals.append(sgal)
         gals.append(gal)
-
+    
     # galaxies-ify
     SGals = galaxies(sgals)
     Gals = galaxies(gals)
+    return Gals,SGals
+    
+def compare_sims(IDs,model,fig_name=None):
+
+    Gals,SGals = load_galaxies(IDs,model)
     # select on the ones with measured z:
     galsz = Gals.finite_key('z')
     # sort by z.
@@ -522,7 +582,8 @@ def compare_sims(IDs,model):
     ax.set_xlabel(r'$Z$',fontsize=20)
     ax.set_title(r'$\rm{%s}$'%sgal.model_name.replace('_','\ '))
     GenUtils.ensure_dir(os.path.join(plt_dir,sgal.mix))
-    fig_name = os.path.join(plt_dir,sgal.mix,sgal.model_name+'.png')
+    if not fig_name:
+        fig_name = os.path.join(plt_dir,sgal.mix,sgal.model_name+'.png')
     plt.savefig(fig_name)
     plt.close()
     print 'wrote %s'%fig_name
@@ -555,18 +616,75 @@ def write_spread_catalog(sgal,outfile=None):
 
     return outfile
 
-if __name__=="__main__":
-    #main(make_plots=True,publish_plots=True)
+
+def setup_matchdirs():
+    match_dir = os.path.join(model_src,'match')
+    msg_dir = os.path.join(match_dir,'msgs')
+    match_out_dir = os.path.join(match_dir,'output')
+    match_plots = os.path.join(match_dir,'plots')
+    match_par_dir = os.path.join(match_dir,'pars')
+    [GenUtils.ensure_dir(f+'/') for f in (match_dir,match_out_dir,msg_dir,match_plots,match_par_dir)]
+    return match_dir,msg_dir,match_out_dir,match_plots,match_par_dir
     
+def match_tests(IDs,model):
+    match_dir, msg_dir, match_out_dir, match_plots, match_par_dir = setup_matchdirs()
+    Gals,SGals = load_galaxies(IDs,model)
+    for g,s in zip(Gals.galaxies,SGals.galaxies):
+        name_fmt = '%s_%s_%s'%(s.ID,s.mix,s.model_name)
+        match_out = os.path.join(match_out_dir,'%s.fit'%name_fmt)
+        msg = os.path.join(msg_dir,'%s.msg'%name_fmt)
+        par = os.path.join(match_par_dir,'%s.par'%name_fmt)
+        match_bg = os.path.join(match_dir,s.name.replace('spread','bg'))
+        match_bg =  MatchUtils.make_match_bg_cmd(s.ast_mag1,s.ast_mag2,
+                                                 outfile=match_bg)
+        
+        phot_file = GenUtils.replace_ext(os.path.split(g.name)[1],'.match')
+        phot_file = os.path.join(model_src,'match',phot_file)
+        
+        phot = MatchUtils.make_match_bg_cmd(g.mag1,g.mag2,outfile=phot_file)
+        
+        match_kwargs = {'dmod':s.data.get_col('m-M0')[0],
+                        'Av': s.data.get_col('Av')[0],
+                        'filter1': s.filter1.replace('F','IR'),
+                        'filter2': s.filter2.replace('F','IR'),
+                        'color': s.ast_color,
+                        'mag': s.ast_mag2,
+                        'pmfile': par}
+        pm_file  = MatchUtils.make_calcsfh_param_file(match_bg,**match_kwargs)    
+        # run match
+        match_out = MatchUtils.call_match(pm_file,phot,s.file_ast,match_out,msg)
+    
+        # make plot
+        alabel = s.model_name.replace('_','\ ')
+        metallicity = g.z
+        if not np.isfinite(g.z): metallicity = '...'
+        alabel += ' Z=%.4f'%g.z
+        cmdgrid = match_out+'.cmd'
+        grid = MatchUtils.pgcmd(cmdgrid,labels=[s.ID,alabel,'Diff','Sig'],
+                                out_dir=match_plots,saveplot=True)
+    
+    return
+
+if __name__=="__main__":
+    #sfr_dir = os.path.join(data_src,'sfh-0.3dex')
+    #out_dir = os.path.join(model_src,'0.3dex')
+    #plt_dir ...
     # load all targets
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    logger.addHandler(ch)
+    logger.info('start of run')
     IDs = all_IDs()
     #IDs = [IDs[0]]
-    
-    # load all models
-    models = ["cmd_input_CAF09_S_SCS.dat",
-              "cmd_input_CAF09_S_SCSFG.dat",
-              "cmd_input_CAF09_S_SCSFG_ETA2.dat"]
-    
+    model = "cmd_input_CAF09_S_SCS.dat"
+    match_tests(IDs,model)
+
+    #kwargs = {'make_plots':True,
+    #          'publish_plots':True,
+    #          'sfr_dir':sfr_dir,
+    #          'out_dir':out_dir}
+    #main(IDs=IDs,**kwargs)
+    '''    
     for model in models:
         sgal,gal = compare_sims(IDs,model)
         fig_loc = os.path.join(plt_dir,sgal.mix,sgal.model_name)
@@ -575,3 +693,4 @@ if __name__=="__main__":
         gst.side_by_side(diag_loc,sgal.model_name,html_file)
         html_file = os.path.join(fig_loc,sgal.model_name+'.html')
         gst.one_col(fig_loc,sgal.model_name,html_file)
+    '''

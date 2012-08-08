@@ -8,8 +8,11 @@ from TPAGBparams import *
 photosys="wfc3snap"
 mag_num=9
 
-def get_sfrFILE(ID):
-    sfr_dir = os.path.join(data_src,'sfh')
+def get_sfrFILE(ID,sfr_dir=None):
+    if sfr_dir == None: 
+        sfr_dir = os.path.join(data_src,'sfh')
+    else:
+        print 'read sfr from %s'%sfr_dir
     l=os.listdir(sfr_dir)
     IDs=[f.split("_")[2] for f in l if not f.startswith('.')]
     ind=IDs.index(ID)
@@ -35,8 +38,9 @@ def mk_sims(ID,
             mfactor=1.,
             outdir=model_src,
             object_mass=1e6,
-            over_write=False):
-    #print ID
+            over_write=False,
+            sfr_dir = None):
+    print outdir
     # read data from table and select parameters
     # for galaxy ID
     trilegal_outs = []
@@ -71,7 +75,7 @@ def mk_sims(ID,
 
     # define filenames
     #sfr_file="sfr_%s.dat"%ID
-    sfr_file=get_sfrFILE(ID)
+    sfr_file=get_sfrFILE(ID,sfr_dir=sfr_dir)
 
     if (os.path.isfile(sfr_file)):
         object_sfr=os.path.abspath(sfr_file)
