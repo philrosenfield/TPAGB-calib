@@ -800,7 +800,7 @@ if __name__ == "__main__":
     here = os.getcwd()
     kwargs = load_input(input_file) 
     # Paola's tracks -> trilegal + tests based only on tracks
-    cmd_input_file = do_everything(**kwargs)
+    #cmd_input_file = do_everything(**kwargs)
     
     agb_mix = kwargs['agb_mix']
     set_name = kwargs['set_name']
@@ -812,12 +812,14 @@ if __name__ == "__main__":
         tri_dir = os.path.join(diagnostic_dir,'trilegal_files')
         sfh_dir = os.path.join(tri_dir,'sfh')
         plt_dir = os.path.join(diagnostic_dir,agb_mix,set_name,track_set)    
-        trilegal_diagnostics.main(track_set,sfh_dir,tri_dir,plt_dir)
-        os.chdir(plt_dir)
+        #trilegal_diagnostics.main(track_set,sfh_dir,tri_dir,plt_dir,over_write=False)
+        #os.chdir(plt_dir)
         if kwargs.get('google_table'):
             image_location = kwargs.get('image_location')
-            GoogleSitesTable.main(image_location)
-        os.chdir(here)
+            if not image_location: 
+                image_location = plt_dir
+            GoogleSitesTable.trilegal_diag_table(image_location)
+        #os.chdir(here)
     # Scripts to make LF compared to data
     if kwargs.get('IDs'):
         galaxy_tests.main(kwargs['IDs'],[track_set+'.dat'])

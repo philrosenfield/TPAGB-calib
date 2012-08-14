@@ -192,7 +192,7 @@ def plot_em(ifile,lf_file,cmd_file,age,z,track):
                         wspace=0, hspace=0)
     plt.savefig(lf_file)
 
-def run_all(age,z,track_set,sfh_dir,tri_dir,plt_dir):
+def run_all(age,z,track_set,sfh_dir,tri_dir,plt_dir,over_write=False):
     sfh_file = "%s/sfh_Z%.2e_A%.2e.dat"%(sfh_dir,z,age)
     par_file = "%s/trilegal_pars_Z%.2e_A%.2e.dat"%(tri_dir,z,age)
     inp_file = "%s/trilegal_input_Z%.2e_A%.2e.dat"%(tri_dir,z,age)
@@ -211,8 +211,8 @@ def run_all(age,z,track_set,sfh_dir,tri_dir,plt_dir):
 
     write_sfh(age,z,sfh_file)
     write_tri_par(sfh_file,par_file)
-    
-    run_trilegal(track_set,par_file,inp_file,out_file)
+    if os.path.isfile(out_file) and over_write == False:
+        run_trilegal(track_set,par_file,inp_file,out_file)
     plot_em(out_file,lf_file,cmd_file,age,z,track_set)
         
 def main(track_set,sfh_dir,tri_dir,plt_dir):

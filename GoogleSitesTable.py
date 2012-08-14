@@ -1,41 +1,37 @@
-# GoogleSitesTable.py
-"""
-python GoogleSitesTable.py just run this in the directory with Marco's plots. 
-
-The printing at the bottom is for phil, so comment it out, change it, or ignore it.
-
--- will make html for CMD and LF page with 5x5 image table (of 16 images)
--- will make two tar.gz files with cmd*png and lf*png
--- to change the tar commands, look at the os.system commands at line 53 (works like perl)
-"""
 import os
-import glob
-import GenUtils
+from ResolvedStellarPops import fileIO
 import numpy as np
 import sys
 import subprocess
 
 def get_z(filename):
-    return float(filename.split('_')[1].replace('Z',''))
+    return float(os.path.split(filename)[1].split('_')[1].replace('Z',''))
 
 def get_age(filename):
-    return float(filename.split('_')[2].replace('A','').replace('.png',''))
+    return float(os.path.split(filename)[1].split('_')[2].replace('A','').replace('.png',''))
 
-def main(image_location):
-    header = '<table style="border-collapse: collapse; border-top-color: rgb(136, 136, 136); border-right-color: rgb(136, 136, 136); border-bottom-color: rgb(136, 136, 136); border-left-color: rgb(136, 136, 136); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; " border="1" bordercolor="#888" cellspacing="0">\n<tbody>\n'
-    footer = '</tbody></table>\n'
+def trilegal_diag_table(image_location):
+    """
+    python GoogleSitesTable.py just run this in the directory with Marco's plots. 
+    
+    The printing at the bottom is for phil, so comment it out, change it, or ignore it.
+    
+    -- will make html for CMD and LF page with 5x5 image table (of 16 images)
+    -- will make two tar.gz files with cmd*png and lf*png
+    -- to change the tar commands, look at the os.system commands at line 53 (works like perl)
+    """
+    image_base,header,footer,titlefmt,cellfmt,line = defaults()
     endrow = '</tr>\n'
     startrow = '<tr>'
     cell = '<td>%s</td>'
     image_garbage = '<div style="display: block; margin-right: auto; margin-left: auto; text-align: center; "><a imageanchor="1" href="%s%s"><img src="%s%s" border="0" width="400" height="300"></a></div>'
-    thismix = os.path.split(os.getcwd())[1]
-    image_loc = os.path.join(image_location,'%s/'%thismix)
+    thismix = os.path.split(image_location)[1]
+    web_image_loc = '/'.join((image_base,'%s/'%thismix))
     
     plt_types = ['cmd','lf']
     for plt_type in plt_types:
-        outfile = '_'.join((os.path.split(os.getcwd())[1],plt_type+'.html'))
-        out = open(outfile,'w')
-        imgs = glob.glob1('.','%s*png'%plt_type)
+        outfile = os.path.join(image_location,plt_type+'.html')
+        imgs = fileIO.get_files(image_location,'%s*png'%plt_type)
         zs = np.unique([get_z(z) for z in imgs])
         ages = np.unique([get_age(a) for a in imgs])
         
@@ -44,18 +40,17 @@ def main(image_location):
             line+= startrow+'<th>%g Gyr</th>'%age
             for z in zs:
                 img = '_'.join((plt_type,'Z%.2e'%z,'A%.2e.png'%age))
-                line+= cell%(image_garbage%(image_loc,img,image_loc,img))
+                line+= cell%(image_garbage%(web_image_loc,img,web_image_loc,img))
             line += endrow
         
-        out.write(header)
-        out.write(line)
-        out.write(footer)
+        quick_write(outfile,header,line,footer)
         
-        os.system('tar -cvf %ss.tar %s*png'%(plt_type,plt_type))
-        os.system('gzip %ss.tar'%plt_type)
-    out.close()
+        fmt = os.path.join(image_location,plt_type)
+        os.system('tar -cvf %ss.tar %s*png'%(fmt,fmt))
+        os.system('gzip %ss.tar'%fmt)
+                
     if 'philrose' in image_location:
-        print 'scp *.gz philrose@portal.astro.washington.edu:/www/astro/users/philrose/html/Research/tpagbcalib/.'
+        print 'scp %s*.gz philrose@portal.astro.washington.edu:/www/astro/users/philrose/html/Research/tpagbcalib/.'%fmt
         print 'ssh philrose@portal.astro.washington.edu'
         print 'cd /www/astro/users/philrose/html/Research/tpagbcalib'
         print 'mkdir %s'%thismix
@@ -102,8 +97,8 @@ def side_by_side(local_dir,image_dir,outfile,
     image_base,header,footer,titlefmt,cellfmt,line = defaults()
     
     abs_image_dir = '/'.join((image_base,os.path.join(image_dir,'diag')))
-    imgsL = GenUtils.get_afile(local_dir,'*%s*png'%extra_left)
-    imgsR = GenUtils.get_afile(local_dir,'*%s*png'%extra_right)
+    imgsL = fileIO.get_files(local_dir,'*%s*png'%extra_left)
+    imgsR = fileIO.get_files(local_dir,'*%s*png'%extra_right)
     
     titlefmt = titlefmt.replace('<td','<td colspan="2"')   
     newrow = '<tr>'
@@ -114,7 +109,7 @@ def side_by_side(local_dir,image_dir,outfile,
         imgtitle = os.path.split(imgL)[1].split('_')[0]
         img_locL = '/'.join((abs_image_dir,os.path.split(imgL)[1]))
         img_locR = '/'.join((abs_image_dir,os.path.split(imgR)[1]))
-        [GenUtils.ensure_file(img) for img in (imgL,imgR)]
+        [fileIO.ensure_file(img) for img in (imgL,imgR)]
         w,h = w_h_frompng(imgL)
         line += titlefmt % imgtitle
         line += newrow
@@ -166,7 +161,7 @@ def one_col(local_dir,image_dir,outfile,extra='',zip_it=False):
     image_base,header,footer,titlefmt,cellfmt,line = defaults()
     
     abs_image_dir = '/'.join((image_base,image_dir))
-    imgs = GenUtils.get_afile(local_dir,'*%s*png'%extra)
+    imgs = fileIO.get_files(local_dir,'*%s*png'%extra)
     
     for img in imgs:
         imgtitle = os.path.split(img)[1].split('_')[0]
