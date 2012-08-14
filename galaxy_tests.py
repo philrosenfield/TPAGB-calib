@@ -10,7 +10,7 @@ import time
 from TPAGBparams import *
 import GenUtils
 import numpy as np
-import pdb; pdb.set_trace()
+#import pdb; pdb.set_trace()
 import matplotlib.pyplot as plt
 import GoogleSitesTable as gst
 import MatchUtils

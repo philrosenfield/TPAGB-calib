@@ -1,3 +1,4 @@
+import pdb
 import trilegal_diagnostics
 import GoogleSitesTable
 import galaxy_tests
@@ -286,9 +287,9 @@ def add_points_to_q_track(track,qs):
     add the coolest point.
     '''
     addpt=[]
-    logt = AGBTracks.get_col(track,'T_star')
-    step = AGBTracks.get_col(track,'step')
-    status =AGBTracks.get_col(track,'status')
+    logt = track.get_col('T_star')
+    step = track.get_col('step')
+    status = track.get_col('status')
     Tqs = logt[qs]
     # need to use some unique array, not log t, since log t could repeat,
     # index would find the first one, not necessarily the correct one.
@@ -307,7 +308,7 @@ def add_points_to_q_track(track,qs):
             # index of the min T of the hot index from above.
             addpt.append(list(logt).index(np.min(logt[[t_mids[i][hot_ind] for hot_ind in hot_inds]])))
             
-    if len(addpt)>0: addpt = [a for a in addpt if status[a]==7.]
+    if len(addpt)>0: addpt = np.unique([a for a in addpt if status[a]==7.])
     Qs = np.sort(np.concatenate((addpt,qs)))
     return Qs,addpt
 
@@ -315,11 +316,11 @@ def find_dldt(track,TPs,addpt):
     '''
     Finds dL/dt of track object
     '''
-    status = AGBTracks.get_col(track,'status')
+    status = track.get_col('status')
     #dl/dT seems somewhat linear for 0.2<phi<0.4 ...
-    phi = AGBTracks.get_col(track,'PHI_TP')
+    phi = track.get_col('PHI_TP')
     phi[0]= -1. # The first line in the agb track is 1. This isn't the quiessent...
-    lin_rise = np.nonzero((status==7) & (phi<0.4) & (phi>0.2))[0]
+    lin_rise, = np.nonzero((status==7) & (phi<0.4) & (phi>0.2))
     rising = [list(set(TP) & set(lin_rise)) for TP in TPs] 
     logl = AGBTracks.get_col(track,'L_star')
     logt = AGBTracks.get_col(track,'T_star')
@@ -628,6 +629,7 @@ def do_everything(**kwargs):
           goes here trilegal_1.3/cmd_input_[mix]_[set].dat
     '''
     home = os.getcwd()
+    over_write = kwargs.get('over_write',False)
     agbtrack_dir = kwargs.get('agbtrack_dir')
     agb_mix = kwargs.get('agb_mix')
     set_name = kwargs.get('set_name')
@@ -641,16 +643,15 @@ def do_everything(**kwargs):
     # do dirs exist?
     ensure_dir(isotrack_dir)
     ensure_dir(os.path.join(diagnostic_dir0,agb_mix,set_name+'/'))
+    
     # name convention: [mix]_[set].dat
     name_conv = '_'.join((agb_mix,set_name))+'.dat'
-    
+
     if make_imfr == True:
         ifmr = os.path.join(diagnostic_dir0,agb_mix,set_name,'_'.join(('ifmr',name_conv)))
         mfile = open(ifmr,'w')
         mfile.write('# M_i M_f Z\n')
   
-    # name convention: [mix]_[set].dat
-    name_conv = '_'.join((agb_mix,set_name))+'.dat'
     
     # cmd_input_file that links to the track file
     cmd_input = '_'.join(('cmd','input',name_conv))
@@ -683,6 +684,7 @@ def do_everything(**kwargs):
             ensure_dir(diagnostic_dir)
             # update kwarg
             kwargs['diagnostic_dir'] = diagnostic_dir
+        
         agb_tracks = get_afile(os.path.join(working_dir,metal_dir),track_identifier)
         agb_tracks.sort()
         ax = plt.axes()
@@ -692,6 +694,7 @@ def do_everything(**kwargs):
         Y = float(metal_dir.split('_')[-1].replace('Y',''))
         iso_name_conv = '_'.join(('Z%.4f'%metallicity,name_conv))
         isofile = os.path.join(home,isotrack_dir,iso_name_conv)
+        if over_write==False and os.path.isfile(isofile): continue
         isofile_rel_name = os.path.join('isotrack',isotrack_dir,iso_name_conv)
         out = open(isofile,'w')
         out.write('# age(yr) logL logTe m_act mcore c/o period ip Mdot(Msun/yr) logTe X Y CNO dlogTe/dlogL \n')
@@ -734,12 +737,12 @@ def do_everything(**kwargs):
             # The quiescent phase is the the max phase in each TP, i.e., closest to 1.
             
             qs = np.cumsum([np.argmax(phi[TP]) for TP in TPs])
-            qs+=range(len(qs))
+            #qs+=range(len(qs)) WTF??
             #qs = [list(phi).index(np.max(phi[TP])) for TP in TPs]
             Qs = qs
             # when to add an extra point to quiescent track
             if len(Qs) <= 9 and mass < 3.: Qs,addpt = add_points_to_q_track(track,qs)
-            Qs = map(int,Qs)
+            Qs = list(Qs)
             # find dl/dt of track
             rising,slopes,fits = find_dldt(track,TPs,addpt)
             
@@ -752,11 +755,11 @@ def do_everything(**kwargs):
             Qs.insert(0,0)            
             slopes.insert(0,slope)
             
-            # make iso file for trilegal
-            make_iso_file(track,Qs,slopes,out)
             # make diagnostic plots and imfr
             if diagnostic_dir != None:
                 diag_plots(track,logl,logt,age,slopes,Qs,addpt,rising,fits,**kwargs)
+            # make iso file for trilegal
+            make_iso_file(track,Qs,slopes,out)
             if kwargs['make_imfr'] == True:
                 M_s = AGBTracks.get_col(track,'M_star')
                 mfile.write('%f %f %f\n'%(M_s[0],M_s[-1],float(met)))            
@@ -789,6 +792,7 @@ def do_everything(**kwargs):
     return cmd_input_file
 
 if __name__ == "__main__":
+    pdb.set_trace()
     try:
         input_file = sys.argv[1]
     except:
