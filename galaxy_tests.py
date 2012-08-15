@@ -583,6 +583,7 @@ def load_galaxies_by_z(IDs,model):
     
     zs = [g.z for g in galsz_sort]
     return zs,galsz_sort,sgalsz
+    
 def compare_sims(IDs,model,fig_name=None):
     zs,galsz_sort,sgalsz = load_galaxies_by_z(IDs,model)
     ax = plt.axes()
@@ -737,12 +738,8 @@ def match_tests(IDs,model):
         s.fit = fit
     return Gals,SGals
 
-
-
-
 if __name__=="__main__":
-    
-    
+
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
     logger.addHandler(ch)
