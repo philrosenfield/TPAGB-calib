@@ -219,7 +219,6 @@ class galaxies(object):
             print g.__str__()
         return ''
 
-
 class galaxy(object):
     def __init__(self, ID, band):
         self.name = get_trgb_fitsname(ID,band)[1]
@@ -341,6 +340,15 @@ def get_mix_modelname(model):
     model_name = '_'.join(model.split('.')[0].split('_')[3:])
     return mix,model_name
 
+def match_metallicities(IDs):
+    sfhs = [mk_sims.get_sfrFILE(ID) for ID in IDs]
+    zs = {}
+    for ID,sfh in zip(IDs,sfhs):
+        age,sfr,z = np.loadtxt(sfh,unpack=True)
+        zs[ID] = {'z':z,'avez':np.mean(z)}
+    return zs
+
+
 def load_galaxy_tagged(ID,band):
     trgb,fitsname = get_trgb_fitsname(ID,band) 
     tagged_fits = read_tagged_phot(GenUtils.replace_ext(fitsname,'.dat'))
@@ -442,7 +450,6 @@ def make_normalized_simulation(ID,model,**kwargs):
         print '\n %s necessary object_mass = %g\n'%(gal.name,object_mass)
         
     return gal,sgal,p_value,maglims 
-
 
 def all_IDs():
     IDs=["SCL-DE1",
@@ -567,7 +574,6 @@ def load_galaxies(IDs,model,**kwargs):
     SGals = galaxies(sgals)
     Gals = galaxies(gals)
     return Gals,SGals
-    
 
 def load_galaxies_by_z(IDs,model):
     Gals,SGals = load_galaxies(IDs,model)
@@ -653,7 +659,6 @@ def write_spread_catalog(sgal,outfile=None,**kwargs):
 
     return outfile
 
-
 def setup_match(name_fmt,bg_name=None,phot_name=None,**kwargs):
     '''
     sets up the match directory structure 
@@ -687,7 +692,6 @@ def setup_match(name_fmt,bg_name=None,phot_name=None,**kwargs):
             mdirdict[d]=os.path.join(new_dir,ext)
     
     return mdirdict
-    
 
 def match_tests(IDs,model):
     Gals,SGals = load_galaxies(IDs,model)
