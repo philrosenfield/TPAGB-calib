@@ -251,8 +251,8 @@ class galaxy(object):
         return
                 
 class simgalaxy(object):
-    def __init__(self,trilegal_out,filter1,filter2):
-        self.base,self.name = os.path.split(trilegal_out)
+    def __init__(self, trilegal_out, filter1, filter2):
+        self.base, self.name = os.path.split(trilegal_out)
         self.data = GenUtils.read_table(trilegal_out)
         self.filter1 = filter1
         self.filter2 = filter2
@@ -263,52 +263,52 @@ class simgalaxy(object):
         
         simgalaxy.load_ast_corrections(self)
         
-        data_to_slice = ['mag1','mag2','stage','ast_mag1','ast_mag2']
+        data_to_slice = ['mag1', 'mag2', 'stage', 'ast_mag1', 'ast_mag2']
         slice_inds = self.rec
-        simgalaxy.slice_data(self,data_to_slice,slice_inds)
+        simgalaxy.slice_data(self, data_to_slice, slice_inds)
             
-        self.ast_color = self.ast_mag1-self.ast_mag2
-        self.color = self.mag1-self.mag2
+        self.ast_color = self.ast_mag1 - self.ast_mag2
+        self.color = self.mag1 - self.mag2
         simgalaxy.load_ic_mstar(self)
         
     def get_fits(self):
-        match_out_dir = os.path.join(os.path.split(self.base)[0],'match','output')
-        fit_file_name = '%s_%s_%s.fit'%(self.ID,self.mix,self.model_name)
+        match_out_dir = os.path.join(os.path.split(self.base)[0], 'match', 'output')
+        fit_file_name = '%s_%s_%s.fit'%(self.ID, self.mix, self.model_name)
         try:
-            fit_file, = GenUtils.get_afile(match_out_dir,fit_file_name)
-            self.chi2,self.fit = MatchUtils.get_fit(fit_file)
+            fit_file, = fileIO.get_files(match_out_dir, fit_file_name)
+            self.chi2, self.fit = MatchUtils.get_fit(fit_file)
         except ValueError:
-            print 'no match output for %s.'%fit_file_name
+            print 'no match output for %s.' % fit_file_name
         return
         
     def load_ast_corrections(self):
-        diff1 = self.data.get_col('diff_'+self.filter1)
-        diff2 = self.data.get_col('diff_'+self.filter2)
-        recovered1, = np.nonzero(abs(diff1)<90.)
-        recovered2, = np.nonzero(abs(diff2)<90.)
+        diff1 = self.data.get_col('diff_' + self.filter1)
+        diff2 = self.data.get_col('diff_' + self.filter2)
+        recovered1, = np.nonzero(abs(diff1) < 90.)
+        recovered2, = np.nonzero(abs(diff2) < 90.)
         self.rec = list(set(recovered1) & set(recovered2))
-        self.ast_mag1 = self.mag1+diff1
-        self.ast_mag2 = self.mag2+diff2
+        self.ast_mag1 = self.mag1 + diff1
+        self.ast_mag2 = self.mag2 + diff2
     
-    def slice_data(self,data_to_slice,slice_inds):
+    def slice_data(self, data_to_slice, slice_inds):
         '''
         slice already set attributes by some index list.
         '''
-        [self.__setattr__(d,self.__dict__[d][slice_inds]) for d in data_to_slice]
+        [self.__setattr__(d, self.__dict__[d][slice_inds]) for d in data_to_slice]
         
     def mix_modelname(self,model):
-        self.mix,self.model_name = get_mix_modelname(model)
+        self.mix, self.model_name = get_mix_modelname(model)
     
     def delete_data(self):
         '''
         for wrapper functions, I don't want gigs of data stored when they
         are no longer needed.
         '''
-        data_names = ['data','mag1','mag2','color','stage','ast_mag1',
-                      'ast_mag2','ast_color','rec']
+        data_names = ['data', 'mag1', 'mag2', 'color', 'stage', 'ast_mag1',
+                      'ast_mag2', 'ast_color','rec']
         [self.__delattr__(data_name) for data_name in data_names]
 
-    def stage_inds(self,stage_name):
+    def stage_inds(self, stage_name):
         return np.nonzero(self.stage == get_stage_label(stage_name))[0]
 
     def load_ic_mstar(self):
@@ -317,13 +317,13 @@ class simgalaxy(object):
         mdot = self.data.get_col('logML')[self.rec]
         logl = self.data.get_col('logL')[self.rec]
         
-        self.imstar, = np.nonzero((co<=1) & 
+        self.imstar, = np.nonzero((co <= 1) & 
                                   (logl >= 3.3) & 
                                   (mdot<=-5) & 
                                   (self.stage == get_stage_label('TPAGB')))
                                   
-        self.icstar, = np.nonzero((co>=1) & 
-                                  (mdot<=-5) & 
+        self.icstar, = np.nonzero((co >= 1) & 
+                                  (mdot <= -5) & 
                                   (self.stage == get_stage_label('TPAGB')))
     
     def all_stages(self, *stages):
@@ -338,7 +338,7 @@ class simgalaxy(object):
 def get_mix_modelname(model):
     mix = model.split('.')[0].split('_')[2]
     model_name = '_'.join(model.split('.')[0].split('_')[3:])
-    return mix,model_name
+    return mix, model_name
 
 def match_metallicities(IDs):
     sfhs = [mk_sims.get_sfrFILE(ID) for ID in IDs]
@@ -348,7 +348,15 @@ def match_metallicities(IDs):
         zs[ID] = {'z':z,'avez':np.mean(z)}
     return zs
 
-
+def compare_metallicities():
+    IDs = allIDs()
+    zs = match_metallicities(IDs)
+    for ID in IDs:
+        zs[ID]['zmeas'] = LFUtils.get_key_fromtable(ID,'Z')
+    
+    for id,zdict in sorted(zs.items(),key=lambda(k,v):(v['avez'],k)):
+        print '%s %.4f %.4f'%(id,zdict['avez'],zdict['zmeas'])
+    
 def load_galaxy_tagged(ID,band):
     trgb,fitsname = get_trgb_fitsname(ID,band) 
     tagged_fits = read_tagged_phot(GenUtils.replace_ext(fitsname,'.dat'))

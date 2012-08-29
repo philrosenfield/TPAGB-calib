@@ -209,6 +209,9 @@ def plot_numbs(ax,item,xpos,ypos,**kwargs):
     x= ax.annotate(r'$%i$' % item,xy=(xpos,ypos),ha='left',size=20,**kwargs)
     return
 
+def match_metallicities():
+    pass
+
 def diagnostic_cmd(sgal,trgb,figname=None,inds=None):
     if inds!=None:
         ustage = np.unique(sgal.stage[inds])
