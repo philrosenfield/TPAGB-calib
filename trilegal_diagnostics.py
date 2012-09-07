@@ -215,7 +215,7 @@ def run_all(age,z,track_set,sfh_dir,tri_dir,plt_dir,over_write=False):
         run_trilegal(track_set,par_file,inp_file,out_file)
     plot_em(out_file,lf_file,cmd_file,age,z,track_set)
         
-def main(track_set,sfh_dir,tri_dir,plt_dir):
+def main(track_set,sfh_dir,tri_dir,plt_dir,over_write=False):
 
     if os.path.isdir(plt_dir):
         shutil.rmtree(plt_dir)
