@@ -89,8 +89,8 @@ def run_all(IDs, models):
 
 def read_tagged_phot(tagged_file):
     '''
-    reads a file created by rsp.annotate_cmd.define_color_mag_region. ascii with 7
-    columns.
+    reads a file created by rsp.annotate_cmd.define_color_mag_region. 
+    ascii with 7 columns.
     '''
     if type(tagged_file) == str:
         #print 'reading %s' % tagged_file
