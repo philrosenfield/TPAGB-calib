@@ -199,3 +199,17 @@ def plot_cluster_test(lifetimesfile, **kwargs):
     print 'wrote', lifetimesfile.replace('dat', 'png')
     plt.close()
     return
+
+def get_unique_inds(ntp):
+    un = np.unique(ntp)
+    if un.size == 1:
+        print 'only one themal pulse.'
+        return un, list(ntp).index(u)
+    else:
+        # this is the first step in each TP.
+        iTPs = [list(ntp).index(u) for u in un]
+        # The indices of each TP.
+        TPs = [np.arange(iTPs[i], iTPs[i + 1]) for i in range(len(iTPs) - 1)]
+        # don't forget the last one.
+        TPs.append(np.arange(iTPs[i + 1], len(ntp)))
+        return TPs, iTPs

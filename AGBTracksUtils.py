@@ -12,24 +12,32 @@ import matplotlib.pyplot as plt
 
 def get_TP_inds(ntp):
     un = np.unique(ntp)
-    # this is the first step in each TP.
-    iTPs = [list(ntp).index(u) for u in un]
-    # The indices of each TP.
-    TPs = [np.arange(iTPs[i], iTPs[i + 1]) for i in range(len(iTPs) - 1)]
-    # don't forget the last one.
-    TPs.append(np.arange(iTPs[i + 1], len(ntp)))
-    return TPs
+    if un.size == 1:
+        print 'only one themal pulse.'
+        return un
+    else:
+        # this is the first step in each TP.
+        iTPs = [list(ntp).index(u) for u in un]
+        # The indices of each TP.
+        TPs = [np.arange(iTPs[i], iTPs[i + 1]) for i in range(len(iTPs) - 1)]
+        # don't forget the last one.
+        TPs.append(np.arange(iTPs[i + 1], len(ntp)))
+        return TPs
 
 
 def get_unique_inds(ntp):
     un = np.unique(ntp)
-    # this is the first step in each TP.
-    iTPs = [list(ntp).index(u) for u in un]
-    # The indices of each TP.
-    TPs = [np.arange(iTPs[i], iTPs[i + 1]) for i in range(len(iTPs) - 1)]
-    # don't forget the last one.
-    TPs.append(np.arange(iTPs[i + 1], len(ntp)))
-    return TPs, iTPs
+    if un.size == 1:
+        print 'only one themal pulse.'
+        return un, list(ntp).index(u)
+    else:
+        # this is the first step in each TP.
+        iTPs = [list(ntp).index(u) for u in un]
+        # The indices of each TP.
+        TPs = [np.arange(iTPs[i], iTPs[i + 1]) for i in range(len(iTPs) - 1)]
+        # don't forget the last one.
+        TPs.append(np.arange(iTPs[i + 1], len(ntp)))
+        return TPs, iTPs
 
 
 def add_points_to_q_track(track, qs):
@@ -87,13 +95,14 @@ def find_dldt(track, TPs, addpt):
     fits = [np.polyfit(logt[r], logl[r], order) for r in rising if len(r) > 0]
     slopes = [fits[i][0] for i in range(len(fits))]
     if len(addpt) > 0:
-        addrise = [TPs.index(TP) for TP in TPs
-                   if len(set(addpt) & set(TP)) > 0]
+        #addrise = [TPs.index(TP) for TP in TPs if len(set(addpt) & set(TP)) > 0]
+        addrise = [i for i in range(len(TPs)) if len(set(addpt) & set(TPs[i])) > 0]
         addslope = slopes[addrise[0]]
         Slopes = []
         for s in slopes:
             if s == addslope:
                 Slopes.append(addslope)
+                print 'added slope!'
             Slopes.append(s)
     else:
         Slopes = slopes[:]
@@ -259,12 +268,14 @@ def do_everything(**kwargs):
                 taum = 0.
             cm.write(' %.4f %.3f %.4f %.4f\n' % (met, mass, tauc, taum))
             # get the indices of the thermal pulses.
-            if len(ntp) == sum(ntp):
+            if ntp.size == 1:
                 print 'no tracks!', agb_track
                 flag = 1
             if flag == 1:
                 continue
             TPs = get_TP_inds(ntp)
+            if len(TPs) == 1:
+                continue
             # The first line in the agb track is 1. This isn't the quiescent...
             phi[0] = -1.
             # The quiescent phase is the the max phase in each TP,
@@ -335,7 +346,7 @@ if __name__ == "__main__":
     kwargs = fileIO.load_input(input_file)
     # Paola's tracks -> trilegal + tests based only on tracks
     overwrite = kwargs.get('overwrite')
-    kwargs['overwrite'] = True
+    #kwargs['overwrite'] = True
     cmd_input_file = do_everything(**kwargs)
 
     agb_mix = kwargs['agb_mix']
