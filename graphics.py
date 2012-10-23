@@ -12,9 +12,9 @@ rcParams['ytick.labelsize'] = 'large'
 rcParams['xtick.labelsize'] = 'large'
 rcParams['axes.edgecolor'] = 'black'
 #rc('text', usetex=True)
+import sys
 
 nullfmt = NullFormatter()  # no labels
-
 
 def discrete_colors(ncolors, colormap='gist_rainbow'):
     colors = []
@@ -61,30 +61,34 @@ def two_panel_plot_vert():
     return ax1, ax2
 
 
-def diag_plots(track, logl, logt, age, slopes, Qs, addpt, rising, fits,
-               **kwargs):
-    agb_mix = kwargs.get('agb_mix')
-    set_name = kwargs.get('set_name')
+def diag_plots(track, infile):
+    agb_mix = infile.agb_mix
+    set_name = infile.set_name
     ext = '.png'
     logt_lim = (3.75, 3.35)
     logl_lim = (2.4, 4.8)
     lage_lim = (1., 1e7)
     co_lim = (0, 5)
 
+    logl = track.get_col('L_star')
+    logt = track.get_col('T_star')
+    age = track.get_col('ageyr')
+    addpt = track.addpt
+    Qs = list(track.Qs)
     # HRD
     fig = plt.figure()
     ax = plt.axes()
-    plotpath = os.path.join(kwargs.get('diagnostic_dir'), 'HRD/')
+    plotpath = os.path.join(infile.diagnostic_dir, 'HRD/')
     fileIO.ensure_dir(plotpath)
     ax.annotate(r'$%s$' % agb_mix.replace('_', '\ '), xy=(3.43, 2.8))
     ax.annotate(r'$%s$' % set_name, xy=(3.43, 2.7))
     ax.annotate(r'$M=%.2f$' % track.mass, xy=(3.43, 2.6))
     ax.plot(logt, logl, color='black')
 
-    ax.plot(logt[map(int, Qs)], logl[map(int, Qs)], color='green', lw=2)
-    [ax.plot(logt[q], logl[q], 'o', color='green') for q in Qs]
-    [ax.plot(logt[add], logl[add], 'o', color='purple')
-     for add in addpt if len(addpt) > 0]
+    ax.plot(logt[Qs], logl[Qs], color='green', lw=2)
+    ax.plot(logt[Qs], logl[Qs], 'o', color='green')
+    if len(addpt) > 0:
+        ax.plot(logt[addpt], logl[addpt], 'o', color='purple')
     ax.set_xlim(logt_lim)
     ax.set_ylim(logl_lim)
     ax.set_xlabel(r'$\log\ Te$')
@@ -127,19 +131,42 @@ def diag_plots(track, logl, logt, age, slopes, Qs, addpt, rising, fits,
     ax1.set_xlabel(r'$\rm{Age (yr)}$')
     ax1.set_ylabel(r'$\log\ Te$')
 
-    plotpath = os.path.join(kwargs.get('diagnostic_dir'), 'age_v/')
+    plotpath = os.path.join(infile.diagnostic_dir, 'age_v/')
     fileIO.ensure_dir(plotpath)
     fname = os.path.split(track.name)[1].replace('.dat', '')
     fig_name = os.path.join(plotpath, '_'.join(('diag', fname)))
-    
-    majorLocator = MultipleLocator()
+
     for ax in ax1, ax2, ax3:
-        ax.grid(linestyle=': ', color='grey')
+        ax.grid(linestyle=':', color='grey')
 
     plt.savefig('%s%s%s' % (fig_name, '_age_v', ext))
     plt.close()
     return
 
+
+def hrd_slopes(track):
+    logl = track.get_col('L_star')
+    logt = track.get_col('T_star')
+    Qs = list(track.Qs)
+    x = np.linspace(min(logt), max(logt))
+    fig = plt.figure()
+    dd = [plt.plot(x, track.fits[i][0]*x + track.fits[i][1], '--',
+                   color='blue', lw=0.5) for i in range(len(track.fits))]
+
+    dd = plt.plot(logt, logl, color='black')
+    dd = [plt.plot(logt[r], logl[r], color='red', lw=2)
+          for r in track.rising if len(r) > 0]
+    dd = plt.plot(logt[Qs], logl[Qs], color='green', lw=2)
+    dd = [plt.plot(logt[q], logl[q], 'o', color='green') for q in Qs]
+    dd = [plt.plot(logt[add], logl[add], 'o', color='purple')
+          for add in track.addpt if len(track.addpt) > 0]
+    dd = plt.axis([max(logt) + 0.01,
+                   min(logt) - 0.01,
+                   min(logl) - 0.01,
+                   max(logl) + 0.01])
+    plt.show()
+    plt.savefig('/Users/phil/Desktop/test.png')
+    sys.exit()
 
 def plot_ifmr(imfrfile):
     mi, mf, z = np.loadtxt(imfrfile, unpack=True)

@@ -3,7 +3,7 @@ import numpy as np
 import glob
 import sys
 import math_utils
-
+import graphics
 
 class AGBTracks(object):
     '''
@@ -34,9 +34,120 @@ class AGBTracks(object):
         self.data_array = data_array
         self.key_dict = dict(zip(col_keys, range(len(col_keys))))
         self.name = name
-        self.mass = float(os.path.split(name)[1].split('_')[1])
-        firstname = os.path.split(name)[1]
-        self.metallicity = float(firstname.split('_')[2].replace('Z', ''))
+        self.firstname = os.path.split(name)[1]
+        self.mass = float(self.firstname.split('_')[1])
+        self.metallicity = float(self.firstname.split('_')[2].replace('Z', ''))
+        # initialize: it's a well formatted track with more than one pulse
+        self.bad_track = False
+        # if only one thermal pulse, stop the press.
+        self.check_ntp()
+        self.get_TP_inds()
+        if not self.bad_track:
+            # force the beginning phase to not look like it's quiescent
+            self.fix_phi()
+            # load quiescent tracks
+            self.get_quiescent_inds()
+            # load indices of m and c stars
+            self.m_cstars()
+            # calculate the lifetimes of m and c stars
+            self.tauc_m()
+            # add points to low mass quiescent track for better interpolation
+            self.addpt = []
+            if len(self.Qs) <= 9 and self.mass < 3.:
+                self.add_points_to_q_track()
+            # find dl/dt of track
+            self.find_dldt()
+        else:
+            print 'bad track:', name
+
+    def find_dldt(self, order=1):
+        '''
+        Finds dL/dt of track object by a poly fit of order = 1 (default)
+        '''
+        TPs = self.TPs
+        qs = list(self.Qs)
+        status = self.get_col('status')
+        logl = self.get_col('L_star')
+        logt = self.get_col('T_star')
+        phi = self.get_col('PHI_TP')
+        # if a low mass interpolation point was added it will get
+        # the same slope as the rest of the thermal pulse.
+        #dl/dT seems somewhat linear for 0.2 < phi < 0.4 ...
+        lin_rise, = np.nonzero((status == 7) & (phi < 0.4) & (phi > 0.2))
+        rising = [list(set(TP) & set(lin_rise)) for TP in TPs]
+        fits = [np.polyfit(logt[r], logl[r], order) for r in rising if len(r) > 0]
+        slopes = np.array([])
+        # first line slope
+        slopes = np.append(slopes, (logl[2] - logl[0]) / (logt[2] - logt[0]))
+        # poly fitted slopes
+        slopes = np.append(slopes, [fits[i][0] for i in range(len(fits))])
+
+        # pop in an additional copy of the slope if an interpolation point 
+        # was added.
+        if len(self.addpt) > 0:
+            tps_of_addpt = np.array([i for i in range(len(TPs))
+                                    if list(set(self.addpt) & set(TPs[i])) > 0])
+            slopes = np.insert(slopes, tps_of_addpt, slopes[tps_of_addpt])
+
+        self.Qs = np.insert(self.Qs, 0, 0)
+        self.rising = rising
+        self.slopes = slopes
+        self.fits = fits
+
+    def add_points_to_q_track(self):
+        '''
+        when to add an extra point for low masses
+        if logt[qs+1] is hotter than logt[qs]
+        and there is a point inbetween logt[qs] and logt[qs+1] that is cooler
+        than logt[qs] add the coolest point.
+        '''
+        addpt = self.addpt
+        qs = list(self.Qs)
+        logt = self.get_col('T_star')
+        tstep = self.get_col('step')
+        status = self.get_col('status')
+        Tqs = logt[qs]
+        # need to use some unique array, not logt, since logt could repeat,
+        # index would find the first one, not necessarily the correct one.
+        Sqs = tstep[qs] - 1.  # steps start at 1, not zero
+        # takes the sign of the difference in logt(qs) 
+        # if the sign of the difference is more than 0, we're going from cold to ho
+
+        # finds where the logt goes from getting colder to hotter...
+        ht, = np.nonzero(np.sign(np.diff(Tqs)) > 0)
+        ht = np.append(ht, ht + 1)  # between the first and second
+        Sqs_ht = Sqs[ht]
+        # the indices between each hot point.
+        t_mids = [map(int, tstep[int(Sqs_ht[i]): int(Sqs_ht[i + 1])])
+                  for i in range(len(Sqs_ht) - 1)]
+        Sqs_ht = Sqs_ht[: -1]
+        for i in range(len(Sqs_ht) - 1):
+            hot_inds = np.nonzero(logt[int(Sqs_ht[i])] > logt[t_mids[i]])[0]
+            if len(hot_inds) > 0:
+                # index of the min T of the hot index from above.
+                addpt.append(list(logt).index(np.min(logt[[t_mids[i][hi]
+                                                           for hi in hot_inds]])))
+
+        if len(addpt) > 0:
+            addpt = np.unique([a for a in addpt if status[a] == 7.])
+        # update Qs with added pts.
+        self.Qs = np.sort(np.concatenate((addpt, qs)))
+        self.addpt = addpt
+
+    def check_ntp(self):
+        '''
+        sets self.bad_track = True if only one thermal pulse.
+        '''
+        ntp = self.get_col('NTP')
+        if ntp.size == 1:
+            print 'no tracks!', self.name
+            self.bad_track = True
+
+    def fix_phi(self):
+        '''
+        The first line in the agb track is 1. This isn't a quiescent stage.
+        '''
+        self.data_array['PHI_TP'][0] = -1.
 
     def get_row(self, i):
         return self.data_array[i, :]
@@ -47,6 +158,69 @@ class AGBTracks(object):
 
     def get_col(self, key):
         return self.data_array[key]
+
+    def m_cstars(self, mdot_cond=-5, logl_cond=3.3):
+        '''
+        adds mstar and cstar attribute of indices that are true for:
+        mstar: co <=1 logl >= 3.3 mdot <= -5
+        cstar: co >=1 mdot <= -5
+        (by default) adjust mdot with mdot_cond and logl with logl_cond.
+        '''
+        data = self.data_array
+
+        self.mstar, = np.nonzero((data['CO'] <= 1) &
+                                 (data['L_star'] >= logl_cond) &
+                                 (data['dMdt'] <= mdot_cond))
+        self.cstar, = np.nonzero((data['CO'] >= 1) &
+                                 (data['dMdt'] <= mdot_cond))
+
+    def tauc_m(self):
+        '''
+        lifetimes of c and m stars
+        '''
+        try:
+            tauc = np.sum(self.data_array['dt'][self.cstar]) / 1e6
+        except IndexError:
+            tauc = 0.
+            print 'no tauc'
+        try:
+            taum = np.sum(self.data_array['dt'][self.mstar]) / 1e6
+        except IndexError:
+            taum = 0.
+            print 'no taum'
+        self.taum = taum
+        self.tauc = tauc
+
+    def get_TP_inds(self):
+        '''
+        find the thermal pulsations of each file
+        '''
+        if not self.bad_track:
+            ntp = self.get_col('NTP')
+            un = np.unique(ntp)
+            if un.size == 1:
+                print 'only one themal pulse.'
+                self.TPs = un
+            else:
+                # this is the first step in each TP.
+                iTPs = [list(ntp).index(u) for u in un]
+                # The indices of each TP.
+                TPs = [np.arange(iTPs[i], iTPs[i + 1]) for i in range(len(iTPs) - 1)]
+                # don't forget the last one.
+                TPs.append(np.arange(iTPs[i + 1], len(ntp)))
+                self.TPs = TPs
+        else:
+            self.TPs = []
+        if len(self.TPs) == 1:
+            self.bad_track = True
+
+    def get_quiescent_inds(self):
+        '''
+        The quiescent phase, Qs,  is the the max phase in each TP,
+        i.e., closest to 1.
+        '''
+        phi = self.get_col('PHI_TP')
+        self.Qs = np.unique([TP[np.argmax(phi[TP])] for TP in self.TPs])
 
 
 def get_numeric_data(filename):
@@ -67,6 +241,45 @@ def get_numeric_data(filename):
         print 'problem with', filename
         data = np.zeros(len(col_keys))
     return AGBTracks(data, col_keys, filename)
+
+
+def input_defaults():
+    keys = ['over_write',
+            'agbtrack_dir', 
+            'agb_mix',
+            'set_name',
+            'trilegal_dir',
+            'isotrack_dir',
+            'tracce_dir',
+            'diagnostic_dir0',
+            'make_imfr',
+            'make_copy',
+            'mass_loss',
+            'trilegal_diagnostics',
+            'IDs',
+            'galaxy_outdir']
+
+    in_def = {}
+    for k in keys:
+        in_def[k] = None
+    in_def['over_write'] = False
+    return in_def
+
+
+class input_file(object):
+    def __init__(self, filename):
+        self.set_defaults()
+        self.in_dict = load_input(filename)
+        self.unpack_dict()
+
+    def set_defaults(self):
+        in_def = input_defaults()
+        self.unpack_dict(udict=in_def)
+
+    def unpack_dict(self, udict=None):
+        if udict is None:
+            udict = self.in_dict
+        [self.__setattr__(k, v) for k, v in udict.items()]
 
 
 def load_input(filename):
@@ -119,7 +332,8 @@ def load_input(filename):
             d[key] = val
     return d
 
-def make_iso_file(track, Qs, slopes, isofile):
+
+def make_iso_file(track, isofile):
     '''
     this only writes the quiescent lines and the first line.
     format of this file is:
@@ -138,10 +352,10 @@ def make_iso_file(track, Qs, slopes, isofile):
     xcno_min        X_C+X_O+X_N
     slope           dTe/dL
     '''
-    fmt = (' %.4e %.4f %.4f %.5f %.5f %.4f %.4e %i %.4e %.4f %.6e %.6e %.6e %.4f\n')
+    fmt = ' %.4e %.4f %.4f %.5f %.5f %.4f %.4e %i %.4e %.4f %.6e %.6e %.6e %.4f \n'
 
     # cull agb track to quiescent, write out.
-    rows = [q - 1 for q in Qs]  # cutting the final point for the file.
+    rows = [q - 1 for q in track.Qs]  # cutting the final point for the file.
     rows[0] += 2
 
     keys = track.key_dict.keys()
@@ -152,30 +366,33 @@ def make_iso_file(track, Qs, slopes, isofile):
                                        key.startswith('N1') or
                                        key.startswith('O1'))]
 
-    isofile.write(' %.4f %i # %s\n' % (track.mass, len(rows),
-                                       os.path.split(track.name)[1]))
+    isofile.write(' %.4f %i # %s \n' % (track.mass, len(rows), track.firstname))
     for r in rows:
-        data_row = track.data_array[r]
-        CNO = np.sum([data_row[c] for c in cno])
-        mdot = 10 ** (data_row['dMdt'])
-        if data_row['Pmod'] == 0:
-            period = data_row['P0']
+        row = track.data_array[r]
+        CNO = np.sum([row[c] for c in cno])
+        mdot = 10 ** (row['dMdt'])
+        if row['Pmod'] == 0:
+            period = row['P0']
         else:
-            period = data_row['P1']
+            period = row['P1']
         if r == rows[-1]:
             # adding nonsense slope for the final row.
             slope = 999999
         else:
-            slope = 1. / slopes[list(rows).index(r)]
+            try:
+                slope = 1. / track.slopes[list(rows).index(r)]
+            except:
+                print 'fucked',track.firstname
+                graphics.hrd_slopes(track)
+                plt.show() 
         try:
-            isofile.write(fmt % (data_row['ageyr'], data_row['L_star'],
-                                 data_row['T_star'], data_row['M_star'],
-                                 data_row['M_c'], data_row['CO'], period,
-                                 data_row['Pmod'], mdot, data_row['T_star'],
-                                 data_row['H'], data_row['Y'], CNO, slope))
+            isofile.write(fmt % (row['ageyr'], row['L_star'], row['T_star'],
+                                 row['M_star'], row['M_c'], row['CO'], period,
+                                 row['Pmod'], mdot, row['T_star'], row['H'],
+                                 row['Y'], CNO, slope))
         except IndexError:
             print list(rows).index(r)
-            print len(rows), len(slopes)
+            print len(rows), len(track.slopes)
             print 1. / slopes[list(rows).index(r)]
     return
 
@@ -264,15 +481,16 @@ def write_cmd_input_file(**kwargs):
                                      efficiency_mass_loss))
     fh.write('\n'.join(footer))
     fh.close()
+    print 'wrote', cmd_input_file
     return cmd_input_file
 
 
 def make_met_file(tracce, Zs, Ys, isofiles):
-    t = open(tracce, 'w')
-    t.write(' %i\n' % len(isofiles))
-    [t.write(' %.4f\t%.3f\t%s\n' % (Zs[i], Ys[i], isofiles[i]))
-     for i in np.argsort(Zs)]
-    t.close()
+    with open(tracce, 'w') as t:
+        t.write(' %i\n' % len(isofiles))
+        [t.write(' %.4f\t%.3f\t%s\n' % (Zs[i], Ys[i], isofiles[i]))
+         for i in np.argsort(Zs)]
+    print 'wrote', tracce
     return
 
 
@@ -281,6 +499,14 @@ def ensure_dir(f):
     if not os.path.isdir(d):
         os.makedirs(d)
         print 'made dirs: ', d
+
+
+def savetxt(filename, data, fmt='%.4f', header=None):
+    with open(filename, 'w') as f:
+        if header is not None:
+            f.write(header)
+        np.savetxt(f, data, fmt=fmt)
+    print 'wrote', filename
 
 
 def get_files(src, search_string):
