@@ -130,6 +130,9 @@ class AGBTracks(object):
 
         if len(addpt) > 0:
             addpt = np.unique([a for a in addpt if status[a] == 7.])
+        # hack: if there is more than one point, take the most evolved.
+        if len(addpt) > 1:
+            addpt = [np.max(addpt)]
         # update Qs with added pts.
         self.Qs = np.sort(np.concatenate((addpt, qs)))
         self.addpt = addpt
@@ -242,22 +245,153 @@ def get_numeric_data(filename):
         data = np.zeros(len(col_keys))
     return AGBTracks(data, col_keys, filename)
 
+def get_numeric_data_not_yet_working(filename):
+    f = open(filename, 'r')
+    lines = f.readlines()
+    f.close()
+    col_keys = lines[0].replace('#', '').replace('lg', '').replace('*', 'star').replace('/','')
+    col_keys = col_keys.strip().split()
+    ncols = len(col_keys)
+    nrows = len(lines) - 1
+    dtype = [(c, '<f8') for c in col_keys]
+    data = np.ndarray((nrows,), dtype=dtype)
+    for i in range(len(lines)-1):
+        if lines[i].startswith('#'):
+            continue
+        try:
+            data[i] = np.array(map(float,lines[i].strip().split()))
+        except ValueError:
+            err = sys.exc_info()[1]
+            tb = sys.exc_info()[-1]
+            print ("%s %s"%(tb.tb_frame.f_code.co_filename, err))
+    return AGBTracks(data, col_keys, filename)
 
-def input_defaults():
-    keys = ['over_write',
-            'agbtrack_dir', 
-            'agb_mix',
-            'set_name',
-            'trilegal_dir',
-            'isotrack_dir',
-            'tracce_dir',
-            'diagnostic_dir0',
-            'make_imfr',
-            'make_copy',
-            'mass_loss',
-            'trilegal_diagnostics',
-            'IDs',
-            'galaxy_outdir']
+
+
+def make_iso_file(track, isofile):
+    '''
+    this only writes the quiescent lines and the first line.
+    format of this file is:
+    t_min,          age in yr
+    logl_min,       logL
+    logte_min,      logTe
+    mass_min,       actual mass along track
+    mcore_min,      core mass
+    co_min,         C/O ratio
+    per_min,        period in days
+    ip_min,         1=first overtone, 0=fundamental mode
+    mlr_min,        - mass loss rate in Msun/yr
+    logtem_min,     keep equal to logTe
+    x_min,          X
+    y_min,          Y
+    xcno_min        X_C+X_O+X_N
+    slope           dTe/dL
+    '''
+    fmt = '%.4e %.4f %.4f %.5f %.5f %.4f %.4e %i %.4e %.4f %.6e %.6e %.6e %.4f \n'
+
+    # cull agb track to quiescent, write out.
+    rows = [q for q in track.Qs]  # cutting the final point for the file.
+    rows[0] += 1
+
+    keys = track.key_dict.keys()
+    vals = track.key_dict.values()
+    col_keys = np.array(keys)[np.argsort(vals)]
+
+    cno = [key for key in col_keys if (key.startswith('C1') or
+                                       key.startswith('N1') or
+                                       key.startswith('O1'))]
+
+    isofile.write(' %.4f %i # %s \n' % (track.mass, len(rows), track.firstname))
+    for r in rows:
+        row = track.data_array[r]
+        CNO = np.sum([row[c] for c in cno])
+        mdot = 10 ** (row['dMdt'])
+        if row['Pmod'] == 0:
+            period = row['P0']
+        else:
+            period = row['P1']
+        if r == rows[-1]:
+            # adding nonsense slope for the final row.
+            slope = 999999
+        else:
+            try:
+                slope = 1. / track.slopes[list(rows).index(r)]
+            except:
+                print 'fucked',track.firstname
+                graphics.hrd_slopes(track)
+        try:
+            isofile.write(fmt % (row['ageyr'], row['L_star'], row['T_star'],
+                                 row['M_star'], row['M_c'], row['CO'], period,
+                                 row['Pmod'], mdot, row['T_star'], row['H'],
+                                 row['Y'], CNO, slope))
+        except IndexError:
+            print list(rows).index(r)
+            print len(rows), len(track.slopes)
+            print 1. / slopes[list(rows).index(r)]
+    return
+
+
+def input_defaults(profile=None):
+    '''
+    the input file should be formatted in this way (comments are optional):
+    # Paola's tracks are here:
+    agbtrack_dir    /Users/phil/research/TP-AGBcalib/AGBTracks
+    
+    # Paola's directory structure is agbtrack_dir/agb_mix/set_name
+    # This agb mix name
+    agb_mix         CAF09    
+    # This set name
+    set_name        S_AUG12
+    # Where cmd_input files will go for trilegal
+    trilegal_dir    cmd_inputfiles/
+    # any additional cmd_input parameters?
+    mass_loss       Reimers: 0.35
+    # Paola's formatted tracks are here: /[mix]/[set]
+    isotrack_dir    isotrack_agb/
+    # File to link from cmd_input to Paola's formatted tracks:
+    tracce_dir      isotrack_agb/
+    # make a another copy of the above files
+    # (for example in dropbox or in a trilegal dir)
+    make_copy       /Users/phil/research/padova_apps/isotrack_agb/
+    # make initial and final mass relation (and also lifetimes c and m)?
+    # (Need more than one metallicity)
+    make_imfr       True
+    # Diagnostic plots base 
+    # this will have directory structure: 
+    # diagnostic_dir0/[agb_mix]_[metallicity]/[set]/
+    diagnostic_dir0            /Users/phil/research/TP-AGBcalib/diagnostics/
+    # Run Marco's Scripts
+    trilegal_diagnostics      True
+    # Make google sites tables
+    google_table    True
+    # Do observational tests
+    IDs   DDO82, NGC2403-HALO-6, NGC2976-DEEP, NGC4163, NGC7793-HALO-6, UGC8508, UGCA292
+    # where to put the observational tests
+    galaxy_outdir   /Users/phil/research/TP-AGBcalib/SNAP/models
+    # overwrite Paola's parsed tracks?
+    over_write   True
+    # only do these metallicities (if commented out, do all metallicities)
+    metals_subset       0.001, 0.004, 0.0005, 0.006, 0.008
+    '''
+    if profile is None:
+        keys = ['over_write',
+                'agbtrack_dir', 
+                'agb_mix',
+                'set_name',
+                'trilegal_dir',
+                'isotrack_dir',
+                'tracce_dir',
+                'diagnostic_dir0',
+                'make_imfr',
+                'make_copy',
+                'mass_loss',
+                'trilegal_diagnostics',
+                'IDs',
+                'galaxy_outdir',
+                'image_location',
+                'metals_subset']
+    else:
+        print 'only default profile set...'
 
     in_def = {}
     for k in keys:
@@ -267,6 +401,12 @@ def input_defaults():
 
 
 class input_file(object):
+    '''
+    a class to replace too many kwargs from the input file.
+    does two things:
+    1. sets a default dictionary (see input_defaults) as attributes
+    2. unpacks the dictionary from load_input as attributes.
+    '''
     def __init__(self, filename):
         self.set_defaults()
         self.in_dict = load_input(filename)
@@ -331,70 +471,6 @@ def load_input(filename):
             # string
             d[key] = val
     return d
-
-
-def make_iso_file(track, isofile):
-    '''
-    this only writes the quiescent lines and the first line.
-    format of this file is:
-    t_min,          age in yr
-    logl_min,       logL
-    logte_min,      logTe
-    mass_min,       actual mass along track
-    mcore_min,      core mass
-    co_min,         C/O ratio
-    per_min,        period in days
-    ip_min,         1=first overtone, 0=fundamental mode
-    mlr_min,        - mass loss rate in Msun/yr
-    logtem_min,     keep equal to logTe
-    x_min,          X
-    y_min,          Y
-    xcno_min        X_C+X_O+X_N
-    slope           dTe/dL
-    '''
-    fmt = ' %.4e %.4f %.4f %.5f %.5f %.4f %.4e %i %.4e %.4f %.6e %.6e %.6e %.4f \n'
-
-    # cull agb track to quiescent, write out.
-    rows = [q - 1 for q in track.Qs]  # cutting the final point for the file.
-    rows[0] += 2
-
-    keys = track.key_dict.keys()
-    vals = track.key_dict.values()
-    col_keys = np.array(keys)[np.argsort(vals)]
-
-    cno = [key for key in col_keys if (key.startswith('C1') or
-                                       key.startswith('N1') or
-                                       key.startswith('O1'))]
-
-    isofile.write(' %.4f %i # %s \n' % (track.mass, len(rows), track.firstname))
-    for r in rows:
-        row = track.data_array[r]
-        CNO = np.sum([row[c] for c in cno])
-        mdot = 10 ** (row['dMdt'])
-        if row['Pmod'] == 0:
-            period = row['P0']
-        else:
-            period = row['P1']
-        if r == rows[-1]:
-            # adding nonsense slope for the final row.
-            slope = 999999
-        else:
-            try:
-                slope = 1. / track.slopes[list(rows).index(r)]
-            except:
-                print 'fucked',track.firstname
-                graphics.hrd_slopes(track)
-                plt.show() 
-        try:
-            isofile.write(fmt % (row['ageyr'], row['L_star'], row['T_star'],
-                                 row['M_star'], row['M_c'], row['CO'], period,
-                                 row['Pmod'], mdot, row['T_star'], row['H'],
-                                 row['Y'], CNO, slope))
-        except IndexError:
-            print list(rows).index(r)
-            print len(rows), len(track.slopes)
-            print 1. / slopes[list(rows).index(r)]
-    return
 
 
 def write_cmd_input_file(**kwargs):
@@ -502,6 +578,10 @@ def ensure_dir(f):
 
 
 def savetxt(filename, data, fmt='%.4f', header=None):
+    '''
+    np.savetxt wrapper that adds header. Some versions of savetxt
+    already allow this...
+    '''
     with open(filename, 'w') as f:
         if header is not None:
             f.write(header)

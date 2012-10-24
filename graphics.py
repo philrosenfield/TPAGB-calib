@@ -102,12 +102,16 @@ def diag_plots(track, infile):
     # AGE v TE
     ax1.plot(age, logt, color='black')
     ax1.plot(age[Qs], logt[Qs], 'o', color='green')
+    if len(addpt) > 0:
+        ax1.plot(age[addpt], logt[addpt], 'o', color='purple')
     ax1.yaxis.set_major_locator(MultipleLocator(.1))
     ax1.yaxis.set_minor_locator(MultipleLocator(.05))
 
     # AGE v L
     ax2.plot(age, logl, color='black')
     ax2.plot(age[Qs], logl[Qs], 'o', color='green')
+    if len(addpt) > 0:
+        ax2.plot(age[addpt], logl[addpt], 'o', color='purple')
     ax2.yaxis.set_major_locator(MultipleLocator(.2))
     ax2.yaxis.set_minor_locator(MultipleLocator(.1))
 
@@ -115,6 +119,8 @@ def diag_plots(track, infile):
     CO = track.get_col('CO')
     ax3.plot(age, CO, color='black')
     ax3.plot(age[Qs], CO[Qs], 'o', color='green')
+    if len(addpt) > 0:
+        ax3.plot(age[addpt], CO[addpt], 'o', color='purple')
     majorFormatter = ScalarFormatter()
     majorFormatter.set_powerlimits((-3, 4))
     ax1.xaxis.set_major_formatter(majorFormatter)
@@ -199,8 +205,8 @@ def two_panel_plot_vert(fign=2):
     return ax1, ax2
 
     
-def plot_cluster_test(lifetimesfile, **kwargs):
-    agbtrack_dir = kwargs.get('agbtrack_dir')
+def plot_cluster_test(lifetimesfile, infile):
+    agbtrack_dir = infile.agbtrack_dir
     cluster_data = os.path.join(agbtrack_dir, 'cluster_data.dat')
     cmass, ctauc, ecp, ecm, ctaum, emp, emm = np.loadtxt(cluster_data,
                                                          unpack=True)

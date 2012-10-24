@@ -90,7 +90,8 @@ def run_trilegal(track, parfile, inp, out):
     cmd+=" -o %s" % os.path.abspath(out)
     cmd+=" -f ../cmd_inputfiles/%s" % track_file
 
-    print cmd
+    #print cmd
+    print out
     p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
     stdout, stderr = (p.stdout, p.stderr)
 
@@ -212,9 +213,13 @@ def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
 
     write_sfh(age, z, sfh_file)
     write_tri_par(sfh_file, par_file)
-    if os.path.isfile(out_file) and over_write == False:
+    if os.path.isfile(out_file) and over_write is False:
         run_trilegal(track_set, par_file, inp_file, out_file)
-    plot_em(out_file, lf_file, cmd_file, age, z, track_set)
+    check = check_trilegal_run(out_file)
+    if check == 1:
+        plot_em(out_file, lf_file, cmd_file, age, z, track_set)
+    else:
+        print check
 
 def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
 
@@ -241,6 +246,22 @@ def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
 
     return
 
+def check_trilegal_run(out_file):
+    with open(out_file, 'r') as f:
+        lines = f.readlines()
+
+    comments = filter(lambda x: x.startswith('#'), lines)
+    if 'TRILEGAL normally terminated' not in comments:
+        print 'TRILEGAL NOT normally terminated, no plots for %s' % out_file
+
+    mcore_ind = comments[0].split().index('Mcore')
+    data = filter(lambda x: not x.startswith('#'), lines)
+    mcore = [float(d.split()[mcore_ind]) for d in data]
+    if np.sum(mcore) == 0.:
+        return 'No AGB stars in %s' % out_file
+    return 1
+
+    
 if __name__=="__main__":
     parser = OptionParser()
 
