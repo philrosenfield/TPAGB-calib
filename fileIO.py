@@ -302,6 +302,8 @@ def make_iso_file(track, isofile):
                                        key.startswith('O1'))]
 
     isofile.write(' %.4f %i # %s \n' % (track.mass, len(rows), track.firstname))
+    # hack, is the line length killing trilegal?
+    # isofile.write(' %.4f %i # test \n' % (track.mass, len(rows)))
     for r in rows:
         row = track.data_array[r]
         CNO = np.sum([row[c] for c in cno])
@@ -312,7 +314,7 @@ def make_iso_file(track, isofile):
             period = row['P1']
         if r == rows[-1]:
             # adding nonsense slope for the final row.
-            slope = 999999
+            slope = 999
         else:
             try:
                 slope = 1. / track.slopes[list(rows).index(r)]

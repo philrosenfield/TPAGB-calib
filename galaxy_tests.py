@@ -1,3 +1,4 @@
+from optparse import OptionParser
 import operator
 import cmdUtils
 import brewer2mpl
@@ -496,15 +497,12 @@ def main(IDs=None, models=None, **kwargs):
     sfr_dir = kwargs.get('sfrdir')
     out_dir = kwargs.get('outdir')
     if IDs is None:
-        # load all targets
-        IDs = all_IDs()
-        #IDs = [IDs[0]]
+        print 'give me a galaxy!'
+        return -1
 
     if models is None:
-        # load all models
-        models = ["cmd_input_CAF09_S_SCS.dat",
-                  "cmd_input_CAF09_S_SCSFG.dat",
-                  "cmd_input_CAF09_S_SCSFG_ETA2.dat"]
+        print 'give me a model!'
+        return -1
 
     outfile = kwargs.get('outfile', 'result_tab.dat')
     if os.path.isfile(outfile):
@@ -512,8 +510,7 @@ def main(IDs=None, models=None, **kwargs):
         out = open(outfile, 'a')
     else:
         out = open(outfile, 'w')
-        out.write(('# ID model p_value NRGB_data NAGB_data',
-                   'NRGB_model NAGB_model\n'))
+        out.write('# ID model p_value NRGB_data NAGB_data NRGB_model NAGB_model\n')
 
     for ID, model in itertools.product(IDs, models):
         mk_sims_args = {'sfr_dir': sfr_dir, 'outdir': out_dir}
@@ -772,6 +769,10 @@ def match_tests(IDs, model):
         s.fit = fit
     return Gals, SGals
 
+def short_list():
+    IDs = ['DDO82', 'NGC2403-HALO-6', 'NGC2976-DEEP', 'NGC4163',
+           'NGC7793-HALO-6', 'UGC8508', 'UGCA292']
+    return IDs
 
 if __name__ == "__main__":
 
@@ -779,7 +780,45 @@ if __name__ == "__main__":
     ch.setLevel(logging.DEBUG)
     logger.addHandler(ch)
     logger.info('start of run')
-    IDs = all_IDs()
+    
+    parser = OptionParser()
+
+    usage="%prog model [options]"
+
+    parser = OptionParser(usage=usage)
+
+    parser.add_option("-s", action="store_true", default=False,
+                      help="run on short set of galaxies")
+
+    parser.add_option("-m", action="store_true", default=False,
+                      help="make plots")
+
+    parser.add_option("-p", action="store_true", default=False,
+                      help="publish plots")
+    
+    parser.add_option("-o", action="store_true", default=False,
+                      help="out directory set to SNAP/models")
+
+    (options, args) = parser.parse_args()
+    
+    if not options.s:
+        IDs = all_IDs()
+    else:
+        IDs = short_list()
+    
+    models = [args[0]]
+    
+    kwargs = {}
+    if options.m:
+        kwargs['make_plots'] = True
+    if options.p:
+        kwargs['publish_plots'] = True
+    if options.o:
+        kwargs['outdir'] = '/Users/phil/research/TP-AGBcalib/SNAP/'
+    
+    main(IDs=IDs, models=models, **kwargs)
+
+    '''
     #IDs = [IDs[0]]
     #model = "cmd_input_CAF09_S_SCS.dat"
 
@@ -791,7 +830,6 @@ if __name__ == "__main__":
     #    match_tests(IDs, model)
     #    compare_sims(IDs, model)
     chi2_plot(IDs, models)
-    '''
     sfr_dir = os.path.join(data_src, 'sfh - 0.3dex')
     out_dir = os.path.join(model_src, '0.3dex')
     #plt_dir ...

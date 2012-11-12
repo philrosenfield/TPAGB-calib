@@ -9,8 +9,9 @@ photosys="wfc3snap"
 mag_num=9
 
 def get_sfrFILE(ID,sfr_dir=None):
-    if sfr_dir == None: 
+    if sfr_dir == None:
         sfr_dir = os.path.join(data_src,'sfh')
+        print 'no sfr_dir given, using %s' % sfr_dir
     else:
         print 'read sfr from %s'%sfr_dir
     l=os.listdir(sfr_dir)

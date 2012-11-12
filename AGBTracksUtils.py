@@ -60,6 +60,7 @@ def AGB_file_setup(infile):
     metal_dirs = [m for m in os.listdir(infile.working_dir)
                   if os.path.isdir(m)]
     if infile.metals_subset is not None:
+        print 'doing a subset of metallicities'
         metal_dirs = [m for m in metal_dirs if metallicity_from_dir(m)[0] in infile.metals_subset]
     metals = np.argsort([metallicity_from_dir(m)[0] for m in metal_dirs])
     infile.metal_dirs = np.array(metal_dirs)[metals]
@@ -102,7 +103,7 @@ def make_plots(infile):
         r.get()
 
     return
-
+    
 def do_everything(infile):
     '''
     This script formats Paola's tracks and creates the files needed to use them
@@ -139,6 +140,7 @@ def do_everything(infile):
     # set up file names and directories, cd to paola's tracks.
     AGB_file_setup(infile)
 
+    # list of isofiles, zs, and ys to send to tracce file.
     isofiles, Zs, Ys = [], [], []
     imfr_data = np.array([])
     lifetime_data = np.array([])
@@ -202,11 +204,12 @@ def do_everything(infile):
         if out is not None:
             out.close()
             print 'wrote', isofile
-    fileIO.make_local_copy(isofile, dest=infile.make_copy)
-    # keep information for tracce file
-    isofiles.append(isofile_rel_name)
-    Ys.append(Y)
-    Zs.append(metallicity)
+
+        fileIO.make_local_copy(isofile, dest=infile.make_copy)
+        # keep information for tracce file
+        isofiles.append(isofile_rel_name)
+        Ys.append(Y)
+        Zs.append(metallicity)
 
     # make file to link cmd_input to formatted agb tracks
     metfile = fileIO.make_met_file(infile.tracce_file, Zs, Ys, isofiles)
