@@ -253,7 +253,8 @@ if __name__ == "__main__":
     pdb.set_trace()
     infile = fileIO.input_file(input_file)
     # Paola's tracks -> trilegal + tests based only on tracks
-    do_everything(infile)
+    if infile.parse_tracks:
+        do_everything(infile)
     
     agb_mix = infile.agb_mix
     set_name = infile.set_name

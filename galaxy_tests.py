@@ -3,6 +3,7 @@ import operator
 import cmdUtils
 import brewer2mpl
 import ResolvedStellarPops as rsp
+import fileIO
 from TrilegalUtils import get_stage_label
 import LFUtils
 import mk_sims
@@ -106,7 +107,9 @@ def get_trgb_fitsname(ID, band):
     if band == 'opt':
         fits = rsp.fileIO.get_files(fits_src,
                                   '*' + '*'.join((ID, 'trim', '.fits')))[0]
-        trgb = get_tab5_trgb_Av_dmod(ID)[0]
+        (filter1, filter2) = os.path.split(fits)[1].split('.')[0].split('_')[-2:]
+        angst_data = rsp.angst_tables.AngstTables()
+        trgb = angst_data.get_tab5_trgb_av_dmod(ID, filter1, filter2)[0]
     elif band == 'ir':
         # read data
         fits, = rsp.fileIO.get_files(fits_src,
@@ -205,40 +208,36 @@ class galaxies(object):
         return ''
 
 
-class galaxy(object):
-    def __init__(self, ID, band):
-        self.name = get_trgb_fitsname(ID, band)[1]
-        self.data = read_tagged_phot(rsp.fileIO.replace_ext(self.name, '.dat'))
-        self.base = os.path.split(self.name)[0]
-        self.target = cmdUtils.get_fileinfo(self.name)[0]
-        self.filter1 = cmdUtils.get_fileinfo(self.name)[1]
-        self.filter2 = cmdUtils.get_fileinfo(self.name)[2]
-        self.mag1 = self.data['mag1']
-        self.mag2 = self.data['mag2']
-        self.color = self.data['mag1'] - self.data['mag2']
-        self.stage = self.data['stage']
-        self.trgb = get_trgb_fitsname(ID, band)[0]
-        self.z = LFUtils.get_key_fromtable(ID, 'Z')
-
-    def stage_inds(self, stage_name):
-        return get_stage_inds(self.data, stage_name)
-
-    def delete_data(self):
-        data_names = ['data', 'mag1', 'mag2', 'color', 'stage']
-        [self.__delattr__(data_name) for data_name in data_names]
-
-    def all_stages(self, *stages):
-        '''
-        adds the indices of some stage as an attribute.
-        '''
-        for stage in stages:
-            i = stage_inds(self.stage, stage)
-            self.__setattr__('i%s' % stage.lower(), i)
-        return
-
+def load_galaxy(ID, band):
+    '''
+    self.name = get_trgb_fitsname(ID, band)[1]
+    self.data = read_tagged_phot(rsp.fileIO.replace_ext(self.name, '.dat'))
+    self.base = os.path.split(self.name)[0]
+    self.target = cmdUtils.get_fileinfo(self.name)[0]
+    self.filter1 = cmdUtils.get_fileinfo(self.name)[1]
+    self.filter2 = cmdUtils.get_fileinfo(self.name)[2]
+    self.mag1 = self.data['mag1']
+    self.mag2 = self.data['mag2']
+    self.color = self.data['mag1'] - self.data['mag2']
+    self.stage = self.data['stage']
+    self.trgb = get_trgb_fitsname(ID, band)[0]
+    self.z = LFUtils.get_key_fromtable(ID, 'Z')
+    '''
+    fitsname = get_trgb_fitsname(ID, band)[1]
+    kwargs = {'hla': False}
+    kwargs['trgb'] = get_trgb_fitsname(ID, band)[0]
+    kwargs['z'] = LFUtils.get_key_fromtable(ID, 'Z')
+    kwargs['band'] = band
+    try:
+        taggedname = read_tagged_phot(rsp.fileIO.replace_ext(fitsname, '.dat'))
+        gal = rsp.Galaxies.galaxy(taggedname, **kwargs)
+    except:
+        print 'no tagged data for %s' % fitsname
+        gal = rsp.Galaxies.galaxy(fitsname, filetype='fitstable', **kwargs)
+    return gal
 
 class simgalaxy(object):
-    def __init__(self, trilegal_out, filter1, filter2):
+    def __init__(self, trilegal_out, filter1, filter2, count_offset=0.0):
         self.base, self.name = os.path.split(trilegal_out)
         self.data = rsp.fileIO.read_table(trilegal_out)
         self.filter1 = filter1
@@ -247,7 +246,7 @@ class simgalaxy(object):
         self.mag1 = self.data.get_col(self.filter1)
         self.mag2 = self.data.get_col(self.filter2)
         self.stage = self.data.get_col('stage')
-
+        self.count_offset = count_offset
         simgalaxy.load_ast_corrections(self)
 
         data_to_slice = ['mag1', 'mag2', 'stage', 'ast_mag1', 'ast_mag2']
@@ -409,7 +408,7 @@ def make_normalized_simulation(ID, model, **kwargs):
     maglims = kwargs.get('maglims', 'trgb')
     offsets = kwargs.get('offsets', (1.5, 0.5))
     mk_sims_args = kwargs.get('mk_sims_args', {})
-
+    count_offset = kwargs.get('count_offset', 0.0)
     # data galaxy instance
     gal = galaxy(ID, band)
     # set maglim if not already set.
@@ -438,7 +437,7 @@ def make_normalized_simulation(ID, model, **kwargs):
         trilegal_out = mk_sims.mk_sims(ID, model, **mk_sims_args)
 
         # load simgalaxy
-        sgal = simgalaxy(trilegal_out, gal.filter1, gal.filter2)
+        sgal = simgalaxy(trilegal_out, gal.filter1, gal.filter2, count_offset=count_offset)
         sgal.ID = ID
         sgal.model = model
         sgal.mix_modelname(model)
@@ -496,6 +495,7 @@ def main(IDs=None, models=None, **kwargs):
     publish_plots = kwargs.get('publish_plots')
     sfr_dir = kwargs.get('sfrdir')
     out_dir = kwargs.get('outdir')
+    count_offset = kwargs.get('count_offset', 0.0)
     if IDs is None:
         print 'give me a galaxy!'
         return -1
@@ -514,8 +514,8 @@ def main(IDs=None, models=None, **kwargs):
 
     for ID, model in itertools.product(IDs, models):
         mk_sims_args = {'sfr_dir': sfr_dir, 'outdir': out_dir}
-        sim_kwargs = {'mk_sims_args': mk_sims_args}
-        gal, sgal, p_value, maglims = make_normalized_simulation(ID, model,
+        sim_kwargs = {'mk_sims_args': mk_sims_args, 'band': 'opt'}
+        gal, sgal, p_value, maglims = make_normalized_simulation(ID, model, count_offset=count_offset,
                                                                  **sim_kwargs)
         write_spread_catalog(sgal, **mk_sims_args)
 
@@ -799,23 +799,41 @@ if __name__ == "__main__":
     parser.add_option("-o", action="store_true", default=False,
                       help="out directory set to SNAP/models")
 
+    parser.add_option('-i', action='store_true', default=False,
+                      help='providing AGBTracksUtils inputfile')
+
     (options, args) = parser.parse_args()
     
-    if not options.s:
-        IDs = all_IDs()
-    else:
+    if options.s:
         IDs = short_list()
-    
-    models = [args[0]]
+        models = [args[0]]
     
     kwargs = {}
-    if options.m:
-        kwargs['make_plots'] = True
-    if options.p:
-        kwargs['publish_plots'] = True
-    if options.o:
-        kwargs['outdir'] = '/Users/phil/research/TP-AGBcalib/SNAP/'
-    
+    if not options.i:
+        if options.m:
+            kwargs['make_plots'] = True
+        if options.p:
+            kwargs['publish_plots'] = True
+        if options.o:
+            kwargs['outdir'] = '/Users/phil/research/TP-AGBcalib/SNAP/'
+            kwargs['count_offset'] = 1.
+    else:
+        print 'reading directions from input file'
+        input_file = args[0]
+        infile = fileIO.input_file(input_file)
+        IDs = infile.IDs
+        if IDs is None:
+            'No galaxies listed, doing short list.'
+            IDs = short_list()
+        agb_mix = infile.agb_mix
+        set_name = infile.set_name
+        track_set = '_'.join((agb_mix, set_name))
+        models = ['%s.dat' % track_set]
+        kwargs['outdir'] = infile.galaxy_outdir
+        if infile.google_table:
+            kwargs['make_plots'] = True
+            kwargs['publish_plots'] = True
+            
     main(IDs=IDs, models=models, **kwargs)
 
     '''

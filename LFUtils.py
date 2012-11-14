@@ -14,6 +14,7 @@ from matplotlib import rc
 myeffect = withStroke(foreground="w", linewidth=3)
 kwargs = dict(path_effects=[myeffect])
 rc('text', usetex=True)
+from ResolvedStellarPops.math_utils import bayesian_blocks
 
 from scipy.stats import ks_2samp
 
@@ -160,7 +161,7 @@ def calc_LF(gal, sgal, maglims, res=0.1, normalize=True):
     sgal.rel_rgb = between(smag[ind], dim, gal.trgb)
     
     # simulated normalized stars brighter than trgb.
-    sgal.rel_agb = brighter(smag[ind], gal.trgb)
+    sgal.rel_agb = brighter(smag[ind], gal.trgb - sgal.count_offset)
     
     KS_D, p_value = ks_2samp(mag[gal.iagb], smag[sgal.rel_agb])
     
@@ -248,7 +249,7 @@ def diagnostic_cmd(sgal, trgb, figname=None, inds=None):
             kwargs['color'] = 'black'
             text_offset = 0.02
             xpos = ax.get_xlim()[0]+2*text_offset
-            plot_numbs(ax, brighter(mag2, trgb, inds=ind).size, xpos,
+            plot_numbs(ax, brighter(mag2, trgb-sgal.count_offset, inds=ind).size, xpos,
                        trgb-text_offset, **kwargs)
             ax.set_title(label, **{'color':cols[i]})
             i+=1
@@ -305,9 +306,13 @@ def plot_LFIR(gal, sgal, p_value, maglims):
 
     mstars = list(set(sgal.imstar) & set(sgal.rel_ind))
     cstars = list(set(sgal.icstar) & set(sgal.rel_ind))
+
     #nbright_rgb = bright_rgb.size
-    bright_mstars = brighter(sgal.ast_mag2, gal.trgb, inds=mstars)
-    bright_cstars = brighter(sgal.ast_mag2, gal.trgb, inds=cstars)
+    bright_mstars = brighter(sgal.ast_mag2, gal.trgb-sgal.count_offset,
+                             inds=mstars)
+    bright_cstars = brighter(sgal.ast_mag2, gal.trgb-sgal.count_offset,
+                             inds=cstars)
+
     nbright_rgb = sgal.rel_agb.size - len(bright_mstars) - len(bright_cstars)
 
     # model used for normalization
@@ -352,13 +357,14 @@ def plot_LFIR(gal, sgal, p_value, maglims):
     #[plot_lines([axData, axModel], axData.get_xlim(), m) for m in (dim, bright)]
     # also?
     plot_lines([axData, axModel], axData.get_xlim(), gal.trgb)
-
+    plot_lines([axData, axModel], axData.get_xlim(), gal.trgb-sgal.count_offset)
+    
     kwargs['color'] = 'black'
     text_offset = 0.02
     xpos = axData.get_xlim()[0] + 2 * text_offset
     yposs = np.asarray(maglims) - text_offset
     ypos = gal.trgb-text_offset
-    plot_numbs(axData, gal.iagb.size, xpos, ypos, **kwargs)
+    plot_numbs(axData, gal.iagb.size-sgal.count_offset, xpos, ypos, **kwargs)
     plot_numbs(axData, gal.rgb_norm.size, xpos, yposs[0], **kwargs)
     
     kwargs['color'] = 'red'
@@ -370,14 +376,14 @@ def plot_LFIR(gal, sgal, p_value, maglims):
     #hist, bins, patches = axHist.hist(mag2, nbins, histtype='step', orientation='horizontal', log=True, color='black')
     #s_hist, s_bins, s_patches = axHist.hist(s_mag2, s_nbins, histtype='step', orientation='horizontal', log=True, color='red')
     #axHist.semilogx(hist, bins[:-1], drawstyle='steps', color='black')
-
-    axHist.semilogx(mhist, b[:-1], drawstyle='steps', color='darkgreen',
+    bins = b[:-1]
+    axHist.semilogx(mhist, bins, drawstyle='steps', color='darkgreen',
                     alpha=0.4)
-    axHist.semilogx(chist, b[:-1], drawstyle='steps', color='darkblue',
+    axHist.semilogx(chist, bins, drawstyle='steps', color='darkblue',
                     alpha=0.4)
-    axHist.semilogx(gal.LF, b[:-1], drawstyle='steps', color='black', lw=2)
-    axHist.semilogx(sgal.LFn, b[:-1], drawstyle='steps', color='red', lw=2)
-    kwargs['color']='black'
+    axHist.semilogx(gal.LF, bins, drawstyle='steps', color='black', lw=2)
+    axHist.semilogx(sgal.LFn, bins, drawstyle='steps', color='red', lw=2)
+    kwargs['color'] = 'black'
     axHist.annotate(r'$p=%.3f$' % p_value, xy=(.9, .95), 
                     xycoords='axes fraction', 
                     ha='right', size=20, **kwargs)

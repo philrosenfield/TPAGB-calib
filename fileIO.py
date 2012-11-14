@@ -489,6 +489,7 @@ def write_cmd_input_file(**kwargs):
     if you don't specify cmd_input_file, output goes to cmd_input_TEMP.dat
     '''
     kind_tracks = kwargs.get('kind_tracks', 2)
+    #file_isotrack = kwargs.get('file_isotrack', 'isotrack/parsec/CAF09_S11final.dat')
     file_isotrack = kwargs.get('file_isotrack', 'isotrack/parsec/CAF09.dat')
     file_lowzams = kwargs.get('file_lowzams', 'isotrack/bassazams_fasulla.dat')
     kind_tpagb = kwargs.get('kind_tpagb', 4)
