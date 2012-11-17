@@ -402,79 +402,6 @@ def input_defaults(profile=None):
     return in_def
 
 
-class input_file(object):
-    '''
-    a class to replace too many kwargs from the input file.
-    does two things:
-    1. sets a default dictionary (see input_defaults) as attributes
-    2. unpacks the dictionary from load_input as attributes.
-    '''
-    def __init__(self, filename):
-        self.set_defaults()
-        self.in_dict = load_input(filename)
-        self.unpack_dict()
-
-    def set_defaults(self):
-        in_def = input_defaults()
-        self.unpack_dict(udict=in_def)
-
-    def unpack_dict(self, udict=None):
-        if udict is None:
-            udict = self.in_dict
-        [self.__setattr__(k, v) for k, v in udict.items()]
-
-
-def load_input(filename):
-    '''
-    reads an input file into a dictionary.
-    file must have key first then value(s)
-    Will make 'True' into a boolean True
-    Will understand if a value is a float, string, or list, etc.
-    Ignores all lines that start with #, but not with # on the same line as
-    key, value.
-    '''
-    try:
-        literal_eval
-    except NameError:
-        from ast import literal_eval
-
-    d = {}
-    with open(filename) as f:
-        for line in f.readlines():
-            if line.startswith('#'):
-                continue
-            if len(line.strip()) == 0:
-                continue
-            key, val = line.strip().partition(' ')[0::2]
-            d[key] = math_utils.is_numeric(val.replace(' ', ''))
-    # do we have a list?
-    for key in d.keys():
-        # float
-        if type(d[key]) == float:
-            continue
-        # list:
-        temp = d[key].split(',')
-        if len(temp) > 1:
-            try:
-                d[key] = map(float, temp)
-            except:
-                d[key] = temp
-        # dict:
-        elif len(d[key].split(':')) > 1:
-            temp1 = d[key].split(':')
-            d[key] = {math_utils.is_numeric(temp1[0]): math_utils.is_numeric(temp1[1])}
-        else:
-            val = temp[0]
-            # boolean
-            true = val.upper().startswith('TR')
-            false = val.upper().startswith('FA')
-            if true or false:
-                val = literal_eval(val)
-            # string
-            d[key] = val
-    return d
-
-
 def write_cmd_input_file(**kwargs):
     '''
     make a TRILEGAL cmd_input file based on default.
@@ -572,6 +499,10 @@ def make_met_file(tracce, Zs, Ys, isofiles):
     print 'wrote', tracce
     return
 
+def load_input(filename):
+    in_def = input_defaults()
+    infile = rsp.fileIO.input_file(filename, default_dict=in_def)
+    return infile
 
 def ensure_dir(f):
     d = os.path.dirname(f)
@@ -590,20 +521,6 @@ def savetxt(filename, data, fmt='%.4f', header=None):
             f.write(header)
         np.savetxt(f, data, fmt=fmt)
     print 'wrote', filename
-
-
-def get_files(src, search_string):
-    '''
-    simple search, returns a list
-    '''
-    import glob
-    try:
-        files = glob.glob1(src, search_string)
-    except IndexError:
-        print 'Can''t find', search_string, 'in', src
-        sys.exit(2)
-    return [os.path.join(src, f) for f in files]
-
 
 def make_local_copy(file, dest=os.environ['ISOTRACK'][:-1] + '_agb/'):
     if dest is not None:
