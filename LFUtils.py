@@ -44,10 +44,11 @@ def get_trgb_ir_nAGB(Target):
     return trgb_ir, nAGB
 
 def brighter(mag2, trgb, inds=None):
-    # number of stars brighter than trgb, make sure mag2 is 
-    # the same filter as trgb!
+    ''' number of stars brighter than trgb, make sure mag2 is 
+        the same filter as trgb!''' 
     i, = np.nonzero(mag2 < trgb)
-    if inds!=None: i = np.intersect1d(i, inds)
+    if inds is not None:
+        i = np.intersect1d(i, inds)
     return i
 
 def get_chi2(obs, exp):
