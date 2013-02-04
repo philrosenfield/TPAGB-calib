@@ -219,7 +219,8 @@ def do_everything(infile):
     # make cmd_input file
     cmd_input = fileIO.write_cmd_input_file(**{'cmd_input_file': infile.cmd_input_file,
                                                'file_tpagb': infile.tracce_file_rel,
-                                               'mass_loss': infile.mass_loss})
+                                               'mass_loss': infile.mass_loss,
+                                               'file_isotrack': infile.file_isotrack})
 
     if infile.make_imfr is True and infile.diagnostic_dir0 is not None:
         ifmr_file = os.path.join(infile.diagnostic_dir0, infile.agb_mix,
@@ -251,7 +252,7 @@ if __name__ == "__main__":
     except:
         print do_everything.__doc__
     pdb.set_trace()
-    infile = fileIO.input_file(input_file)
+    infile = fileIO.input_file(input_file, default_dict=fileIO.input_defaults())
     # Paola's tracks -> trilegal + tests based only on tracks
     if infile.parse_tracks:
         do_everything(infile)

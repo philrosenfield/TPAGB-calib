@@ -41,27 +41,27 @@ def write_tri_par(sfh, ofile):
          'mag_num            3               ',
          'mag_lim            -3.0            ',
          'mag_res            0.1             ',
-       'dust               1               ',
-       'dustM              dpmod60alox40   ',
-       'dustC              AMCSIC15        ',
-       'binary_kind        0               ',
-       'binary_frac        0.3             ',
-       'binary_mrinf       0.7             ',
-       'binary_mrsup       1.0             ',
-       'extinction_kind    2               ',
-       'thindisk_kind      0               ',
-       'thickdisk_kind     0               ',
-       'halo_kind          0               ',
-       'bulge_kind         0               ',
-       'object_kind        1               ',
-       'object_mass        1.0e7           ',
-       'object_dist        10.0            ',
-       'object_avkind      1               ',
-       'object_av          0.000           ',
-       'object_cutoffmass  0.8             ',
-       'object_sfr         %s' % os.path.abspath(sfh),
-       'object_sfr_A       1e9             ',
-       'object_sfr_B       0.0             ']
+         'dust               1               ',
+         'dustM              dpmod60alox40   ',
+         'dustC              AMCSIC15        ',
+         'binary_kind        0               ',
+         'binary_frac        0.3             ',
+         'binary_mrinf       0.7             ',
+         'binary_mrsup       1.0             ',
+         'extinction_kind    2               ',
+         'thindisk_kind      0               ',
+         'thickdisk_kind     0               ',
+         'halo_kind          0               ',
+         'bulge_kind         0               ',
+         'object_kind        1               ',
+         'object_mass        1.0e7           ',
+         'object_dist        10.0            ',
+         'object_avkind      1               ',
+         'object_av          0.000           ',
+         'object_cutoffmass  0.8             ',
+         'object_sfr         %s' % os.path.abspath(sfh),
+         'object_sfr_A       1e9             ',
+         'object_sfr_B       0.0             ']
     
     with open(ofile, 'w') as oo:
         [oo.write(line + '\n') for line in o]
@@ -203,7 +203,8 @@ def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
     write_tri_par(sfh_file, par_file)
     if os.path.isfile(out_file) and over_write is False:
         run_trilegal(track_set, par_file, inp_file, out_file)
-    check = check_trilegal_run(out_file)
+    #check = check_trilegal_run(out_file)
+    check = 1
     if check == 1:
         plot_em(out_file, lf_file, cmd_file, age, z, track_set)
     else:

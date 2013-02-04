@@ -245,6 +245,7 @@ def get_numeric_data(filename):
         data = np.zeros(len(col_keys))
     return AGBTracks(data, col_keys, filename)
 
+
 def get_numeric_data_not_yet_working(filename):
     f = open(filename, 'r')
     lines = f.readlines()
@@ -265,7 +266,6 @@ def get_numeric_data_not_yet_working(filename):
             tb = sys.exc_info()[-1]
             print ("%s %s"%(tb.tb_frame.f_code.co_filename, err))
     return AGBTracks(data, col_keys, filename)
-
 
 
 def make_iso_file(track, isofile):
@@ -331,6 +331,28 @@ def make_iso_file(track, isofile):
             print len(rows), len(track.slopes)
             print 1. / slopes[list(rows).index(r)]
     return
+
+
+class input_file(object):
+    '''
+    a class to replace too many kwargs from the input file.
+    does two things:
+    1. sets a default dictionary (see input_defaults) as attributes
+    2. unpacks the dictionary from load_input as attributes.
+    '''
+    def __init__(self, filename, default_dict=None):
+        if default_dict is not None:
+            self.set_defaults(default_dict)
+        self.in_dict = load_input(filename)
+        self.unpack_dict()
+
+    def set_defaults(self, in_def):
+        self.unpack_dict(udict=in_def)
+
+    def unpack_dict(self, udict=None):
+        if udict is None:
+            udict = self.in_dict
+        [self.__setattr__(k, v) for k, v in udict.items()]
 
 
 def input_defaults(profile=None):
@@ -416,7 +438,6 @@ def write_cmd_input_file(**kwargs):
     if you don't specify cmd_input_file, output goes to cmd_input_TEMP.dat
     '''
     kind_tracks = kwargs.get('kind_tracks', 2)
-    #file_isotrack = kwargs.get('file_isotrack', 'isotrack/parsec/CAF09_S11final.dat')
     file_isotrack = kwargs.get('file_isotrack', 'isotrack/parsec/CAF09.dat')
     file_lowzams = kwargs.get('file_lowzams', 'isotrack/bassazams_fasulla.dat')
     kind_tpagb = kwargs.get('kind_tpagb', 4)
@@ -498,11 +519,79 @@ def make_met_file(tracce, Zs, Ys, isofiles):
          for i in np.argsort(Zs)]
     print 'wrote', tracce
     return
-
+'''
 def load_input(filename):
     in_def = input_defaults()
-    infile = rsp.fileIO.input_file(filename, default_dict=in_def)
+    infile = input_file(filename, default_dict=in_def)
     return infile
+'''
+
+def get_files(src, search_string):
+    '''
+    returns a list of files, similar to ls src/search_string
+    '''
+    if not src.endswith('/'):
+        src += '/'
+    try:
+        files = glob.glob1(src, search_string)
+    except IndexError:
+        print 'Can''t find %s in %s' % (search_string, src)
+        sys.exit(2)
+    files = [os.path.join(src, f) for f in files]
+    [ensure_file(f) for f in files] 
+    return files
+
+
+def load_input(filename):
+    '''
+    reads an input file into a dictionary.
+    file must have key first then value(s)
+    Will make 'True' into a boolean True
+    Will understand if a value is a float, string, or list, etc.
+    Ignores all lines that start with #, but not with # on the same line as
+    key, value.
+    '''
+    try:
+        literal_eval
+    except NameError:
+        from ast import literal_eval
+
+    d = {}
+    with open(filename) as f:
+        for line in f.readlines():
+            if line.startswith('#'):
+                continue
+            if len(line.strip()) == 0:
+                continue
+            key, val = line.strip().partition(' ')[0::2]
+            d[key] = math_utils.is_numeric(val.replace(' ', ''))
+    # do we have a list?
+    for key in d.keys():
+        # float
+        if type(d[key]) == float:
+            continue
+        # list:
+        temp = d[key].split(',')
+        if len(temp) > 1:
+            try:
+                d[key] = map(float, temp)
+            except:
+                d[key] = temp
+        # dict:
+        elif len(d[key].split(':')) > 1:
+            temp1 = d[key].split(':')
+            d[key] = {math_utils.is_numeric(temp1[0]): math_utils.is_numeric(temp1[1])}
+        else:
+            val = temp[0]
+            # boolean
+            true = val.upper().startswith('TR')
+            false = val.upper().startswith('FA')
+            if true or false:
+                val = literal_eval(val)
+            # string
+            d[key] = val
+    return d
+
 
 def ensure_dir(f):
     d = os.path.dirname(f)
@@ -521,6 +610,18 @@ def savetxt(filename, data, fmt='%.4f', header=None):
             f.write(header)
         np.savetxt(f, data, fmt=fmt)
     print 'wrote', filename
+
+def ensure_file(f, mad=True):
+    '''
+    input 
+    f (string): if f is not a file will print "no file"
+    optional
+    mad (bool)[True]: if mad is True, will exit program.
+    '''
+    if not os.path.isfile(f):
+        print 'there is no file', f
+        if mad:
+            sys.exit()
 
 def make_local_copy(file, dest=os.environ['ISOTRACK'][:-1] + '_agb/'):
     if dest is not None:
