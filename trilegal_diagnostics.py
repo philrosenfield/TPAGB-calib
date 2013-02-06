@@ -16,6 +16,8 @@ import numpy as np
 import shutil
 
 import multiprocessing
+import logging
+logger = logging.getLogger()
 
 sim_z=[0.0005, 0.001, 0.004, 0.008]
 
@@ -67,19 +69,20 @@ def write_tri_par(sfh, ofile):
         [oo.write(line + '\n') for line in o]
     return
 
-def run_trilegal(track, parfile, inp, out):
+def xrun_trilegal(track, parfile, inp, out):
     track_file='cmd_input_%s.dat' % track
     # Phil changed this for his computer!!
-    cmd='/Users/phil/research/PyTRILEGAL/run_trilegal.py -e code/main'
-    cmd+=' %s' % parfile
-    cmd+=' -a'
+    cmd = '/Users/phil/research/PyTRILEGAL/run_trilegal.py -e code/main'
+    cmd += ' %s' % parfile
+    cmd += ' -a'
+    cmd += ' -l'
     # Phil made these abs paths!
-    cmd+=' -i %s' % os.path.abspath(inp)
-    cmd+=' -o %s' % os.path.abspath(out)
-    cmd+=' -f ../cmd_inputfiles/%s' % track_file
+    cmd += ' -i %s' % os.path.abspath(inp)
+    cmd += ' -o %s' % os.path.abspath(out)
+    cmd += ' -f ../cmd_inputfiles/%s' % track_file
 
-    #print cmd
-    print out
+    print cmd
+    #print out
     p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
     stdout, stderr = (p.stdout, p.stderr)
 
@@ -88,6 +91,51 @@ def run_trilegal(track, parfile, inp, out):
     for l in stdout.readlines():
         ff.write('# %s' % l)
     ff.close()
+
+def make_galaxy_input(galaxy_input, sfh_file):
+    import ResolvedStellarPops as rsp
+    inp = rsp.fileIO.input_parameters(default_dict=rsp.TrilegalUtils.galaxy_input_dict())
+    kwargs = {'object_mass': 1e7,
+              'object_sfr_file': sfh_file,
+              'file_mag': 'tab_mag_odfnew/tab_mag_2mass.dat',
+              'mag_limit_val': -3.0,
+              'mag_num': 3,
+              'object_sfr_mult_factorA': 1e9}
+    inp.add_params(kwargs)
+    inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
+    return
+
+def run_trilegal(cmd_input, galaxy_input, output):
+    '''
+    runs trilegal with os.system. might be better with subprocess? Also 
+    changes directory to trilegal root, if that's not in a .cshrc need to 
+    somehow tell it where to go.
+    
+    to do:
+    add -a or any other flag options
+    possibly add the stream output to the end of the output file.
+    '''
+    here = os.getcwd()
+    os.chdir(os.environ['TRILEGAL_ROOT'])
+
+    logger.info('running trilegal...')
+    cmd = 'code/main -f %s -l %s %s > %s.msg\n' % (cmd_input,
+                                                            galaxy_input,
+                                                            output, output)
+    print cmd
+    logger.debug(cmd)
+    t = os.system(cmd)
+    logger.info('done.')
+
+    if t != 0:
+        for l in open('%s.msg' % output).readlines():
+            logger.debug(l.strip())
+    else:
+        os.remove('%s.msg' % output)
+
+    os.chdir(here)
+    return
+
 
 def plot_em(ifile, lf_file, cmd_file, age, z, track):
     print 'Plotting', ifile
@@ -190,7 +238,7 @@ def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
 
     lf_file  = '%s/lf_Z%.2e_A%.2e.png' % (plt_dir, z, age)
     cmd_file = '%s/cmd_Z%.2e_A%.2e.png' % (plt_dir, z, age)
-    print lf_file, cmd_file
+    #print lf_file, cmd_file
     f_lf = open('%s/list_lf.dat' % plt_dir, 'a')
     f_cmd = open('%s/list_cmd.dat' % plt_dir, 'a')
     f_lf.write(lf_file+'\n')
@@ -200,9 +248,11 @@ def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
 
 
     write_sfh(age, z, sfh_file)
-    write_tri_par(sfh_file, par_file)
-    if os.path.isfile(out_file) and over_write is False:
-        run_trilegal(track_set, par_file, inp_file, out_file)
+    #write_tri_par(sfh_file, par_file)
+    make_galaxy_input(inp_file, sfh_file)
+    #if not os.path.isfile(out_file) or over_write is True:
+    track_file='../cmd_inputfiles/cmd_input_%s.dat' % track_set
+    run_trilegal(track_file, inp_file, out_file)
     #check = check_trilegal_run(out_file)
     check = 1
     if check == 1:
@@ -214,7 +264,7 @@ def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
 
     if os.path.isdir(plt_dir):
         shutil.rmtree(plt_dir)
-        print 'rm''d directories', plt_dir
+        print 'rm\'d directories', plt_dir
 
     for d in [sfh_dir, tri_dir, plt_dir]:
         if not os.path.isdir(d):
