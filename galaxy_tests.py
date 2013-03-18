@@ -1,6 +1,5 @@
 from optparse import OptionParser
 import operator
-import cmdUtils
 import brewer2mpl
 import ResolvedStellarPops as rsp
 import fileIO
@@ -9,7 +8,6 @@ import LFUtils
 import mk_sims
 from multiprocessing import Pool
 import itertools
-import time
 from TPAGBparams import *
 import numpy as np
 #import pdb; pdb.set_trace()
@@ -91,7 +89,7 @@ def run_all(IDs, models):
 
 def read_tagged_phot(tagged_file):
     '''
-    reads a file created by rsp.annotate_cmd.define_color_mag_region. 
+    reads a file created by rsp.annotate_cmd.define_color_mag_region.
     ascii with 7 columns.
     '''
     if type(tagged_file) == str:
@@ -106,14 +104,14 @@ def read_tagged_phot(tagged_file):
 def get_trgb_fitsname(ID, band):
     if band == 'opt':
         fits = rsp.fileIO.get_files(fits_src,
-                                  '*' + '*'.join((ID, 'trim', '.fits')))[0]
+                                    '*' + '*'.join((ID, 'trim', '.fits')))[0]
         (filter1, filter2) = os.path.split(fits)[1].split('.')[0].split('_')[-2:]
         angst_data = rsp.angst_tables.AngstTables()
         trgb = angst_data.get_tab5_trgb_av_dmod(ID, filter1, filter2)[0]
     elif band == 'ir':
         # read data
         fits, = rsp.fileIO.get_files(fits_src,
-                                   '*' + '*'.join((ID, 'IR', '.fits')))
+                                     '*' + '*'.join((ID, 'IR', '.fits')))
         trgb = LFUtils.get_trgb_ir_nAGB(ID)[0]
     else:
         print 'choose opt or ir'
@@ -124,7 +122,7 @@ def get_trgb_fitsname(ID, band):
 class galaxies(object):
     '''
     THIS IS FROM BR RATIO CODE. I'M NOT SURE IT'S GENERAL ENOUGH TO PUT INTO
-    ~ / research / python SO I COPIED IT...
+    ~/research/python SO I COPIED IT...
 
     I made summary...
     wrapper for lists of galaxy objects, each method returns lists, unless they
@@ -182,7 +180,7 @@ class galaxies(object):
 
     def group_by_z(self):
         zsf = self.zs[np.isfinite(self.zs)]
-        zsn = self.zs[np.isnan(self.zs)]
+        #zsn = self.zs[np.isnan(self.zs)]
         d = {}
         for z in zsf:
             key = 'Z%.4f' % z
@@ -235,6 +233,7 @@ def load_galaxy(ID, band):
         print 'no tagged data for %s' % fitsname
         gal = rsp.Galaxies.galaxy(fitsname, filetype='fitstable', **kwargs)
     return gal
+
 
 class simgalaxy(object):
     def __init__(self, trilegal_out, filter1, filter2, count_offset=0.0):
@@ -301,7 +300,7 @@ class simgalaxy(object):
 
     def load_ic_mstar(self):
         co = self.data.get_col('C/O')[self.rec]
-        lage = self.data.get_col('logAge')[self.rec]
+        #lage = self.data.get_col('logAge')[self.rec]
         mdot = self.data.get_col('logML')[self.rec]
         logl = self.data.get_col('logL')[self.rec]
 
@@ -325,7 +324,7 @@ class simgalaxy(object):
 
 
 def get_mix_modelname(model):
-    mix = model.replace('cmd_input','').split('.')[0].split('_')[0]
+    mix = model.replace('cmd_input', '').split('.')[0].split('_')[0]
     model_name = '_'.join(model.split('.')[0].split('_')[1:])
     return mix, model_name
 
@@ -353,12 +352,12 @@ def load_galaxy_tagged(ID, band):
     trgb, fitsname = get_trgb_fitsname(ID, band)
     tagged_fits = read_tagged_phot(rsp.fileIO.replace_ext(fitsname, '.dat'))
 
-    target, filt1, filt2 = cmdUtils.get_fileinfo(fitsname)
-    mag1 = tagged_fits['mag1']
-    mag2 = tagged_fits['mag2']
-    stage = tagged_fits['stage']
+    #target, filt1, filt2 = cmdUtils.get_fileinfo(fitsname)
+    #mag1 = tagged_fits['mag1']
+    #mag2 = tagged_fits['mag2']
+    #stage = tagged_fits['stage']
 
-    color = mag1 - mag2
+    #color = mag1 - mag2
 
     return tagged_fits
 
@@ -568,8 +567,8 @@ def load_galaxies(IDs, model, **kwargs):
         sgal.model = model
         sgal.mix_modelname(model)
         sgal.get_fits()
-        maglims = (np.nan, np.nan)
-        p_value = LFUtils.calc_LF(gal, sgal, maglims, normalize=False)
+        #maglims = (np.nan, np.nan)
+        #p_value = LFUtils.calc_LF(gal, sgal, maglims, normalize=False)
         sgal.file_ast = mk_sims.get_fakFILE(ID)
         sgals.append(sgal)
         gals.append(gal)
@@ -729,8 +728,8 @@ def match_tests(IDs, model):
         match_bg = MatchUtils.make_match_bg_cmd(s.ast_mag1, s.ast_mag2,
                                                 outfile=match_dict['bg'])
         print match_bg
-        phot = MatchUtils.make_match_bg_cmd(g.mag1, g.mag2,
-                                            outfile=match_dict['phot'])
+        #phot = MatchUtils.make_match_bg_cmd(g.mag1, g.mag2,
+        #                                    outfile=match_dict['phot'])
 
         match_kwargs = {'dmod': s.data.get_col('m - M0')[0],
                         'Av': s.data.get_col('Av')[0],
@@ -769,10 +768,12 @@ def match_tests(IDs, model):
         s.fit = fit
     return Gals, SGals
 
+
 def short_list():
     IDs = ['DDO82', 'NGC2403-HALO-6', 'NGC2976-DEEP', 'NGC4163',
            'NGC7793-HALO-6', 'UGC8508', 'UGCA292']
     return IDs
+
 
 if __name__ == "__main__":
 
@@ -780,10 +781,10 @@ if __name__ == "__main__":
     ch.setLevel(logging.DEBUG)
     logger.addHandler(ch)
     logger.info('start of run')
-    
+
     parser = OptionParser()
 
-    usage="%prog model [options]"
+    usage = "%prog model [options]"
 
     parser = OptionParser(usage=usage)
 
@@ -795,7 +796,7 @@ if __name__ == "__main__":
 
     parser.add_option("-p", action="store_true", default=False,
                       help="publish plots")
-    
+
     parser.add_option("-o", action="store_true", default=False,
                       help="out directory set to SNAP/models")
 
@@ -803,11 +804,11 @@ if __name__ == "__main__":
                       help='providing AGBTracksUtils inputfile')
 
     (options, args) = parser.parse_args()
-    
+
     if options.s:
         IDs = short_list()
         models = [args[0]]
-    
+
     kwargs = {}
     if not options.i:
         if options.m:
@@ -833,7 +834,7 @@ if __name__ == "__main__":
         if infile.google_table:
             kwargs['make_plots'] = True
             kwargs['publish_plots'] = True
-            
+
     main(IDs=IDs, models=models, **kwargs)
 
     '''

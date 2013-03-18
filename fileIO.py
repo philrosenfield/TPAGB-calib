@@ -5,6 +5,7 @@ import sys
 import math_utils
 import graphics
 
+
 class AGBTracks(object):
     '''
     A fast way of loading files.
