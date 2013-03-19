@@ -3,19 +3,34 @@ import operator
 import brewer2mpl
 import ResolvedStellarPops as rsp
 import fileIO
-from TrilegalUtils import get_stage_label
 import LFUtils
 import mk_sims
 from multiprocessing import Pool
 import itertools
-from TPAGBparams import *
+import os
+import sys
 import numpy as np
 #import pdb; pdb.set_trace()
 import matplotlib.pyplot as plt
 import GoogleSitesTable as gst
-import MatchUtils
+import matplotlib.nxutils as nxutils
 import logging
 logger = logging.getLogger()
+
+
+# default locations.
+tpcalib_dir = '/Users/phil/research/TP-AGBcalib/'
+snap_src = os.path.join(tpcalib_dir, 'SNAP')
+
+table_src = os.path.join(snap_src, 'tables')
+plt_dir = os.path.join(snap_src, 'plots')
+model_src = os.path.join(snap_src, 'models')
+data_src = os.path.join(snap_src, 'data')
+output_src = os.path.join(model_src, 'ast')
+fits_src = os.path.join(data_src, 'galaxies')
+fake_dir = os.path.join(data_src, 'fakes')
+sfr_dir = os.path.join(data_src, 'sfh')
+angst_data = rsp.angst_tables.AngstTables()
 
 
 def edit_sfh(ID, new_sfr_dir, orig_sfr_dir=None, **changes):
@@ -87,26 +102,11 @@ def run_all(IDs, models):
     return
 
 
-def read_tagged_phot(tagged_file):
-    '''
-    reads a file created by rsp.annotate_cmd.define_color_mag_region.
-    ascii with 7 columns.
-    '''
-    if type(tagged_file) == str:
-        #print 'reading %s' % tagged_file
-        cols = ['ra', 'dec', 'mag1', 'mag2', 'mag1err', 'mag2err', 'stage']
-        fits = np.genfromtxt(tagged_file, names=cols)
-    else:
-        fits = tagged_file
-    return fits
-
-
 def get_trgb_fitsname(ID, band):
     if band == 'opt':
         fits = rsp.fileIO.get_files(fits_src,
                                     '*' + '*'.join((ID, 'trim', '.fits')))[0]
         (filter1, filter2) = os.path.split(fits)[1].split('.')[0].split('_')[-2:]
-        angst_data = rsp.angst_tables.AngstTables()
         trgb = angst_data.get_tab5_trgb_av_dmod(ID, filter1, filter2)[0]
     elif band == 'ir':
         # read data
@@ -114,219 +114,42 @@ def get_trgb_fitsname(ID, band):
                                      '*' + '*'.join((ID, 'IR', '.fits')))
         trgb = LFUtils.get_trgb_ir_nAGB(ID)[0]
     else:
-        print 'choose opt or ir'
+        print 'photsys not found... check get_trgb_fitsname'
         sys.exit()
     return trgb, fits
 
 
-class galaxies(object):
-    '''
-    THIS IS FROM BR RATIO CODE. I'M NOT SURE IT'S GENERAL ENOUGH TO PUT INTO
-    ~/research/python SO I COPIED IT...
-
-    I made summary...
-    wrapper for lists of galaxy objects, each method returns lists, unless they
-    are setting attributes.
-    '''
-    def __init__(self, galaxy_objects):
-        self.galaxies = galaxy_objects
-        galaxies.summary(self, 'target', 'filter1', 'filter2')
-        # maybe I can avoid simgalaxies with self.__class__?
-        #self.zs = np.unique([np.round(g.z, 4) for g in self.galaxies])
-        #self.photsyss =  np.unique(g.photsys for g in self.galaxies)
-
-    def summary(self, *attrs):
-        '''
-        similar to squish, but has np.unique.
-        '''
-        for attr in attrs:
-            new_list = [g.__getattribute__(attr) for g in self.galaxies]
-            new_val = np.unique(new_list)
-            self.__setattr__('%ss' % attr, new_val)
-
-    def all_stages(self, *stages):
-        '''
-        adds the indices of any stage as attributes to galaxy.
-        If the stage isn't found, - 1 is returned.
-        '''
-        [g.all_stages(*stages) for g in self.galaxies]
-        return
-
-    def squish(self, *attrs):
-        '''
-        concatenates an attribute or many attributes and adds them to galaxies
-        instance.
-        No slicing, so not sure how it will be useful besides Color Mag2.
-        '''
-        for attr in attrs:
-            new_list = [g.__getattribute__(attr) for g in self.galaxies]
-            new_val = np.concatenate(new_list)
-            self.__setattr__('%ss' % attr, new_val)
-
-    def finite_key(self, key):
-        return [g for g in self.galaxies if np.isfinite(g.__dict__[key])]
-
-    def select_on_key(self, key, val):
-        ''' ex filter2 == F814W works great with strings or exact g.key == val.
-        rounds z to four places, no error handling.
-        '''
-        key = key.lower()
-        if key == 'z':
-            gs = [g for g in self.galaxies if
-                  np.round(g.__dict__[key], 4) == val]
-        else:
-            gs = [g for g in self.galaxies if g.__dict__[key] == val]
-        return gs
-
-    def group_by_z(self):
-        zsf = self.zs[np.isfinite(self.zs)]
-        #zsn = self.zs[np.isnan(self.zs)]
-        d = {}
-        for z in zsf:
-            key = 'Z%.4f' % z
-            d[key] = galaxies.select_on_key(self, 'z', z)
-
-        d['no z'] = [g for g in gals if np.isnan(g.z)]
-        return d
-
-    def intersection(self, **kwargs):
-        '''
-        ex kwargs = {'filter2': 'F814W', 'filter1': 'F555W'}
-        will return a list of galaxy objects that match all kwarg values.
-        '''
-        gs_tmp = self.galaxies
-        gs = [galaxies.select_on_key(self, k, v) for k, v in kwargs.items()]
-        for i in range(len(gs)):
-            gs_tmp = list(set(gs_tmp) & set(gs[i]))
-        return gs_tmp
-
-    def __str__(self):
-        for g in self.galaxies:
-            print g.__str__()
-        return ''
-
-
 def load_galaxy(ID, band):
     '''
-    self.name = get_trgb_fitsname(ID, band)[1]
-    self.data = read_tagged_phot(rsp.fileIO.replace_ext(self.name, '.dat'))
-    self.base = os.path.split(self.name)[0]
-    self.target = cmdUtils.get_fileinfo(self.name)[0]
-    self.filter1 = cmdUtils.get_fileinfo(self.name)[1]
-    self.filter2 = cmdUtils.get_fileinfo(self.name)[2]
-    self.mag1 = self.data['mag1']
-    self.mag2 = self.data['mag2']
-    self.color = self.data['mag1'] - self.data['mag2']
-    self.stage = self.data['stage']
-    self.trgb = get_trgb_fitsname(ID, band)[0]
-    self.z = LFUtils.get_key_fromtable(ID, 'Z')
     '''
-    fitsname = get_trgb_fitsname(ID, band)[1]
-    kwargs = {'hla': False}
-    kwargs['trgb'] = get_trgb_fitsname(ID, band)[0]
+    (trgb, fitsname) = get_trgb_fitsname(ID, band)
+
+    kwargs = {'hla': False, 'trgb': trgb, 'photsys': 'wfc3snap', 'angst': True}
     kwargs['z'] = LFUtils.get_key_fromtable(ID, 'Z')
-    kwargs['band'] = band
+
     try:
-        taggedname = read_tagged_phot(rsp.fileIO.replace_ext(fitsname, '.dat'))
+        taggedname = rsp.fileIO.replace_ext(fitsname, '.dat')
         gal = rsp.Galaxies.galaxy(taggedname, **kwargs)
     except:
         print 'no tagged data for %s' % fitsname
         gal = rsp.Galaxies.galaxy(fitsname, filetype='fitstable', **kwargs)
+
     return gal
-
-
-class simgalaxy(object):
-    def __init__(self, trilegal_out, filter1, filter2, count_offset=0.0):
-        self.base, self.name = os.path.split(trilegal_out)
-        self.data = rsp.fileIO.read_table(trilegal_out)
-        self.filter1 = filter1
-        self.filter2 = filter2
-        self.target = self.name.split('_')[2]
-        self.mag1 = self.data.get_col(self.filter1)
-        self.mag2 = self.data.get_col(self.filter2)
-        self.stage = self.data.get_col('stage')
-        self.count_offset = count_offset
-        simgalaxy.load_ast_corrections(self)
-
-        data_to_slice = ['mag1', 'mag2', 'stage', 'ast_mag1', 'ast_mag2']
-        slice_inds = self.rec
-        simgalaxy.slice_data(self, data_to_slice, slice_inds)
-
-        self.ast_color = self.ast_mag1 - self.ast_mag2
-        self.color = self.mag1 - self.mag2
-        simgalaxy.load_ic_mstar(self)
-
-    def get_fits(self):
-        match_out_dir = os.path.join(os.path.split(self.base)[0], 'match',
-                                     'output')
-        fit_file_name = '%s_%s_%s.fit' % (self.ID, self.mix, self.model_name)
-        try:
-            fit_file, = fileIO.get_files(match_out_dir, fit_file_name)
-            self.chi2, self.fit = MatchUtils.get_fit(fit_file)
-        except ValueError:
-            print 'no match output for %s.' % fit_file_name
-        return
-
-    def load_ast_corrections(self):
-        diff1 = self.data.get_col('diff_' + self.filter1)
-        diff2 = self.data.get_col('diff_' + self.filter2)
-        recovered1, = np.nonzero(abs(diff1) < 90.)
-        recovered2, = np.nonzero(abs(diff2) < 90.)
-        self.rec = list(set(recovered1) & set(recovered2))
-        self.ast_mag1 = self.mag1 + diff1
-        self.ast_mag2 = self.mag2 + diff2
-
-    def slice_data(self, data_to_slice, slice_inds):
-        '''
-        slice already set attributes by some index list.
-        '''
-        [self.__setattr__(d, self.__dict__[d][slice_inds])
-         for d in data_to_slice]
-
-    def mix_modelname(self, model):
-        self.mix, self.model_name = get_mix_modelname(model)
-
-    def delete_data(self):
-        '''
-        for wrapper functions, I don't want gigs of data stored when they
-        are no longer needed.
-        '''
-        data_names = ['data', 'mag1', 'mag2', 'color', 'stage', 'ast_mag1',
-                      'ast_mag2', 'ast_color', 'rec']
-        [self.__delattr__(data_name) for data_name in data_names]
-
-    def stage_inds(self, stage_name):
-        return np.nonzero(self.stage == get_stage_label(stage_name))[0]
-
-    def load_ic_mstar(self):
-        co = self.data.get_col('C/O')[self.rec]
-        #lage = self.data.get_col('logAge')[self.rec]
-        mdot = self.data.get_col('logML')[self.rec]
-        logl = self.data.get_col('logL')[self.rec]
-
-        self.imstar, = np.nonzero((co <= 1) &
-                                  (logl >= 3.3) &
-                                  (mdot <= - 5) &
-                                  (self.stage == get_stage_label('TPAGB')))
-
-        self.icstar, = np.nonzero((co >= 1) &
-                                  (mdot <= - 5) &
-                                  (self.stage == get_stage_label('TPAGB')))
-
-    def all_stages(self, *stages):
-        '''
-        adds the indices of some stage as an attribute.
-        '''
-        for stage in stages:
-            i = stage_inds(self.stage, stage)
-            self.__setattr__('i%s' % stage.lower(), i)
-        return
 
 
 def get_mix_modelname(model):
     mix = model.replace('cmd_input', '').split('.')[0].split('_')[0]
     model_name = '_'.join(model.split('.')[0].split('_')[1:])
     return mix, model_name
+
+
+def get_fake_file(ID):
+    return rsp.fileIO.get_files(fake_dir, '*%s*' %
+                                ID.replace('C-0', 'C-').replace('C-', 'C'))[0]
+
+
+def get_sfr_file(ID):
+    return rsp.fileIO.get_files(sfr_dir, '*%s*' % ID)[0]
 
 
 def match_metallicities(IDs):
@@ -339,7 +162,7 @@ def match_metallicities(IDs):
 
 
 def compare_metallicities():
-    IDs = allIDs()
+    IDs = all_IDs()
     zs = match_metallicities(IDs)
     for ID in IDs:
         zs[ID]['zmeas'] = LFUtils.get_key_fromtable(ID, 'Z')
@@ -348,26 +171,69 @@ def compare_metallicities():
         print '%s %.4f %.4f' % (id, zdict['avez'], zdict['zmeas'])
 
 
-def load_galaxy_tagged(ID, band):
-    trgb, fitsname = get_trgb_fitsname(ID, band)
-    tagged_fits = read_tagged_phot(rsp.fileIO.replace_ext(fitsname, '.dat'))
-
-    #target, filt1, filt2 = cmdUtils.get_fileinfo(fitsname)
-    #mag1 = tagged_fits['mag1']
-    #mag2 = tagged_fits['mag2']
-    #stage = tagged_fits['stage']
-
-    #color = mag1 - mag2
-
-    return tagged_fits
-
-
 def get_stage_inds(fits, stage_name):
-    inds, = np.nonzero(fits['stage'] == get_stage_label(stage_name))
+    inds, = np.nonzero(fits['stage'] == rsp.TrilegalUtils.get_stage_label(stage_name))
     return inds
 
 
-def make_normalized_simulation(ID, model, **kwargs):
+def setup_trilegal(gal, model, object_mass=5e9):
+    agb_model = model.replace('cmd_input_', '').replace('.dat', '').lower()
+
+    table = '/Users/phil/research/TP-AGBcalib/SNAP/tables/table.dat'
+    with open(table, 'r') as t:
+        lines = t.readlines()
+    for line in lines:
+        line = line.strip().split()
+        if line[0] == gal.target:
+            mag_lim_filt = line[4]
+            mag_lim = float(line[5])
+
+    object_dist = 10 ** ((5 + gal.dmod) / 5)
+    sfr_file = get_sfr_file(gal.target)
+    file_mag = 'tab_mag_odfnew/tab_mag_%s.dat' % gal.photsys
+    galinp_kw = {'object_sfr_file': get_sfr_file(gal.target),
+                 'file_mag': file_mag,
+                 'mag_limit_val': mag_lim,
+                 'mag_num': rsp.TrilegalUtils.find_mag_num(file_mag, mag_lim_filt),
+                 'object_sfr_file': sfr_file,
+                 'object_av': gal.Av,
+                 'object_dist': object_dist,
+                 'object_mass': object_mass,
+                 'object_sfr_mult_factorA': 1e9}
+
+    galaxy_input = os.path.join(snap_src, 'input', 'input_%s.dat' % gal.target)
+    rsp.TrilegalUtils.change_galaxy_input(galaxy_input, **galinp_kw)
+    trilegal_output = os.path.join(snap_src, 'output', 'output_%s_%s.dat' %
+                                   (gal.target, agb_model))
+
+    return galaxy_input, trilegal_output, galinp_kw
+
+
+def setup_data_normalization(gal, maglims):
+    # find normalization region
+    # (when hand picking cmd_regions, RGB includes AGB!)
+    gal.irgb = gal.stage_inds('RGB')
+    # the stars in the data marked as rgb between mag lims.
+    rgb_norm = rsp.math_utils.between(gal.mag2, maglims[0], maglims[1],
+                                      inds=gal.irgb)
+    points = np.column_stack((gal.color[rgb_norm], gal.mag2[rgb_norm]))
+    # the 1 std around color mean
+    cmean = np.mean(gal.color[rgb_norm])
+    cstd = np.std(gal.color[rgb_norm])
+    verts = np.array([[cmean - cstd, maglims[0]],
+                      [cmean - cstd, maglims[1]],
+                      [cmean + cstd, maglims[1]],
+                      [cmean + cstd, maglims[0]],
+                      [cmean - cstd, maglims[0]]])
+
+    ndata_stars = np.nonzero(nxutils.points_inside_poly(points, verts))[0].size
+    return verts, ndata_stars
+
+
+def make_normalized_simulation(ID, model, photsys='wfc3snap', over_write=False,
+                               object_mass=5e6, maglims='trgb', band='ir',
+                               offsets=(1.5, 0.5), mk_sims_args={},
+                               count_offset=0.):
     '''
     Wrapper for running trilegal and LFUtils.calc_LF
     Will continue to run trilegal until galaxy is high enough mass to have
@@ -381,8 +247,8 @@ def make_normalized_simulation(ID, model, **kwargs):
     cmd_input model to run trilegal: string
 
     optional params:
-    over_write: bool [False]
-        force running of trilegal (will run if no output file exists)
+    xxxover_write: bool [False]
+    xxx    force running of trilegal (will run if no output file exists)
     maglims: list, tuple or string. ['trgb']
         either the dim, bright maglims or 'trgb'
     offsets: list, tuple: (dim, bright) default: [(1.5, 0.5)]
@@ -398,61 +264,67 @@ def make_normalized_simulation(ID, model, **kwargs):
         ks test p_value
         maglims
     '''
-    # To be compatible with Jason, might work with 'ir' or 'opt' should only
-    # call different file finding routines.
-    band = kwargs.get('band', 'ir')
-    # load kwargs
-    over_write = kwargs.get('over_write', False)
-    object_mass = kwargs.get('object_mass', 5e6)
-    maglims = kwargs.get('maglims', 'trgb')
-    offsets = kwargs.get('offsets', (1.5, 0.5))
-    mk_sims_args = kwargs.get('mk_sims_args', {})
-    count_offset = kwargs.get('count_offset', 0.0)
-    # data galaxy instance
-    gal = galaxy(ID, band)
+    gal = load_galaxy(ID, band)
+    galaxy_input, trilegal_output, galinp_kw = setup_trilegal(gal, model,
+                                                              object_mass=object_mass)
+    cmd_input = os.path.join('/Users/phil/research/padova_apps/cmd_inputfiles/', model)
+    fake_file = get_fake_file(ID)
+
     # set maglim if not already set.
     if maglims == 'trgb':
         maglims = (gal.trgb + offsets[0], gal.trgb + offsets[1])
+
+    verts, ndata_stars = setup_data_normalization(gal, maglims)
+
+    #gal.iagb = rsp.math_utils.brighter(gal.mag2, gal.trgb, inds=gal.irgb)
 
     # initializations
     go = 0
     normalization = 1e9
     # arbitrary normalization factor set to 0.75... 1.0 is upper limit,
-    # didn't think it's necessary to make this a kwarg...
+    # because that would mean there are the same number of stars in the
+    # normalization region for both the sim and the data. Any number lower than
+    # one is just a bit of overkill so you can randomly draw and get a good
+    # stat. sample.
     while normalization > .75:
         # object_mass increase factor is hard coded, could be kwarg.
-        if go != 0:
-            object_mass = object_mass * 5.
-            # reset over_write for while loop
-            over_write = 1
+        if go > 0:
+            object_mass *= 5.
+            galinp_kw['object_mass'] = object_mass
+            rsp.TrilegalUtils.change_galaxy_input(galaxy_input, **galinp_kw)
         go += 1
 
         # run trilegal
-        if over_write:
-            print 'Trying %s %s, Mass = %g, Attempt %i' % (ID, model,
-                                                           object_mass, go)
-        mk_sims_args['object_mass'] = object_mass
-        mk_sims_args['over_write'] = over_write
-        trilegal_out = mk_sims.mk_sims(ID, model, **mk_sims_args)
+        print 'Trying %s %s, Mass=%g, Attempt %i' % (ID, model, object_mass, go)
 
-        # load simgalaxy
-        sgal = simgalaxy(trilegal_out, gal.filter1, gal.filter2, count_offset=count_offset)
-        sgal.ID = ID
-        sgal.model = model
-        sgal.mix_modelname(model)
+        rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input, trilegal_output)
 
+        # load sim galaxy
+        sgal = rsp.Galaxies.simgalaxy(trilegal_output, gal.filter1, gal.filter2,
+                                      count_offset=count_offset)
+        # "correct" for asts
+        rsp.Galaxies.ast_correct_trilegal_sim(sgal, fake_file=fake_file)
+        sgal.load_ast_corrections()
+
+        sgal.normalize('rgb', useasts=True, ndata_stars=ndata_stars, by_stage=False,
+                       verts=verts)
         # calcuate the LFs
-        p_value = LFUtils.calc_LF(gal, sgal, maglims)
+        #p_value = LFUtils.calc_LF(gal, sgal, maglims)
+        #print p_value
 
         # update normalization
-        normalization = sgal.normalization
+        normalization = sgal.rgb_norm
         print 'normalization', normalization
+
+    sgal.ID = ID
+    sgal.model = model
+    sgal.mix_modelname(model)
 
     if over_write:
         sgal.object_mass = object_mass
         print '\n %s necessary object_mass = %g\n' % (gal.name, object_mass)
 
-    return gal, sgal, p_value, maglims
+    return
 
 
 def all_IDs():
@@ -482,7 +354,8 @@ def all_IDs():
     return IDs
 
 
-def main(IDs=None, models=None, **kwargs):
+def main(IDs, models, band='ir', mk_sims_args={}, make_plots=False, publish_plots=False,
+         count_offset=0., outfile='result_tab.dat'):
     '''
     big wrapper for galaxy tests
 
@@ -490,20 +363,7 @@ def main(IDs=None, models=None, **kwargs):
     make_plots: LFUtils.plotLFIR and .diagnostic_cmd
     publish_plots: call GoogleSitesTable
     '''
-    make_plots = kwargs.get('make_plots')
-    publish_plots = kwargs.get('publish_plots')
-    sfr_dir = kwargs.get('sfrdir')
-    out_dir = kwargs.get('outdir')
-    count_offset = kwargs.get('count_offset', 0.0)
-    if IDs is None:
-        print 'give me a galaxy!'
-        return -1
 
-    if models is None:
-        print 'give me a model!'
-        return -1
-
-    outfile = kwargs.get('outfile', 'result_tab.dat')
     if os.path.isfile(outfile):
         print outfile, 'exists. appending.'
         out = open(outfile, 'a')
@@ -512,11 +372,11 @@ def main(IDs=None, models=None, **kwargs):
         out.write('# ID model p_value NRGB_data NAGB_data NRGB_model NAGB_model\n')
 
     for ID, model in itertools.product(IDs, models):
-        mk_sims_args = {'sfr_dir': sfr_dir, 'outdir': out_dir}
-        sim_kwargs = {'mk_sims_args': mk_sims_args, 'band': 'opt'}
-        gal, sgal, p_value, maglims = make_normalized_simulation(ID, model, count_offset=count_offset,
+        sim_kwargs = {'mk_sims_args': mk_sims_args, 'band': band}
+        gal, sgal, p_value, maglims = make_normalized_simulation(ID, model,
+                                                                 count_offset=count_offset,
                                                                  **sim_kwargs)
-        write_spread_catalog(sgal, **mk_sims_args)
+        #write_spread_catalog(sgal, **mk_sims_args)
 
         if make_plots:
             fig_loc = os.path.join(plt_dir, sgal.mix, sgal.model_name)
@@ -561,8 +421,8 @@ def load_galaxies(IDs, model, **kwargs):
     for ID in IDs:
         spread_file = os.path.join(out_dir, 'spread',
                                    'spread_output_%s_model_%s' % (ID, model))
-        gal = galaxy(ID, 'ir')
-        sgal = simgalaxy(spread_file, gal.filter1, gal.filter2)
+        gal = rsp.Galaxy.galaxy(ID, 'ir')
+        sgal = rsp.Galaxy.simgalaxy(spread_file, gal.filter1, gal.filter2)
         sgal.ID = ID
         sgal.model = model
         sgal.mix_modelname(model)
@@ -574,8 +434,8 @@ def load_galaxies(IDs, model, **kwargs):
         gals.append(gal)
 
     # galaxies - ify
-    SGals = galaxies(sgals)
-    Gals = galaxies(gals)
+    SGals = rsp.Galaxy.galaxies(sgals)
+    Gals = rsp.Galaxy.galaxies(gals)
     return Gals, SGals
 
 
@@ -725,10 +585,10 @@ def match_tests(IDs, model):
                                            s.model_name)
         rsp.fileIO.ensure_dir(match_dict['plots'] + '/')
 
-        match_bg = MatchUtils.make_match_bg_cmd(s.ast_mag1, s.ast_mag2,
-                                                outfile=match_dict['bg'])
+        match_bg = rsp.match_utils.make_match_bg_cmd(s.ast_mag1, s.ast_mag2,
+                                                     outfile=match_dict['bg'])
         print match_bg
-        #phot = MatchUtils.make_match_bg_cmd(g.mag1, g.mag2,
+        #phot = rsp.match_utils.make_match_bg_cmd(g.mag1, g.mag2,
         #                                    outfile=match_dict['phot'])
 
         match_kwargs = {'dmod': s.data.get_col('m - M0')[0],
@@ -739,13 +599,13 @@ def match_tests(IDs, model):
                         'mag': s.ast_mag2,
                         'pmfile': match_dict['pars']}
 
-        pm_file = MatchUtils.make_calcsfh_param_file(match_bg, **match_kwargs)
+        pm_file = rsp.match_utils.make_calcsfh_param_file(match_bg, **match_kwargs)
         # run match
 
-        match_out = MatchUtils.call_match(pm_file, match_dict['phot'],
-                                          s.file_ast, match_dict['output'],
-                                          match_dict['msgs'])
-        chi, fit = MatchUtils.get_fit(match_out)
+        match_out = rsp.match_utils.call_match(pm_file, match_dict['phot'],
+                                               s.file_ast, match_dict['output'],
+                                               match_dict['msgs'])
+        chi, fit = rsp.match_utils.get_fit(match_out)
         # make plot
         alabel = '$\mathrm{%s}' % s.model_name.replace('_', '\ ')
         metallicity = g.z
@@ -757,7 +617,7 @@ def match_tests(IDs, model):
         cmdgrid = match_out + '.cmd'
         labs = ['$%s$' % s.ID, alabel, '$\mathrm{Diff}$',
                 '$\chi^2=%g\ \mathrm{Sig}$' % chi]
-        grid = MatchUtils.pgcmd(cmdgrid, labels=labs)
+        grid = rsp.match_utils.pgcmd(cmdgrid, labels=labs)
         grid[2].set_ylabel(r'$%s$' % g.filter2, fontsize=20)
         grid[2].set_xlabel(r'$%s - %s$' % (g.filter1, g.filter2), fontsize=20)
         figname = os.path.join(match_dict['plots'], os.path.split(cmdgrid)[1])
@@ -806,7 +666,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     if options.s:
-        IDs = short_list()
+        IDs = short_list()[0]
         models = [args[0]]
 
     kwargs = {}

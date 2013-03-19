@@ -1,4 +1,5 @@
-import sys,os
+import sys
+import os
 #from PadovaTracksUtils import spread_angst
 from subprocess import *
 
@@ -18,6 +19,7 @@ def get_sfrFILE(ID,sfr_dir=None):
     IDs=[f.split("_")[2] for f in l if not f.startswith('.')]
     ind=IDs.index(ID)
     return os.path.join(sfr_dir,l[ind])
+
 
 def get_fakFILE(ID):
     fak_dir =os.path.join(data_src,'fakes')
