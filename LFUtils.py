@@ -5,7 +5,6 @@
 #
 import os
 import numpy as np
-import brewer2mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import NullFormatter
 from matplotlib.patheffects import withStroke
@@ -15,26 +14,14 @@ kwargs = dict(path_effects=[myeffect])
 rc('text', usetex=True)
 #from ResolvedStellarPops.math_utils import bayesian_blocks
 
-
-
-from scipy.stats import ks_2samp
-
-
-
 # Phil's functions:
-import GenUtils
-from TrilegalUtils import get_label_stage
 from TPAGBparams import *
-
-
 
 
 def read_mettable():
     tab = os.path.join(table_src, 'IR_NAGBs.dat')
     dtype = [('fitstable', '|S46'),
              ('IR_TRGB', '<f8'),
-
-
 
 
              ('N_AGB', '<f8'),
@@ -47,15 +34,11 @@ def read_mettable():
     return table
 
 
-
-
 def get_key_fromtable(ID, key):
     tab = read_mettable()
     names = list(tab['fitstable'])
     i, = [names.index(i) for i in names if ID in i]
     return tab[key][i]
-
-
 
 
 def get_trgb_ir_nAGB(Target):
@@ -64,237 +47,35 @@ def get_trgb_ir_nAGB(Target):
     return trgb_ir, nAGB
 
 
-
-
-def brighter(mag2, trgb, inds=None):
-    ''' number of stars brighter than trgb, make sure mag2 is
-        the same filter as trgb!'''
-    i, = np.nonzero(mag2 < trgb)
-    if inds is not None:
-        i = np.intersect1d(i, inds)
-    return i
-
-
-
-
 def get_chi2(obs, exp):
     return np.sum((obs - exp) ** 2 / exp)
 
 
-
-
-def between(arr, mdim, mbrt, inds=None):
-    i, = np.nonzero((arr < mdim) & (arr > mbrt))
-    if inds is not None:
-        i = np.intersect1d(i, inds)
-    return i
-
-
-
-
-def calc_LF(gal, sgal, maglims, res=0.1, normalize=True):
-    '''
-    usage:
-    gal: galaxy object
-    sgal: simgalaxy object
-    maglims: tuple (region in mag to normalize)
-    res: LF bin resolution [0.1]
-    normalize: bool [True] do the normalization
-
-
-
-    adds attributes to gal and sgal:
-        irgb: indices of "rgb" stars (and agb stars, relys on tagged data)
-        iagb: indices of "rgb" stars brighter than trgb
-        bins: LF bins
-        LF: Luminosity function
-
-
-
-    ------
-    adds attributes to gal:
-    rgb_norm: indices of rgb stars between maglims
-
-
-
-    ------
-    adds attributes to sgal:
-
-
-
-    norm:
-        (only if normalization)
-        indices of all stars in same cmd space as data's rgb_norm
-
-
-
-    rel_ind:
-        if normalize = True: indices of simulation cmd that are picked so they
-                             mimic the number of rgb stars between maglims
-        else: the entire array.
-
-
-
-    normalization:
-        (only if normalization)
-        scaling used to determine ind and scale LFs (added attributes to
-        objects)
-
-
-
-    LFn:
-        (only if normalization) LF scaled by normalization
-    rel_rgb:
-        indices of rgb stars randomly picked from normalization
-    rel_agb:
-        indices of agb stars randomly picked from normalization
-
-
-
-    returns:
-    p_value: ks test probability comparing simulated stars brighter than trgb
-             to data of the same
-
-
-
-    '''
-
-
-
-    # data
-    mag = gal.mag2
-    color = gal.color
-    dim, bright = maglims
-    # when hand picking cmd_regions, RGB includes AGB!
-    gal.irgb = gal.stage_inds('RGB')
-    gal.iagb = brighter(mag, gal.trgb, inds=gal.irgb)
-
-
-
-    # simulation
-    smag = sgal.ast_mag2
-    scolor = sgal.ast_color
-    sgal.irgb = sgal.stage_inds('RGB')
-
-
-
-    # LF resolution in dex
-    nbins = (mag.max() - mag.min()) / res
-
-
-
-    # the LFs
-    gal.LF, gal.bins = np.histogram(mag, nbins)
-    sgal.LF, sgal.bins = np.histogram(smag, bins=gal.bins)
-
-
-
-    if normalize is True:
-        # The RGB stars used for normalization
-        gal.rgb_norm = between(mag, dim, bright, inds=gal.irgb)
-
-
-
-        # The Simulated RGB stars
-        #!! Not used!!
-        #sgal.rgb_in_norm = between(smag, dim, bright, inds=sgal.irgb)
-
-
-
-        # all sim stars in cmd region of rgb data norm stars.
-        sgal.norm = GenUtils.inside(color[gal.rgb_norm], mag[gal.rgb_norm],
-                                    scolor, smag)
-
-
-
-        # here is the normalization!!
-        sgal.normalization = float(gal.rgb_norm.size)/float(sgal.norm.size)
-        if sgal.normalization > 0.75:
-            print sgal.normalization
-            print 'Too few model stars'
-
-
-
-        # normalize the simulated LF
-        sgal.LFn = sgal.LF*sgal.normalization
-
-
-
-        # for plotting random simulated stars to match number of obs.
-        rands = np.random.random(smag.size)
-        ind, = np.nonzero(rands < sgal.normalization)
-        sgal.rel_ind = ind
-    else:
-        ind = range(smag.size)
-
-
-
-    # simulated normalized RGB stars
-    sgal.rel_rgb = between(smag[ind], dim, gal.trgb)
-
-
-
-    # simulated normalized stars brighter than trgb.
-    sgal.rel_agb = brighter(smag[ind], gal.trgb - sgal.count_offset)
-
-
-
-    KS_D, p_value = ks_2samp(mag[gal.iagb], smag[sgal.rel_agb])
-
-
-
-    # want to add some lines for the flux and the mass loss rates.
-    return p_value
-
-
-
-
 def setup_lfplot(gal):
     # plot limits
-    left, width = 0.1, 0.312
-    bottom, height = 0.1, 0.8
-    left_m = left + width + 0.01  # for model
-    left_h = left + 2 * width + 0.02  # for hist (width is set hist_axis)
+    bottom = 0.1
+    height = 0.8
+    widths = [0.28, 0.28, 0.2]
+    lefts = [0.1, 0.41, 0.72]
 
+    fig = plt.figure(1, figsize=(9, 9))
 
-
-    # plot and fig sizes
-    fig = plt.figure(1, figsize=(8, 8))
-
-
-
-    data_axis = [left, bottom, width, height]
-    model_axis = [left_m, bottom, width, height]
-    hist_axis = [left_h, bottom, 0.2, height]
-
-
-
-    axData = plt.axes(data_axis)
-    axModel = plt.axes(model_axis)
-    axHist = plt.axes(hist_axis)
-
-
-
+    axs = [plt.axes([lefts[i], bottom, widths[i], height])
+           for i in range(3)]
+    lab_kw = {'fontsize': 20}
     # titles
-    axData.set_title(r'$\rm{data}$', color='black')
-    axModel.set_title(r'$\rm{model}$', color='red')
-    axData.set_xlabel(r'$\rm{%s-%s}$' % (gal.filter1, gal.filter2), size=20)
-    axData.set_ylabel(r'$\rm{%s}$' % gal.filter2, size=20)
-    axModel.set_xlabel(axData.get_xlabel(), size=20)
-    axHist.set_xlabel(r'$\#$', size=20)
+    axs[0].set_title(r'$Data$', color='black', **lab_kw)
+    axs[1].set_title(r'$Model$', color='red', **lab_kw)
+    axs[0].set_xlabel(r'$%s-%s$' % (gal.filter1, gal.filter2), **lab_kw)
+    axs[0].set_ylabel(r'$%s$' % gal.filter2, **lab_kw)
+    axs[1].set_xlabel(axs[0].get_xlabel(), **lab_kw)
+    axs[2].set_xlabel(r'$\#$', **lab_kw)
+    # no formatters on mid and right plots
+    [ax.yaxis.set_major_formatter(NullFormatter()) for ax in axs[1:]]
 
-
-
-    for ax in [axData, axModel, axHist]:
-        ax.set_xlim((-0.5, gal.color.max()))  # model and data x limits here
-        ax.set_ylim((25.5, 18.5))  # set all y limits here
-    axHist.set_xlim((1, 50000))
-
-
-
-    return fig, axData, axModel, axHist
-
-
+    for ax in axs:
+        ax.tick_params(labelsize=16)
+    return (fig, axs)
 
 
 def plot_lines(axs, xrange, yval):
@@ -302,111 +83,10 @@ def plot_lines(axs, xrange, yval):
     return
 
 
-
-
 def plot_numbs(ax, item, xpos, ypos, **kwargs):
-    ax.annotate(r'$%i$' % item, xy=(xpos, ypos), ha='left', size=20,
+    ax.annotate(r'$%i$' % item, xy=(xpos, ypos), ha='left',
                 **kwargs)
     return
-
-
-
-
-def diagnostic_cmd(sgal, trgb, figname=None, inds=None):
-    if inds is not None:
-        ustage = np.unique(sgal.stage[inds])
-    else:
-        ustage = np.unique(sgal.stage)
-    nplots = ustage.size+1.
-    cols = brewer2mpl.get_map('Paired', 'qualitative', len(ustage)).mpl_colors
-    subplots_kwargs = {'sharex': 1, 'sharey': 1, 'figsize': (12, 8)}
-    j = 0
-    for color, mag2 in zip((sgal.color, sgal.ast_color),
-                           (sgal.mag2, sgal.ast_mag2)):
-        if inds is not None:
-            stage = sgal.stage[inds]
-        fig, (axs) = setup_multiplot(nplots, **subplots_kwargs)
-
-
-
-        for ax in axs.ravel():
-            ax.set_xlim(-0.5, sgal.color.max())
-            ax.set_ylim(25.5, 18.5)
-
-
-
-        ax0, cols = colorplot_by_stage(axs.ravel()[0], color, mag2, '.', stage,
-                                       cols=cols)
-        i = 0
-        for ax, st in zip(axs.ravel()[1:], ustage):
-            plot_lines([ax], ax.get_xlim(), trgb)
-            label = get_label_stage(int(st))
-            ind = sgal.stage_inds(label)
-            if inds is not None:
-                ind = list(set(ind) & set(inds))
-            if len(ind) == 0:
-                continue
-            ax.plot(color[ind], mag2[ind], '.', color=cols[i], mew=0,
-                    label='N=%i' % len(ind))
-            kwargs['color'] = 'black'
-            text_offset = 0.02
-            xpos = ax.get_xlim()[0]+2*text_offset
-            plot_numbs(ax, brighter(mag2, trgb-sgal.count_offset, inds=ind).size, xpos,
-                       trgb-text_offset, **kwargs)
-            ax.set_title(label, **{'color': cols[i]})
-            i += 1
-            ax.legend(loc=1, numpoints=1, frameon=False)
-        if figname:
-            if j == 0:
-                extra = ''
-            else:
-                extra = '_spread'
-            plt.savefig(figname.replace('.png', '%s.png' % extra))
-            print 'wrote %s' % figname.replace('.png', '%s.png' % extra)
-            plt.close()
-        else:
-            plt.show()
-        j += 1
-    return figname.replace('.png', '%s.png' % extra)
-
-
-
-
-def setup_multiplot(nplots, **subplots_kwargs):
-    nx = np.round(np.sqrt(nplots))
-    nextra = nplots-nx**2
-    ny = nx
-    if nextra > 0:
-        ny += 1
-    nx = int(nx)
-    ny = int(ny)
-
-
-
-    fig, axs = plt.subplots(nx, ny, **subplots_kwargs)
-
-
-
-    return fig, axs
-
-
-
-
-def colorplot_by_stage(ax, x, y, marker, stages, cols=None):
-    # inds from calc_LFIR are based on only resolved stars.
-
-
-
-    if cols is None:
-        cols = discrete_colors(len(np.unique(stages)))
-    for i, s in enumerate(np.unique(stages)):
-        ind, = np.nonzero(stages == s)
-        if ind.size == 0:
-            continue
-        ax.plot(x[ind], y[ind], marker, color=cols[i], mew=0)
-    return ax, cols
-
-
 
 
 def make_title(gal, fig):
@@ -417,40 +97,28 @@ def make_title(gal, fig):
     else:
         title = r'$\rm{%s\ m}_{TRGB}=%.3f\ Z=...$' % (gal.target, gal.trgb)
 
-
-
     fig.text(0.5, 0.96, title, **text_kwargs)
     return
 
 
-
-
-def plot_LFIR(gal, sgal, p_value, maglims):
+def setup_plot_numbers():
     dim, bright = maglims
 
+    sgal.load_ic_mstar()
 
+    bright_limit = gal.trgb - sgal.count_offset
 
-    mstars = list(set(sgal.imstar) & set(sgal.rel_ind))
-    cstars = list(set(sgal.icstar) & set(sgal.rel_ind))
+    bright_mstars = rsp.math_utils.brighter(sgal.ast_mag2, bright_limit,
+                                            inds=sgal.imstars)
 
+    bright_cstars = rsp.math_utils.brighter(sgal.ast_mag2, bright_limit,
+                                            inds=sgal.imcstars)
 
-
-    #nbright_rgb = bright_rgb.size
-    bright_mstars = brighter(sgal.ast_mag2, gal.trgb-sgal.count_offset,
-                             inds=mstars)
-    bright_cstars = brighter(sgal.ast_mag2, gal.trgb-sgal.count_offset,
-                             inds=cstars)
-
-
-
+    sim_stars = sgal.ast_mag2[sgal.rec][sgal.rgb_norm_inds]
     nbright_rgb = sgal.rel_agb.size - len(bright_mstars) - len(bright_cstars)
-
-
 
     # model used for normalization
     norm_inds = list(set(sgal.norm) & set(sgal.rel_ind))
-
-
 
     if sgal.rel_agb.size - len(bright_mstars) - len(bright_cstars) - nbright_rgb != 0.:
         print ''
@@ -458,103 +126,94 @@ def plot_LFIR(gal, sgal, p_value, maglims):
         print ''
 
 
-
-    #nRGBs = len(sgal.ast_color[sgal.rel_agb]) - len(mstars) - len(cstars)
-
-
-
-    mhist, b = np.histogram(sgal.ast_mag2[mstars], bins=sgal.bins)
-    chist, b = np.histogram(sgal.ast_mag2[cstars], bins=sgal.bins)
+def annotate_line(ax, yval, str, offset=0.1, text_kw={}):
+    text_kw = dict({'fontsize': 20}.items() + text_kw.items())
+    ax.text(ax.get_xlim()[0]+offset, yval-offset, str, **text_kw)
 
 
+def plot_LFIR(gal, sgal, p_value, maglims, res=0.1):
+    model_color = 'red'
+    data_color = 'black'
+    nbins = (gal.mag2.max() - gal.mag2.min()) / res
+    gal_hist, bins = np.histogram(gal.mag2, nbins)
+    sgal_hist, _ = np.histogram(sgal.ast_mag2[sgal.rec], bins=bins)
+    sgal_hist *= sgal.rgb_norm
+    mhist, _ = np.histogram(sgal.ast_mag2[sgal.rec][sgal.imstar], nbins)
+    chist, _ = np.histogram(sgal.ast_mag2[sgal.rec][sgal.icstar], bins=bins)
 
-    fig, axData, axModel, axHist = setup_lfplot(gal)
-
-
+    (fig, [axs]) = setup_lfplot(gal)
 
     make_title(gal, fig)
-
-
-
+    plt_kw = {'threshold': 25, 'levels': 3, 'scatter_args': {'alpha': 1}}
     # plot data
-    axData.plot(gal.color, gal.mag2, '.', mew=0, color='grey', mec='grey')
-    # data used for normalization
-    axData.plot(gal.color[gal.rgb_norm], gal.mag2[gal.rgb_norm], '.', mew=0,
-                color='black')
+    gal.plot_cmd(gal.color, gal.mag2, ax=axs[0], color=data_color, **plt_kw)
+    # plot simulation
+    sgal.plot_cmd(sgal.ast_color[sgal.rec][sgal.rgb_norm_inds],
+                  sgal.ast_mag2[sgal.rec][sgal.rgb_norm_inds], ax=axs[1],
+                  color=model_color, **plt_kw)
+    # plot histogram
+    axs[2].semilogx(gal_hist, bins[1:], drawstyle='steps', color=data_color, lw=2)
+    axs[2].semilogx(sgal_hist, bins[1:], drawstyle='steps', color=model_color, lw=2)
 
+    # fix axes
+    axs[0].set_ylim(axs[0].get_ylim()[0], 20)
+    [ax.set_ylim(axs[0].get_ylim()) for ax in axs[1:]]
+    axs[1].set_xlim(axs[0].get_xlim())
 
+    # lines and numbers on plots
+    data_agb = rsp.math_utils.brighter(gal.mag2, gal.trgb).size
+    line_on_it_kw = {'annotate': 0, 'ls': '-'}
+    gal.put_a_line_on_it(axs[0], gal.trgb, color=data_color, **line_on_it_kw)
+    annotate_line(axs[0], gal.trgb, '%i' % data_agb, text_kw={'color': data_color})
 
-    # plot model
-    axModel.plot(sgal.ast_color[sgal.rel_ind], sgal.ast_mag2[sgal.rel_ind],
-                 '.', color='red', mew=0, label=r'Other$=%i$' % (nbright_rgb))
+    sim_agb = rsp.math_utils.brighter(sgal.ast_mag2[sgal.rec][sgal.rgb_norm_inds], gal.trgb).size
+    gal.put_a_line_on_it(axs[1], gal.trgb, color=model_color, **line_on_it_kw)
+    annotate_line(axs[1], gal.trgb, '%i' % sim_agb, text_kw={'color': model_color})
+    
+    '''
+    axm.plot(sgal.ast_color[mstars], sgal.ast_mag2[mstars], '.',
+             color='darkblue', mew=0, label=r'$M=%i$' % (len(bright_mstars)))
 
+    axm.plot(sgal.ast_color[cstars], sgal.ast_mag2[cstars], '.',
+             color='darkblue', mew=0, label=r'$C=%i$' % (len(bright_cstars)))
 
+    axm.legend(frameon=False, loc=2, numpoints=1)
 
-    axModel.plot(sgal.ast_color[norm_inds], sgal.ast_mag2[norm_inds], '.',
-                 color='black', mew=0)  # , label=r'$RGB=%i$'%(len(norm_inds)))
-
-
-
-    axModel.plot(sgal.ast_color[mstars], sgal.ast_mag2[mstars], '.',
-                 color='darkblue', mew=0, label=r'$M=%i$' % (len(bright_mstars)))
-    #             color='darkgreen', mew=0, label=r'$M=%i$'%(len(mstars)))
-
-
-
-    axModel.plot(sgal.ast_color[cstars], sgal.ast_mag2[cstars], '.',
-                 color='darkblue', mew=0, label=r'$C=%i$' % (len(bright_cstars)))
-    #             color='darkblue', mew=0, label=r'$C=%i$'%(len(cstars)))
-    axModel.legend(frameon=False, loc=2, numpoints=1)
-
-
-
-    #[plot_lines([axData, axModel], axData.get_xlim(), m) for m in (dim, bright)]
+    #[plot_lines([axd, axm], axd.get_xlim(), m) for m in (dim, bright)]
     # also?
-    plot_lines([axData, axModel], axData.get_xlim(), gal.trgb)
-    plot_lines([axData, axModel], axData.get_xlim(), gal.trgb-sgal.count_offset)
-
-
+    plot_lines([axd, axm], axd.get_xlim(), gal.trgb)
+    plot_lines([axd, axm], axd.get_xlim(), gal.trgb-sgal.count_offset)
 
     kwargs['color'] = 'black'
     text_offset = 0.02
-    xpos = axData.get_xlim()[0] + 2 * text_offset
+    xpos = axd.get_xlim()[0] + 2 * text_offset
     yposs = np.asarray(maglims) - text_offset
     ypos = gal.trgb-text_offset
-    plot_numbs(axData, gal.iagb.size-sgal.count_offset, xpos, ypos, **kwargs)
-    plot_numbs(axData, gal.rgb_norm.size, xpos, yposs[0], **kwargs)
-
-
+    plot_numbs(axd, gal.iagb.size-sgal.count_offset, xpos, ypos, **kwargs)
+    plot_numbs(axd, gal.rgb_norm.size, xpos, yposs[0], **kwargs)
 
     kwargs['color'] = 'red'
-    xpos = axModel.get_xlim()[0] + text_offset
-    plot_numbs(axModel, sgal.rel_agb.size, xpos, ypos, **kwargs)
-    plot_numbs(axModel, len(norm_inds), xpos, yposs[0], **kwargs)
-
-
+    xpos = axm.get_xlim()[0] + text_offset
+    plot_numbs(axm, sgal.rel_agb.size, xpos, ypos, **kwargs)
+    plot_numbs(axm, len(norm_inds), xpos, yposs[0], **kwargs)
 
     # plot hists
-    #hist, bins, patches = axHist.hist(mag2, nbins, histtype='step', orientation='horizontal', log=True, color='black')
-    #s_hist, s_bins, s_patches = axHist.hist(s_mag2, s_nbins, histtype='step', orientation='horizontal', log=True, color='red')
-    #axHist.semilogx(hist, bins[:-1], drawstyle='steps', color='black')
+    #hist, bins, patches = axh.hist(mag2, nbins, histtype='step', orientation='horizontal', log=True, color='black')
+    #s_hist, s_bins, s_patches = axh.hist(s_mag2, s_nbins, histtype='step', orientation='horizontal', log=True, color='red')
+    #axh.semilogx(hist, bins[:-1], drawstyle='steps', color='black')
     bins = b[:-1]
-    axHist.semilogx(mhist, bins, drawstyle='steps', color='darkgreen',
-                    alpha=0.4)
-    axHist.semilogx(chist, bins, drawstyle='steps', color='darkblue',
-                    alpha=0.4)
-    axHist.semilogx(gal.LF, bins, drawstyle='steps', color='black', lw=2)
-    axHist.semilogx(sgal.LFn, bins, drawstyle='steps', color='red', lw=2)
+    axh.semilogx(mhist, bins, drawstyle='steps', color='darkgreen',
+                 alpha=0.4)
+    axh.semilogx(chist, bins, drawstyle='steps', color='darkblue',
+                 alpha=0.4)
+
     kwargs['color'] = 'black'
-    axHist.annotate(r'$p=%.3f$' % p_value, xy=(.9, .95),
-                    xycoords='axes fraction',
-                    ha='right', size=20, **kwargs)
-
-
-
+    axh.annotate(r'$p=%.3f$' % p_value, xy=(.9, .95),
+                 xycoords='axes fraction',
+                 ha='right', **kwargs)
+    '''
     # no formatters on mid and right plots
-    nullfmt = NullFormatter()  # no labels
-    [ax.yaxis.set_major_formatter(nullfmt) for ax in (axHist, axModel)]
-
-
+    [ax.yaxis.set_major_formatter(NullFormatter()) for ax in (axh, axm)]
 
     filename = '_'.join((gal.target, sgal.model_name, gal.filter1, gal.filter2))
     #plt.savefig(os.path.join(plt_dir, filename+'_LF.ps'))
@@ -562,8 +221,6 @@ def plot_LFIR(gal, sgal, p_value, maglims):
     print 'Wrote ', filename+'_LF.png'
     plt.close()
     return filename+'_LF.png'
-
-
 
 if __name__ == '__main__':
     print 'use galaxy_test.py'

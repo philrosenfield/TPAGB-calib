@@ -68,12 +68,12 @@ def mk_sims(ID,
             #else:
             #    print "WRONG CAMERA NAME!"
             #    sys.exit(2)
-           
+
     table.close()
     if not ok:
         print "WRONG ID"
         sys.exit(2)
- 
+
     object_dist = 10**((5+float(dmod))/5)
 
     # define filenames
@@ -116,13 +116,13 @@ def mk_sims(ID,
     lines=ifile.read()
     pfile.write(lines)
 
-    pfile.write(fmt%('photosys    ',photosys    )) 
-    pfile.write(fmt%('mag_num     ',mag_num    )) 
-    pfile.write(fmt%('mag_lim     ',mag_lim    )) 
-    pfile.write(fmt%('object_mass ',object_mass)) 
-    pfile.write(fmt%('object_dist ',object_dist)) 
-    pfile.write(fmt%('object_av   ',object_av  )) 
-    pfile.write(fmt%('object_sfr  ',object_sfr )) 
+    pfile.write(fmt % ('photosys    ', photosys    )) 
+    pfile.write(fmt % ('mag_num     ', mag_num    )) 
+    pfile.write(fmt % ('mag_lim     ', mag_lim    )) 
+    pfile.write(fmt % ('object_mass ', object_mass)) 
+    pfile.write(fmt % ('object_dist ', object_dist)) 
+    pfile.write(fmt % ('object_av   ', object_av  )) 
+    pfile.write(fmt % ('object_sfr  ', object_sfr )) 
  
     pfile.close()
     ifile.close()
@@ -132,42 +132,44 @@ def mk_sims(ID,
     # EDIT - made it only one model at a time...
     model = models
     #
-    out_filename="output_%s_model_%s"%(ID,model)
-    out_dir="%s/output"%outdir
-    ast_filename="ast_%s"%out_filename
-    ast_dir="%s/ast"%outdir
+    out_filename = "output_%s_model_%s" % (ID, model)
+    out_dir = "%s/output" % outdir
+    ast_filename = "ast_%s" % out_filename
+    ast_dir = "%s/ast" % outdir
     if not os.path.isdir(out_dir):
         os.makedirs(out_dir)
     if not os.path.isdir(ast_dir):
         os.makedirs(ast_dir)
-    out_file    ="%s/%s"%(out_dir,out_filename)   # trilegal output file
-    ast_file    ="%s/%s"%(ast_dir,ast_filename)   # trilegal output file + completeness + errors
+    out_file = "%s/%s" % (out_dir, out_filename)   # trilegal output file
+    ast_file = "%s/%s" % (ast_dir, ast_filename)   # trilegal output file + completeness + errors
  
     #cmd="$HOME/SOFTWARE/WXTRILEGAL/run_trilegal.py "
-    cmd="/Users/phil/research/PyTRILEGAL/run_trilegal.py "
+    cmd = "/Users/phil/research/PyTRILEGAL/run_trilegal.py "
     #cmd="run_trilegal.py "
-    cmd+="-e code/main "
-    cmd+="-a "
-    cmd+="-l "
-    cmd+="-i %s "%os.path.abspath(inp_file)
-    cmd+="-o %s "%os.path.abspath(out_file)
-    if not model.startswith('cmd'): model = 'cmd_input_'+model
-    cmd+="-f ../cmd_inputfiles/%s "%model
-    cmd+=par_file
+    cmd += "-e code/main "
+    cmd += "-a "
+    cmd += "-l "
+    cmd += "-i %s " % os.path.abspath(inp_file)
+    cmd += "-o %s " % os.path.abspath(out_file)
+    if not model.startswith('cmd'):
+        model = 'cmd_input_'+model
+    cmd += "-f ../cmd_inputfiles/%s " % model
+    cmd += par_file
  
-    if not os.path.isfile(out_file) or over_write==True:
-        print 'running TRILEGAL:',model,ID
+    if not os.path.isfile(out_file) or over_write is True:
+        print 'running TRILEGAL:', model, ID
         print cmd
-        p = Popen(cmd,shell=True,stdout=PIPE,stderr=PIPE,close_fds=True)
-        stdout,stderr = (p.stdout,p.stderr)
+        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE,
+                  close_fds=True)
+        stdout, stderr = (p.stdout, p.stderr)
         p.wait()
-   
-        EOF = os.path.join(os.environ['PYTHONPATH'],'EOF')
-        cmd= '%s << %s\n'%(os.path.join(model_src,'spread_angst'),EOF)
-        cmd+=os.path.abspath(fak_file)+"\n"
-        cmd+=os.path.abspath(out_file)+"\n"
-        cmd+=os.path.abspath(ast_file)+"\n"
-        cmd+="%s\n"%EOF
+
+        EOF = os.path.join(os.environ['PYTHONPATH'], 'EOF')
+        cmd = '%s << %s\n' % (os.path.join(model_src, 'spread_angst'), EOF)
+        cmd += os.path.abspath(fak_file) + "\n"
+        cmd += os.path.abspath(out_file) + "\n"
+        cmd += os.path.abspath(ast_file) + "\n"
+        cmd += "%s\n" % EOF
         print "  ... completeness using %s"%fak_file
         print "  %s -> %s"%(out_file,ast_file)
         print 'Running spread_angst...'

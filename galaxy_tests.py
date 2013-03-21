@@ -5,7 +5,6 @@ import ResolvedStellarPops as rsp
 import fileIO
 import LFUtils
 import mk_sims
-from multiprocessing import Pool
 import itertools
 import os
 import sys
@@ -22,53 +21,14 @@ logger = logging.getLogger()
 tpcalib_dir = '/Users/phil/research/TP-AGBcalib/'
 snap_src = os.path.join(tpcalib_dir, 'SNAP')
 
-table_src = os.path.join(snap_src, 'tables')
 plt_dir = os.path.join(snap_src, 'plots')
 model_src = os.path.join(snap_src, 'models')
 data_src = os.path.join(snap_src, 'data')
-output_src = os.path.join(model_src, 'ast')
 fits_src = os.path.join(data_src, 'galaxies')
 fake_dir = os.path.join(data_src, 'fakes')
 sfr_dir = os.path.join(data_src, 'sfh')
+
 angst_data = rsp.angst_tables.AngstTables()
-
-
-def edit_sfh(ID, new_sfr_dir, orig_sfr_dir=None, **changes):
-    '''
-    add or subtract a value from each bin in sfr file.
-
-    possible changes:
-    age
-    sfr
-    z
-    feh (dex)
-    zdisp - - not yet.
-
-    example:
-    IDs = all_IDs()
-    new_sfr_dir = os.path.join(data_src, 'sfh - 0.3dex')
-    new_sfrs = [edit_sfh(ID, new_sfr_dir, **{'FeH': - 0.3}) for ID in IDs]
-    '''
-    z_sun = 0.01524
-    sfr_file = mk_sims.get_sfrFILE(ID, sfr_dir=orig_sfr_dir)
-    orig_sfr = np.genfromtxt(sfr_file, names=['age', 'sfr', 'z'])
-    new_sfr = orig_sfr.copy()
-    for key in changes.keys():
-        if key in new_sfr.dtype.names:
-            new_sfr[key] += changes[key]
-        elif key.lower() == 'feh':
-            z = new_sfr['z']
-            feh = np.log10(z / z_sun)
-            new_feh = feh + changes[key]
-            new_sfr['z'] = z_sun * 10 ** new_feh
-        else:
-            print '%s not found in %s' % (key, sfr_file)
-            return -1
-
-    rsp.fileIO.ensure_dir(new_sfr_dir)
-    new_sfr_file = os.path.join(new_sfr_dir, os.path.split(sfr_file)[1])
-    np.savetxt(new_sfr_file, new_sfr, fmt='%2.6f')
-    return new_sfr_file
 
 
 def tag_cmds(IDs):
@@ -89,29 +49,16 @@ def tag_cmds(IDs):
     return
 
 
-def run_all(IDs, models):
-    pool = Pool()
-
-    res = []
-    for ID, model in itertools.product(IDs, models):
-        res.append(pool.apply_async(main, (ID, model),))
-
-    for r in res:
-        r.get()
-
-    return
-
-
 def get_trgb_fitsname(ID, band):
+    band = band.lower()
+    filenames = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID)
+    fits = ir_or_opt_file(filenames, band=band)
+
     if band == 'opt':
-        fits = rsp.fileIO.get_files(fits_src,
-                                    '*' + '*'.join((ID, 'trim', '.fits')))[0]
         filters = ','.join(os.path.split(fits)[1].split('.')[0].split('_')[-2:])
         trgb = angst_data.get_tab5_trgb_av_dmod(ID, filters)[0]
+
     elif band == 'ir':
-        # read data
-        fits, = rsp.fileIO.get_files(fits_src,
-                                     '*' + '*'.join((ID, 'IR', '.fits')))
         trgb = LFUtils.get_trgb_ir_nAGB(ID)[0]
     else:
         print 'photsys not found... check get_trgb_fitsname'
@@ -124,11 +71,12 @@ def load_galaxy(ID, band):
     '''
     (trgb, fitsname) = get_trgb_fitsname(ID, band)
 
-    kwargs = {'hla': False, 'trgb': trgb, 'photsys': 'wfc3snap', 'angst': True}
+    kwargs = {'hla': False, 'trgb': trgb, 'photsys': 'wfc3snap',
+              'angst': True, 'band': band}
     kwargs['z'] = LFUtils.get_key_fromtable(ID, 'Z')
 
     taggedname = rsp.fileIO.replace_ext(fitsname, '.dat')
-    try:    
+    try:
         gal = rsp.Galaxies.galaxy(taggedname, **kwargs)
     except:
         print 'no tagged data for %s' % fitsname
@@ -143,20 +91,30 @@ def get_mix_modelname(model):
     return mix, model_name
 
 
-def get_fake_file(ID, band='ir'):
+def ir_or_opt_file(filenames, band='ir'):
+    '''
+    if filenames is a list len 1: does nothing.
+    if band is ir returns the file with IR in the filename,
+    else returns the other file, or the first file without IR in it.
+    '''
+    if len(filenames) < 1:
+        filename = filenames
+    else:
+        file_ir = [a for a in filenames if 'IR' in a][0]
+        file_opt = [a for a in filenames if not 'IR' in a][0]
+        if band == 'ir':
+            filename = file_ir
+        else:
+            filename = file_opt
+    return filename
 
+
+def get_fake_file(ID, band='ir'):
     fake_files = rsp.fileIO.get_files(fake_dir, '*%s*' %
                                       ID.replace('C-0', 'C-').replace('C-', 'C'))
-    if len(fake_files) > 1:
-        fake_file_ir = [a for a in fake_files if 'IR' in a][0]
-        fake_file_opt = [a for a in fake_files if not 'IR' in a][0]
-        if band == 'ir':
-            fake_file = fake_file_ir
-        else:
-            fake_file = fake_file_opt
-    else:
-        fake_file = fake_files[0]
+    fake_file = ir_or_opt_file(fake_files, band=band)
     return fake_file
+
 
 def get_sfr_file(ID):
     return rsp.fileIO.get_files(sfr_dir, '*%s*' % ID)[0]
@@ -179,11 +137,6 @@ def compare_metallicities():
 
     for id, zdict in sorted(zs.items(), key=lambda(k, v): (v['avez'], k)):
         print '%s %.4f %.4f' % (id, zdict['avez'], zdict['zmeas'])
-
-
-def get_stage_inds(fits, stage_name):
-    inds, = np.nonzero(fits['stage'] == rsp.TrilegalUtils.get_stage_label(stage_name))
-    return inds
 
 
 def setup_trilegal(gal, model, object_mass=5e9):
@@ -222,8 +175,9 @@ def setup_trilegal(gal, model, object_mass=5e9):
     for line in lines:
         line = line.strip().split()
         if line[0] == gal.target:
+            # not exactly the 50% completeness mag...
             mag_lim_filt = line[4]
-            mag_lim = float(line[5])
+            mag_lim = float(line[5]) + 1.
 
     object_dist = 10 ** ((5 + gal.dmod) / 5)
     sfr_file = get_sfr_file(gal.target)
@@ -286,7 +240,9 @@ def setup_data_normalization(gal, maglims):
 def make_normalized_simulation(ID, model, photsys='wfc3snap', over_write=False,
                                object_mass=5e6, maglims='trgb', band='ir',
                                offsets=(1.5, 0.5), count_offset=0.,
-                               mass_inc_fact=5, run_trilegal=True):
+                               mass_inc_fact=5, run_trilegal=True,
+                               norm_threshold=0.75, leo_method=False,
+                               spread_outfile=None):
     '''
     Will continue to run trilegal until galaxy is high enough mass to have
     proper normalization.
@@ -343,6 +299,7 @@ def make_normalized_simulation(ID, model, photsys='wfc3snap', over_write=False,
     # set maglim if not already set.
     if maglims == 'trgb':
         maglims = (gal.trgb + offsets[0], gal.trgb + offsets[1])
+    print maglims
 
     verts, ndata_stars = setup_data_normalization(gal, maglims)
 
@@ -350,7 +307,7 @@ def make_normalized_simulation(ID, model, photsys='wfc3snap', over_write=False,
     go = 0
     normalization = 1e9
 
-    while normalization > .75:
+    while normalization > norm_threshold:
         if go > 0:
             # if we've been through this already, increase mass and try again.
             object_mass *= mass_inc_fact
@@ -370,7 +327,20 @@ def make_normalized_simulation(ID, model, photsys='wfc3snap', over_write=False,
         sgal = rsp.Galaxies.simgalaxy(trilegal_output, gal.filter1, gal.filter2,
                                       count_offset=count_offset)
         # "correct" for asts
-        rsp.Galaxies.ast_correct_trilegal_sim(sgal, fake_file=fake_file)
+        if leo_method is True:
+            # Leo's method will write to a file...
+            if spread_outfile is None:
+                spread_outfile = os.path.join(sgal.base, 'ast_%s' % sgal.name)
+
+        rsp.Galaxies.ast_correct_trilegal_sim(sgal, fake_file=fake_file,
+                                              leo_method=leo_method,
+                                              spread_outfile=spread_outfile)
+        if leo_method is True:
+            # now load the ast file we just wrote
+            # TODO: open up spread_angst and send the array back!
+            sgal = rsp.Galaxies.simgalaxy(spread_outfile, gal.filter1, gal.filter2,
+                                          count_offset=count_offset)
+
         ast_check = sgal.load_ast_corrections()
         assert ast_check == 1, 'problem with ast corrections'
 
@@ -393,7 +363,7 @@ def LFTest(ID, model, object_mass=5e6):
 
     # read in object mass??
     sgal, gal = make_normalized_simulation(ID, model, object_mass=object_mass)
-
+    import scipy
     KS_D, p_value = scipy.stats.ks_2samp(np.sort(gal.mag2), np.sort(sgal.mag2[sgal.rgb_norm_inds]))
     #gal.iagb = rsp.math_utils.brighter(gal.mag2, gal.trgb, inds=gal.irgb)
     # calcuate the LFs
