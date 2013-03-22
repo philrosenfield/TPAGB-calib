@@ -123,10 +123,10 @@ def mk_sims(ID,
     pfile.write(fmt % ('object_dist ', object_dist)) 
     pfile.write(fmt % ('object_av   ', object_av  )) 
     pfile.write(fmt % ('object_sfr  ', object_sfr )) 
- 
+
     pfile.close()
     ifile.close()
- 
+
     # run trilegal
     #for model in models:
     # EDIT - made it only one model at a time...
@@ -142,7 +142,7 @@ def mk_sims(ID,
         os.makedirs(ast_dir)
     out_file = "%s/%s" % (out_dir, out_filename)   # trilegal output file
     ast_file = "%s/%s" % (ast_dir, ast_filename)   # trilegal output file + completeness + errors
- 
+
     #cmd="$HOME/SOFTWARE/WXTRILEGAL/run_trilegal.py "
     cmd = "/Users/phil/research/PyTRILEGAL/run_trilegal.py "
     #cmd="run_trilegal.py "
@@ -155,7 +155,7 @@ def mk_sims(ID,
         model = 'cmd_input_'+model
     cmd += "-f ../cmd_inputfiles/%s " % model
     cmd += par_file
- 
+
     if not os.path.isfile(out_file) or over_write is True:
         print 'running TRILEGAL:', model, ID
         print cmd
@@ -170,16 +170,17 @@ def mk_sims(ID,
         cmd += os.path.abspath(out_file) + "\n"
         cmd += os.path.abspath(ast_file) + "\n"
         cmd += "%s\n" % EOF
-        print "  ... completeness using %s"%fak_file
-        print "  %s -> %s"%(out_file,ast_file)
+        print "  ... completeness using %s" % fak_file
+        print "  %s -> %s" % (out_file, ast_file)
         print 'Running spread_angst...'
         #p = subprocess.Popen(cmd, shell=True,stdout=subprocess.PIPE)
         #sts = os.waitpid(p.pid, 0)[1]
-        p = Popen(cmd,shell=True,stdout=PIPE,stderr=PIPE,close_fds=True)
-        stdout,stderr = (p.stdout,p.stderr)
+        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE,
+                  close_fds=True)
+        stdout,stderr = (p.stdout, p.stderr)
         p.wait()
- 
-        os.system("wc -l %s %s|head -2"%(out_file,ast_file))
- 
+
+        os.system("wc -l %s %s|head -2" % (out_file, ast_file))
+
     return os.path.abspath(ast_file)
     

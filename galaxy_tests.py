@@ -7,7 +7,6 @@ import LFUtils
 import mk_sims
 import itertools
 import os
-import sys
 import numpy as np
 #import pdb; pdb.set_trace()
 import matplotlib.pyplot as plt
@@ -18,15 +17,11 @@ logger = logging.getLogger()
 
 
 # default locations.
-tpcalib_dir = '/Users/phil/research/TP-AGBcalib/'
-snap_src = os.path.join(tpcalib_dir, 'SNAP')
+snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
 
 plt_dir = os.path.join(snap_src, 'plots')
 model_src = os.path.join(snap_src, 'models')
-data_src = os.path.join(snap_src, 'data')
-fits_src = os.path.join(data_src, 'galaxies')
-fake_dir = os.path.join(data_src, 'fakes')
-sfr_dir = os.path.join(data_src, 'sfh')
+fits_src = os.path.join(snap_src, 'data', 'galaxies')
 
 angst_data = rsp.angst_tables.AngstTables()
 
@@ -49,33 +44,18 @@ def tag_cmds(IDs):
     return
 
 
-def get_trgb_fitsname(ID, band):
-    band = band.lower()
-    filenames = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID)
-    fits = ir_or_opt_file(filenames, band=band)
-
-    if band == 'opt':
-        filters = ','.join(os.path.split(fits)[1].split('.')[0].split('_')[-2:])
-        trgb = angst_data.get_tab5_trgb_av_dmod(ID, filters)[0]
-
-    elif band == 'ir':
-        trgb = LFUtils.get_trgb_ir_nAGB(ID)[0]
-    else:
-        print 'photsys not found... check get_trgb_fitsname'
-        sys.exit()
-    return trgb, fits
-
-
 def load_galaxy(ID, band):
     '''
     '''
-    (trgb, fitsname) = get_trgb_fitsname(ID, band)
+    band = band.lower()
+    filenames = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID)
+    fitsname = ir_or_opt_file(filenames, band=band)
 
-    kwargs = {'hla': False, 'trgb': trgb, 'photsys': 'wfc3snap',
-              'angst': True, 'band': band}
+    kwargs = {'hla': False, 'photsys': 'wfc3snap', 'angst': True, 'band': band}
     kwargs['z'] = LFUtils.get_key_fromtable(ID, 'Z')
 
     taggedname = rsp.fileIO.replace_ext(fitsname, '.dat')
+
     try:
         gal = rsp.Galaxies.galaxy(taggedname, **kwargs)
     except:
@@ -97,8 +77,8 @@ def ir_or_opt_file(filenames, band='ir'):
     if band is ir returns the file with IR in the filename,
     else returns the other file, or the first file without IR in it.
     '''
-    if len(filenames) < 1:
-        filename = filenames
+    if len(filenames) <= 1:
+        filename, = filenames
     else:
         file_ir = [a for a in filenames if 'IR' in a][0]
         file_opt = [a for a in filenames if not 'IR' in a][0]
@@ -110,6 +90,7 @@ def ir_or_opt_file(filenames, band='ir'):
 
 
 def get_fake_file(ID, band='ir'):
+    fake_dir = os.path.join(snap_src, 'data', 'fakes')
     fake_files = rsp.fileIO.get_files(fake_dir, '*%s*' %
                                       ID.replace('C-0', 'C-').replace('C-', 'C'))
     fake_file = ir_or_opt_file(fake_files, band=band)
@@ -117,6 +98,7 @@ def get_fake_file(ID, band='ir'):
 
 
 def get_sfr_file(ID):
+    sfr_dir = os.path.join(snap_src, 'data', 'sfh')
     return rsp.fileIO.get_files(sfr_dir, '*%s*' % ID)[0]
 
 
@@ -371,31 +353,48 @@ def LFTest(ID, model, object_mass=5e6):
     #print p_value
 
 
+def gi10_overlap():
+    return ["DDO78", "DDO71", "SCL-DE1"]
+
+
 def all_IDs():
-    IDs = ["SCL-DE1",
-           "NGC2403-HALO-6",
-           "NGC7793-HALO-6",
-           "UGC-04459",
-           "UGC-4305-1",
-           "UGC-4305-2",
-           "UGC-5139",
-           "DDO78",
-           "DDO82",
-           "KDG73",
-           "KKH37",
-           "NGC0300-WIDE1",
-           "NGC404",
-           "NGC2403-DEEP",
-           "NGC2976-DEEP",
-           "NGC3741",
-           "NGC4163",
-           "UGC8508",
-           "UGCA292",
-           "NGC3077-PHOENIX",
-           "IC2574-SGS",
-           "HS117",
-           "DDO71"]
-    return IDs
+    return ["SCL-DE1",
+            "NGC2403-HALO-6",
+            "NGC7793-HALO-6",
+            "UGC-04459",
+            "UGC-4305-1",
+            "UGC-4305-2",
+            "UGC-5139",
+            "DDO78",
+            "DDO82",
+            "KDG73",
+            "KKH37",
+            "NGC0300-WIDE1",
+            "NGC404",
+            "NGC2403-DEEP",
+            "NGC2976-DEEP",
+            "NGC3741",
+            "NGC4163",
+            "UGC8508",
+            "UGCA292",
+            "NGC3077-PHOENIX",
+            "IC2574-SGS",
+            "HS117",
+            "DDO71"]
+
+
+def repeat_girardi10():
+    targets = gi10_overlap()
+    model = 'cmd_input_gi10_rev.dat'
+    norm_sim_kw = {'offsets': (1., 0.), 'band': 'opt', 'leo_method': True}
+
+    for target in targets:
+        if target == 'DDO78':
+            norm_sim_kw['object_mass'] = 5e8
+        else:
+            norm_sim_kw['object_mass'] = 1e8
+
+        sgal, gal = make_normalized_simulation(target, model, **norm_sim_kw)
 
 
 def main(IDs, models, band='ir', mk_sims_args={}, make_plots=False, publish_plots=False,
