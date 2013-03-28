@@ -1,13 +1,8 @@
-from optparse import OptionParser
-import operator
-import brewer2mpl
 import ResolvedStellarPops as rsp
-import fileIO
 import LFUtils
 import mk_sims
 import os
 import numpy as np
-#import pdb; pdb.set_trace()
 import matplotlib.pyplot as plt
 import matplotlib.nxutils as nxutils
 import logging
@@ -21,6 +16,104 @@ plt_dir = os.path.join(snap_src, 'plots')
 model_src = os.path.join(snap_src, 'models')
 
 angst_data = rsp.angst_tables.AngstTables()
+
+
+def agb_rheb_separation():
+    '''
+    right now this is done by hand. :)
+    '''
+    targets = all_targets()
+    #targets.pop(targets.index('NGC404'))
+    gals = [load_galaxy(t, band='ir') for t in targets]
+    # Color = np.concatenate([g.Color for g in gals])
+    # Mag1 = np.concatenate([g.Mag1 for g in gals])
+    # Mag2 = np.concatenate([g.Mag2 for g in gals])
+    Trgbs = np.array([g.Trgb for g in gals])
+    mean_trgb = np.mean(Trgbs)
+    # offset = Trgbs-np.mean(Trgbs)
+    # Mag2o = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(gals)])
+    # fig, ax = gals[0].plot_cmd(Color, Mag2o, threshold=100, levels=5)
+    # fig.colorbar(gals[0].cs)
+    # here's the place where there will be a double gaussian fitting.
+    verts = np.array([[0.7, mean_trgb],
+                      [0.77, -6.6],
+                      [0.83, -7.4],
+                      [0.83, -10],
+                      [5, -10],
+                      [5, mean_trgb],
+                      [0.7, mean_trgb]])
+    # so it's going to be this gal[i] agb's are within: verts[:,1] + offset[i]
+    # [g.name, offset[i] for i, g in enumerate(gals)]
+    return verts
+
+
+def load_agb_verts(gal):
+    '''
+    there is a file that contains the contents of this dictionary, it's vert_file
+    I just didn't feel like writing a reader for it so I pasted it. What?
+    don't look at me like that I have a lot to do.
+    vert_file = '/Users/phil/research/TP-AGBcalib/code/TPAGB-calib/agb_rheb_sep.dat'
+    '''
+    offset_dict = {'SCL-DE1': 0.186,
+                   'NGC2403-HALO-6': -0.155,
+                   'NGC7793-HALO-6': -0.307,
+                   'UGC-04459': 0.063,
+                   'UGC-4305-1': 0.002,
+                   'UGC-4305-2': 0.012,
+                   'UGC-5139': 0.105,
+                   'DDO78': -0.054,
+                   'DDO82': -0.103,
+                   'KDG73': 0.157,
+                   'KKH37': 0.085,
+                   'NGC0300-WIDE1': -0.212,
+                   'NGC2403-DEEP': -0.089,
+                   'NGC2976-DEEP': -0.220,
+                   'NGC3741': 0.143,
+                   'NGC4163': 0.003,
+                   'UGC8508': 0.077,
+                   'UGCA292': 0.394,
+                   'NGC3077-PHOENIX': -0.297,
+                   'IC2574-SGS': 0.044,
+                   'HS117': 0.092,
+                   'DDO71': 0.075}
+    Verts = agb_rheb_separation()
+    verts = Verts.copy()
+    verts[:, 1] += offset_dict[gal.target]
+
+    vColor = verts[:, 0]
+    vMag2 = verts[:, 1]
+    vMag1 = vColor + vMag2
+    vmag1 = rsp.astronomy_utils.Mag2mag(vMag1, 'F160W', 'wfc3ir', Av=gal.Av, dmod=gal.dmod)
+    vmag2 = rsp.astronomy_utils.Mag2mag(vMag2, 'F110W', 'wfc3ir', Av=gal.Av, dmod=gal.dmod)
+    verts = np.column_stack((vmag1 - vmag2, vmag2))
+    return verts
+
+
+def load_sim_masses(ID):
+    mass_dict = {'SCL-DE1': 1e+08,
+                 'NGC2403-HALO-6': 1e+08,
+                 'NGC7793-HALO-6': 1e+08,
+                 'UGC-04459': 1e+08,
+                 'UGC-4305-1': 5e+08,
+                 'UGC-4305-2': 5e+08,
+                 'UGC-5139': 1e+08,
+                 'DDO78': 5e+08,
+                 'DDO82': 2.5e+09,
+                 'KDG73': 2e+07,
+                 'KKH37': 1e+08,
+                 'NGC0300-WIDE1': 1e+08,
+                 'NGC404': 5e+08,
+                 'NGC2403-DEEP': 1e+08,
+                 'NGC2976-DEEP': 5e+08,
+                 'NGC3741': 1e+08,
+                 'NGC4163': 5e+08,
+                 'UGC8508': 1e+08,
+                 'UGCA292': 2e+07,
+                 'NGC3077-PHOENIX': 1e+08,
+                 'IC2574-SGS': 2.5e+09,
+                 'HS117': 2e+07,
+                 'DDO71': 1e+08}
+    return mass_dict[ID]
 
 
 def tag_cmds(IDs):
@@ -49,6 +142,7 @@ def load_galaxy(ID, band='ir'):
     if band is None:
         fits_src = os.path.join(snap_src, 'data', 'opt_ir_matched_v2')
     fitsname = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID)
+
     if len(fitsname) > 1:
         filetype = 'fitstable'
     else:
@@ -74,7 +168,10 @@ def ir_or_opt_file(filenames, band='ir'):
         filename, = filenames
     else:
         file_ir = [a for a in filenames if 'IR' in a][0]
-        file_opt = [a for a in filenames if not 'IR' in a][0]
+        try:
+            file_opt = [a for a in filenames if not 'IR' in a][0]
+        except IndexError:
+            print 'looks like no optical fits table'
         if band == 'ir':
             filename = file_ir
         else:
@@ -93,7 +190,11 @@ def get_fake_files(ID, band=None):
     fake_files = rsp.fileIO.get_files(fake_dir, '*%s*' %
                                       ID.replace('C-0', 'C-').replace('C-', 'C'))
     file_ir = [a for a in fake_files if 'IR' in a][0]
-    file_opt = [a for a in fake_files if not 'IR' in a][0]
+    try:
+        file_opt = [a for a in fake_files if not 'IR' in a][0]
+    except IndexError:
+        print 'looks like no optical fake file for %s.' % ID
+        file_opt = None
     if band is None:
         fake_file = [file_opt, file_ir]
     elif band == 'opt':
@@ -118,7 +219,7 @@ def match_metallicities(IDs):
 
 
 def compare_metallicities():
-    IDs = all_IDs()
+    IDs = all_targets()
     zs = match_metallicities(IDs)
     for ID in IDs:
         zs[ID]['zmeas'] = LFUtils.get_key_fromtable(ID, 'Z')
@@ -234,16 +335,18 @@ def setup_data_normalization(gal, filt1, filt2, band='ir', leo_method=False):
     inds, = np.nonzero(nxutils.points_inside_poly(points, verts))
     gal.rgb_norm_inds = list(set(rgb_norm) & set(inds))
     ndata_stars = len(gal.rgb_norm_inds)
-
+    gal.norm_verts = verts
     return verts, ndata_stars
 
 
-def make_normalized_simulation(ID, model, filt1, filt2, photsys='wfc3snap',
+def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
                                over_write=False, object_mass=5e6,
                                maglims='trgb', band='ir', offsets=(1.5, 0.5),
                                count_offset=0., mass_inc_fact=5,
                                run_trilegal=True, norm_threshold=0.75,
-                               leo_method=False, spread_outfile=None):
+                               leo_method=False, spread_outfile=None,
+                               leo_norm=False, leo_ast=False,
+                               spread_outfile2=None):
     '''
     Will continue to run trilegal until galaxy is high enough mass to have
     proper normalization.
@@ -291,8 +394,12 @@ def make_normalized_simulation(ID, model, filt1, filt2, photsys='wfc3snap',
             sgal.target
             sgal.model
     '''
-    gal = load_galaxy(ID, band=band)
     trgb = gal.trgb
+
+    if leo_method is True:
+        leo_norm = True
+        leo_ast = True
+
     if filt1 == 'default':
         filt1 = gal.filter1
         filt2 = gal.filter2
@@ -303,14 +410,14 @@ def make_normalized_simulation(ID, model, filt1, filt2, photsys='wfc3snap',
                                                               object_mass=object_mass)
 
     cmd_input = os.path.join('/Users/phil/research/padova_apps/cmd_inputfiles/', model)
-    fake_files = get_fake_files(ID, band=band)
+    fake_files = get_fake_files(gal.target, band=band)
 
     # set maglim if not already set.
     if maglims == 'trgb':
         gal.maglims = (trgb + offsets[0], trgb + offsets[1])
 
     verts, ndata_stars = setup_data_normalization(gal, filt1, filt2,
-                                                  leo_method=leo_method)
+                                                  leo_method=leo_norm)
 
     # initializations
     go = 0
@@ -326,7 +433,7 @@ def make_normalized_simulation(ID, model, filt1, filt2, photsys='wfc3snap',
 
         # run trilegal
         logger.debug('Trying %s %s, Mass=%g, Attempt %i' %
-                     (ID, model, object_mass, go))
+                     (gal.target, model, object_mass, go))
 
         if run_trilegal is True:
             rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input,
@@ -336,27 +443,27 @@ def make_normalized_simulation(ID, model, filt1, filt2, photsys='wfc3snap',
         sgal = rsp.Galaxies.simgalaxy(trilegal_output, gal.filter1, gal.filter2,
                                       count_offset=count_offset)
         # "correct" for asts
-        if leo_method is True:
+        if leo_ast is True:
             # Leo's method will write to a file.
             # There must be filters in the file name for spread_angst_ir to
             # work properly.
             if spread_outfile is None:
                 spread_outfile = os.path.join(sgal.base, 'ast_%s_%s_%s' %
                                               (gal.filter1, gal.filter2, sgal.name))
-            spread_outfile2 = None
+
             if hasattr('gal', 'filter3'):
                 spread_outfile2 = spread_outfile.replace(sgal.name, '%s_%s_%s' %
                                                         (gal.filter3, gal.filter4,
                                                          sgal.name))
 
         rsp.Galaxies.ast_correct_trilegal_sim(sgal, fake_file=fake_files,
-                                              leo_method=leo_method,
+                                              leo_method=leo_ast,
                                               spread_outfile=spread_outfile,
                                               spread_outfile2=spread_outfile2)
         if spread_outfile2 is not None:
             spread_outfile = spread_outfile2
 
-        if leo_method is True:
+        if leo_ast is True:
             # now load the ast file we just wrote
             # TODO: open up spread_angst and send the array back!
             sgal = rsp.Galaxies.simgalaxy(spread_outfile, gal.filter1, gal.filter2,
@@ -373,42 +480,41 @@ def make_normalized_simulation(ID, model, filt1, filt2, photsys='wfc3snap',
         print 'normalization', normalization
 
     sgal.norm_inds = sgal.rgb_norm_inds
-    sgal.target = ID
+    sgal.target = gal.target
     sgal.model = model
     sgal.mix_modelname(model)
     sgal.object_mass = object_mass
     sgal.norm_verts = verts
-    return sgal, gal
+    return sgal
 
 
 def gi10_overlap():
-    return ["DDO78", "DDO71", "SCL-DE1"]
+    return ['DDO78', 'DDO71', 'SCL-DE1']
 
 
-def all_IDs():
-    return ["SCL-DE1",
-            "NGC2403-HALO-6",
-            "NGC7793-HALO-6",
-            "UGC-04459",
-            "UGC-4305-1",
-            "UGC-4305-2",
-            "UGC-5139",
-            "DDO78",
-            "DDO82",
-            "KDG73",
-            "KKH37",
-            "NGC0300-WIDE1",
-            "NGC404",
-            "NGC2403-DEEP",
-            "NGC2976-DEEP",
-            "NGC3741",
-            "NGC4163",
-            "UGC8508",
-            "UGCA292",
-            "NGC3077-PHOENIX",
-            "IC2574-SGS",
-            "HS117",
-            "DDO71"]
+def all_targets():
+    return ['SCL-DE1',
+            'DDO78',
+            'DDO71',
+            'NGC7793-HALO-6',
+            'NGC0300-WIDE1',
+            'NGC3077-PHOENIX',
+            'NGC2403-DEEP',
+            'NGC2403-HALO-6',
+            'UGC-5139',
+            'DDO82',
+            'IC2574-SGS',
+            'UGC-4305-1',
+            'UGC-4305-2',
+            'NGC4163',
+            'UGC8508',
+            'UGC-04459',
+            'NGC3741',
+            'UGCA292',
+            'HS117',
+            'KDG73',
+            'KKH37',
+            'NGC2976-DEEP']
 
 
 def repeat_girardi10(maglims='trgb'):
@@ -422,8 +528,7 @@ def repeat_girardi10(maglims='trgb'):
               'cmd_input_gi10_rev_old_tracks.dat']
 
     offsets = (2., 0.)
-    norm_sim_kw = {'offsets': offsets, 'band': band, 'leo_method': True,
-                   'object_mass': 1e8}
+    norm_sim_kw = {'offsets': offsets, 'band': band, 'leo_method': True}
 
     plot_LF_kw = {'ylim': (28, 20), 'xlim2': (0.8, 4e4)}
 
@@ -438,17 +543,18 @@ def repeat_girardi10(maglims='trgb'):
         plot_LF_kw['model_title'] = model_title
 
         for target in targets:
-            if target == 'DDO78':
-                norm_sim_kw['object_mass'] = 5e8
+            norm_sim_kw['object_mass'] = load_sim_masses(target)
 
-            sgal, gal = make_normalized_simulation(target, model, filt1, filt2,
-                                                   **norm_sim_kw)
+            gal = load_galaxy(target, band=band)
+            sgal = make_normalized_simulation(gal, model, filt1, filt2,
+                                              **norm_sim_kw)
             if gal.filter1 == 'F475W':
                 plot_LF_kw['xlim'] = (-0.75, 4)
             else:
                 plot_LF_kw['xlim'] = (-0.75, 3)
 
             smg = rsp.Galaxies.sim_and_gal(gal, sgal)
+
             smg.nrgb_nagb(band=band)
             smg.make_LF(filt1, filt2, plot_LF_kw=plot_LF_kw, comp50=True)
 
@@ -457,165 +563,38 @@ def ir_rgb_agb_ratio():
     filt1 = 'default'
     filt2 = 'default'
     band = 'ir'
-    targets = ['DDO78', 'DDO71', 'SCL-DE1']
-    models = ['cmd_input_CAF09_S_JAN13.dat',
-              'cmd_input_gi10_rev.dat',
-              'cmd_input_gi10_rev_old_tracks.dat']
+    #targets = ['DDO78', 'DDO71', 'SCL-DE1']
+    targets = all_targets()
 
+    #models = ['cmd_input_CAF09_S_JAN13.dat', 'cmd_input_gi10_rev_old_tracks.dat']
+    models = ['cmd_input_gi10_rev.dat']
     offsets = (1.5, 0.)
-    norm_sim_kw = {'offsets': offsets, 'band': band, 'leo_method': True,
-                   'object_mass': 1e8, 'run_trilegal': False}
+    norm_sim_kw = {'offsets': offsets, 'band': band, 'leo_ast': True,
+                   'run_trilegal': True}
 
-    plot_LF_kw = {'ylim': (25.5, 20), 'xlim': (1, 2.5), 'xlim2': (0.8, 4e4)}
+    plot_LF_kw = {'ylim': (25.3, 11.75), 'xlim': (-0.5, 1.5), 'xlim2': (0.8, 4e4)}
 
     for model in models:
-        if model == 'cmd_input_gi10_rev.dat':
-            model_title = 'Gi10\ S12ND'
-        elif model == 'cmd_input_gi10_rev_old_tracks.dat':
+        if model == 'cmd_input_gi10_rev_old_tracks.dat':
             model_title = 'Gi10'
         elif model == 'cmd_input_CAF09_S_JAN13.dat':
             model_title = 'JAN13'
+        elif model == 'cmd_input_gi10_rev.dat':
+            model_title = 'Gi10\ S12ND'
 
         plot_LF_kw['model_title'] = model_title
 
         for target in targets:
-            if target == 'DDO78':
-                norm_sim_kw['object_mass'] = 5e8
+            print target
+            norm_sim_kw['object_mass'] = load_sim_masses(target)
 
             sgal, gal = make_normalized_simulation(target, model, filt1, filt2,
                                                    **norm_sim_kw)
-
+            agb_verts = load_agb_verts(gal)
             smg = rsp.Galaxies.sim_and_gal(gal, sgal)
-            smg.nrgb_nagb(band=band)
+            smg.nrgb_nagb(band=band, agb_verts=agb_verts)
             smg.make_LF(gal.filter1, gal.filter2, plot_LF_kw=plot_LF_kw,
                         comp50=True)
-
-
-def load_galaxies(IDs, model, **kwargs):
-    sgals = []
-    gals = []
-    #IDs = all_IDs()
-    out_dir = kwargs.get('out_dir', model_src)
-    #for ID, model in itertools.product(IDs, models):
-    for ID in IDs:
-        spread_file = os.path.join(out_dir, 'spread',
-                                   'spread_output_%s_model_%s' % (ID, model))
-        gal = rsp.Galaxy.galaxy(ID, 'ir')
-        sgal = rsp.Galaxy.simgalaxy(spread_file, gal.filter1, gal.filter2)
-        sgal.ID = ID
-        sgal.model = model
-        sgal.mix_modelname(model)
-        sgal.get_fits()
-        #maglims = (np.nan, np.nan)
-        #p_value = LFUtils.calc_LF(gal, sgal, maglims, normalize=False)
-        sgal.file_ast = mk_sims.get_fakFILE(ID)
-        sgals.append(sgal)
-        gals.append(gal)
-
-    # galaxies - ify
-    SGals = rsp.Galaxy.galaxies(sgals)
-    Gals = rsp.Galaxy.galaxies(gals)
-    return Gals, SGals
-
-
-def load_galaxies_by_z(IDs, model):
-    Gals, SGals = load_galaxies(IDs, model)
-    # select on the ones with measured z:
-    galsz = Gals.finite_key('z')
-    # sort by z.
-    galsz_sort = sorted(galsz, key=lambda galaxy: galaxy.z)
-
-    # use that to grab the sim gals
-    sgalsz = []
-    for g in galsz_sort:
-        sgalsz += [sg for sg in SGals.galaxies if sg.target == g.target]
-
-    zs = [g.z for g in galsz_sort]
-    return zs, galsz_sort, sgalsz
-
-
-def compare_sims(IDs, model, fig_name=None):
-    zs, galsz_sort, sgalsz = load_galaxies_by_z(IDs, model)
-    ax = plt.axes()
-    for z, g, s in zip(zs, galsz_sort, sgalsz):
-        ax.plot(z, float(s.rel_agb.size) / float(g.iagb.size),
-                'o', ms=5, color='black')
-        bright_rgb = LFUtils.brighter(s.ast_mag2, g.trgb, inds=s.irgb)
-        ax.plot(z,
-                float((s.rel_agb.size - bright_rgb.size)) / float(g.iagb.size),
-                'o', ms=5, color='red')
-        ax.annotate(g.target,
-                    xy=(z, float((s.rel_agb.size - bright_rgb.size)) /
-                        float(g.iagb.size) + 0.01), ha='center')
-        ax.annotate(g.target,
-                    xy=(z, float(s.rel_agb.size) / float(g.iagb.size) + 0.01),
-                    ha='center')
-    ax.set_ylabel(r'$N_{AGB, model} / N_{AGB, data}$', fontsize=20)
-    ax.set_xlabel(r'$Z$', fontsize=20)
-    ax.set_title(r'$\rm{%s}$' % s.model_name.replace('_', '\ '))
-    rsp.fileIO.ensure_dir(os.path.join(plt_dir, s.mix))
-    if not fig_name:
-        fig_name = os.path.join(plt_dir, s.mix, s.model_name + '.png')
-    plt.savefig(fig_name)
-    plt.close()
-    print 'wrote %s' % fig_name
-    return
-
-
-def chi2_plot(IDs, models):
-    ax = plt.axes()
-    cols = brewer2mpl.get_map('Dark2', 'qualitative', len(models)).mpl_colors
-    l = 0.
-    for i, model in enumerate(models):
-        l += .004
-        zs, galsz_sort, sgalsz = load_galaxies_by_z(IDs, model)
-        for z, g, s in zip(zs, galsz_sort, sgalsz):
-            ax.plot(z, s.chi2, 'o', ms=5, color=cols[i])
-            ax.annotate(g.target, xy=(z + 0.0001, s.chi2 + 0.01), ha='left',
-                        va='center', fontsize='8')
-        ax.annotate('$%s$' % s.model_name.replace('_', '\ '), xy=(l, 3),
-                    color=cols[i], fontsize=20)
-    ax.set_ylabel(r'$\chi^2$', fontsize=20)
-    ax.set_xlabel(r'$Z$', fontsize=20)
-    fig_name = os.path.join(plt_dir, s.mix, 'chi2.png')
-    ax.set_ylim(2, 18)
-    plt.savefig(fig_name)
-    plt.close()
-    return
-
-
-def write_spread_catalog(sgal, outfile=None, **kwargs):
-    '''
-    writes a slice of the trilegal output catalog.
-    slice is on ast recovered stars that are randomly selected by
-    normalization.
-    i.e sgal.rec and sgal.rel_ind.
-    returns string outfile name.
-    '''
-    out_dir = kwargs.get('outdir')
-    if out_dir is None:
-        out_dir = model_src
-    if outfile is None:
-        outfile = os.path.join(out_dir, 'spread', sgal.name.replace('ast',
-                                                                    'spread'))
-        rsp.fileIO.ensure_dir(outfile)
-    if not os.path.isfile(outfile):
-        out = open(outfile, 'w')
-        # get the header
-        sort_keys = sorted(sgal.data.key_dict.iteritems(),
-                           key=operator.itemgetter(1))
-        col_keys = [k[0] for k in sort_keys]
-
-        # slice data on recovered inds and rel_inds.
-        dslice = np.squeeze(sgal.data.data_array[[sgal.rec], :])[sgal.rel_ind]
-
-        out.write('# {}\n'.format(' '.join(col_keys)))
-        np.savetxt(out, dslice, fmt='%-7.6f')
-        print 'wrote %s' % outfile
-    else:
-        print '%s exists. Write spread catalog will not overwrite.' % outfile
-
-    return outfile
 
 
 def setup_match(name_fmt, bg_name=None, phot_name=None, **kwargs):
@@ -709,9 +688,8 @@ def match_tests(IDs, model):
 
 
 def short_list():
-    IDs = ['DDO82', 'NGC2403-HALO-6', 'NGC2976-DEEP', 'NGC4163',
+    return['DDO82', 'NGC2403-HALO-6', 'NGC2976-DEEP', 'NGC4163',
            'NGC7793-HALO-6', 'UGC8508', 'UGCA292']
-    return IDs
 
 
 if __name__ == "__main__":
@@ -720,7 +698,10 @@ if __name__ == "__main__":
     ch.setLevel(logging.DEBUG)
     logger.addHandler(ch)
     logger.info('start of run')
-
+    import pdb
+    pdb.set_trace()
+    ir_rgb_agb_ratio()
+    '''
     parser = OptionParser()
 
     usage = "%prog model [options]"
@@ -775,3 +756,4 @@ if __name__ == "__main__":
             kwargs['publish_plots'] = True
 
     #main(IDs=IDs, models=models, **kwargs)
+    '''
