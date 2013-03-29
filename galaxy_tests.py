@@ -1,7 +1,7 @@
 import ResolvedStellarPops as rsp
 import LFUtils
-import mk_sims
 import os
+import difflib
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.nxutils as nxutils
@@ -16,6 +16,103 @@ plt_dir = os.path.join(snap_src, 'plots')
 model_src = os.path.join(snap_src, 'models')
 
 angst_data = rsp.angst_tables.AngstTables()
+
+
+def sort_angst_data_table(table, targets):
+    '''
+    order table in the same index order as target list.
+    table  (np.array) must have key 'target' which matches values of targets
+    '''        
+    # targets as known by snap table
+    snap_targets = [difflib.get_close_matches(t, table['target'])[0]
+                    for t in targets]
+    
+    snap_tab_sort = [list(table['target']).index(st) for st in snap_targets]
+    return table[snap_tab_sort]
+
+
+def gaussian_mixture_modeling():
+    from scipy.stats import norm
+    from sklearn.mixture import GMM
+    from astroML.datasets import fetch_sdss_sspp
+    from astroML.decorators import pickle_results
+    from astroML.plotting.tools import draw_ellipse
+    X = np.vstack([gals.Colors, gals.Mag2o]).T
+    N = np.arange(1, 14)
+
+
+    @pickle_results("GMM_CMD.pkl")
+    def compute_GMM(N, covariance_type='full', n_iter=1000):
+        models = [None for n in N]
+        for i in range(len(N)):
+            print N[i]
+            models[i] = GMM(n_components=N[i], n_iter=n_iter,
+                            covariance_type=covariance_type)
+            models[i].fit(X)
+        return models
+
+    models = compute_GMM(N)
+    AIC = [m.aic(X) for m in models]
+    BIC = [m.bic(X) for m in models]
+    i_best = np.argmin(BIC)
+    gmm_best = models[i_best]
+    print "best fit converged:", gmm_best.converged_
+    print "BIC: n_components =  %i" % N[i_best]
+    fig, ax = plt.subplots()
+    colorbins = 501
+    magbins = 501
+    H, colorbins, magbins = np.histogram2d(gals.Colors, gals.Mag2o, (colorbins, magbins))
+    Xgrid = np.array(map(np.ravel, np.meshgrid(0.5*(colorbins[:-1]+colorbins[1:]), 0.5*(magbins[:-1]+magbins[1:])))).T
+    log_dens = gmm_best.score(Xgrid).reshape((501, 501))
+    fig, ax = plt.subplots()
+    ax.imshow(np.exp(log_dens),
+              origin='lower', interpolation='nearest', aspect='auto',
+              extent=[colorbins[0], colorbins[-1],
+                      magbins[-1], magbins[0]], cmap=plt.cm.binary)
+
+    ax.scatter(gmm_best.means_[:, 0], gmm_best.means_[:, 1], c='r')
+    for mu, C, w in zip(gmm_best.means_, gmm_best.covars_, gmm_best.weights_):
+        draw_ellipse(mu, C, scales=[1.5], ax=ax, fc='none', ec='k')
+
+
+def multi_galaxy_hess():
+    targets = all_targets()
+    # load galaxies class
+    gals = rsp.Galaxies.galaxies([load_galaxy(t, band='ir') for t in targets])
+    # combine all galaxies
+    gals.squish('Color', 'Mag2', 'Trgb')
+
+    mean_trgb = np.mean(gals.Trgbs)
+    offset = gals.Trgbs - np.mean(gals.Trgbs)
+    gals.Mag2o = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(gals.galaxies)])
+    hess_kw = {'binsize': 0.1, 'cbinsize': 0.05}
+    hess = rsp.astronomy_utils.hess(gals.Colors, gals.Mag2o, **hess_kw)
+    # now split by mean color.
+    # snap table 3 in the same order of the targets list
+    snap_tab3 = sort_angst_data_table(angst_data.snap_tab3, targets)
+
+    mean_color = snap_tab3['mean_color']
+    bluer, = np.nonzero(mean_color < 0.861)
+    redder, = np.nonzero(mean_color >= 0.861)
+
+    gals.squish('Color', **{'inds': bluer, 'new_attrs': ['bColor']})
+
+    gals.squish('Color', **{'inds': redder, 'new_attrs': ['rColor']})
+
+    gals.bMag2o = np.concatenate([g.Mag2 - offset[i]
+                                  for i, g in enumerate(gals.galaxies[bluer])])
+
+    gals.rMag2o = np.concatenate([g.Mag2 - offset[i]
+                                  for i, g in enumerate(gals.galaxies[redder])])
+
+    
+    blue_hess = rsp.astronomy_utils.hess(gals.bColor, gals.bMag2o, **hess_kw)
+    red_hess = rsp.astronomy_utils.hess(gals.rColor, gals.rMag2o, **hess_kw)
+
+    # offset = Trgbs-np.mean(Trgbs)
+    # Mag2o = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(gals)])
+    # fig, ax = gals[0].plot_cmd(Color, Mag2o, threshold=100, levels=5)
+    # fig.colorbar(gals[0].cs)
 
 
 def agb_rheb_separation():
@@ -208,14 +305,6 @@ def get_sfr_file(ID):
     sfr_dir = os.path.join(snap_src, 'data', 'sfh')
     return rsp.fileIO.get_files(sfr_dir, '*%s*' % ID)[0]
 
-
-def match_metallicities(IDs):
-    sfhs = [mk_sims.get_sfrFILE(ID) for ID in IDs]
-    zs = {}
-    for ID, sfh in zip(IDs, sfhs):
-        age, sfr, z = np.loadtxt(sfh, unpack=True)
-        zs[ID] = {'z': z, 'avez': np.mean(z)}
-    return zs
 
 
 def compare_metallicities():
@@ -565,7 +654,7 @@ def ir_rgb_agb_ratio():
     band = 'ir'
     #targets = ['DDO78', 'DDO71', 'SCL-DE1']
     targets = all_targets()
-
+    targets = ['SCL-DE1']
     #models = ['cmd_input_CAF09_S_JAN13.dat', 'cmd_input_gi10_rev_old_tracks.dat']
     models = ['cmd_input_gi10_rev.dat']
     offsets = (1.5, 0.)
@@ -587,9 +676,9 @@ def ir_rgb_agb_ratio():
         for target in targets:
             print target
             norm_sim_kw['object_mass'] = load_sim_masses(target)
-
-            sgal, gal = make_normalized_simulation(target, model, filt1, filt2,
-                                                   **norm_sim_kw)
+            gal = load_galaxy(target, band=band)
+            sgal = make_normalized_simulation(gal, model, filt1, filt2,
+                                              **norm_sim_kw)
             agb_verts = load_agb_verts(gal)
             smg = rsp.Galaxies.sim_and_gal(gal, sgal)
             smg.nrgb_nagb(band=band, agb_verts=agb_verts)
@@ -698,62 +787,12 @@ if __name__ == "__main__":
     ch.setLevel(logging.DEBUG)
     logger.addHandler(ch)
     logger.info('start of run')
-    import pdb
-    pdb.set_trace()
+
+    #import pdb
+    #pdb.set_trace()
+
+    #import cProfile
+    #command = 'ir_rgb_agb_ratio()'
+    #cProfile.runctx(command, globals(), locals())
+
     ir_rgb_agb_ratio()
-    '''
-    parser = OptionParser()
-
-    usage = "%prog model [options]"
-
-    parser = OptionParser(usage=usage)
-
-    parser.add_option("-s", action="store_true", default=False,
-                      help="run on short set of galaxies")
-
-    parser.add_option("-m", action="store_true", default=False,
-                      help="make plots")
-
-    parser.add_option("-p", action="store_true", default=False,
-                      help="publish plots")
-
-    parser.add_option("-o", action="store_true", default=False,
-                      help="out directory set to SNAP/models")
-
-    parser.add_option('-i', action='store_true', default=False,
-                      help='providing AGBTracksUtils inputfile')
-
-    (options, args) = parser.parse_args()
-
-    if options.s:
-        IDs = short_list()[0]
-        models = [args[0]]
-
-    kwargs = {}
-    if not options.i:
-        if options.m:
-            kwargs['make_plots'] = True
-        if options.p:
-            kwargs['publish_plots'] = True
-        if options.o:
-            kwargs['outdir'] = '/Users/phil/research/TP-AGBcalib/SNAP/'
-            kwargs['count_offset'] = 1.
-    else:
-        print 'reading directions from input file'
-        input_file = args[0]
-        infile = fileIO.input_file(input_file)
-        IDs = infile.IDs
-        if IDs is None:
-            'No galaxies listed, doing short list.'
-            IDs = short_list()
-        agb_mix = infile.agb_mix
-        set_name = infile.set_name
-        track_set = '_'.join((agb_mix, set_name))
-        models = ['%s.dat' % track_set]
-        kwargs['outdir'] = infile.galaxy_outdir
-        if infile.google_table:
-            kwargs['make_plots'] = True
-            kwargs['publish_plots'] = True
-
-    #main(IDs=IDs, models=models, **kwargs)
-    '''
