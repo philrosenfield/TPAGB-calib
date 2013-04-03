@@ -1,0 +1,43 @@
+# where should everything come from and go
+snap_src    /Users/phil/research/TP-AGBcalib/SNAP
+
+# targets, either use all, or set targets (not implemented (leo_overlap, short_list)
+targets     gi10
+
+xlim        -0.75, 4
+ylim        28, 20
+
+# cmd_input files
+models       cmd_input_gi10_rev_old_tracks.dat
+# plot LF
+make_plot   True
+
+# use IR data or OPT data
+band        opt
+
+# which filters for all cmds etc. gal means uses filters from data file.
+filt1       gal
+filt2       gal
+
+# make trilegal simulation
+run_trilegal    False
+
+# offsets refer to below/above trgb or just set maglims to number and ignore offsets
+maglims     trgb
+offsets     2., 0.
+
+# use leo's method of determining ast corrections
+leo_ast     True
+
+# use girardi10 method of rgb normalization (color mag limits)
+leo_norm    True
+
+# use both leo_norm and leo_ast
+leo_method  True
+
+# load ast corrected file:
+renormalize     True
+
+debug   True
+
+add_boxes   False

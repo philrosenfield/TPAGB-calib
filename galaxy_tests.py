@@ -152,50 +152,61 @@ def agb_rheb_separation():
     return verts
 
 
-def load_agb_verts(gal):
+def load_agb_verts(gal, leo_method=False):
     '''
     there is a file that contains the contents of this dictionary, it's vert_file
     I just didn't feel like writing a reader for it so I pasted it. What?
     don't look at me like that I have a lot to do.
     vert_file = '/Users/phil/research/TP-AGBcalib/code/TPAGB-calib/agb_rheb_sep.dat'
     '''
-    offset_dict = {'SCL-DE1': 0.186,
-                   'NGC2403-HALO-6': -0.155,
-                   'NGC7793-HALO-6': -0.307,
-                   'UGC-04459': 0.063,
-                   'UGC-4305-1': 0.002,
-                   'UGC-4305-2': 0.012,
-                   'UGC-5139': 0.105,
-                   'DDO78': -0.054,
-                   'DDO82': -0.103,
-                   'KDG73': 0.157,
-                   'KKH37': 0.085,
-                   'NGC0300-WIDE1': -0.212,
-                   'NGC2403-DEEP': -0.089,
-                   'NGC2976-DEEP': -0.220,
-                   'NGC3741': 0.143,
-                   'NGC4163': 0.003,
-                   'UGC8508': 0.077,
-                   'UGCA292': 0.394,
-                   'NGC3077-PHOENIX': -0.297,
-                   'IC2574-SGS': 0.044,
-                   'HS117': 0.092,
-                   'DDO71': 0.075}
-    Verts = agb_rheb_separation()
-    verts = Verts.copy()
-    verts[:, 1] += offset_dict[gal.target]
+    if leo_method is False:
+        offset_dict = {'SCL-DE1': 0.186,
+                       'NGC2403-HALO-6': -0.155,
+                       'NGC7793-HALO-6': -0.307,
+                       'UGC-04459': 0.063,
+                       'UGC-4305-1': 0.002,
+                       'UGC-4305-2': 0.012,
+                       'UGC-5139': 0.105,
+                       'DDO78': -0.054,
+                       'DDO82': -0.103,
+                       'KDG73': 0.157,
+                       'KKH37': 0.085,
+                       'NGC0300-WIDE1': -0.212,
+                       'NGC2403-DEEP': -0.089,
+                       'NGC2976-DEEP': -0.220,
+                       'NGC3741': 0.143,
+                       'NGC4163': 0.003,
+                       'UGC8508': 0.077,
+                       'UGCA292': 0.394,
+                       'NGC3077-PHOENIX': -0.297,
+                       'IC2574-SGS': 0.044,
+                       'HS117': 0.092,
+                       'DDO71': 0.075}
+        Verts = agb_rheb_separation()
+        verts = Verts.copy()
+        verts[:, 1] += offset_dict[gal.target]
 
-    vColor = verts[:, 0]
-    vMag2 = verts[:, 1]
-    vMag1 = vColor + vMag2
-    Mag2mag_kw = {'Av': gal.Av, 'dmod': gal.dmod}
-    vmag1 = rsp.astronomy_utils.Mag2mag(vMag1, gal.filter1, gal.photsys,
-                                        **Mag2mag_kw)
+        vColor = verts[:, 0]
+        vMag2 = verts[:, 1]
+        vMag1 = vColor + vMag2
+        Mag2mag_kw = {'Av': gal.Av, 'dmod': gal.dmod}
+        vmag1 = rsp.astronomy_utils.Mag2mag(vMag1, gal.filter1, gal.photsys,
+                                            **Mag2mag_kw)
 
-    vmag2 = rsp.astronomy_utils.Mag2mag(vMag2, gal.filter2, gal.photsys,
-                                        **Mag2mag_kw)
+        vmag2 = rsp.astronomy_utils.Mag2mag(vMag2, gal.filter2, gal.photsys,
+                                            **Mag2mag_kw)
 
-    verts = np.column_stack((vmag1 - vmag2, vmag2))
+        verts = np.column_stack((vmag1 - vmag2, vmag2))
+    else:
+        magdim = gal.trgb
+        magbright = 0.
+        colmin = np.min(gal.color)
+        colmax = np.max(gal.color)
+        verts = np.array([[colmin, magdim],
+                          [colmin, magbright],
+                          [colmax, magbright],
+                          [colmax, magdim],
+                          [colmin, magdim]])
     return verts
 
 
@@ -659,20 +670,27 @@ def load_normalized_simulation(target, model, band=None, input_file=None,
     sgal.norm_verts = verts
     return gal, sgal
 
-def call_mc_norm():
-    targets = all_targets()
-    models = ['cmd_input_CAF09_S_JAN13.dat',
-              'cmd_input_gi10_rev_old_tracks.dat',
-              'cmd_input_gi10_rev.dat']
-    mc_norm_kw = {'band': 'ir', 'offsets': (1.5, 0.), 'leo_norm': False,
-                  'maglims': 'trgb'}
+def call_mc_norm(do_all=True, gi10=False):
+    if do_all is True:
+        targets = all_targets()
+        models = ['cmd_input_CAF09_S_JAN13.dat',
+                  'cmd_input_gi10_rev_old_tracks.dat',
+                  'cmd_input_gi10_rev.dat']
+        mc_norm_kw = {'band': 'ir', 'offsets': (1.5, 0.), 'leo_norm': False,
+                      'maglims': 'trgb'}
+    
+    if gi10 is True:
+        targets = gi10_overlap()
+        models = ['cmd_input_gi10_rev_old_tracks.dat']
+        mc_norm_kw = {'band': 'opt', 'offsets': (2., 0.), 'leo_norm': True,
+                      'maglims': 'trgb', 'leo_method': True}
     for target in targets:
         for model in models:
-            #mc_norm(target, model, **mc_norm_kw)
-            sgal_rgb_agb(target, model, **mc_norm_kw)
+            mc_norm(target, model, **mc_norm_kw)
+            #sgal_rgb_agb(target, model, **mc_norm_kw)
 
 def mc_norm(target, model, band=None, input_file=None, maglims=None,
-            offsets=None, leo_norm=False):
+            offsets=None, leo_norm=False, leo_method=False):
     
     gal, sgal = load_normalized_simulation(target, model, band=band, 
                                            input_file=input_file,
@@ -688,7 +706,7 @@ def mc_norm(target, model, band=None, input_file=None, maglims=None,
     reg_inds, = np.nonzero(nxutils.points_inside_poly(spoints, rgb_verts))
     nsim_stars = len(reg_inds)
 
-    agb_verts = load_agb_verts(gal)
+    agb_verts = load_agb_verts(gal, leo_method=leo_method)
     ndata_agb = len(np.nonzero(nxutils.points_inside_poly(points, agb_verts))[0])
 
     nrgb_nagb_data = float(ndata_agb) / float(ndata_rgb)
@@ -805,48 +823,6 @@ def short_list():
            'NGC7793-HALO-6', 'UGC8508', 'UGCA292']
 
 
-def repeat_girardi10(maglims='trgb'):
-    filt1 = 'default'
-    filt2 = 'default'
-    band = 'opt'
-    targets = ['DDO78', 'DDO71', 'SCL-DE1']
-
-    models = ['cmd_input_CAF09_S_JAN13.dat'
-              'cmd_input_gi10_rev.dat',
-              'cmd_input_gi10_rev_old_tracks.dat']
-
-    offsets = (2., 0.)
-    norm_sim_kw = {'offsets': offsets, 'band': band, 'leo_method': True}
-
-    plot_LF_kw = {'ylim': (28, 20), 'xlim2': (0.8, 4e4)}
-
-    for model in models:
-        if model == 'cmd_input_gi10_rev.dat':
-            model_title = 'Gi10\ S12ND'
-        elif model == 'cmd_input_gi10_rev_old_tracks.dat':
-            model_title = 'Gi10'
-        elif model == 'cmd_input_CAF09_S_JAN13.dat':
-            model_title = 'JAN13'
-
-        plot_LF_kw['model_title'] = model_title
-
-        for target in targets:
-            norm_sim_kw['object_mass'] = load_sim_masses(target)
-
-            gal = load_galaxy(target, band=band)
-            sgal = make_normalized_simulation(gal, model, filt1, filt2,
-                                              **norm_sim_kw)
-            if gal.filter1 == 'F475W':
-                plot_LF_kw['xlim'] = (-0.75, 4)
-            else:
-                plot_LF_kw['xlim'] = (-0.75, 3)
-
-            smg = rsp.Galaxies.sim_and_gal(gal, sgal)
-
-            smg.nrgb_nagb(band=band)
-            smg.make_LF(filt1, filt2, plot_LF_kw=plot_LF_kw, comp50=True)
-
-
 def load_ast_file(gal, model):
     model_short = model.replace('cmd_input_','').lower()
     search_str = '*'.join(('ast_%s' % gal.filter1, gal.filter2, gal.target,
@@ -868,7 +844,7 @@ def read_norm_inds_file(sgal, filename=None):
 
     with open(filename, 'r') as f:
         lines = [l for l in f.readlines() if not l.startswith('#')]
-    
+
     norm_inds = []
     for line in lines:
         inds = np.array(map(int, line.strip().split(',')))
@@ -878,20 +854,34 @@ def read_norm_inds_file(sgal, filename=None):
 def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      targets=None, run_trilegal=False, leo_ast=True, 
                      offsets=(1.5, 0.), models=None, maglims=None,
-                     leo_method=False, leo_norm=False, make_plot=True):
+                     leo_method=False, leo_norm=False, make_plot=True,
+                     xlim=None, ylim=None, xlim2=None, add_boxes=True):
     
     if targets == 'all':
         targets = all_targets()
+    elif targets == 'gi10':
+        targets = gi10_overlap()
 
     if type(targets) == str:
         targets = [targets]
 
-    norm_sim_kw = {'offsets': offsets, 'band': band, 'leo_ast': True,
-                   'run_trilegal': False}
+    if type(models) == str:
+        models = [models]
+
+    norm_sim_kw = {'offsets': offsets, 'band': band, 'leo_ast': leo_ast,
+                   'run_trilegal': run_trilegal, 'leo_method': leo_method,
+                   'leo_norm': leo_norm}
 
     if make_plot is True:
-        plot_LF_kw = {'ylim': (25.3, 11.75), 'xlim': (-0.5, 1.5),
-                      'xlim2': (0.8, 4e4)}
+        # these are chosen for IR plots.
+        if xlim is None:
+            xlim = (-0.5, 1.5)
+        if ylim is None:
+            ylim = (25.3, 18)
+        if xlim2 is None:
+            xlim2 = (0.8, 4e4)
+        plot_LF_kw = {'ylim': ylim, 'xlim': xlim,
+                      'xlim2': xlim2}
 
     result_dict = {}
     for target in targets:
@@ -911,14 +901,14 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
 
             sgal = make_normalized_simulation(gal, model, filt1, filt2,
                                               **norm_sim_kw)
-            agb_verts = load_agb_verts(gal)
+            agb_verts = load_agb_verts(gal, leo_method=leo_method)
             smg = rsp.Galaxies.sim_and_gal(gal, sgal)
             nrgb_nagb_data, nrgb_nagb_sim = smg.nrgb_nagb(band=band,
                                                           agb_verts=agb_verts)
             if make_plot is True:
                 plot_LF_kw['model_title'] = model_title
                 smg.make_LF(gal.filter1, gal.filter2, plot_LF_kw=plot_LF_kw,
-                            comp50=True)
+                            comp50=True, add_boxes=add_boxes)
             
             sub_dict = {'data': nrgb_nagb_data, model_title: nrgb_nagb_sim}
             if result_dict.has_key(target):
