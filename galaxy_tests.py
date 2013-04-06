@@ -664,11 +664,13 @@ def load_normalized_simulation(target, model, band=None, input_file=None,
     sgal = rsp.Galaxies.simgalaxy(sim_file, filter1=gal.filter1, filter2=gal.filter2)
     sgal.load_ast_corrections()
 
-    sgal.target = gal.target
-    sgal.model = model
-    sgal.mix_modelname(model)
-    sgal.norm_verts = verts
+    sgal = make_normalized_simulation(gal, model, 'gal', 'gal', maglims=maglims,
+                                      band=band, offsets=offsets,
+                                      run_trilegal=False, leo_norm=leo_norm,
+                                      trilegal_output=sim_file)
+
     return gal, sgal
+
 
 def call_mc_norm(do_all=True, gi10=False):
     if do_all is True:
@@ -681,7 +683,7 @@ def call_mc_norm(do_all=True, gi10=False):
     
     if gi10 is True:
         targets = gi10_overlap()
-        models = ['cmd_input_gi10_rev_old_tracks.dat']
+        models = ['cmd_input_gi10_bow.dat']
         mc_norm_kw = {'band': 'opt', 'offsets': (2., 0.), 'leo_norm': True,
                       'maglims': 'trgb', 'leo_method': True}
     for target in targets:
@@ -732,6 +734,7 @@ def mc_norm(target, model, band=None, input_file=None, maglims=None,
     print '%s %.3f %.3f %.4f %s' % (target, nrgb_nagb_data, np.mean(nmodel),
                                     np.std(nmodel), model)
 
+
 def sgal_rgb_agb(target, model, band=None, input_file=None, maglims=None,
                  offsets=None, leo_norm=False):
 
@@ -771,6 +774,7 @@ def sgal_rgb_agb(target, model, band=None, input_file=None, maglims=None,
                                                        
     print '%s %.3f %.3f %.3f %s' % (target, nrgb_nagb_sim, raw_ratio, ratio_no_ast, model)
 
+
 def compare_models():
     dtype = [('galaxy', 'S16'), ('data_ratio', '<f8'), ('JAN13', '<f8'), 
              ('JAN13_stdev', '<f8'),  ('Gi10', '<f8'), ('Gi10_stdev', '<f8'),
@@ -788,6 +792,7 @@ def compare_models():
     [ax.text(i, max(resids.T[i]+0.01), '$%s$' % fyeah['galaxy'][i], fontsize=10) for i in range(len(resids.T))]
     [ax.text(i, min(resids.T[i]-0.01), '$%.4f$' % fyeah['Z'][i], fontsize=10) for i in range(len(resids.T))]
     ax.xaxis.set_major_formatter(NullFormatter()) 
+
 
 def gi10_overlap():
     return ['DDO78', 'DDO71', 'SCL-DE1']
@@ -832,6 +837,7 @@ def load_ast_file(gal, model):
                                      search_str)
     return sim_file
 
+
 def maglim_offsets(offsets, maglims, trgb=None):
     if maglims == 'trgb':
         maglims = (trgb + offsets[0], trgb + offsets[1])
@@ -851,11 +857,13 @@ def read_norm_inds_file(sgal, filename=None):
         norm_inds.append(inds)
     return norm_inds
 
+
 def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      targets=None, run_trilegal=False, leo_ast=True, 
                      offsets=(1.5, 0.), models=None, maglims=None,
                      leo_method=False, leo_norm=False, make_plot=True,
-                     xlim=None, ylim=None, xlim2=None, add_boxes=True):
+                     xlim=None, ylim=None, xlim2=None, add_boxes=True,
+                     color_hist=False):
     
     if targets == 'all':
         targets = all_targets()
@@ -880,8 +888,8 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
             ylim = (25.3, 18)
         if xlim2 is None:
             xlim2 = (0.8, 4e4)
-        plot_LF_kw = {'ylim': ylim, 'xlim': xlim,
-                      'xlim2': xlim2}
+        plot_LF_kw = {'ylim': ylim, 'xlim': xlim, 'xlim2': xlim2,
+                      'color_hist': color_hist}
 
     result_dict = {}
     for target in targets:
@@ -908,7 +916,8 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
             if make_plot is True:
                 plot_LF_kw['model_title'] = model_title
                 smg.make_LF(gal.filter1, gal.filter2, plot_LF_kw=plot_LF_kw,
-                            comp50=True, add_boxes=add_boxes)
+                            comp50=True, add_boxes=add_boxes,
+                            color_hist=color_hist)
             
             sub_dict = {'data': nrgb_nagb_data, model_title: nrgb_nagb_sim}
             if result_dict.has_key(target):
