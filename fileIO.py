@@ -234,8 +234,12 @@ def get_numeric_data(filename):
     data are passed as zeros.
     '''
     f = open(filename, 'r')
-    line = f.readline()
+    lines = f.readlines()
     f.close()
+    line = lines[0]
+    if len(lines) == 1:
+        print 'only one line in %s' % filename
+        return -1
     col_keys = line.replace('#', '').replace('lg', '').replace('*', 'star')
     col_keys = col_keys.strip().split()
     try:

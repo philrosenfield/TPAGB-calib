@@ -178,9 +178,14 @@ def do_everything(infile):
         for agb_track in agb_tracks:
             # load track
             track = fileIO.get_numeric_data(agb_track)
+            if track == -1:
+                continue
+
             if track.bad_track is True:
                 continue
-            assert metallicity == track.metallicity, 'directory and track metallicity do not match'
+
+            assert metallicity == track.metallicity, \  
+                'directory and track metallicity do not match'
 
             # make iso file for trilegal
             if out is not None:
