@@ -660,7 +660,6 @@ def load_normalized_simulation(target, model, band=None, input_file=None,
     verts, ndata_stars = setup_data_normalization(gal, gal.filter1, gal.filter2,
                                                   leo_method=leo_norm)
     
-    # just takes the first... it's a quick load.
     sgal = rsp.Galaxies.simgalaxy(sim_file, filter1=gal.filter1, filter2=gal.filter2)
     sgal.load_ast_corrections()
 
@@ -827,14 +826,18 @@ def short_list():
     return['DDO82', 'NGC2403-HALO-6', 'NGC2976-DEEP', 'NGC4163',
            'NGC7793-HALO-6', 'UGC8508', 'UGCA292']
 
+def targets_z002():
+    return ['DDO82', 'IC2574-SGS', 'UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
 
 def load_ast_file(gal, model):
     model_short = model.replace('cmd_input_','').lower()
     search_str = '*'.join(('ast_%s' % gal.filter1, gal.filter2, gal.target,
                            model_short))
-
-    sim_file, = rsp.fileIO.get_files(os.path.join(snap_src, 'output'),
-                                     search_str)
+    try:
+        sim_file, = rsp.fileIO.get_files(os.path.join(snap_src, 'output'),
+                                         search_str)
+    except ValueError:
+        raise ValueError, 'more than one value found when searching %s' % search_str
     return sim_file
 
 
@@ -863,12 +866,14 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      offsets=(1.5, 0.), models=None, maglims=None,
                      leo_method=False, leo_norm=False, make_plot=True,
                      xlim=None, ylim=None, xlim2=None, add_boxes=True,
-                     color_hist=False):
+                     color_hist=False, plot_tpagb=False):
     
     if targets == 'all':
         targets = all_targets()
     elif targets == 'gi10':
         targets = gi10_overlap()
+    elif targets == 'z002':
+        targets = targets_z002()
 
     if type(targets) == str:
         targets = [targets]
@@ -889,7 +894,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
         if xlim2 is None:
             xlim2 = (0.8, 4e4)
         plot_LF_kw = {'ylim': ylim, 'xlim': xlim, 'xlim2': xlim2,
-                      'color_hist': color_hist}
+                      'color_hist': color_hist, 'title': True}
 
     result_dict = {}
     for target in targets:
@@ -917,7 +922,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                 plot_LF_kw['model_title'] = model_title
                 smg.make_LF(gal.filter1, gal.filter2, plot_LF_kw=plot_LF_kw,
                             comp50=True, add_boxes=add_boxes,
-                            color_hist=color_hist)
+                            color_hist=color_hist, plot_tpagb=plot_tpagb)
             
             sub_dict = {'data': nrgb_nagb_data, model_title: nrgb_nagb_sim}
             if result_dict.has_key(target):
@@ -983,8 +988,7 @@ def match_tests(IDs, model):
         s.fit = fit
     return Gals, SGals
 
-
-if __name__ == "__main__":
+def main(inputfile):
     #ch = logging.StreamHandler()
     #ch.setLevel(logging.DEBUG)
     #logger.addHandler(ch)
@@ -992,9 +996,7 @@ if __name__ == "__main__":
     #import cProfile
     #command = 'ir_rgb_agb_ratio()'
     #cProfile.runctx(command, globals(), locals())
-
-    inputs = rsp.fileIO.load_input(sys.argv[1])
-
+    inputs = rsp.fileIO.load_input(inputfile)
     if inputs['debug'] is True:
         import pdb
         pdb.set_trace()
@@ -1006,6 +1008,9 @@ if __name__ == "__main__":
     del inputs['snap_src']
 
     ir_rgb_agb_ratio(**inputs)
+
+if __name__ == "__main__":
+    main(sys.argv[1])
 else:
+    global snap_src
     snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
-    

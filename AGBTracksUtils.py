@@ -184,7 +184,7 @@ def do_everything(infile):
             if track.bad_track is True:
                 continue
 
-            assert metallicity == track.metallicity, \  
+            assert metallicity == track.metallicity, \
                 'directory and track metallicity do not match'
 
             # make iso file for trilegal
@@ -197,7 +197,8 @@ def do_everything(infile):
 
             # make diagnostic plots
             if infile.diagnostic_dir0 is not None:
-                assert metallicity_from_dir(infile.diagnostic_dir)[0] == track.metallicity, 'diag dir met wrong!'
+                assert metallicity_from_dir(infile.diagnostic_dir)[0] == track.metallicity, \
+                    'diag dir met wrong!'
                 graphics.diag_plots(track, infile)
 
             # save information for imfr
@@ -282,11 +283,11 @@ if __name__ == "__main__":
             GoogleSitesTable.trilegal_diag_table(image_location)
 
     # Scripts to make LF compared to data
-    if infile.IDs:
+    if infile.galaxy_tests_inp:
         gt_kw = {'outdir': infile.galaxy_outdir}
         if infile.google_table:
            gt_kw['make_plots'] = True
            gt_kw['publish_plots'] = True
         
-        galaxy_tests.main(infile.IDs, ['%s.dat' % track_set], **gt_kw)
+        galaxy_tests.main(infile.galaxy_tests_inp)
         pass
