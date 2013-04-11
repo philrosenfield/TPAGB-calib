@@ -14,6 +14,16 @@ import matplotlib.nxutils as nxutils
 angst_data = rsp.angst_tables.AngstTables()
 
 
+def make_sfh_plots():
+    zctmps = ['/Users/phil/research/Italy/WFC3SNAP/PHIL/SFRfiles/noAGB/fullreszctmps/10915_DDO82_F606W_F814W.gst.sfh.zctmp',
+              '/Users/phil/research/Italy/WFC3SNAP/PHIL/SFRfiles/noAGB/fullreszctmps/9755_IC2574-SGS_F555W_F814W.gst.match.sfh.zctmp',
+              '/Users/phil/research/Italy/WFC3SNAP/PHIL/SFRfiles/noAGB/fullreszctmps/10605_UGC-4305-1_F555W_F814W.gst.sfh.zctmp',
+              '/Users/phil/research/Italy/WFC3SNAP/PHIL/SFRfiles/noAGB/fullreszctmps/10605_UGC-4305-2_F555W_F814W.gst.sfh.zctmp',
+              '/Users/phil/research/Italy/WFC3SNAP/PHIL/SFRfiles/noAGB/fullreszctmps/10915_NGC4163_F606W_F814W.gst.sfh.zctmp',
+              '/Users/phil/research/Italy/WFC3SNAP/PHIL/SFRfiles/noAGB/fullreszctmps/10915_UGC8508_F475W_F814W.gst.match.sfh.zctmp'] 
+    [rsp.match_utils.plot_zctmp(z) for z in zctmps]
+
+
 def sort_angst_data_table(table, targets):
     '''
     order table in the same index order as target list.
@@ -671,20 +681,27 @@ def load_normalized_simulation(target, model, band=None, input_file=None,
     return gal, sgal
 
 
-def call_mc_norm(do_all=True, gi10=False):
-    if do_all is True:
+def call_mc_norm(targets=None, models=None, gi10=False, mc_norm_kw={}):
+    '''
+    calls mc_norm for many targets, over many models. 
+    '''
+    if targets is None:
         targets = all_targets()
+
+    if models is None:
         models = ['cmd_input_CAF09_S_JAN13.dat',
                   'cmd_input_gi10_rev_old_tracks.dat',
                   'cmd_input_gi10_rev.dat']
-        mc_norm_kw = {'band': 'ir', 'offsets': (1.5, 0.), 'leo_norm': False,
-                      'maglims': 'trgb'}
+        
+    mc_norm_kw = dict({'band': 'ir', 'offsets': (1.5, 0.), 'leo_norm': False,
+                       'maglims': 'trgb'}.items() + mc_norm_kw.items())
     
     if gi10 is True:
         targets = gi10_overlap()
         models = ['cmd_input_gi10_bow.dat']
         mc_norm_kw = {'band': 'opt', 'offsets': (2., 0.), 'leo_norm': True,
                       'maglims': 'trgb', 'leo_method': True}
+
     for target in targets:
         for model in models:
             mc_norm(target, model, **mc_norm_kw)
@@ -692,7 +709,12 @@ def call_mc_norm(do_all=True, gi10=False):
 
 def mc_norm(target, model, band=None, input_file=None, maglims=None,
             offsets=None, leo_norm=False, leo_method=False):
-    
+    '''
+    One random draw to make the LF plots could be any number of TP-AGB stars
+    within the Poisson noise, or perhaps even wider range. This code does the
+    normalization 10,001 times to see what the mean Nagb/Nrgb ratio is and its
+    stdev.
+    '''    
     gal, sgal = load_normalized_simulation(target, model, band=band, 
                                            input_file=input_file,
                                            maglims=maglims, offsets=offsets, 
