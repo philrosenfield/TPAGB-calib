@@ -681,17 +681,19 @@ def load_normalized_simulation(target, model, band=None, input_file=None,
     return gal, sgal
 
 
-def call_mc_norm(targets=None, models=None, gi10=False, mc_norm_kw={}):
+def call_mc_norm(targets=None, models=None, gi10=False, **mc_norm_kw):
     '''
     calls mc_norm for many targets, over many models. 
     '''
-    if targets is None:
-        targets = all_targets()
+
+    targets = load_targets(targets)
 
     if models is None:
         models = ['cmd_input_CAF09_S_JAN13.dat',
                   'cmd_input_gi10_rev_old_tracks.dat',
                   'cmd_input_gi10_rev.dat']
+    if type(models) == str:
+        models = [models]
         
     mc_norm_kw = dict({'band': 'ir', 'offsets': (1.5, 0.), 'leo_norm': False,
                        'maglims': 'trgb'}.items() + mc_norm_kw.items())
@@ -708,7 +710,7 @@ def call_mc_norm(targets=None, models=None, gi10=False, mc_norm_kw={}):
             #sgal_rgb_agb(target, model, **mc_norm_kw)
 
 def mc_norm(target, model, band=None, input_file=None, maglims=None,
-            offsets=None, leo_norm=False, leo_method=False):
+            offsets=None, leo_norm=False, leo_method=False, **kwargs):
     '''
     One random draw to make the LF plots could be any number of TP-AGB stars
     within the Poisson noise, or perhaps even wider range. This code does the
@@ -883,13 +885,7 @@ def read_norm_inds_file(sgal, filename=None):
     return norm_inds
 
 
-def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
-                     targets=None, run_trilegal=False, leo_ast=True, 
-                     offsets=(1.5, 0.), models=None, maglims=None,
-                     leo_method=False, leo_norm=False, make_plot=True,
-                     xlim=None, ylim=None, xlim2=None, add_boxes=True,
-                     color_hist=False, plot_tpagb=False):
-    
+def load_targets(targets):
     if targets == 'all':
         targets = all_targets()
     elif targets == 'gi10':
@@ -899,6 +895,16 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
 
     if type(targets) == str:
         targets = [targets]
+    return targets
+    
+def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
+                     targets=None, run_trilegal=False, leo_ast=True, 
+                     offsets=(1.5, 0.), models=None, maglims=None,
+                     leo_method=False, leo_norm=False, make_plot=True,
+                     xlim=None, ylim=None, xlim2=None, add_boxes=True,
+                     color_hist=False, plot_tpagb=False):
+    
+    targets = load_targets(targets)
 
     if type(models) == str:
         models = [models]
@@ -1026,10 +1032,15 @@ def main(inputfile):
 
     global snap_src
     snap_src = inputs['snap_src']
-
     del inputs['snap_src']
 
+    mc_norm = inputs['mc_norm']
+    del inputs['mc_norm']
+    
     ir_rgb_agb_ratio(**inputs)
+    
+    if mc_norm is True:
+        call_mc_norm(**inputs)
 
 if __name__ == "__main__":
     main(sys.argv[1])

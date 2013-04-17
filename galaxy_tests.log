@@ -4550,3 +4550,516 @@ DEBUG:root:[[  0.79990379  23.589     ]
 INFO:root:data stars in normalization range: 3311
 DEBUG:root:normalization 0.0730
 INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_caf09_s_jan13_inds.dat
+INFO:root:start of run
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+DEBUG:root:normalization 0.0703
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_caf09_s_mar13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.72167307  23.732     ]
+ [  0.72167307  22.232     ]
+ [  0.85430565  22.232     ]
+ [  0.85430565  23.732     ]
+ [  0.72167307  23.732     ]]
+INFO:root:data stars in normalization range: 2817
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.72167307  23.732     ]
+ [  0.72167307  22.232     ]
+ [  0.85430565  22.232     ]
+ [  0.85430565  23.732     ]
+ [  0.72167307  23.732     ]]
+INFO:root:data stars in normalization range: 2817
+DEBUG:root:normalization 0.0429
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_IC2574-SGS_caf09_s_mar13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.72167307  23.732     ]
+ [  0.72167307  22.232     ]
+ [  0.85430565  22.232     ]
+ [  0.85430565  23.732     ]
+ [  0.72167307  23.732     ]]
+INFO:root:data stars in normalization range: 2817
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.68255239  23.437     ]
+ [  0.68255239  21.937     ]
+ [  0.82313672  21.937     ]
+ [  0.82313672  23.437     ]
+ [  0.68255239  23.437     ]]
+INFO:root:data stars in normalization range: 1571
+INFO:root:start of run
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.68255239  23.437     ]
+ [  0.68255239  21.937     ]
+ [  0.82313672  21.937     ]
+ [  0.82313672  23.437     ]
+ [  0.68255239  23.437     ]]
+INFO:root:data stars in normalization range: 1571
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+DEBUG:root:normalization 0.0951
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC-4305-1_caf09_s_mar13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.68255239  23.437     ]
+ [  0.68255239  21.937     ]
+ [  0.82313672  21.937     ]
+ [  0.82313672  23.437     ]
+ [  0.68255239  23.437     ]]
+INFO:root:data stars in normalization range: 1571
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.67311211  23.447     ]
+ [  0.67311211  21.947     ]
+ [  0.81067109  21.947     ]
+ [  0.81067109  23.447     ]
+ [  0.67311211  23.447     ]]
+INFO:root:data stars in normalization range: 1940
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.67311211  23.447     ]
+ [  0.67311211  21.947     ]
+ [  0.81067109  21.947     ]
+ [  0.81067109  23.447     ]
+ [  0.67311211  23.447     ]]
+INFO:root:data stars in normalization range: 1940
+DEBUG:root:normalization 0.1376
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC-4305-2_caf09_s_mar13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.67311211  23.447     ]
+ [  0.67311211  21.947     ]
+ [  0.81067109  21.947     ]
+ [  0.81067109  23.447     ]
+ [  0.67311211  23.447     ]]
+INFO:root:data stars in normalization range: 1940
+DEBUG:root:normalization 0.0703
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_caf09_s_mar13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.75392585  23.071     ]
+ [  0.75392585  21.571     ]
+ [  0.85248619  21.571     ]
+ [  0.85248619  23.071     ]
+ [  0.75392585  23.071     ]]
+INFO:root:data stars in normalization range: 1978
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.75392585  23.071     ]
+ [  0.75392585  21.571     ]
+ [  0.85248619  21.571     ]
+ [  0.85248619  23.071     ]
+ [  0.75392585  23.071     ]]
+INFO:root:data stars in normalization range: 1978
+DEBUG:root:normalization 0.1369
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_NGC4163_caf09_s_mar13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.75392585  23.071     ]
+ [  0.75392585  21.571     ]
+ [  0.85248619  21.571     ]
+ [  0.85248619  23.071     ]
+ [  0.75392585  23.071     ]]
+INFO:root:data stars in normalization range: 1978
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.68798968  22.912     ]
+ [  0.68798968  21.412     ]
+ [  0.80432436  21.412     ]
+ [  0.80432436  22.912     ]
+ [  0.68798968  22.912     ]]
+INFO:root:data stars in normalization range: 1194
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.68798968  22.912     ]
+ [  0.68798968  21.412     ]
+ [  0.80432436  21.412     ]
+ [  0.80432436  22.912     ]
+ [  0.68798968  22.912     ]]
+INFO:root:data stars in normalization range: 1194
+DEBUG:root:normalization 0.1835
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC8508_caf09_s_mar13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.68798968  22.912     ]
+ [  0.68798968  21.412     ]
+ [  0.80432436  21.412     ]
+ [  0.80432436  22.912     ]
+ [  0.68798968  22.912     ]]
+INFO:root:data stars in normalization range: 1194
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+DEBUG:root:normalization 0.0703
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_caf09_s_mar13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 to 0.000000
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+DEBUG:root:normalization 0.0703
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_caf09_s_mar13_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.799     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.799     ]
+ [ -2.11499977  25.799     ]]
+INFO:root:data stars in normalization range: 6530
+DEBUG:root:Trying DDO78 cmd_input_gi10_bow.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_bow.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_bow.dat > trilegal.msg
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_bow.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10915_DDO78_F475W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_bow.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0624
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_bow_inds.dat
+INFO:root:DDO71: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.708     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.708     ]
+ [ -0.70299911  25.708     ]]
+INFO:root:data stars in normalization range: 3663
+DEBUG:root:Trying DDO71 cmd_input_gi10_bow.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_bow.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_bow.dat > trilegal.msg
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_bow.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_bow.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.1712
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_bow_inds.dat
+INFO:root:SCL-DE1: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.09      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  26.09      ]
+ [ -0.86900139  26.09      ]]
+INFO:root:data stars in normalization range: 1552
+DEBUG:root:Trying SCL-DE1 cmd_input_gi10_bow.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_bow.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_bow.dat > trilegal.msg
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_bow.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10503_SCL-DE1_F606W_F814W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_gi10_bow.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0739
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_gi10_bow_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.799     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.799     ]
+ [ -2.11499977  25.799     ]]
+INFO:root:data stars in normalization range: 6530
+DEBUG:root:Trying DDO78 cmd_input_gi10_bow.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_bow.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_bow.dat > trilegal.msg
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_bow.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10915_DDO78_F475W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_bow.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0625
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_bow_inds.dat
+INFO:root:DDO71: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.708     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.708     ]
+ [ -0.70299911  25.708     ]]
+INFO:root:data stars in normalization range: 3663
+DEBUG:root:Trying DDO71 cmd_input_gi10_bow.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_bow.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_bow.dat > trilegal.msg
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_bow.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_bow.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.1696
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_bow_inds.dat
+INFO:root:SCL-DE1: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.09      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  26.09      ]
+ [ -0.86900139  26.09      ]]
+INFO:root:data stars in normalization range: 1552
+DEBUG:root:Trying SCL-DE1 cmd_input_gi10_bow.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_bow.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_bow.dat > trilegal.msg
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_bow.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10503_SCL-DE1_F606W_F814W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_gi10_bow.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0734
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_gi10_bow_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.799     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.799     ]
+ [ -2.11499977  25.799     ]]
+INFO:root:data stars in normalization range: 6530
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.799     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.799     ]
+ [ -2.11499977  25.799     ]]
+INFO:root:data stars in normalization range: 6530
+DEBUG:root:normalization 0.0625
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_bow_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.799     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.799     ]
+ [ -2.11499977  25.799     ]]
+INFO:root:data stars in normalization range: 6530
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.708     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.708     ]
+ [ -0.70299911  25.708     ]]
+INFO:root:data stars in normalization range: 3663
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.708     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.708     ]
+ [ -0.70299911  25.708     ]]
+INFO:root:data stars in normalization range: 3663
+DEBUG:root:normalization 0.1696
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_bow_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.708     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.708     ]
+ [ -0.70299911  25.708     ]]
+INFO:root:data stars in normalization range: 3663
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.09      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  26.09      ]
+ [ -0.86900139  26.09      ]]
+INFO:root:data stars in normalization range: 1552
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.09      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  26.09      ]
+ [ -0.86900139  26.09      ]]
+INFO:root:data stars in normalization range: 1552
+DEBUG:root:normalization 0.0734
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_gi10_bow_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.09      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  26.09      ]
+ [ -0.86900139  26.09      ]]
+INFO:root:data stars in normalization range: 1552
