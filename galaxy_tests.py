@@ -10,6 +10,7 @@ import difflib
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.nxutils as nxutils
+from matplotlib.colors import LogNorm
 
 angst_data = rsp.angst_tables.AngstTables()
 
@@ -93,51 +94,77 @@ def gaussian_mixture_modeling():
         draw_ellipse(mu, C, scales=[1.5], ax=ax, fc='none', ec='k')
     
 
-def multi_galaxy_hess():
-    targets = all_targets()
+def multi_galaxy_hess(targets=None, split_by_color=False, ax=None, imshow_kw={},
+                      make_hess=False):
+    if ax is None:
+        fig, ax = plt.subplots()
+
+    if targets is None:
+        targets = all_targets()
     # load galaxies class
     gals = rsp.Galaxies.galaxies([load_galaxy(t, band='ir') for t in targets])
     # combine all galaxies
     gals.squish('Color', 'Mag2', 'Trgb')
 
-    mean_trgb = np.mean(gals.Trgbs)
-    offset = gals.Trgbs - np.mean(gals.Trgbs)
-    gals.Mag2o = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(gals.galaxies)])
-    hess_kw = {'binsize': 0.1, 'cbinsize': 0.05}
-    hess = rsp.astronomy_utils.hess(gals.Colors, gals.Mag2o, **hess_kw)
-    # now split by mean color.
-    # snap table 3 in the same order of the targets list
-    snap_tab3 = sort_angst_data_table(angst_data.snap_tab3, targets)
+    if split_by_color is True:
+        # now split by mean color.
+        # snap table 3 in the same order of the targets list
+        snap_tab3 = sort_angst_data_table(angst_data.snap_tab3, targets)
 
-    mean_color = snap_tab3['mean_color']
-    bluer, = np.nonzero(mean_color < 0.861)
-    redder, = np.nonzero(mean_color >= 0.861)
+        mean_color = snap_tab3['mean_color']
+        bluer, = np.nonzero(mean_color < 0.861)
+        redder, = np.nonzero(mean_color >= 0.861)
 
-    gals.squish('Color', **{'inds': bluer, 'new_attrs': ['bColor']})
+        gals.squish('Color', **{'inds': bluer, 'new_attrs': ['bColor']})
 
-    gals.squish('Color', **{'inds': redder, 'new_attrs': ['rColor']})
+        gals.squish('Color', **{'inds': redder, 'new_attrs': ['rColor']})
 
-    gals.bMag2o = np.concatenate([g.Mag2 - offset[i]
-                                  for i, g in enumerate(gals.galaxies[bluer])])
+        gals.bMag2o = np.concatenate([g.Mag2 - offset[i]
+                                      for i, g in enumerate(gals.galaxies[bluer])])
 
-    gals.rMag2o = np.concatenate([g.Mag2 - offset[i]
-                                  for i, g in enumerate(gals.galaxies[redder])])
+        gals.rMag2o = np.concatenate([g.Mag2 - offset[i]
+                                      for i, g in enumerate(gals.galaxies[redder])])
 
     
-    blue_hess = rsp.astronomy_utils.hess(gals.bColor, gals.bMag2o, **hess_kw)
-    red_hess = rsp.astronomy_utils.hess(gals.rColor, gals.rMag2o, **hess_kw)
+        blue_hess = rsp.astronomy_utils.hess(gals.bColor, gals.bMag2o, **hess_kw)
+        red_hess = rsp.astronomy_utils.hess(gals.rColor, gals.rMag2o, **hess_kw)
+        # not finished...
+    else:
+        mean_trgb = np.mean(gals.Trgbs)
+        offset = gals.Trgbs - np.mean(gals.Trgbs)
+        gals.Mag2o = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(gals.galaxies)])
+        if make_hess is True:
+            cmin, cmax, cbinsize = -0.25, 1.25, 0.01
+            mmin, mmax, binsize = -10.5, -2, 0.05
+            cbins = np.arange(cmin, cmax, cbinsize)
+            mbins = np.arange(mmin, mmax, binsize)
+            hess_kw = {'binsize': 0.1, 'cbinsize': 0.01, 'cbin': cbins, 'mbin': mbins}
+            hess = rsp.astronomy_utils.hess(gals.Colors, gals.Mag2o, **hess_kw)
+            imshow_kw = dict({'norm': LogNorm(vmin=None, vmax=hess[2].max()),
+                              'cmap': plt.cm.gray_r, 'interpolation': 'nearest'}.items() + 
+                              imshow_kw.items())
+            ax = rsp.astronomy_utils.hess_plot(hess, imshow_kw=imshow_kw)
+        else:
+            fig, ax = gals.galaxies[0].plot_cmd(gals.Colors, gals.Mag2o,
+                                                threshold=50, levels=5,
+                                                hist_bin_res=.1)
+            #fig.colorbar(gals.galaxies[0].cs)
+        verts = agb_rheb_separation()
+        ax.plot(verts[:, 0], verts[:, 1], lw=2, color='navy')
+        ax.hlines(mean_trgb, *ax.get_xlim(), lw=2, color='red', zorder=100)
+        ax.set_xlim(cmin, cmax)
 
-    # offset = Trgbs-np.mean(Trgbs)
-    # Mag2o = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(gals)])
-    # fig, ax = gals[0].plot_cmd(Color, Mag2o, threshold=100, levels=5)
-    # fig.colorbar(gals[0].cs)
+    ax.set_xlabel('$%s-%s$' % (gals.filter1, gals.filter2), fontsize=20)
+    ax.set_ylabel('$%s$' % gals.filter2, fontsize=20)
+    ax.tick_params(labelsize=16)
+    return fig, ax
 
-
-def agb_rheb_separation():
+def agb_rheb_separation(targets=None):
     '''
     right now this is done by hand. :)
     '''
-    targets = all_targets()
+    if targets is None:
+        targets = all_targets()
     #targets.pop(targets.index('NGC404'))
     gals = [load_galaxy(t, band='ir') for t in targets]
     # Color = np.concatenate([g.Color for g in gals])
@@ -157,6 +184,9 @@ def agb_rheb_separation():
                       [5, -10],
                       [5, mean_trgb],
                       [0.7, mean_trgb]])
+
+    # I was a little off...
+    verts[:, 0] += 0.04
     # so it's going to be this gal[i] agb's are within: verts[:,1] + offset[i]
     # [g.name, offset[i] for i, g in enumerate(gals)]
     return verts
