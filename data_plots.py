@@ -6,6 +6,42 @@ import LFUtils
 This is a work in progress, which sorts of intro figures should I have for the paper??
 
 '''
+
+def tp_initial_conditions():
+    init_cond_base = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09/S12_FIRST_TP/'
+    search_term = '*.INP'
+    init_conds = rsp.fileIO.get_files(init_cond_base, search_term)
+
+    inps = [rsp.fileIO.readfile(ic, col_key_line=-1) for ic in init_conds]
+    masses = [0.8, 1., 1.5, 2., 3., 4., 5.]
+    z = 0.002
+    
+    fmt = ''
+    line = ' & '.join(['%(m1).1f', '%(l1).3f', '%(te1).3f', '%(t1).2e'])
+    line += ' \\\ \n'
+    for inp in inps:
+        if inp['z0'][0] != z:
+            continue
+        for mass in masses:
+            ind, = np.nonzero(inp['m1'] == mass)
+            fmt += (line % inp[ind])
+    
+    fmt.replace('e+0', '\times10^')
+    header = r'''\begin{table}
+\begin{tabular}{%s}
+Mass/$\msun$) & $\log L/\Lsun$ & $\log T_{eff}$ (K) & Age (yr) \\
+'''
+    footer = r'''
+\label{tab_init_cond}
+\end{tabular}
+\tablecomments{All data from \citet{Bressan2012} Tracks}
+\end{table}
+'''
+    with open('/Users/phil/research/TP-AGBcalib/communication/TPAGB Paper/init_cond_tab.tex', 'w') as f:
+        f.write(header % ''.join('l' * 4))
+        f.write(fmt)
+        f.write(footer)
+
 def not_sure_what_this_was_for():
     angst_tab = rsp.angst_tables.AngstTables()
     snap_sample = '/Users/phil/research/TP-AGBcalib/SNAP/data/galaxies'
@@ -204,14 +240,17 @@ def make_table(targets=None, deluxe=True):
         fmt += line % datum
         
     fmt = fmt.replace('nan', '...')
-    plain_header =  r'''\begin{table}{%s}
+    plain_header =  r'''\begin{table}
+\begin{tabular}{%s}
 Target/name & Opt.~Filters & $A_V$ & Mean NIR & $m_{\rm F160W}$ & $m_{\rm F160W}$ & $(m-M)_0$ & $\log [O/H]$ & $N_{\rm RGB}$ & $N_{\rm AGB}$ & $\frac{N_{\rm AGB}}{N_{\rm RGB}}$ \\
 & & & Color & TRGB & \50%s complete & & & & & \\
 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
 \hline
 '''
-    plain_footer = '''\caption{Columns 3--5 from \citet{Dalcanton2012}, column 8 from \citet[][and refs. therein]{Berg2012, Marble2010}}
+    plain_footer = '''
 \label{tab_sample}
+\end{tabular}
+\tablecomments{Columns 3--5 from \citet{Dalcanton2012}, column 8 from \citet[][and refs. therein]{Berg2012, Marble2010}}
 \end{table}
 '''
 
