@@ -1,4 +1,75 @@
 from astropy import coordinates as coord
+import ResolvedStellarPops as rsp
+import ResolvedStellarPops.convertz as convertz
+'''
+actually for the LMC, you can simplify things a lot:
+
+1- the distance and reddening are known, take them from Stefano's paper.
+    you don't need to relocate the TRGB.
+
+2- you don't need to renormalize the simulations to the RGB numbers, because
+    that was already done by Stefano. Stefano provides the SFR in units of
+    Msun/yr. Integrate this SFR(t) from 0 to 15 Gyr, and you have the total
+    mass of stars ever formed in that region of the LMC. This total mass is
+    given to TRILEGAL in the line:
+
+1.0e6 10.0 # object_mass, object_dist: total mass inside field, distance
+
+Provided that you use the same IMF and binary fraction as Stefano, you
+shouldn't have any problem.
+
+Doing so, the only data you actually need for the LMC is the 2MASS data
+(which is 99% complete for the AGB stars), the SFR files Stefano gave you
+already, and the values you find in Stefano's paper (distance, Av, etc).
+
+Let me know in case this is not clear.
+'''
+
+def parse_stefano_sfr():    
+    filename = '/Users/phil/research/TP-AGBcalib/LMC_Calib/SFR_LMC88.dat'
+    outfile = '/Users/phil/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88.dat'
+    data = rsp.fileIO.readfile(filename, col_key_line=1)
+
+    cen_age = data['Center_age_bin']
+    
+    sfr = data['med_SFR']
+
+    z = convertz.convertz(feh=data['med_FeH'])[1]
+    zmin = convertz.convertz(feh=data['min_FeH'])[1]
+    zmax = convertz.convertz(feh=data['max_FeH'])[1]
+    # even dispersions
+    zdisp = [np.mean([(zmax[i] - z[i]),
+                      (z[i] - zmin[i])]) for i in range(len(z))]
+
+    fmt = '%.3f %.3f %.4f %.4f\n'
+    np.savetxt(outfile, np.array([cen_age, sfr, z, zdisp]).T, fmt=fmt)
+    
+    object_mass = np.sum(data['med_MASS']) * 1e6
+    return outfile, object_mass
+
+def make_trilegal_sim(cmd_input=None):
+    if cmd_input is None:
+    cmd_input = '/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat'
+    object_sfr_file, object_mass = parse_stefano_sfr()
+    galaxy_input = object_sfr_file.replace('.dat','_galinp.dat')
+    output = '%s_%s' % (object_sfr_file.replace('.dat',''), cmd_input.split('cmd_input_')[1])
+
+    gal_inp_pars = {'file_mag': 'tab_mag_odfnew/tab_mag_wfc3snap.dat',
+                    'mag_limit_val': 20.6,
+                    'mag_num': 12,
+                    'binary_kind': 1,
+                    'binary_frac': 0.3,
+                    'object_sfr_mult_factorA': 1e9,
+                    'object_dist': 47643.,
+                    'object_av': 0.2, 
+                    'object_avkind': 0,
+                    'object_mass': object_mass,
+                    'object_sfr_file': object_sfr_file}
+    gal_inp = rsp.fileIO.input_parameters(default_dict=rsp.TrilegalUtils.galaxy_input_dict())
+    gal_inp.add_params(gal_inp_pars)
+    gal_imp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
+    rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input, output)
+
 
 vmcagbs = '/Users/phil/research/TP-AGBcalib/LMC_Calib/VMCAGBS_fmt.dat'
 
