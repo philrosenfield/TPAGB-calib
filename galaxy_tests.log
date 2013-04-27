@@ -5598,3 +5598,9 @@ INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
+INFO:root:start of run
+INFO:root:wrote tri_SFR_LMC88_CAF09_S_MAR13.png
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /Users/phil/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_CAF09_S_APR13.dat > trilegal.msg
+
+INFO:root:done.

@@ -50,6 +50,8 @@ def parse_stefano_sfr():
 def make_trilegal_sim(cmd_input=None):
     if cmd_input is None:
     cmd_input = '/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat'
+    cmd_input = '/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat'
+
     object_sfr_file, object_mass = parse_stefano_sfr()
     galaxy_input = object_sfr_file.replace('.dat','_galinp.dat')
     output = '%s_%s' % (object_sfr_file.replace('.dat',''), cmd_input.split('cmd_input_')[1])
@@ -67,7 +69,7 @@ def make_trilegal_sim(cmd_input=None):
                     'object_sfr_file': object_sfr_file}
     gal_inp = rsp.fileIO.input_parameters(default_dict=rsp.TrilegalUtils.galaxy_input_dict())
     gal_inp.add_params(gal_inp_pars)
-    gal_imp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
+    gal_inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
     rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input, output)
 
 
@@ -122,9 +124,25 @@ def read_lmc_cat(filename):
 lmc_cat_name = '/Users/phil/research/TP-AGBcalib/LMC_Calib/LMC88_psf_Y_J_Ks.cat.update'
 lmc_cat = read_lmc_cat(lmc_cat_name)
 
+def make_plot(output, lmc_cat):
+    sgal = rsp.Galaxies.simgalaxy(output, filter1='J', filter2='Ks')
+    sgal.all_stages('TPAGB')
+    fig, (ax1, ax2) = plt.subplots(ncols=2)
+    ax1.plot(lmc_cat['J_MAG'] - lmc_cat['Ks_MAG'], lmc_cat['Ks_MAG'],',', color='black')
+    ax2.plot(sgal.color, sgal.mag2, ',', color='black')
+    ax2.plot(sgal.color[sgal.itpagb], sgal.mag2[sgal.itpagb], '.', color='red')
+    ax2.set_ylim(ax2.get_ylim()[::-1])
+    ax1.set_xlim(ax2.get_xlim())
+    ax1.set_ylim(ax2.get_ylim())
+    ax1.set_xlabel('$J-Ks$')
+    ax1.set_ylabel('$Ks$')
+    ax2.set_title('$N_{TPAGB} = %i$' % len(sgal.itpagb))
+    [ax.tick_params(labelsize=16) for ax in [ax1, ax2]]
+    plt.savefig(output.replace('.dat','.png'))
+
+
 data = read_vmc_table(vmcagbs)
 radec = [coord.FK5Coordinates(r, d) for r, d in zip(data['RAJ2000'], data['DEJ2000'])]
 ra = np.array([r.ra.degrees for r in radec])
 dec = np.array([r.dec.degrees for r in radec])
-
 
