@@ -419,19 +419,24 @@ def setup_trilegal(gal, model, object_mass=5e9):
     sfr_file = get_sfr_file(gal.target)
     file_mag = 'tab_mag_odfnew/tab_mag_%s.dat' % gal.photsys
 
-    galinp_kw = {'object_sfr_file': get_sfr_file(gal.target),
-                 'file_mag': file_mag,
-                 'mag_limit_val': gal.comp50mag2 + 3.,
-                 'mag_num': rsp.TrilegalUtils.find_mag_num(file_mag,
-                                                           gal.filter2),
+    gal_dict_inp = {'photsys': gal.photsys,
+                    'filter1': gal.filter2,
+                    'object_mass': object_mass,
+                    'object_sfr_file': get_sfr_file(gal.target)}
+
+    gal_dict = rsp.TrilegalUtils.galaxy_input_dict(**gal_dict_inp)
+    gal_inp = rsp.fileIO.input_parameters(default_dict=gal_dict)
+
+    galinp_kw = {'mag_limit_val': gal.comp50mag2 + 3.,
                  'object_sfr_file': sfr_file,
                  'object_av': gal.Av,
                  'object_dist': object_dist,
-                 'object_mass': object_mass,
                  'object_sfr_mult_factorA': 1e9}
 
+    gal_inp.add_params(galinp_kw)
+
     galaxy_input = os.path.join(snap_src, 'input', 'input_%s.dat' % gal.target)
-    rsp.TrilegalUtils.change_galaxy_input(galaxy_input, **galinp_kw)
+    gal_inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
     trilegal_output = os.path.join(snap_src, 'output', 'output_%s_%s.dat' %
                                    (gal.target, agb_model))
 

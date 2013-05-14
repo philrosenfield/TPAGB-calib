@@ -98,15 +98,23 @@ def xrun_trilegal(track, parfile, inp, out):
 
 def make_galaxy_input(galaxy_input, sfh_file):
     import ResolvedStellarPops as rsp
-    inp = rsp.fileIO.input_parameters(default_dict=rsp.TrilegalUtils.galaxy_input_dict())
-    kwargs = {'object_mass': 1e7,
-              'object_sfr_file': sfh_file,
-              'file_mag': 'tab_mag_odfnew/tab_mag_2mass.dat',
-              'mag_limit_val': -3.0,
-              'mag_num': 3,
-              'object_sfr_mult_factorA': 1e9}
-    inp.add_params(kwargs)
-    inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
+
+    gal_dict_inp = {'photsys': '2mass',
+                    'filter1': 'Ks',
+                    'object_mass': 1e7,
+                    'object_sfr_file': sfh_file}
+
+    gal_dict = rsp.TrilegalUtils.galaxy_input_dict(**gal_dict_inp)
+
+    gal_inp = rsp.fileIO.input_parameters(default_dict=gal_dict)
+
+    galinp_kw = {'mag_limit_val': -3,
+                 'object_sfr_mult_factorA': 1e9,
+                 'mag_num': 3}
+
+    gal_inp.add_params(galinp_kw)
+
+    gal_inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
     return
 
 
@@ -124,7 +132,7 @@ def run_trilegal(cmd_input, galaxy_input, output):
     os.chdir(os.environ['TRILEGAL_ROOT'])
 
     logger.info('running trilegal...')
-    cmd = 'code/main -f %s -l %s %s > %s.msg\n' % (cmd_input, galaxy_input,
+    cmd = 'code/main -f %s -l -a %s %s > %s.msg\n' % (cmd_input, galaxy_input,
                                                    output, output)
     print cmd
     logger.debug(cmd)
@@ -339,10 +347,11 @@ if __name__ == '__main__':
         main(track_set, sfh_dir, tri_dir, plt_dir,
              over_write=infile.over_write)
     else:
+        cwd = os.getcwd()
         track_set = args[0]
-        sfh_dir = 'SFH'
-        tri_dir = 'TRILEGAL_FILES'
-        plt_dir = 'PLOTS/%s' % track_set
+        sfh_dir = os.path.join(cwd, 'SFH')
+        tri_dir = os.path.join(cwd, 'TRILEGAL_FILES')
+        plt_dir = os.path.join(cwd, 'PLOTS/%s' % track_set)
         main(track_set, sfh_dir, tri_dir, plt_dir)
 
     if not options.nr:

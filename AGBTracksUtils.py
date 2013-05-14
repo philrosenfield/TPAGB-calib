@@ -283,7 +283,7 @@ if __name__ == "__main__":
             GoogleSitesTable.trilegal_diag_table(image_location)
 
     # Scripts to make LF compared to data
-    if infile.galaxy_tests_inp:
+    if hasattr('galaxy_test_inp', infile):
         gt_kw = {'outdir': infile.galaxy_outdir}
         if infile.google_table:
            gt_kw['make_plots'] = True

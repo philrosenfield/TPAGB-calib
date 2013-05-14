@@ -1,11 +1,11 @@
 # where should everything come from and go
 snap_src    /Users/phil/research/TP-AGBcalib/SNAP
 
-# targets or set of targets (hard coded)
+# targets, either use all, or set targets (not implemented (leo_overlap, short_list)
 targets     z002
 
 # cmd_input files
-models      cmd_input_CAF09_S_MAR13.dat
+models      cmd_input_CAF09_S_APR13VW93.dat
 
 # plot LF
 make_plot   True
@@ -20,7 +20,7 @@ filt1       gal
 filt2       gal
 
 # make trilegal simulation
-run_trilegal    False
+run_trilegal    True
 
 # offsets refer to below/above trgb or just set maglims to number and ignore offsets
 maglims     trgb
@@ -36,7 +36,8 @@ leo_norm    False
 leo_method  False
 
 # load ast corrected file:
-renormalize     True
+renormalize     False
 
 debug   True
-mc_norm True
+
+mc_norm  True
