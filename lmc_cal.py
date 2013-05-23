@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator, MultipleLocator, NullFormatter
 import os
+import brewer2mpl
 '''
 actually for the LMC, you can simplify things a lot:
 
@@ -38,7 +39,13 @@ def parse_stefano_sfr():
     tf = to[:-1] + half_lagebin
     tf = np.append(tf, 10.13)
 
-    sfr = data['med_SFR']
+    to = data['Center_age_bin']
+    to = np.insert(to, 0, 6.6)
+    half_lagebin = np.diff(to)
+    tf = to[:-1] + half_lagebin
+    to = to[:-1]
+    
+    sfr = data['med_SFR'] * 1e-3/ 2.
 
     z = convertz.convertz(feh=data['med_FeH'])[1]
     zmin = convertz.convertz(feh=data['min_FeH'])[1]
@@ -68,8 +75,9 @@ def parse_stefano_sfr():
             out.write(fmt % (age1p[i], sfr[i], z2[i], zdisp[i]))
             out.write(fmt % (age2a[i], sfr[i], z1[i], zdisp[i]))
             out.write(fmt % (age2p[i], 0.0, z1[i], zdisp[i]))
-    
+        
     object_mass = np.sum(data['med_MASS']) * 1e6
+
     return outfile, object_mass
 
 
@@ -167,7 +175,10 @@ def read_lmc_cat(filename):
     
     return np.genfromtxt(filename, names=col_keys)
 
-def make_plot(output, extra='', photsys='2mass'):
+def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
+    if tpagb_mass_bins is None:
+        tpagb_mass_bins = np.arange(1, 6, 0.5)
+
     filter1 = 'J'
     if 'ubv' in photsys:
         filter2 = 'K'
@@ -188,141 +199,38 @@ def make_plot(output, extra='', photsys='2mass'):
     gal.target = sgal.mix
 
     smg = rsp.Galaxies.sim_and_gal(gal, sgal)
-    outfile = output.replace('.dat','_mag%s.png' % extra)
-    smg.make_LF(filter1, filter2, color_hist=True, plot_tpagb=True,
-                add_boxes=False, plot_LF_kw={'xlim': (0.5, 4)}, figname=outfile)
-    '''
-    #fig, (ax1, ax2, ax3) = plt.subplots(ncols=3)
-    #ax1.plot(lmc_cat['J_MAG'] - lmc_cat['Ks_MAG'], lmc_cat['Ks_MAG'],',', color='black')
-    #ax2.plot(sgal.color, sgal.mag2, ',', color='black')
-    #ax2.plot(sgal.color[sgal.itpagb], sgal.mag2[sgal.itpagb], '.', color='red')
-    #ax2.set_ylim(ax2.get_ylim()[::-1])
-    #ax1.set_xlim(ax2.get_xlim())
-    #ax1.set_ylim(ax2.get_ylim())
-    #ax1.set_xlabel('$J-Ks$')
-    #ax1.set_ylabel('$Ks$')
-    #ax2.set_title('$N_{TPAGB} = %i$' % len(sgal.itpagb))
-    #[ax.tick_params(labelsize=16) for ax in [ax1, ax2]]
-    
-    
-    # use the 2mass filters
-    mag2 = data['Ksmag2']
-    color = data['Jmag2'] - mag2
+    outfile = output.replace('.dat','_%s.png' % extra)
+    fig, axs, top_axs = smg.make_LF(filter1, filter2, color_hist=True, plot_tpagb=True,
+                                    add_boxes=False, plot_LF_kw={'xlim': (0.5, 4)}, figname=outfile)
+    axs[1].cla()
+    ax = sgal.color_by_arg(0,0,0, xdata=sgal.color, ydata=sgal.mag2,
+                           coldata=sgal.data.get_col('m_ini'),
+                           bins=tpagb_mass_bins, slice_inds=sgal.itpagb,
+                           ax=axs[1], xlim=axs[0].get_xlim(),
+                           ylim=axs[0].get_ylim(), fig=fig)
 
-
-    fig, axs = plot_LF(color, mag2, sgal.color, sgal.mag2, sgal.filter1, sgal.filter2,
-                       itpagb=sgal.itpagb, xlim=(-1, 2), ylim=(15,10),
-                       model_plt_color='grey', outfile=outfile)
-
-    # use the VMC filters
-    extra += '_VMC'
-    mag2 = data['KsmagV']
-    color = data['JmagV'] - mag2
-
-    outfile = output.replace('.dat','_mag%s.png' % extra)
-    fig, axs = plot_LF(color, mag2, sgal.color, sgal.mag2, sgal.filter1, sgal.filter2,
-                       itpagb=sgal.itpagb, xlim=(-1, 2), ylim=(15,10),
-                       model_plt_color='grey', outfile=outfile)
-    '''
-
-def plot_LF(color, mag, scolor, smag, filt1, filt2,
-            model_plt_color='red', data_plt_color='black', ylim=None,
-            xlim=None, xlim2=None, model_title='Model', title=False,
-            itpagb=None, res=0.1, outfile=None):
-
-    def setup_lfplot(filt1, filt2, model_title='Model', target='LMC88',
-                     lab_kw={}, data_plt_color='black',
-                     model_plt_color='grey'):
-
-        fig = plt.figure(figsize=(9, 9))
-        # plot limits determined by hand
-        bottom, height = 0.1, 0.8
-        widths = [0.57, 0.22]
-        lefts = [0.1, 0.73]
-
-        axs = [plt.axes([lefts[i], bottom, widths[i], height])
-               for i in range(len(lefts))]
-
-        lab_kw = dict({'fontsize': 20}.items() + lab_kw.items())
-
-        # titles
-        #axs[0].set_title('$%s$' % target,
-        #                 color=data_plt_color, **lab_kw)
-
-        axs[0].set_title('$%s$' % model_title, color=model_plt_color, **lab_kw)
-
-        axs[0].set_xlabel('$%s-%s$' % (filt1, filt2), **lab_kw)
-
-        axs[0].set_ylabel('$%s$' % filt2, **lab_kw)
-        #axs[1].set_xlabel(axs[0].get_xlabel(), **lab_kw)
-        axs[1].set_xlabel('$\#$', **lab_kw)
-
-        for ax in axs:
-            ax.tick_params(labelsize=20)
-
-        return fig, axs
-
-    def fix_plot(axs, xlim=None, xlim2=None, ylim=None):
-        # fix axes
-        if xlim is not None:
-            axs[0].set_xlim(xlim)
-        if ylim is not None:
-            axs[0].set_ylim(ylim)
-        if xlim2 is not None:
-            axs[1].set_xlim(xlim2)
-
-        for ax in axs[:1]:
-            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-            ax.xaxis.set_minor_locator(MultipleLocator(0.2))
-
-        for ax in axs:
-            ax.set_ylim(axs[0].get_ylim())
-            ax.yaxis.set_major_locator(MultipleLocator(2))
-            ax.yaxis.set_minor_locator(MultipleLocator(0.5))
-
-        #axs[1].set_xlim(axs[0].get_xlim())
-
-        # no formatters on mid and right plots
-        [ax.yaxis.set_major_formatter(NullFormatter()) for ax in axs[1:]]
-
-
-    fig, axs = setup_lfplot(filt1, filt2, model_title=model_title,
-                            data_plt_color=data_plt_color,
-                            model_plt_color=model_plt_color)
-
-    axs[0].plot(color, mag, '.', color=data_plt_color)
-
-    axs[0].plot(scolor, smag, '.', color=model_plt_color, mec=model_plt_color)
-    if itpagb is not None:
-        axs[0].plot(scolor[itpagb], smag[itpagb], '.', color='red')
-
-    nbins = (mag.max() - mag.min()) / res
-
-    gal_hist, bins = np.histogram(mag, nbins)
-    sgal_hist, _ = np.histogram(smag, bins=bins)
-    if itpagb is not None:
-        sgal_hist2, _ = np.histogram(smag[itpagb], bins=bins)
-
-    # plot histogram
-    hist_kw = {'drawstyle': 'steps', 'color': data_plt_color, 'lw': 2}
-    axs[1].semilogx(gal_hist, bins[1:], **hist_kw)
-
-
-    if itpagb is not None:
-        hist_kw['color'] = 'red'
-        axs[1].semilogx(sgal_hist2, bins[1:], **hist_kw)
+    if 3 <= len(tpagb_mass_bins) <= 11:
+        bmap = brewer2mpl.get_map('Paired', 'Qualitative', len(tpagb_mass_bins))
+        cols = bmap.mpl_colors
     else:
-        hist_kw['color'] = model_plt_color
-        axs[1].semilogx(sgal_hist, bins[1:], **hist_kw)
+        cols = rspgraph.discrete_colors(len(tpagb_mass_bins), colormap='RdYlGn')
 
-    fix_plot(axs, xlim=xlim, xlim2=xlim2, ylim=ylim)
-    if outfile is not None:
-        plt.savefig(outfile, dpi=300)
-        print 'wrote %s' % outfile
-    return fig, axs
+    tpagb_masses = sgal.data.get_col('m_ini')[sgal.itpagb]
+    tpinds = np.digitize(tpagb_masses, tpagb_mass_bins)
+    tpagb_mass_inds = [sgal.itpagb[tpinds==i] for i in np.unique(tpinds)]
+    # some masses are not recovered.
+    tpagb_mass_bins = tpagb_mass_bins[np.unique(tpinds)]
+    for tpagb_mass_ind in tpagb_mass_inds:
+        hist, _ = np.histogram(sgal.mag2[tpagb_mass_ind], bins=smg.bins)
+        axs[2].semilogx(hist, smg.bins[1:], color=cols[i], ls='steps', lw=2)
+
+    outfile = outfile.replace('_%s.png' % extra, '_%s_by_mass.png' % extra)
+    plt.savefig(outfile, dpi=300, bbox_to_inches='tight')
+    print 'wrote %s' % outfile
+
 
 def main():
-    overwrite = True
+    overwrite = False
     photsyss = ['2mass']
     for photsys in photsyss:
         outputs = make_trilegal_sim(loidl=True, photsys=photsys, overwrite=overwrite)
