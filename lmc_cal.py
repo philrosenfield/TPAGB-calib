@@ -1,3 +1,4 @@
+import ResolvedStellarPops.graphics.GraphicsUtils as rspg
 import ResolvedStellarPops as rsp
 import ResolvedStellarPops.convertz as convertz
 import numpy as np
@@ -177,7 +178,7 @@ def read_lmc_cat(filename):
 
 def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
     if tpagb_mass_bins is None:
-        tpagb_mass_bins = np.arange(1, 6, 0.5)
+        tpagb_mass_bins = np.arange(1., 6, 0.5)
 
     filter1 = 'J'
     if 'ubv' in photsys:
@@ -209,21 +210,28 @@ def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
                            ax=axs[1], xlim=axs[0].get_xlim(),
                            ylim=axs[0].get_ylim(), fig=fig)
 
+    tpagb_masses = sgal.data.get_col('m_ini')[sgal.itpagb]
+    tpinds = np.digitize(tpagb_masses, tpagb_mass_bins)
+    tpinds = tpinds[tpinds < len(tpagb_mass_bins)]
+    tpagb_mass_inds = [sgal.itpagb[tpinds==i] for i in np.unique(tpinds)]
+    # some masses are not recovered.
+    tpagb_mass_bins = tpagb_mass_bins[np.unique(tpinds)]
     if 3 <= len(tpagb_mass_bins) <= 11:
         bmap = brewer2mpl.get_map('Paired', 'Qualitative', len(tpagb_mass_bins))
         cols = bmap.mpl_colors
     else:
-        cols = rspgraph.discrete_colors(len(tpagb_mass_bins), colormap='RdYlGn')
+        cols = rspg.discrete_colors(len(tpagb_mass_bins), colormap='RdYlGn')
 
-    tpagb_masses = sgal.data.get_col('m_ini')[sgal.itpagb]
-    tpinds = np.digitize(tpagb_masses, tpagb_mass_bins)
-    tpagb_mass_inds = [sgal.itpagb[tpinds==i] for i in np.unique(tpinds)]
-    # some masses are not recovered.
-    tpagb_mass_bins = tpagb_mass_bins[np.unique(tpinds)]
-    for tpagb_mass_ind in tpagb_mass_inds:
+    for i, tpagb_mass_ind in enumerate(tpagb_mass_inds):
         hist, _ = np.histogram(sgal.mag2[tpagb_mass_ind], bins=smg.bins)
         axs[2].semilogx(hist, smg.bins[1:], color=cols[i], ls='steps', lw=2)
 
+    fig1, ax1 = plt.subplots()
+    tpagb_imasses = sgal.data.get_col('m_ini')[sgal.itpagb]                
+    tpagb_amasses = sgal.data.get_col('Mact')[sgal.itpagb]                
+    dm = tpagb_imasses-tpagb_amasses
+    ax1.plot(dm, sgal.mag2[sgal.itpagb], '.')
+    
     outfile = outfile.replace('_%s.png' % extra, '_%s_by_mass.png' % extra)
     plt.savefig(outfile, dpi=300, bbox_to_inches='tight')
     print 'wrote %s' % outfile
