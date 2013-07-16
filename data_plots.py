@@ -2,11 +2,48 @@ import ResolvedStellarPops as rsp
 import numpy as np
 import galaxy_tests
 import LFUtils
+import os
+import fileIO
 '''
 This is a work in progress, which sorts of intro figures should I have for the paper??
 
 '''
 
+
+def compare_mass_loss(mass=1.0, z=0.002, sets=['S_APR13', 'S_APR13VW93', 'S_MAR13']):
+    '''
+    made to plot a comparison between several mass prescriptions.
+    Labels for the plot are set up stupidly, maybe in in_dict or labels arg...
+    '''
+    agb_tracks_dir = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09'
+    direcs = []
+    labels = []
+    for set in sets:
+        if set == 'S_APR13':
+            label = 'BS95'
+        if set == 'S_APR13VW93':
+            label = 'VW93'
+        if set == 'S_MAR13':
+            label = 'M13'
+        direc = os.path.join(agb_tracks_dir, set)
+        direc, = [os.path.join(direc,d) for d in os.listdir(direc) if str(z) in d]
+        direc, = rsp.fileIO.get_files(direc, 'agb_%.2f*' % mass)
+        direcs.append(direc)
+        labels.append('$%s$' % label)
+    tracks = [fileIO.get_numeric_data(t) for t in direcs]
+    fig, ax = plt.subplots()
+    for i in range(len(tracks)):
+        ax.plot(tracks[i].data_array['ageyr']/1e6, tracks[i].data_array['dMdt'],
+                label=labels[i], lw=2)
+    ax.legend(loc=4, frameon=False)
+    ax.set_xlabel('$Age\ (10^6 yr)$', fontsize=20)
+    ax.set_ylabel('$\dot{M}$', fontsize=20)
+    ax.text(.95, .90, '$M=%.2fM_\odot$' % mass, fontsize=16, transform=ax.transAxes, ha='right')
+    ax.tick_params(labelsize=16)
+    plt.savefig('compare_mass_loss_m%.2f.png' % mass, dpi=300)
+    
+    
+    
 def tp_initial_conditions():
     init_cond_base = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09/S12_FIRST_TP/'
     search_term = '*.INP'

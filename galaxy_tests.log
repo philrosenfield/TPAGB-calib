@@ -7042,3 +7042,865 @@ DEBUG:root:[[  0.68798968  22.912     ]
  [  0.80432436  22.912     ]
  [  0.68798968  22.912     ]]
 INFO:root:data stars in normalization range: 1194
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.799     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.799     ]
+ [ -2.11499977  25.799     ]]
+INFO:root:data stars in normalization range: 6530
+DEBUG:root:Trying DDO78 cmd_input_gi10_bow.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_bow.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_bow.dat > trilegal0869066131994.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_bow.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10915_DDO78_F475W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_bow.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0629
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_bow_inds.dat
+INFO:root:start of run
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+DEBUG:root:Trying DDO82 cmd_input_CAF09_S_APR13VW93.dat, Mass=2.5e+09, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO82.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO82_caf09_s_apr13vw93.dat > trilegal0186262431665.msg 
+
+INFO:root:done.
+DEBUG:root:
+INFO:root:start of run
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO82_caf09_s_apr13vw93.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO82_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_caf09_s_apr13vw93.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0707
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_caf09_s_apr13vw93_inds.dat
+INFO:root:start of run
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO82_caf09_s_apr13vw93.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO82_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_caf09_s_apr13vw93.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0707
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_caf09_s_apr13vw93_inds.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.72167307  23.732     ]
+ [  0.72167307  22.232     ]
+ [  0.85430565  22.232     ]
+ [  0.85430565  23.732     ]
+ [  0.72167307  23.732     ]]
+INFO:root:data stars in normalization range: 2817
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_IC2574-SGS_caf09_s_apr13vw93.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_IC2574-SGS_caf09_s_apr13vw93.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0424
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_IC2574-SGS_caf09_s_apr13vw93_inds.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.68255239  23.437     ]
+ [  0.68255239  21.937     ]
+ [  0.82313672  21.937     ]
+ [  0.82313672  23.437     ]
+ [  0.68255239  23.437     ]]
+INFO:root:data stars in normalization range: 1571
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC-4305-1_caf09_s_apr13vw93.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC-4305-1_caf09_s_apr13vw93.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0930
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC-4305-1_caf09_s_apr13vw93_inds.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.67311211  23.447     ]
+ [  0.67311211  21.947     ]
+ [  0.81067109  21.947     ]
+ [  0.81067109  23.447     ]
+ [  0.67311211  23.447     ]]
+INFO:root:data stars in normalization range: 1940
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC-4305-2_caf09_s_apr13vw93.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-2_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC-4305-2_caf09_s_apr13vw93.dat
+DEBUG:root:Running spread_angst...
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat > trilegal0694628116501.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0894
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13_inds.dat
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat > trilegal0150269117815.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0886
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13_inds.dat
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat > trilegal00683966210349.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0902
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13_inds.dat
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat > trilegal0522113110748.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0899
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13_inds.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.76767572  23.642     ]
+ [  0.76767572  22.142     ]
+ [  0.8875951   22.142     ]
+ [  0.8875951   23.642     ]
+ [  0.76767572  23.642     ]]
+INFO:root:data stars in normalization range: 1037
+DEBUG:root:Trying DDO71 cmd_input_CAF09_S_APR13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_apr13.dat > trilegal0287123143201.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_apr13.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO71_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_apr13.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.2003
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_apr13_inds.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.70292362  24.07      ]
+ [  0.70292362  22.57      ]
+ [  0.85261633  22.57      ]
+ [  0.85261633  24.07      ]
+ [  0.70292362  24.07      ]]
+INFO:root:data stars in normalization range: 422
+DEBUG:root:Trying SCL-DE1 cmd_input_CAF09_S_APR13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_apr13.dat > trilegal0376212940702.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_apr13.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_SCL-DE1_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_apr13.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.1016
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_apr13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:normalization 0.0899
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.76767572  23.642     ]
+ [  0.76767572  22.142     ]
+ [  0.8875951   22.142     ]
+ [  0.8875951   23.642     ]
+ [  0.76767572  23.642     ]]
+INFO:root:data stars in normalization range: 1037
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.76767572  23.642     ]
+ [  0.76767572  22.142     ]
+ [  0.8875951   22.142     ]
+ [  0.8875951   23.642     ]
+ [  0.76767572  23.642     ]]
+INFO:root:data stars in normalization range: 1037
+DEBUG:root:normalization 0.2003
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_apr13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.76767572  23.642     ]
+ [  0.76767572  22.142     ]
+ [  0.8875951   22.142     ]
+ [  0.8875951   23.642     ]
+ [  0.76767572  23.642     ]]
+INFO:root:data stars in normalization range: 1037
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.70292362  24.07      ]
+ [  0.70292362  22.57      ]
+ [  0.85261633  22.57      ]
+ [  0.85261633  24.07      ]
+ [  0.70292362  24.07      ]]
+INFO:root:data stars in normalization range: 422
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.70292362  24.07      ]
+ [  0.70292362  22.57      ]
+ [  0.85261633  22.57      ]
+ [  0.85261633  24.07      ]
+ [  0.70292362  24.07      ]]
+INFO:root:data stars in normalization range: 422
+DEBUG:root:normalization 0.1016
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_apr13_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.70292362  24.07      ]
+ [  0.70292362  22.57      ]
+ [  0.85261633  22.57      ]
+ [  0.85261633  24.07      ]
+ [  0.70292362  24.07      ]]
+INFO:root:data stars in normalization range: 422
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:[]
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:[]
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:[]
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:[]
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit Chi^2: 28.436070 Fit: 49838.150000
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.png
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit - - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:[]
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit Chi^2: 28.436070 Fit: 49838.150000
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.png
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit Chi^2: nan Fit: 169489.700000
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.png
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit Chi^2: 8.474877 Fit: 10524.750000
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.png
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit Chi^2: 29.216540 Fit: 48348.290000
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.png
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst_verts.dat /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit Chi^2: 1.586498 Fit: 954.609500
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.png
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst_verts.dat /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:[]
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.fit Chi^2: 1.586498 Fit: 954.609500
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ugc-4305-1_f110w_f160w_caf09_s_apr13.png
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ddo82_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ddo82_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ddo82_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_DDO82_IR_F110W_F160W.gst_verts.dat /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO82_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ddo82_f110w_f160w_caf09_s_apr13.fit - - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ddo82_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:[]
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ddo82_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ddo82_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ddo82_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_DDO82_IR_F110W_F160W.gst_verts.dat /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO82_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ddo82_f110w_f160w_caf09_s_apr13.fit -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ddo82_f110w_f160w_caf09_s_apr13.msg
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ddo82_f110w_f160w_caf09_s_apr13.fit Chi^2: 2.271379 Fit: 472.255700
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ddo82_f110w_f160w_caf09_s_apr13.png
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_IC2574-SGS_IR_F110W_F160W.gst_verts.dat /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.fit - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:['Assertion failed: (nmbin!=NULL), function init_pars, file calcsfh.c, line 158.\n', '/bin/sh: line 1: 28028 Abort trap: 6           /Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_IC2574-SGS_IR_F110W_F160W.gst_verts.dat /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.fit-zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.msg\n']
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ddo82_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ddo82_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ddo82_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_DDO82_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO82_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ddo82_f110w_f160w_caf09_s_apr13.fit - - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ddo82_f110w_f160w_caf09_s_apr13.msg
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ddo82_f110w_f160w_caf09_s_apr13.fit Chi^2: 2.271379 Fit: 472.255700
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ddo82_f110w_f160w_caf09_s_apr13.png
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_IC2574-SGS_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.fit - - - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:['Assertion failed: (nmbin!=NULL), function init_pars, file calcsfh.c, line 158.\n', '/bin/sh: line 1: 28047 Abort trap: 6           /Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_IC2574-SGS_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.fit--zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.msg\n']
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ddo82_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ddo82_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ddo82_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_DDO82_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO82_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ddo82_f110w_f160w_caf09_s_apr13.fit - - - - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ddo82_f110w_f160w_caf09_s_apr13.msg
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ddo82_f110w_f160w_caf09_s_apr13.fit Chi^2: 2.271379 Fit: 472.255700
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ddo82_f110w_f160w_caf09_s_apr13.png
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_IC2574-SGS_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.fit - - - - - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.msg
+ERROR:root:['Assertion failed: (nmbin!=NULL), function init_pars, file calcsfh.c, line 158.\n', '/bin/sh: line 1: 29217 Abort trap: 6           /Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_IC2574-SGS_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.fit---zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ic2574-sgs_f110w_f160w_caf09_s_apr13.msg\n']
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13VW93.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13vw93.dat > trilegal00827004915352.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13vw93.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13vw93.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0858
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13vw93_inds.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.76767572  23.642     ]
+ [  0.76767572  22.142     ]
+ [  0.8875951   22.142     ]
+ [  0.8875951   23.642     ]
+ [  0.76767572  23.642     ]]
+INFO:root:data stars in normalization range: 1037
+DEBUG:root:Trying DDO71 cmd_input_CAF09_S_APR13VW93.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_apr13vw93.dat > trilegal0741576485734.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_apr13vw93.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO71_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_apr13vw93.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.1950
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_apr13vw93_inds.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.70292362  24.07      ]
+ [  0.70292362  22.57      ]
+ [  0.85261633  22.57      ]
+ [  0.85261633  24.07      ]
+ [  0.70292362  24.07      ]]
+INFO:root:data stars in normalization range: 422
+DEBUG:root:Trying SCL-DE1 cmd_input_CAF09_S_APR13VW93.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_apr13vw93.dat > trilegal0200971029096.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_apr13vw93.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_SCL-DE1_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_apr13vw93.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.0979
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_apr13vw93_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:normalization 0.0858
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13vw93_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.76767572  23.642     ]
+ [  0.76767572  22.142     ]
+ [  0.8875951   22.142     ]
+ [  0.8875951   23.642     ]
+ [  0.76767572  23.642     ]]
+INFO:root:data stars in normalization range: 1037
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.76767572  23.642     ]
+ [  0.76767572  22.142     ]
+ [  0.8875951   22.142     ]
+ [  0.8875951   23.642     ]
+ [  0.76767572  23.642     ]]
+INFO:root:data stars in normalization range: 1037
+DEBUG:root:normalization 0.1950
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_apr13vw93_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.76767572  23.642     ]
+ [  0.76767572  22.142     ]
+ [  0.8875951   22.142     ]
+ [  0.8875951   23.642     ]
+ [  0.76767572  23.642     ]]
+INFO:root:data stars in normalization range: 1037
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.70292362  24.07      ]
+ [  0.70292362  22.57      ]
+ [  0.85261633  22.57      ]
+ [  0.85261633  24.07      ]
+ [  0.70292362  24.07      ]]
+INFO:root:data stars in normalization range: 422
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.70292362  24.07      ]
+ [  0.70292362  22.57      ]
+ [  0.85261633  22.57      ]
+ [  0.85261633  24.07      ]
+ [  0.70292362  24.07      ]]
+INFO:root:data stars in normalization range: 422
+DEBUG:root:normalization 0.0979
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_apr13vw93_inds.dat
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.70292362  24.07      ]
+ [  0.70292362  22.57      ]
+ [  0.85261633  22.57      ]
+ [  0.85261633  24.07      ]
+ [  0.70292362  24.07      ]]
+INFO:root:data stars in normalization range: 422
+INFO:root:start of run
+INFO:root:DDO82: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.79990379  23.589     ]
+ [  0.79990379  22.089     ]
+ [  0.90756944  22.089     ]
+ [  0.90756944  23.589     ]
+ [  0.79990379  23.589     ]]
+INFO:root:data stars in normalization range: 3311
+DEBUG:root:Trying DDO82 cmd_input_gi10_bow.dat, Mass=2.5e+09, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_bow.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO82.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO82_gi10_bow.dat > trilegal0778786501659.msg 
+
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.fit - - - - - - -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.msg
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_UGC-4305-1_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.fit -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.msg
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.fit Chi^2: 7.844873 Fit: 6285.834000
+INFO:root:match_light wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/plots/match_ugc-4305-1_f110w_f160w_caf09_s_apr13vw93.png
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_IC2574-SGS_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.fit-zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.msg
+ERROR:root:['Assertion failed: (nmbin!=NULL), function init_pars, file calcsfh.c, line 158.\n', '/bin/sh: line 1: 30381 Abort trap: 6           /Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_IC2574-SGS_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.fit-zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.msg\n']
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO82_gi10_bow.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO82_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_gi10_bow.dat
+DEBUG:root:Running spread_angst...
+INFO:root:start of run
+INFO:root:make_calcsfh_param_file wrote /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.par
+WARNING:root: /Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.bg filename is too long. Copying it locally.
+DEBUG:root:/Users/phil/research/match2.4/bin/calcsfh /Users/phil/research/TP-AGBcalib/SNAP/models/match/pars/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.par /Users/phil/research/TP-AGBcalib/SNAP/models/match/phot/11719_IC2574-SGS_IR_F110W_F160W.gst.match /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake /Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.fit -zinc -PADUA_AGB > /Users/phil/research/TP-AGBcalib/SNAP/models/match/msgs/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.msg
+INFO:root:/Users/phil/research/TP-AGBcalib/SNAP/models/match/output/match_ic2574-sgs_f110w_f160w_caf09_s_mar13.fit Chi^2: 14.317960 Fit: 9393.181000
+DEBUG:root:normalization 0.0750
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_gi10_bow_inds.dat
+INFO:root:start of run
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat > trilegal0485183857855.msg 
+
+INFO:root:done.
+DEBUG:root:
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat > trilegal0799677740589.msg 
+
+INFO:root:done.
+DEBUG:root:
+INFO:root:start of run
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat > trilegal0563786750334.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.3008
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13_inds.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13VW93.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13vw93.dat > trilegal0623212105746.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13vw93.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13vw93.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.2814
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13vw93_inds.dat
+INFO:root:DDO78: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.78854596  23.545     ]
+ [  0.78854596  22.045     ]
+ [  0.89396896  22.045     ]
+ [  0.89396896  23.545     ]
+ [  0.78854596  23.545     ]]
+INFO:root:data stars in normalization range: 1296
+DEBUG:root:Trying DDO78 cmd_input_gi10_bow.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_bow.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_bow.dat > trilegal0743870200335.msg 
+

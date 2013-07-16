@@ -82,15 +82,17 @@ def parse_stefano_sfr():
     return outfile, object_mass
 
 
-def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass', overwrite=True):
+def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
+                      overwrite=True):
 
     if '2mass' in photsys:
         filter1 = 'Ks'
     elif 'ubv' in photsys:
         filter1 = 'K'
 
-    cmd_inputs = ['/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat',
-                  '/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat']
+    #cmd_inputs = ['/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat',
+                  #'/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat',
+    cmd_inputs = ['/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat']
     outputs = []
     for cmd_input in cmd_inputs:
         object_sfr_file, object_mass = parse_stefano_sfr()
@@ -124,9 +126,14 @@ def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass', overwrite=Tru
         gal_inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
         if os.path.isfile(output):
             if overwrite is True:
-                rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input, output, loud=True)
+                rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input, output,
+                                               loud=True)
             else:
                 print output, 'found, not going to run trilegal and overwrite.'
+        else:
+            rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input, output,
+                                           loud=True)
+        
         outputs.append(output)
 
     return outputs
@@ -238,7 +245,7 @@ def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
 
 
 def main():
-    overwrite = False
+    overwrite = True
     photsyss = ['2mass']
     for photsys in photsyss:
         outputs = make_trilegal_sim(loidl=True, photsys=photsys, overwrite=overwrite)

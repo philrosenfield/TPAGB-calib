@@ -5,7 +5,7 @@ snap_src    /Users/phil/research/TP-AGBcalib/SNAP
 targets     z002
 
 # cmd_input files
-models      cmd_input_CAF09_S_APR13VW93.dat
+models       cmd_input_gi10_bow.dat
 
 # plot LF
 make_plot   True
@@ -20,7 +20,7 @@ filt1       gal
 filt2       gal
 
 # make trilegal simulation
-run_trilegal    False
+run_trilegal    True
 
 # offsets refer to below/above trgb or just set maglims to number and ignore offsets
 maglims     trgb

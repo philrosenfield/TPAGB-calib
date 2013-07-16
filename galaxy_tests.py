@@ -14,6 +14,19 @@ from matplotlib.colors import LogNorm
 
 angst_data = rsp.angst_tables.AngstTables()
 
+def get_imf(target):
+    filename = '/Users/phil/research/TP-AGBcalib/code/TPAGB-calib/best_fits_from_match_runs.dat'
+    dtype = [('ID', '|S5'), ('Galaxy', '|S14'), ('filter1', '|S5'), ('filter2', '|S5'), ('Av', '<f8'), ('IMF', '<f8'), ('dmod', '<f8'), ('dlogZ', '<f8')]
+    data = np.genfromtxt(filename, dtype=dtype)
+    imf, = data['IMF'][np.nonzero(data['Galaxy']==target)]
+    if imf == 1.30:
+        tab_imf = 'tab_imf/imf_salpeter_match.dat'        
+    elif imf == 1.35:
+        tab_imf = 'tab_imf/imf_salpeter.dat'
+    else:
+        print 'imf problem.'
+    return tab_imf
+
 
 def make_sfh_plots():
     zctmps = ['/Users/phil/research/Italy/WFC3SNAP/PHIL/SFRfiles/noAGB/fullreszctmps/10915_DDO82_F606W_F814W.gst.sfh.zctmp',
@@ -431,7 +444,10 @@ def setup_trilegal(gal, model, object_mass=5e9):
                  'object_sfr_file': sfr_file,
                  'object_av': gal.Av,
                  'object_dist': object_dist,
-                 'object_sfr_mult_factorA': 1e9}
+                 'object_sfr_mult_factorA': 1e9,
+                 'file_imf': get_imf(gal.target),
+                 'binary_kind': 1,
+                 'binary_frac': 0.35}
 
     gal_inp.add_params(galinp_kw)
 
@@ -885,8 +901,12 @@ def short_list():
     return['DDO82', 'NGC2403-HALO-6', 'NGC2976-DEEP', 'NGC4163',
            'NGC7793-HALO-6', 'UGC8508', 'UGCA292']
 
+
 def targets_z002():
     return ['DDO82', 'IC2574-SGS', 'UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
+
+def targets_paper1():
+    return np.concatenate([gi10_overlap(), targets_z002()])
 
 def load_ast_file(gal, model):
     model_short = model.replace('cmd_input_','').lower()
@@ -927,11 +947,14 @@ def load_targets(targets):
         targets = gi10_overlap()
     elif targets == 'z002':
         targets = targets_z002()
+    elif targets == 'paper1':
+        targets = targets_paper1()
 
     if type(targets) == str:
         targets = [targets]
     return targets
-    
+
+ 
 def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      targets=None, run_trilegal=False, leo_ast=True, 
                      offsets=(1.5, 0.), models=None, maglims=None,
@@ -997,59 +1020,128 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
     for key, rd in result_dict.items():
         print key, ' '.join(['%.3f' % i for i in  rd.values()])
 
-def match_tests(IDs, model):
-    Gals, SGals = load_galaxies(IDs, model)
-    for g, s in zip(Gals.galaxies, SGals.galaxies):
-        name_fmt = '%s_%s_%s' % (s.ID, s.mix, s.model_name)
-        bg_name = s.name.replace('spread', 'bg')
-        phot_name = rsp.fileIO.replace_ext(os.path.split(g.name)[1], '.match')
-        match_dict = setup_match(name_fmt, bg_name, phot_name)
-        match_dict['plots'] = os.path.join(match_dict['plots'], s.mix,
-                                           s.model_name)
-        rsp.fileIO.ensure_dir(match_dict['plots'] + '/')
 
-        match_bg = rsp.match_utils.make_match_bg_cmd(s.ast_mag1, s.ast_mag2,
-                                                     outfile=match_dict['bg'])
-        print match_bg
-        #phot = rsp.match_utils.make_match_bg_cmd(g.mag1, g.mag2,
-        #                                    outfile=match_dict['phot'])
+def match_tests(target, model, band, verts=False, inverse_verts=False):
+    '''
+    run the match fitter with the simulated galaxy as the bg,
+    no time bins, and data as data. this will just do the chi2 test.
+    
+    verts will load the agb verts and only compare that area of a hess
+    diagram.
+    
+    inverse_verts will ignore the agb verts section of the cmd.
+    '''
+    gal = load_galaxy(target, band=band)
+    ast_file = load_ast_file(gal, model)
 
-        match_kwargs = {'dmod': s.data.get_col('m - M0')[0],
-                        'Av': s.data.get_col('Av')[0],
-                        'filter1': s.filter1.replace('F', 'IR'),
-                        'filter2': s.filter2.replace('F', 'IR'),
-                        'color': s.ast_color,
-                        'mag': s.ast_mag2,
-                        'pmfile': match_dict['pars']}
+    # these are from the normalization, they include resolved and not resolved
+    # stars, the match parameter file will slice out the not resolved.
+    ast_inds = ast_file.replace('.dat', '_inds.dat')
 
-        pm_file = rsp.match_utils.make_calcsfh_param_file(match_bg, **match_kwargs)
-        # run match
+    # the ast_inds file has 2 lines, the first is the filename of ast_file
+    # the second is a list of inds.
+    lines = open(ast_inds).readlines()
+    comment_file = lines[0].replace('#', '').strip().replace(' ','')
+    print '%s\n%s' % (ast_file, comment_file)
+    inds = np.array(lines[1].strip().split(','),
+                    dtype=int)
 
-        match_out = rsp.match_utils.call_match(pm_file, match_dict['phot'],
-                                               s.file_ast, match_dict['output'],
-                                               match_dict['msgs'])
-        chi, fit = rsp.match_utils.get_fit(match_out)
-        # make plot
-        alabel = '$\mathrm{%s}' % s.model_name.replace('_', '\ ')
-        metallicity = g.z
-        if not np.isfinite(g.z):
-            metallicity = '...'
-            alabel += '\ Z = %s$' % metallicity
-        else:
-            alabel += '\ Z = %.4f$' % metallicity
-        cmdgrid = match_out + '.cmd'
-        labs = ['$%s$' % s.ID, alabel, '$\mathrm{Diff}$',
-                '$\chi^2=%g\ \mathrm{Sig}$' % chi]
-        grid = rsp.match_utils.pgcmd(cmdgrid, labels=labs)
-        grid[2].set_ylabel(r'$%s$' % g.filter2, fontsize=20)
-        grid[2].set_xlabel(r'$%s - %s$' % (g.filter1, g.filter2), fontsize=20)
-        figname = os.path.join(match_dict['plots'], os.path.split(cmdgrid)[1])
-        print figname
-        plt.savefig('%s.png' % figname)
-        plt.close()
-        s.chi = chi
-        s.fit = fit
-    return Gals, SGals
+    models_loc = '/Users/phil/research/TP-AGBcalib/SNAP/models/match/'
+    model = ast_file.split(gal.target)[1][1:]
+    fmter = '_'.join(['match', gal.target, gal.filter1, gal.filter2, model]).replace('.dat', '').lower()
+
+    match_bg = os.path.join(models_loc, 'bg', fmter + '.bg')
+    sgal = rsp.Galaxies.simgalaxy(ast_file, filter1=gal.filter1,
+                                  filter2=gal.filter2)
+    sgal.load_ast_corrections()
+
+    color = sgal.color[inds]
+    mag2 = sgal.mag2[inds]
+
+    match_phot, = rsp.fileIO.get_files(os.path.join(models_loc, 'phot'),
+                                       '*%s*.gst.match' % gal.target)
+
+    if verts is True or inverse_verts is True:
+        agb_verts = load_agb_verts(gal)
+
+        # load photometry verts, will need to save new file
+        m1, m2 = np.loadtxt(match_phot, unpack=True)
+        phot_points = np.column_stack((color, mag2))
+        phot_mask = nxutils.points_inside_poly(phot_points, agb_verts)
+        
+        # sim cmd points
+        points = np.column_stack((color, mag2))
+        mask = nxutils.points_inside_poly(points, agb_verts)
+
+        if verts is True:
+            vinds, = np.nonzero(mask)
+            vpinds, = np.nonzero(phot_mask)
+            match_phot_ext = '_verts.dat'
+        elif inverse_verts is True:
+            vinds, = np.nonzero(mask==0)
+            vpinds, = np.nonzero(phot_mask==0)
+            match_phot_ext = '_inverts.dat'
+
+        # slice sim cmd
+        color = color[vinds]
+        mag2 = mag2[vinds]
+
+        # save new match phot
+        match_phot = rsp.fileIO.replace_ext(match_phot, match_phot_ext)
+        np.savetxt(match_phot, np.array([m1[vpinds], m2[vpinds]]).T)
+
+    rsp.match_utils.write_match_bg(color, mag2, match_bg)
+
+    pm_file = os.path.join(models_loc, 'pars', fmter + '.par')
+
+
+    match_fake = get_fake_files(gal.target, band=band)
+    match_out = os.path.join(models_loc, 'output', fmter + '.fit')
+    msg = os.path.join(models_loc, 'msgs', fmter + '.msg')
+    figname = os.path.join(models_loc, 'plots', fmter + '.png')
+
+    match_kwargs = {'dmod': sgal.data.get_col('m-M0')[0],
+                    'Av': sgal.data.get_col('Av')[0],
+                    'filter1': sgal.filter1.replace('F', 'IR'),
+                    'filter2': sgal.filter2.replace('F', 'IR'),
+                    'color': sgal.ast_color[inds],
+                    'mag': sgal.ast_mag2[inds],
+                    'pmfile': pm_file,
+                    'match_bg': match_bg}
+
+    if verts is True:
+        match_kwargs['dmag'] = 0.2
+        match_kwargs['dcol'] = 0.1
+
+    chi2, fit = rsp.match_utils.match_light(gal, pm_file, match_phot,
+                                            match_fake, match_out, msg,
+                                            match_kwargs=match_kwargs,
+                                            make_plot=True, model_name=model,
+                                            figname=figname, loud=True)
+    return chi2, fit
+
+def run_match_tests(targets, models, band):
+    '''
+    calls match_tests in a batch mode.
+    '''
+
+    targets = load_targets(targets)
+
+    if type(models) == str:
+        models = [models]
+
+    for target in targets:
+        if target == 'DDO82':
+            continue
+        for model in models:
+            # entire cmd fit
+            full_chi2, full_fit = match_tests(target, model, band)
+            # include agb only
+            agb_chi2, agb_fit = match_tests(target, model, band, verts=True)
+            # exclude agb
+            part_chi2, part_fit = match_tests(target, model, band,
+                                              inverse_verts=True)
+            print target, model, full_chi2, full_fit, agb_chi2, agb_fit, part_chi2, part_fit
 
 def main(inputfile):
     #ch = logging.StreamHandler()
@@ -1076,6 +1168,9 @@ def main(inputfile):
     
     if mc_norm is True:
         call_mc_norm(**inputs)
+
+    if match_tests is True:
+        run_match_tests(inputs['targets'], inputs['models'], inputs['band'])
 
 if __name__ == "__main__":
     main(sys.argv[1])
