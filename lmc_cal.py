@@ -90,16 +90,16 @@ def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
     elif 'ubv' in photsys:
         filter1 = 'K'
 
-    #cmd_inputs = ['/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat',
-                  #'/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat',
-    cmd_inputs = ['/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat']
+    cmd_inputs = ['/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat',
+                  '/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat',
+                  '/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat']
     outputs = []
     for cmd_input in cmd_inputs:
         object_sfr_file, object_mass = parse_stefano_sfr()
         galaxy_input = object_sfr_file.replace('.dat','_galinp.dat')
         output = '%s_%s' % (object_sfr_file.replace('.dat',''),
                             cmd_input.split('cmd_input_')[1])
-        
+
         gal_dict_inp = {'photsys': photsys,
                         'filter1': filter1,
                         'object_mass': object_mass,
@@ -133,7 +133,6 @@ def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
         else:
             rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input, output,
                                            loud=True)
-        
         outputs.append(output)
 
     return outputs

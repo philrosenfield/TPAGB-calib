@@ -906,7 +906,8 @@ def targets_z002():
     return ['DDO82', 'IC2574-SGS', 'UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
 
 def targets_paper1():
-    return np.concatenate([gi10_overlap(), targets_z002()])
+    #return np.concatenate([gi10_overlap(), targets_z002()])
+    return np.concatenate([['SCL-DE1'], targets_z002()])
 
 def load_ast_file(gal, model):
     model_short = model.replace('cmd_input_','').lower()
@@ -1021,7 +1022,8 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
         print key, ' '.join(['%.3f' % i for i in  rd.values()])
 
 
-def match_tests(target, model, band, verts=False, inverse_verts=False):
+def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={},
+                extra=''):
     '''
     run the match fitter with the simulated galaxy as the bg,
     no time bins, and data as data. this will just do the chi2 test.
@@ -1031,32 +1033,18 @@ def match_tests(target, model, band, verts=False, inverse_verts=False):
     
     inverse_verts will ignore the agb verts section of the cmd.
     '''
-    gal = load_galaxy(target, band=band)
-    ast_file = load_ast_file(gal, model)
-
-    # these are from the normalization, they include resolved and not resolved
-    # stars, the match parameter file will slice out the not resolved.
-    ast_inds = ast_file.replace('.dat', '_inds.dat')
-
-    # the ast_inds file has 2 lines, the first is the filename of ast_file
-    # the second is a list of inds.
-    lines = open(ast_inds).readlines()
-    comment_file = lines[0].replace('#', '').strip().replace(' ','')
-    print '%s\n%s' % (ast_file, comment_file)
-    inds = np.array(lines[1].strip().split(','),
-                    dtype=int)
-
+    
+    gal, sgal = load_normalized_simulation(target, model, band=band, 
+                                           maglims=inputs['maglims'],
+                                           offsets=inputs['offsets'],
+                                           leo_norm=inputs['leo_norm'])
     models_loc = '/Users/phil/research/TP-AGBcalib/SNAP/models/match/'
-    model = ast_file.split(gal.target)[1][1:]
-    fmter = '_'.join(['match', gal.target, gal.filter1, gal.filter2, model]).replace('.dat', '').lower()
+    fmter = '_'.join(['match', extra, gal.target, gal.filter1, gal.filter2, model]).replace('.dat', '').lower()
 
     match_bg = os.path.join(models_loc, 'bg', fmter + '.bg')
-    sgal = rsp.Galaxies.simgalaxy(ast_file, filter1=gal.filter1,
-                                  filter2=gal.filter2)
-    sgal.load_ast_corrections()
 
-    color = sgal.color[inds]
-    mag2 = sgal.mag2[inds]
+    color = sgal.ast_color[sgal.norm_inds]
+    mag2 = sgal.ast_mag2[sgal.norm_inds]
 
     match_phot, = rsp.fileIO.get_files(os.path.join(models_loc, 'phot'),
                                        '*%s*.gst.match' % gal.target)
@@ -1066,7 +1054,7 @@ def match_tests(target, model, band, verts=False, inverse_verts=False):
 
         # load photometry verts, will need to save new file
         m1, m2 = np.loadtxt(match_phot, unpack=True)
-        phot_points = np.column_stack((color, mag2))
+        phot_points = np.column_stack((m1-m2, m2))
         phot_mask = nxutils.points_inside_poly(phot_points, agb_verts)
         
         # sim cmd points
@@ -1085,15 +1073,13 @@ def match_tests(target, model, band, verts=False, inverse_verts=False):
         # slice sim cmd
         color = color[vinds]
         mag2 = mag2[vinds]
-
         # save new match phot
         match_phot = rsp.fileIO.replace_ext(match_phot, match_phot_ext)
         np.savetxt(match_phot, np.array([m1[vpinds], m2[vpinds]]).T)
-
+    
     rsp.match_utils.write_match_bg(color, mag2, match_bg)
 
     pm_file = os.path.join(models_loc, 'pars', fmter + '.par')
-
 
     match_fake = get_fake_files(gal.target, band=band)
     match_out = os.path.join(models_loc, 'output', fmter + '.fit')
@@ -1104,14 +1090,29 @@ def match_tests(target, model, band, verts=False, inverse_verts=False):
                     'Av': sgal.data.get_col('Av')[0],
                     'filter1': sgal.filter1.replace('F', 'IR'),
                     'filter2': sgal.filter2.replace('F', 'IR'),
-                    'color': sgal.ast_color[inds],
-                    'mag': sgal.ast_mag2[inds],
                     'pmfile': pm_file,
-                    'match_bg': match_bg}
+                    'color': color,
+                    'mag2': mag2,
+                    'match_bg': match_bg#,
+                    #'bright1': agb_verts[:, 1].min() + agb_verts[:, 0].min(),
+                    #'faint1': agb_verts[:, 1].max() + agb_verts[:, 0].max(),
+                    #'bright2': agb_verts[:, 1].min(),
+                    #'faint2': agb_verts[:, 1].max(),
+                    #'colmin': agb_verts[:, 0].min(),
+                    #'colmax': agb_verts[:, 0].max()
+                    }
 
+    photpts = len(vpinds)
+    simpts = len(vinds)
+    npts = np.min([photpts, simpts])
     if verts is True:
-        match_kwargs['dmag'] = 0.2
-        match_kwargs['dcol'] = 0.1
+        dmag = np.diff(np.linspace(m2.min(), m2.max(), int(np.sqrt(npts))))[0]
+        dcol = np.diff(np.linspace(np.min((m1-m2)), np.max((m1-m2)), int(np.sqrt(npts))))[0]
+        dmag = np.min([0.2, dmag])
+        dcol = np.min([0.1, dcol])
+        match_kwargs['dmag'] = dmag
+        match_kwargs['dcol'] = dcol
+        print match_kwargs['dmag'], match_kwargs['dcol']
 
     chi2, fit = rsp.match_utils.match_light(gal, pm_file, match_phot,
                                             match_fake, match_out, msg,
@@ -1120,10 +1121,17 @@ def match_tests(target, model, band, verts=False, inverse_verts=False):
                                             figname=figname, loud=True)
     return chi2, fit
 
-def run_match_tests(targets, models, band):
+def run_match_tests(targets=None, models=None, band=None, inputs={}):
     '''
     calls match_tests in a batch mode.
     '''
+
+    if targets is None:
+        targets = inputs['targets']
+    if band is None:
+        band = inputs['band']
+    if models is None:
+        models = inputs['models']
 
     targets = load_targets(targets)
 
@@ -1131,18 +1139,19 @@ def run_match_tests(targets, models, band):
         models = [models]
 
     for target in targets:
-        if target == 'DDO82':
-            continue
         for model in models:
             # entire cmd fit
-            full_chi2, full_fit = match_tests(target, model, band)
+            #full_chi2, full_fit = match_tests(target, model, band, inputs=inputs,
+            #                                  extra='full')
             # include agb only
-            agb_chi2, agb_fit = match_tests(target, model, band, verts=True)
+            agb_chi2, agb_fit = match_tests(target, model, band, verts=True,
+                                            inputs=inputs, extra='agb')
             # exclude agb
-            part_chi2, part_fit = match_tests(target, model, band,
-                                              inverse_verts=True)
-            print target, model, full_chi2, full_fit, agb_chi2, agb_fit, part_chi2, part_fit
-
+            #part_chi2, part_fit = match_tests(target, model, band,
+            #                                  inverse_verts=True, inputs=inputs,
+            #                                  extra='not_agb')
+            #print target, model, full_chi2, agb_chi2, part_chi2
+            print target, model, agb_chi2
 def main(inputfile):
     #ch = logging.StreamHandler()
     #ch.setLevel(logging.DEBUG)
@@ -1170,7 +1179,7 @@ def main(inputfile):
         call_mc_norm(**inputs)
 
     if match_tests is True:
-        run_match_tests(inputs['targets'], inputs['models'], inputs['band'])
+        run_match_tests(inputs=inputs)
 
 if __name__ == "__main__":
     main(sys.argv[1])
