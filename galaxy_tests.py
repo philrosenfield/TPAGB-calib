@@ -907,7 +907,7 @@ def targets_z002():
 
 def targets_paper1():
     #return np.concatenate([gi10_overlap(), targets_z002()])
-    return np.concatenate([['SCL-DE1'], targets_z002()])
+    return ['UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
 
 def load_ast_file(gal, model):
     model_short = model.replace('cmd_input_','').lower()
@@ -1141,17 +1141,18 @@ def run_match_tests(targets=None, models=None, band=None, inputs={}):
     for target in targets:
         for model in models:
             # entire cmd fit
-            #full_chi2, full_fit = match_tests(target, model, band, inputs=inputs,
-            #                                  extra='full')
+            full_chi2, full_fit = match_tests(target, model, band, inputs=inputs,
+                                              extra='full')
             # include agb only
             agb_chi2, agb_fit = match_tests(target, model, band, verts=True,
                                             inputs=inputs, extra='agb')
             # exclude agb
-            #part_chi2, part_fit = match_tests(target, model, band,
-            #                                  inverse_verts=True, inputs=inputs,
-            #                                  extra='not_agb')
-            #print target, model, full_chi2, agb_chi2, part_chi2
-            print target, model, agb_chi2
+            part_chi2, part_fit = match_tests(target, model, band,
+                                              inverse_verts=True, inputs=inputs,
+                                              extra='not_agb')
+            print target, model, full_chi2, agb_chi2, part_chi2
+            #print target, model, agb_chi2
+
 def main(inputfile):
     #ch = logging.StreamHandler()
     #ch.setLevel(logging.DEBUG)

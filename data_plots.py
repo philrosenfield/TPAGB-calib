@@ -4,17 +4,24 @@ import galaxy_tests
 import LFUtils
 import os
 import fileIO
+import matplotlib.pyplot as plt
 '''
 This is a work in progress, which sorts of intro figures should I have for the paper??
 
 '''
 
 
-def compare_mass_loss(mass=1.0, z=0.002, sets=['S_APR13', 'S_APR13VW93', 'S_MAR13']):
+def compare_mass_loss(mass=1.0, z=0.002, sets=['S_APR13', 'S_APR13VW93', 'S_MAR13'],
+                      xcol='ageyr', ycol='dMdt'):
     '''
     made to plot a comparison between several mass prescriptions.
     Labels for the plot are set up stupidly, maybe in in_dict or labels arg...
     '''
+    if xcol == 'ageyr':
+        norm = 1e6
+    else:
+        norm = 1.                
+
     agb_tracks_dir = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09'
     direcs = []
     labels = []
@@ -33,15 +40,15 @@ def compare_mass_loss(mass=1.0, z=0.002, sets=['S_APR13', 'S_APR13VW93', 'S_MAR1
     tracks = [fileIO.get_numeric_data(t) for t in direcs]
     fig, ax = plt.subplots()
     for i in range(len(tracks)):
-        ax.plot(tracks[i].data_array['ageyr']/1e6, tracks[i].data_array['dMdt'],
+        ax.plot(tracks[i].data_array[xcol]/norm, tracks[i].data_array[ycol],
                 label=labels[i], lw=2)
     ax.legend(loc=4, frameon=False)
     ax.set_xlabel('$Age\ (10^6 yr)$', fontsize=20)
     ax.set_ylabel('$\dot{M}$', fontsize=20)
     ax.text(.95, .90, '$M=%.2fM_\odot$' % mass, fontsize=16, transform=ax.transAxes, ha='right')
     ax.tick_params(labelsize=16)
-    plt.savefig('compare_mass_loss_m%.2f.png' % mass, dpi=300)
-    
+    plt.savefig('compare_%s_loss_m%.2f.png' % (ycol, mass), dpi=300)
+    return ax
     
     
 def tp_initial_conditions():
