@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.nxutils as nxutils
 from matplotlib.colors import LogNorm
+from pprint import pprint
 
 angst_data = rsp.angst_tables.AngstTables()
 
@@ -805,8 +806,10 @@ def mc_norm(target, model, band=None, input_file=None, maglims=None,
 
         nrgb_nagb_sim = nsim_agb / nsim_rgb
         nmodel = np.append(nmodel, nrgb_nagb_sim)
-    print '%s %.3f %.3f %.4f %s' % (target, nrgb_nagb_data, np.mean(nmodel),
-                                    np.std(nmodel), model)
+        pct_diff = (np.mean(nmodel) - nrgb_nagb_data) / nrgb_nagb_data
+
+    print '%s %.2f %.2f %.4f %.2f %s' % (target, nrgb_nagb_data, np.mean(nmodel),
+                                         np.std(nmodel), pct_diff, model)
 
 
 def sgal_rgb_agb(target, model, band=None, input_file=None, maglims=None,
@@ -906,8 +909,8 @@ def targets_z002():
     return ['DDO82', 'IC2574-SGS', 'UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
 
 def targets_paper1():
-    #return np.concatenate([gi10_overlap(), targets_z002()])
-    return ['UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
+    return np.concatenate([gi10_overlap(), targets_z002()])
+    #return ['UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
 
 def load_ast_file(gal, model):
     model_short = model.replace('cmd_input_','').lower()
@@ -961,7 +964,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      offsets=(1.5, 0.), models=None, maglims=None,
                      leo_method=False, leo_norm=False, make_plot=True,
                      xlim=None, ylim=None, xlim2=None, add_boxes=True,
-                     color_hist=False, plot_tpagb=False):
+                     color_hist=False, plot_tpagb=False, **kwargs):
     
     targets = load_targets(targets)
 
@@ -1005,22 +1008,27 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
             smg = rsp.Galaxies.sim_and_gal(gal, sgal)
             nrgb_nagb_data, nrgb_nagb_sim = smg.nrgb_nagb(band=band,
                                                           agb_verts=agb_verts)
+
+            pct_diff = (nrgb_nagb_sim - nrgb_nagb_data) / nrgb_nagb_data
+
             if make_plot is True:
                 plot_LF_kw['model_title'] = model_title
                 smg.make_LF(gal.filter1, gal.filter2, plot_LF_kw=plot_LF_kw,
                             comp50=True, add_boxes=add_boxes,
                             color_hist=color_hist, plot_tpagb=plot_tpagb)
             
-            sub_dict = {'data': nrgb_nagb_data, model_title: nrgb_nagb_sim}
+            sub_dict = {'data': nrgb_nagb_data, model_title: nrgb_nagb_sim,
+                        'pct_diff': pct_diff}
+
             if result_dict.has_key(target):
                 result_dict[target].update(sub_dict)
             else:
                 result_dict[target] = sub_dict
 
-    print '   ', ' '.join(result_dict[result_dict.keys()[0]].keys())
-    for key, rd in result_dict.items():
-        print key, ' '.join(['%.3f' % i for i in  rd.values()])
-
+    #print '   ', ' '.join(result_dict[result_dict.keys()[0]].keys())
+    #for key, rd in result_dict.items():
+    #    print key, ' '.join(['%.3f' % i for i in  rd.values()])
+    pprint(result_dict)
 
 def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={},
                 extra=''):
@@ -1065,10 +1073,13 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
             vinds, = np.nonzero(mask)
             vpinds, = np.nonzero(phot_mask)
             match_phot_ext = '_verts.dat'
-        elif inverse_verts is True:
+        if inverse_verts is True:
             vinds, = np.nonzero(mask==0)
             vpinds, = np.nonzero(phot_mask==0)
             match_phot_ext = '_inverts.dat'
+
+        photpts = len(vpinds)
+        simpts = len(vinds)
 
         # slice sim cmd
         color = color[vinds]
@@ -1077,6 +1088,9 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
         match_phot = rsp.fileIO.replace_ext(match_phot, match_phot_ext)
         np.savetxt(match_phot, np.array([m1[vpinds], m2[vpinds]]).T)
     
+    photpts = len(gal.mag2)
+    simpts = len(mag2)
+
     rsp.match_utils.write_match_bg(color, mag2, match_bg)
 
     pm_file = os.path.join(models_loc, 'pars', fmter + '.par')
@@ -1102,13 +1116,11 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
                     #'colmax': agb_verts[:, 0].max()
                     }
 
-    photpts = len(vpinds)
-    simpts = len(vinds)
     npts = np.min([photpts, simpts])
     if verts is True:
         dmag = np.diff(np.linspace(m2.min(), m2.max(), int(np.sqrt(npts))))[0]
         dcol = np.diff(np.linspace(np.min((m1-m2)), np.max((m1-m2)), int(np.sqrt(npts))))[0]
-        dmag = np.min([0.2, dmag])
+        dmag = np.min([0.15, dmag])
         dcol = np.min([0.1, dcol])
         match_kwargs['dmag'] = dmag
         match_kwargs['dcol'] = dcol
@@ -1174,12 +1186,13 @@ def main(inputfile):
     mc_norm = inputs['mc_norm']
     del inputs['mc_norm']
     
-    ir_rgb_agb_ratio(**inputs)
+    if inputs['make_lfs'] is True:
+        ir_rgb_agb_ratio(**inputs)
     
     if mc_norm is True:
         call_mc_norm(**inputs)
 
-    if match_tests is True:
+    if inputs['match_tests'] is True:
         run_match_tests(inputs=inputs)
 
 if __name__ == "__main__":

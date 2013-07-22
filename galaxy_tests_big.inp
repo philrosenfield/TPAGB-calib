@@ -9,8 +9,8 @@ models      cmd_input_CAF09_S_APR13.dat, cmd_input_CAF09_S_APR13VW93.dat, cmd_in
 
 # plot LF
 make_plot   True
-plot_tpagb  True
-color_hist  True
+plot_tpagb  False
+color_hist  False
 
 # use IR data or OPT data
 band        ir
@@ -20,7 +20,7 @@ filt1       gal
 filt2       gal
 
 # make trilegal simulation
-run_trilegal    True
+run_trilegal    False
 
 # offsets refer to below/above trgb or just set maglims to number and ignore offsets
 maglims     trgb
@@ -36,8 +36,13 @@ leo_norm    False
 leo_method  False
 
 # load ast corrected file:
-renormalize     False
+renormalize     True
+
+# do agb_nir ratio
+make_lfs    False
 
 debug   True
 
-mc_norm  True
+mc_norm  False
+
+match_tests   True
