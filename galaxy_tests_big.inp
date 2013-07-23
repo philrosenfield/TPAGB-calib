@@ -8,7 +8,7 @@ targets     paper1
 models      cmd_input_CAF09_S_APR13.dat, cmd_input_CAF09_S_APR13VW93.dat, cmd_input_gi10_bow.dat, cmd_input_CAF09_S_MAR13.dat
 
 # plot LF
-make_plot   True
+make_plot   False
 plot_tpagb  False
 color_hist  False
 

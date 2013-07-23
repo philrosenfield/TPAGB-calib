@@ -15,6 +15,45 @@ from pprint import pprint
 
 angst_data = rsp.angst_tables.AngstTables()
 
+
+def cmd_contamination(gal, dcolor=0.1, dmag=0.2):
+    '''
+    , verts_file_fmt=None,
+    diag_plot=True, isoch_base=None,
+    isoc_search_fmt=None, out_file_fmt=None,
+    out_fig_fmt=None, M11=False, galaxy_table=None,
+    rdcolor=None, rdmag=None
+    '''
+    def set_up_cmd_steps(dcolor, dmag, npts):
+        if type(dcolor) == float:
+            dcolor = np.ones(npts) * dcolor
+
+        if type(dmag) == float:
+            dmag = np.ones(npts) * dmag
+
+        return dcolor, dmag
+
+    dcolor, dmag = set_up_cmd_steps(dcolor, dmag, len(bheb_color))
+
+    for i in range(len(bheb_color)):
+        colerr, magerr = cmd_errors_in_box(bheb_mag2[i], gal)
+        # find stars inside each heb box and save info
+        bverts = box_around_pt(bheb_color[i], bheb_mag2[i],
+                               dcolor[i]+colerr/2, dmag[i])
+        rverts = box_around_pt(rheb_color[i], rheb_mag2[i],
+                               rdcolor[i]+colerr/2, rdmag[i])
+        binds, = np.nonzero(nxutils.points_inside_poly(points, bverts))
+        rinds, = np.nonzero(nxutils.points_inside_poly(points, rverts))
+        if 0 in [len(binds), len(rinds)]:
+            continue
+        #ms_bhebverts = box_around_pt(bheb_color[i]-(dcolor[i]+colerr/2),
+        #                             bheb_mag2[i], 2*(dcolor[i]+colerr/2), dmag[i])
+
+        ms_bhebverts = np.column_stack(([np.array(bverts)[:, 0][2], np.array(bverts)[:, 0][2], -1, -1, np.array(bverts)[:, 0][2]], np.array(bverts)[:, 1]))
+        ms_in_bheb, bheb_in_ms, poisson_noise, nmsbheb = gal.double_gaussian_contamination(gal, ms_bhebverts, color_sep=bheb_color[i]-(dcolor[i]+colerr/2)/2., diag_plot=True)
+        lost_bheb = bheb_in_ms
+        contaminated_bheb = ms_in_bheb
+
 def get_imf(target):
     filename = '/Users/phil/research/TP-AGBcalib/code/TPAGB-calib/best_fits_from_match_runs.dat'
     dtype = [('ID', '|S5'), ('Galaxy', '|S14'), ('filter1', '|S5'), ('filter2', '|S5'), ('Av', '<f8'), ('IMF', '<f8'), ('dmod', '<f8'), ('dlogZ', '<f8')]
@@ -1125,12 +1164,21 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
         match_kwargs['dmag'] = dmag
         match_kwargs['dcol'] = dcol
         print match_kwargs['dmag'], match_kwargs['dcol']
+    
+    if model.lower() == 'cmd_input_caf09_s_apr13vw93.dat':
+        model_name = '$\dot{M}_{VW93}$'
+    if model.lower() == 'cmd_input_caf09_s_apr13.dat':
+        model_name = '$\dot{M}_{BS95}$'
+    if model.lower() == 'cmd_input_gi10_bow.dat':
+        model_name = '$\dot{M}_{G10}$'
+    if model.lower() == 'cmd_input_caf09_s_mar13.dat':
+        model_name = '$\dot{M}_{M13}$'
 
     chi2, fit = rsp.match_utils.match_light(gal, pm_file, match_phot,
                                             match_fake, match_out, msg,
                                             match_kwargs=match_kwargs,
-                                            make_plot=True, model_name=model,
-                                            figname=figname, loud=True)
+                                            make_plot=True, model_name=model_name,
+                                            figname=figname, loud=False)
     return chi2, fit
 
 def run_match_tests(targets=None, models=None, band=None, inputs={}):
@@ -1164,6 +1212,91 @@ def run_match_tests(targets=None, models=None, band=None, inputs={}):
                                               extra='not_agb')
             print target, model, full_chi2, agb_chi2, part_chi2
             #print target, model, agb_chi2
+
+def check_stats()
+    filename = '/Users/phil/Desktop/tpagb_stats.dat'
+    lines = open(filename, 'r').readlines()
+    target, data, model, model_std, pct_diff, model_name = zip(*[l.strip().split() for l in lines])
+    data = np.array(data, dtype=float)
+    model = np.array(model, dtype=float)
+    model_std = np.array(model_std, dtype=float)
+    pct_diff = np.array(pct_diff, dtype=float)
+    target = np.array(target, dtype=str)
+    model_name = np.array(model_name, dtype=str)
+
+    isort = np.argsort(data)
+    fig, ax = plt.subplots()
+    for i in range(4):
+        ax.plot(pct_diff[isort[i::4]], data[isort[i::4]], label=model_name[i])
+    ax.legend()
+
+    filename = '/Users/phil/Desktop/chi2tests.dat'
+    lines = open(filename, 'r').readlines()
+    target, model, full, agb, not_agb = zip(*[l.strip().split() for l in lines if not l.startswith('#')])
+    model = np.array(model, dtype=str)
+    model[model=='APR13'] = '$BS95$'
+    model[model=='G10'] = '$G10$'
+    model[model=='MAR13'] = '$M13$'
+    model[model=='APR13VW93'] = '$VW93$'
+    
+    full = np.array(full, dtype=float)
+    target = np.array(['$%s$' % t for t in target], dtype=str)
+    agb = np.array(agb, dtype=float)
+    not_agb = np.array(not_agb, dtype=float)
+
+    # a plot of the chi full minus chi no agb.
+    cols = ['darkred', 'navy', 'black', 'purple']
+    fig, ax = plt.subplots()
+    for i in range(4):
+        ax.plot(full[i::4] - not_agb[i::4], 'o', ms=15, alpha=0.4, lw=2, color=cols[i], label=model[i])
+        #ax.plot(not_agb[i::4], 'o', lw=2, , color=cols[i])
+    ax.legend(loc=0, numpoints=1)
+    plt.xticks(np.arange(len(full[i::4])), target[i::4], rotation=45)
+    ax.set_xlim(-0.5, 9.5)
+    ax.set_ylabel('$\chi^2_{full}-\chi^2_{no-agb}$', fontsize=20)
+    plt.savefig('chi2_agb_improves_fit.png', dpi=300)
+
+    # a plot of just chi2 with full and no agb.
+    cols = ['darkred', 'navy', 'black', 'purple']
+    fig, ax = plt.subplots()
+    for i in range(4):
+        ax.plot(full[i::4], 'o', ms=15, alpha=0.4, lw=2, color=cols[i], label=model[i])
+        ax.plot(not_agb[i::4], 'x', ms=15, lw=2, color=cols[i])
+    ax.legend(loc=0, numpoints=1)
+    plt.xticks(np.arange(len(full[i::4])), target[i::4], rotation=45)
+    ax.set_xlim(-0.5, 9.5)
+    ax.set_ylabel('$\chi^2$', fontsize=20)
+    plt.savefig('chi2_full_no_agb.png', dpi=300)
+
+
+    model = model.reshape(9,4)        
+    not_agb = not_agb.reshape(9,4)        
+    full = full.reshape(9,4)        
+    cols = ['darkred', 'navy', 'black', 'purple']
+    fig, ax = plt.subplots()
+    for i in range(len(model)):
+        # G10 - x: 
+        fg10 = full[i][2]
+        ng10 = not_agb[i][2]
+        if np.isnan(ng10):
+            print 'nan!!'
+            ng10 = 1e10
+        full_diff = np.array([fg10 - full[i][j] for j in [0,1,3]])
+        nagb_diff = np.array([ng10 - not_agb[i][j] for j in [0,1,3]])
+        #nagb_diff = not_agb[i][2] - not_agb[i]
+        [ax.plot(i, full_diff[j], 'o', ms=10, alpha=0.4, color=cols[j]) for j in range(len(full_diff))]
+        [ax.plot(i, nagb_diff[j], 'x', ms=10, color=cols[j]) for j in range(len(nagb_diff))]
+    [ax.plot(-999, -999, 'o', ms=10, alpha=0.4, color=cols[j], label=model[i][j]) for j in [0,1,3]]
+    ax.set_xlim(-0.5, 9.5)
+    ax.set_ylim(-.2, 0.7)
+    ax.legend(loc=0, numpoints=1)
+    plt.xticks(np.arange(len(target[::4])), target[::4], rotation=45)
+    ax.set_ylabel('$\chi^2_{G10}-\chi^2_i$', fontsize=20)
+    # left: 12
+    # bottom: 22
+    # right: 96
+    # top: 96 
+    # w,hspace: .2 
 
 def main(inputfile):
     #ch = logging.StreamHandler()
