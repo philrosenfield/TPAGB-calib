@@ -8,19 +8,19 @@ targets     paper1
 models      cmd_input_CAF09_S_APR13.dat, cmd_input_CAF09_S_APR13VW93.dat, cmd_input_gi10_bow.dat, cmd_input_CAF09_S_MAR13.dat
 
 # plot LF
-make_plot   False
+make_plot   True
 plot_tpagb  False
 color_hist  False
 
 # use IR data or OPT data
-band        ir
+band        opt
 
 # which filters for all cmds etc. gal means uses filters from data file.
 filt1       gal
 filt2       gal
 
 # make trilegal simulation
-run_trilegal    False
+run_trilegal    True
 
 # offsets refer to below/above trgb or just set maglims to number and ignore offsets
 maglims     trgb
@@ -36,13 +36,13 @@ leo_norm    False
 leo_method  False
 
 # load ast corrected file:
-renormalize     True
+renormalize     False
 
 # do agb_nir ratio
-make_lfs    False
+make_lfs    True
 
 debug   True
 
-mc_norm  False
+mc_norm  True
 
 match_tests   True

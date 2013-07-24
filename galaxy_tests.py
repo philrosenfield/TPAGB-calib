@@ -16,7 +16,7 @@ from pprint import pprint
 angst_data = rsp.angst_tables.AngstTables()
 
 
-def cmd_contamination(gal, dcolor=0.1, dmag=0.2):
+def cmd_contamination(gal, dcolor=0.1, dmag=0.3, thresh=5):
     '''
     , verts_file_fmt=None,
     diag_plot=True, isoch_base=None,
@@ -24,36 +24,39 @@ def cmd_contamination(gal, dcolor=0.1, dmag=0.2):
     out_fig_fmt=None, M11=False, galaxy_table=None,
     rdcolor=None, rdmag=None
     '''
-    def set_up_cmd_steps(dcolor, dmag, npts):
-        if type(dcolor) == float:
-            dcolor = np.ones(npts) * dcolor
+    # rough outline of the RGB/AGB area. Exclude MS (~0.0)
+    color_limits = [0.4, 1.5]
+    bright_mag_limit = np.min(gal.mag2)
 
-        if type(dmag) == float:
-            dmag = np.ones(npts) * dmag
+    # minimum size of dmag bin spacing
+    dmag = 0.5
 
-        return dcolor, dmag
+    #inds, = np.nonzero((gal.mag2 < gal.trgb) &
+    #                   (gal.color > color_limits[0]) &
+    #                   (gal.color < color_limits[1]))
+    #mag2 = gal.mag2[inds]
+    #color = gal.color[inds]
+    points = np.column_stack((gal.color, gal.mag2))
+    mag_bins = np.arange(bright_mag_limit, gal.trgb + dmag,  dmag)
 
-    dcolor, dmag = set_up_cmd_steps(dcolor, dmag, len(bheb_color))
-
-    for i in range(len(bheb_color)):
-        colerr, magerr = cmd_errors_in_box(bheb_mag2[i], gal)
-        # find stars inside each heb box and save info
-        bverts = box_around_pt(bheb_color[i], bheb_mag2[i],
-                               dcolor[i]+colerr/2, dmag[i])
-        rverts = box_around_pt(rheb_color[i], rheb_mag2[i],
-                               rdcolor[i]+colerr/2, rdmag[i])
-        binds, = np.nonzero(nxutils.points_inside_poly(points, bverts))
-        rinds, = np.nonzero(nxutils.points_inside_poly(points, rverts))
-        if 0 in [len(binds), len(rinds)]:
+    for u, l in zip(mag_bins, np.roll(mag_bins,-1))[:-1]:
+        verts = np.array([[color_limits[0], l],
+                          [color_limits[0], u],
+                          [color_limits[1], u],
+                          [color_limits[1], l],
+                          [color_limits[0], l]])
+        inside, = np.nonzero(nxutils.points_inside_poly(points, verts))
+        
+        if len(inside) < thresh:
+            print len(inside)
             continue
-        #ms_bhebverts = box_around_pt(bheb_color[i]-(dcolor[i]+colerr/2),
-        #                             bheb_mag2[i], 2*(dcolor[i]+colerr/2), dmag[i])
 
-        ms_bhebverts = np.column_stack(([np.array(bverts)[:, 0][2], np.array(bverts)[:, 0][2], -1, -1, np.array(bverts)[:, 0][2]], np.array(bverts)[:, 1]))
-        ms_in_bheb, bheb_in_ms, poisson_noise, nmsbheb = gal.double_gaussian_contamination(gal, ms_bhebverts, color_sep=bheb_color[i]-(dcolor[i]+colerr/2)/2., diag_plot=True)
-        lost_bheb = bheb_in_ms
-        contaminated_bheb = ms_in_bheb
-
+        rstars_in_agb, agb_in_rstars, poisson_noise, nstars, color_sep = \
+            gal.double_gaussian_contamination(verts, diag_plot=True, dcol=0.1)
+        lost_agb = agb_in_rstars
+        contaminated_agb = rstars_in_agb
+        print u, l, color_sep
+        # still doesn't work... not picking up double gaussians....
 def get_imf(target):
     filename = '/Users/phil/research/TP-AGBcalib/code/TPAGB-calib/best_fits_from_match_runs.dat'
     dtype = [('ID', '|S5'), ('Galaxy', '|S14'), ('filter1', '|S5'), ('filter2', '|S5'), ('Av', '<f8'), ('IMF', '<f8'), ('dmod', '<f8'), ('dlogZ', '<f8')]
@@ -1070,7 +1073,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
     pprint(result_dict)
 
 def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={},
-                extra=''):
+                extra='', match_phot=None):
     '''
     run the match fitter with the simulated galaxy as the bg,
     no time bins, and data as data. this will just do the chi2 test.
@@ -1093,8 +1096,9 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
     color = sgal.ast_color[sgal.norm_inds]
     mag2 = sgal.ast_mag2[sgal.norm_inds]
 
-    match_phot, = rsp.fileIO.get_files(os.path.join(models_loc, 'phot'),
-                                       '*%s*.gst.match' % gal.target)
+    if match_phot is None:
+        match_phot, = rsp.fileIO.get_files(os.path.join(models_loc, 'phot'),
+                                           '*%s*.gst.match' % gal.target)
 
     if verts is True or inverse_verts is True:
         agb_verts = load_agb_verts(gal)
@@ -1178,10 +1182,90 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
                                             match_fake, match_out, msg,
                                             match_kwargs=match_kwargs,
                                             make_plot=True, model_name=model_name,
-                                            figname=figname, loud=False)
+                                            figname=figname, loud=True)
     return chi2, fit
 
-def run_match_tests(targets=None, models=None, band=None, inputs={}):
+def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
+                   figname=None, dmag=0.1, dcol=0.05):
+
+    sim_color = sgal.ast_color[sgal.norm_inds]
+    sim_mag2 = sgal.ast_mag2[sgal.norm_inds]
+
+    data_color = gal.color
+    data_mag2 = gal.mag2
+
+    if verts is True or inverse_verts is True:
+        agb_verts = load_agb_verts(gal)
+
+        # load photometry verts, will need to save new file
+        phot_points = np.column_stack((data_color, data_mag2))
+        phot_mask = nxutils.points_inside_poly(phot_points, agb_verts)
+
+        # sim cmd points
+        points = np.column_stack((sim_color, sim_mag2))
+        mask = nxutils.points_inside_poly(points, agb_verts)
+
+        if verts is True:
+            vinds, = np.nonzero(mask)
+            vpinds, = np.nonzero(phot_mask)
+            match_phot_ext = '_verts.dat'
+        if inverse_verts is True:
+            vinds, = np.nonzero(mask==0)
+            vpinds, = np.nonzero(phot_mask==0)
+            match_phot_ext = '_inverts.dat'
+
+        photpts = len(vpinds)
+        simpts = len(vinds)
+
+        # slice sim cmd
+        sim_color = sim_color[vinds]
+        sim_mag2 = sim_mag2[vinds]
+        data_color = data_color[vpinds]
+        data_mag2 = data_mag2[vpinds]
+        
+    # spacing
+    photpts = len(data_mag2)
+    simpts = len(sim_mag2)
+    npts = np.min([photpts, simpts])
+    dmag = np.diff(np.linspace(data_mag2.min(), data_mag2.max(),
+                   int(np.sqrt(npts))))[0]
+    dcol = np.diff(np.linspace(np.min((data_color)), np.max((data_color)),
+                   int(np.sqrt(npts))))[0]
+    dmag = np.min([0.15, dmag])
+    dcol = np.min([0.1, dcol])
+
+    data_hess = rsp.astronomy_utils.hess(data_color, data_mag2, dmag,
+                                         **{'cbinsize': dcol})
+
+    sim_hess = rsp.astronomy_utils.hess(sim_color, sim_mag2, dmag,
+                                         **{'cbin': data_hess[0],
+                                            'mbin': data_hess[1]})
+
+    chi2, dif, sig = rsp.Galaxies.stellar_prob(data_hess, sim_hess)
+
+
+    if make_plot is True:
+        if figname is None:
+            figname = 'pgpro_%s_%s.png' % (gal.target, model)        
+        if sgal.model.lower() == 'cmd_input_caf09_s_apr13vw93.dat':
+            model_name = '$\dot{M}_{VW93}$'
+        if sgal.model.lower() == 'cmd_input_caf09_s_apr13.dat':
+            model_name = '$\dot{M}_{BS95}$'
+        if sgal.model.lower() == 'cmd_input_gi10_bow.dat':
+            model_name = '$\dot{M}_{G10}$'
+        if sgal.model.lower() == 'cmd_input_caf09_s_mar13.dat':
+            model_name = '$\dot{M}_{M13}$'
+
+        ZS = [data_hess[2], sim_hess[2], dif, sig]
+        extent = [data_hess[0][0], data_hess[0][-1], data_hess[1][-1], data_hess[1][0]]
+        labels = [gal.target, model_name, '$Difference$', '$\chi^2=%.2f$' % chi2]
+        grid = rsp.match_graphics.match_plot(ZS, extent, labels=labels)
+        plt.savefig(figname, dpi=300)
+        plt.close()
+
+    return chi2
+
+def run_fuck_you_match(targets=None, models=None, band=None, inputs={}):
     '''
     calls match_tests in a batch mode.
     '''
@@ -1198,22 +1282,85 @@ def run_match_tests(targets=None, models=None, band=None, inputs={}):
     if type(models) == str:
         models = [models]
 
+    figname_fmt = 'pgpro_%s_%s_%s.png'
+
     for target in targets:
+        # print target
         for model in models:
+            # print model
+            gal, sgal = load_normalized_simulation(target, model, band=band, 
+                                                   maglims=inputs['maglims'],
+                                                   offsets=inputs['offsets'],
+                                                   leo_norm=inputs['leo_norm'])
             # entire cmd fit
-            full_chi2, full_fit = match_tests(target, model, band, inputs=inputs,
-                                              extra='full')
+            extra = 'full'
+            figname = figname_fmt % (target, model.replace('.dat',''), extra)
+            full_chi2 = fuck_you_match(gal, sgal, figname=figname,
+                                       make_plot=True)
             # include agb only
-            agb_chi2, agb_fit = match_tests(target, model, band, verts=True,
-                                            inputs=inputs, extra='agb')
+            extra = 'agb'
+            figname = figname_fmt % (target, model.replace('.dat',''), extra)
+            agb_chi2 = fuck_you_match(gal, sgal, figname=figname, verts=True,
+                                      make_plot=True)
             # exclude agb
+            extra = 'not_agb'
+            figname = figname_fmt % (target, model.replace('.dat',''), extra)
+            part_chi2 = fuck_you_match(gal, sgal, figname=figname,
+                                       inverse_verts=True, make_plot=True)
+
+            print '%s %s %.2f %.2f %.2f' % (target, model.replace('.dat', '').split('_')[-1], full_chi2, agb_chi2, part_chi2)
+
+
+
+def run_match_tests(targets=None, models=None, band=None, inputs={},
+                    modelB=None, ex2=''):
+    '''
+    calls match_tests in a batch mode.
+    '''
+
+    if targets is None:
+        targets = inputs['targets']
+    if band is None:
+        band = inputs['band']
+    if models is None:
+        models = inputs['models']
+
+    targets = load_targets(targets)
+
+    if type(models) == str:
+        models = [models]
+
+    if modelB is not None:
+        bg_loc = '/Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/'
+        match_phot_fmt = 'match_%s_%s*%s.bg'
+
+    for target in targets:
+        print target
+        for model in models:
+            print model
+            # entire cmd fit
+            extra = 'full'
+            match_phot, = rsp.fileIO.get_files(bg_loc, str.lower(match_phot_fmt % (extra, target, modelB.replace('.dat',''))))
+            full_chi2, full_fit = match_tests(target, model, band, inputs=inputs,
+                                              extra=extra+ex2, match_phot=match_phot)
+            # include agb only
+            extra = 'agb'
+            match_phot, = rsp.fileIO.get_files(bg_loc, str.lower(match_phot_fmt % (extra, target, modelB.replace('.dat',''))))
+            agb_chi2, agb_fit = match_tests(target, model, band, verts=True,
+                                            inputs=inputs, extra=extra+ex2,
+                                            match_phot=match_phot)
+            # exclude agb
+            extra = 'not_agb'
+            match_phot, = rsp.fileIO.get_files(bg_loc, str.lower(match_phot_fmt % (extra, target, modelB.replace('.dat',''))))
             part_chi2, part_fit = match_tests(target, model, band,
                                               inverse_verts=True, inputs=inputs,
-                                              extra='not_agb')
+                                              extra=extra+ex2,
+                                              match_phot=match_phot)
+
             print target, model, full_chi2, agb_chi2, part_chi2
             #print target, model, agb_chi2
 
-def check_stats()
+def check_stats():
     filename = '/Users/phil/Desktop/tpagb_stats.dat'
     lines = open(filename, 'r').readlines()
     target, data, model, model_std, pct_diff, model_name = zip(*[l.strip().split() for l in lines])
@@ -1235,7 +1382,7 @@ def check_stats()
     target, model, full, agb, not_agb = zip(*[l.strip().split() for l in lines if not l.startswith('#')])
     model = np.array(model, dtype=str)
     model[model=='APR13'] = '$BS95$'
-    model[model=='G10'] = '$G10$'
+    model[model=='bow'] = '$G10$'
     model[model=='MAR13'] = '$M13$'
     model[model=='APR13VW93'] = '$VW93$'
     
@@ -1254,6 +1401,7 @@ def check_stats()
     plt.xticks(np.arange(len(full[i::4])), target[i::4], rotation=45)
     ax.set_xlim(-0.5, 9.5)
     ax.set_ylabel('$\chi^2_{full}-\chi^2_{no-agb}$', fontsize=20)
+    plt.subplots_adjust(bottom=0.2)
     plt.savefig('chi2_agb_improves_fit.png', dpi=300)
 
     # a plot of just chi2 with full and no agb.
@@ -1266,13 +1414,14 @@ def check_stats()
     plt.xticks(np.arange(len(full[i::4])), target[i::4], rotation=45)
     ax.set_xlim(-0.5, 9.5)
     ax.set_ylabel('$\chi^2$', fontsize=20)
+    plt.subplots_adjust(bottom=0.2)
     plt.savefig('chi2_full_no_agb.png', dpi=300)
 
 
     model = model.reshape(9,4)        
     not_agb = not_agb.reshape(9,4)        
     full = full.reshape(9,4)        
-    cols = ['darkred', 'navy', 'black', 'purple']
+    cols = ['darkred', 'navy', 'purple', 'purple']
     fig, ax = plt.subplots()
     for i in range(len(model)):
         # G10 - x: 
@@ -1288,10 +1437,13 @@ def check_stats()
         [ax.plot(i, nagb_diff[j], 'x', ms=10, color=cols[j]) for j in range(len(nagb_diff))]
     [ax.plot(-999, -999, 'o', ms=10, alpha=0.4, color=cols[j], label=model[i][j]) for j in [0,1,3]]
     ax.set_xlim(-0.5, 9.5)
-    ax.set_ylim(-.2, 0.7)
+    ax.hlines(0, *ax.get_xlim(), linestyle='--')
+    #ax.set_ylim(-.2, 0.7)
     ax.legend(loc=0, numpoints=1)
     plt.xticks(np.arange(len(target[::4])), target[::4], rotation=45)
+    plt.subplots_adjust(bottom=0.2)
     ax.set_ylabel('$\chi^2_{G10}-\chi^2_i$', fontsize=20)
+    plt.savefig('chi2_gi10_comp.png', dpi=300)
     # left: 12
     # bottom: 22
     # right: 96
