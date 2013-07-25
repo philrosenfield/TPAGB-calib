@@ -2,7 +2,7 @@
 snap_src    /Users/phil/research/TP-AGBcalib/SNAP
 
 # targets, either use all, or set targets (not implemented (leo_overlap, short_list)
-targets     paper1
+targets     DDO71, SCL-DE1, IC2574-SGS, UGC-4305-1, UGC-4305-2, NGC4163, UGC8508
 
 # cmd_input files
 models      cmd_input_CAF09_S_APR13.dat, cmd_input_CAF09_S_APR13VW93.dat, cmd_input_gi10_bow.dat, cmd_input_CAF09_S_MAR13.dat
@@ -45,4 +45,4 @@ debug   True
 
 mc_norm  True
 
-match_tests   True
+stats_tests   True

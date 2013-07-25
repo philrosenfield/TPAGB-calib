@@ -364,12 +364,12 @@ def load_galaxy(ID, band='ir'):
     if band is None:
         fits_src = os.path.join(snap_src, 'data', 'opt_ir_matched_v2')
     fitsname = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID)
-
     if len(fitsname) > 1:
         filetype = 'fitstable'
     else:
         filetype = 'agbsnap'
     fitsname = ir_or_opt_file(fitsname, band=band)
+
     gal_kw = {'hla': False, 'photsys': 'wfc3snap', 'angst': True,
               'filetype': filetype, 'band': band}
 
@@ -685,7 +685,7 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
 
         # load sim galaxy
         sgal = rsp.Galaxies.simgalaxy(trilegal_output, gal.filter1, gal.filter2,
-                                      count_offset=count_offset)
+                                      count_offset=count_offset, photsys=gal.photsys)
         ast_check = sgal.load_ast_corrections()
         if not hasattr(sgal, 'ast_mag2'):
             # "correct" for asts
@@ -717,7 +717,7 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
                 # now load the ast file we just wrote
                 # TODO: open up spread_angst and send the array back!
                 sgal = rsp.Galaxies.simgalaxy(spread_outfile, gal.filter1, gal.filter2,
-                                              count_offset=count_offset)
+                                              count_offset=count_offset, photsys=gal.photsys)
 
             ast_check = sgal.load_ast_corrections()
             assert ast_check == 1, 'problem with ast corrections'
@@ -753,6 +753,7 @@ def load_normalized_simulation(target, model, band=None, input_file=None,
 
     gal = load_galaxy(target, band=band)
     sim_file = load_ast_file(gal, model)
+
     if input_file is not None:
         inputs = rsp.fileIO.load_inputs(input_file)
         offsets = inputs['offsets']
@@ -764,7 +765,9 @@ def load_normalized_simulation(target, model, band=None, input_file=None,
     verts, ndata_stars = setup_data_normalization(gal, gal.filter1, gal.filter2,
                                                   leo_method=leo_norm)
     
-    sgal = rsp.Galaxies.simgalaxy(sim_file, filter1=gal.filter1, filter2=gal.filter2)
+    sgal = rsp.Galaxies.simgalaxy(sim_file, filter1=gal.filter1, filter2=gal.filter2,
+                                  photsys=gal.photsys)
+    print sgal.photsys
     sgal.load_ast_corrections()
 
     sgal = make_normalized_simulation(gal, model, 'gal', 'gal', maglims=maglims,
@@ -962,7 +965,7 @@ def load_ast_file(gal, model):
         sim_file, = rsp.fileIO.get_files(os.path.join(snap_src, 'output'),
                                          search_str)
     except ValueError:
-        raise ValueError, 'more than one value found when searching %s' % search_str
+        raise ValueError, 'more than one or zero value(s) found when searching %s' % search_str
     return sim_file
 
 
@@ -1054,7 +1057,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
             pct_diff = (nrgb_nagb_sim - nrgb_nagb_data) / nrgb_nagb_data
 
             if make_plot is True:
-                plot_LF_kw['model_title'] = model_title
+                plot_LF_kw['model_title'] = translate_model_name(model_title)
                 smg.make_LF(gal.filter1, gal.filter2, plot_LF_kw=plot_LF_kw,
                             comp50=True, add_boxes=add_boxes,
                             color_hist=color_hist, plot_tpagb=plot_tpagb)
@@ -1169,14 +1172,7 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
         match_kwargs['dcol'] = dcol
         print match_kwargs['dmag'], match_kwargs['dcol']
     
-    if model.lower() == 'cmd_input_caf09_s_apr13vw93.dat':
-        model_name = '$\dot{M}_{VW93}$'
-    if model.lower() == 'cmd_input_caf09_s_apr13.dat':
-        model_name = '$\dot{M}_{BS95}$'
-    if model.lower() == 'cmd_input_gi10_bow.dat':
-        model_name = '$\dot{M}_{G10}$'
-    if model.lower() == 'cmd_input_caf09_s_mar13.dat':
-        model_name = '$\dot{M}_{M13}$'
+    model_name = translate_model_name(model)
 
     chi2, fit = rsp.match_utils.match_light(gal, pm_file, match_phot,
                                             match_fake, match_out, msg,
@@ -1185,14 +1181,29 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
                                             figname=figname, loud=True)
     return chi2, fit
 
+def translate_model_name(model):
+    if 'apr13vw93' in model.lower():
+        model_name = '$\dot{M}_{VW93}$'
+    elif 'apr13' in model.lower():
+        model_name = '$\dot{M}_{BS95}$'
+    elif 'gi10' in model.lower() or 'bow' in model.lower():
+        model_name = '$\dot{M}_{G10}$'
+    elif 'mar13' in model.lower():
+        model_name = '$\dot{M}_{M13}$'
+    return model_name
+
 def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
-                   figname=None, dmag=0.1, dcol=0.05):
+                   figname=None, dmag=0.1, dcol=0.05, modelB=None):
 
     sim_color = sgal.ast_color[sgal.norm_inds]
     sim_mag2 = sgal.ast_mag2[sgal.norm_inds]
 
-    data_color = gal.color
-    data_mag2 = gal.mag2
+    if modelB is not None:
+        data_color = gal.color
+        data_mag2 = gal.mag2
+    else:
+        data_color = gal.ast_color[gal.norm_inds]
+        data_mag2 = gal.ast_mag2[gal.norm_inds]
 
     if verts is True or inverse_verts is True:
         agb_verts = load_agb_verts(gal)
@@ -1227,10 +1238,10 @@ def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
     photpts = len(data_mag2)
     simpts = len(sim_mag2)
     npts = np.min([photpts, simpts])
-    dmag = np.diff(np.linspace(data_mag2.min(), data_mag2.max(),
-                   int(np.sqrt(npts))))[0]
-    dcol = np.diff(np.linspace(np.min((data_color)), np.max((data_color)),
-                   int(np.sqrt(npts))))[0]
+    dmag = np.diff(np.linspace(np.min(data_mag2), np.max(data_mag2),
+                               int(np.sqrt(npts))))[0]
+    dcol = np.diff(np.linspace(np.min(data_color), np.max(data_color),
+                               int(np.sqrt(npts))))[0]
     dmag = np.min([0.15, dmag])
     dcol = np.min([0.1, dcol])
 
@@ -1247,14 +1258,8 @@ def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
     if make_plot is True:
         if figname is None:
             figname = 'pgpro_%s_%s.png' % (gal.target, model)        
-        if sgal.model.lower() == 'cmd_input_caf09_s_apr13vw93.dat':
-            model_name = '$\dot{M}_{VW93}$'
-        if sgal.model.lower() == 'cmd_input_caf09_s_apr13.dat':
-            model_name = '$\dot{M}_{BS95}$'
-        if sgal.model.lower() == 'cmd_input_gi10_bow.dat':
-            model_name = '$\dot{M}_{G10}$'
-        if sgal.model.lower() == 'cmd_input_caf09_s_mar13.dat':
-            model_name = '$\dot{M}_{M13}$'
+
+        model_name = translate_model_name(sgal.model)
 
         ZS = [data_hess[2], sim_hess[2], dif, sig]
         extent = [data_hess[0][0], data_hess[0][-1], data_hess[1][-1], data_hess[1][0]]
@@ -1265,9 +1270,11 @@ def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
 
     return chi2
 
-def run_fuck_you_match(targets=None, models=None, band=None, inputs={}):
+def run_fuck_you_match(targets=None, models=None, band=None, inputs={},
+                       modelB=None):
     '''
-    calls match_tests in a batch mode.
+    does the chi2 test for full field, agb region, and not-agb region.
+    to compare model to model, use modelB.
     '''
 
     if targets is None:
@@ -1285,27 +1292,44 @@ def run_fuck_you_match(targets=None, models=None, band=None, inputs={}):
     figname_fmt = 'pgpro_%s_%s_%s.png'
 
     for target in targets:
-        # print target
+        print target
         for model in models:
-            # print model
+            print model
             gal, sgal = load_normalized_simulation(target, model, band=band, 
                                                    maglims=inputs['maglims'],
                                                    offsets=inputs['offsets'],
                                                    leo_norm=inputs['leo_norm'])
+
+            if modelB is not None:
+                _, sgal2 = load_normalized_simulation(target, modelB, band=band, 
+                                                      maglims=inputs['maglims'],
+                                                      offsets=inputs['offsets'],
+                                                      leo_norm=inputs['leo_norm'])
+
+                # overwrite gal with modelB.
+                [gal.__setattr__(k, v) for k,v in sgal2.__dict__.items()]
+                #gal.target = modelB.replace('.dat', '').split('_')[-1]
             # entire cmd fit
             extra = 'full'
+            print extra
             figname = figname_fmt % (target, model.replace('.dat',''), extra)
-            full_chi2 = fuck_you_match(gal, sgal, figname=figname,
+            full_chi2 = fuck_you_match(gal, sgal, figname=figname, modelB=modelB,
                                        make_plot=True)
+            
+            if band == 'opt':
+                print '%s %s %.2f' % (target, model.replace('.dat', '').split('_')[-1], full_chi2)
+                return
             # include agb only
             extra = 'agb'
+            print extra
             figname = figname_fmt % (target, model.replace('.dat',''), extra)
             agb_chi2 = fuck_you_match(gal, sgal, figname=figname, verts=True,
-                                      make_plot=True)
+                                      make_plot=True, modelB=modelB)
             # exclude agb
             extra = 'not_agb'
+            print extra
             figname = figname_fmt % (target, model.replace('.dat',''), extra)
-            part_chi2 = fuck_you_match(gal, sgal, figname=figname,
+            part_chi2 = fuck_you_match(gal, sgal, figname=figname, modelB=modelB,
                                        inverse_verts=True, make_plot=True)
 
             print '%s %s %.2f %.2f %.2f' % (target, model.replace('.dat', '').split('_')[-1], full_chi2, agb_chi2, part_chi2)
@@ -1477,8 +1501,8 @@ def main(inputfile):
     if mc_norm is True:
         call_mc_norm(**inputs)
 
-    if inputs['match_tests'] is True:
-        run_match_tests(inputs=inputs)
+    if inputs['stats_tests'] is True:
+        run_fuck_you_match(inputs=inputs)
 
 if __name__ == "__main__":
     main(sys.argv[1])
