@@ -10,8 +10,11 @@ import difflib
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.nxutils as nxutils
+from matplotlib.ticker import MaxNLocator
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 from pprint import pprint
+import brewer2mpl
 
 angst_data = rsp.angst_tables.AngstTables()
 
@@ -151,14 +154,14 @@ def gaussian_mixture_modeling():
     
 
 def multi_galaxy_hess(targets=None, split_by_color=False, ax=None, imshow_kw={},
-                      make_hess=False):
+                      make_hess=False, band='ir'):
     if ax is None:
         fig, ax = plt.subplots()
 
     if targets is None:
         targets = all_targets()
     # load galaxies class
-    gals = rsp.Galaxies.galaxies([load_galaxy(t, band='ir') for t in targets])
+    gals = rsp.Galaxies.galaxies([load_galaxy(t, band=band) for t in targets])
     # combine all galaxies
     gals.squish('Color', 'Mag2', 'Trgb')
 
@@ -214,6 +217,7 @@ def multi_galaxy_hess(targets=None, split_by_color=False, ax=None, imshow_kw={},
     ax.set_ylabel('$%s$' % gals.filter2, fontsize=20)
     ax.tick_params(labelsize=16)
     return fig, ax
+
 
 def agb_rheb_separation(targets=None):
     '''
@@ -767,7 +771,6 @@ def load_normalized_simulation(target, model, band=None, input_file=None,
     
     sgal = rsp.Galaxies.simgalaxy(sim_file, filter1=gal.filter1, filter2=gal.filter2,
                                   photsys=gal.photsys)
-    print sgal.photsys
     sgal.load_ast_corrections()
 
     sgal = make_normalized_simulation(gal, model, 'gal', 'gal', maglims=maglims,
@@ -957,6 +960,13 @@ def targets_paper1():
     return np.concatenate([gi10_overlap(), targets_z002()])
     #return ['UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
 
+def targets_leo_norm_ok():
+    '''
+    targets that don't have MS to cut out, might as well use the whole
+    RGB
+    '''
+    return np.concatenate([gi10_overlap(), ['DDO82', 'NGC4163', 'UGC8508']])
+    
 def load_ast_file(gal, model):
     model_short = model.replace('cmd_input_','').lower()
     search_str = '*'.join(('ast_%s' % gal.filter1, gal.filter2, gal.target,
@@ -1003,14 +1013,25 @@ def load_targets(targets):
         targets = [targets]
     return targets
 
- 
+
+def nir_cmd_plot_limits(xlim=None, ylim=None, xlim2=None):
+    # these are chosen for IR plots.
+    if xlim is None:
+        xlim = (-0.5, 1.5)
+    if ylim is None:
+        ylim = (25.3, 18)
+    if xlim2 is None:
+        xlim2 = (0.8, 4e4)
+    return xlim, ylim, xlim2 
+
+
 def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      targets=None, run_trilegal=False, leo_ast=True, 
                      offsets=(1.5, 0.), models=None, maglims=None,
                      leo_method=False, leo_norm=False, make_plot=True,
                      xlim=None, ylim=None, xlim2=None, add_boxes=True,
-                     color_hist=False, plot_tpagb=False, **kwargs):
-    
+                     color_hist=False,  plt_tpagb=False, **kwargs):
+    smgs = []
     targets = load_targets(targets)
 
     if type(models) == str:
@@ -1021,20 +1042,25 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                    'leo_norm': leo_norm}
 
     if make_plot is True:
-        # these are chosen for IR plots.
-        if xlim is None:
-            xlim = (-0.5, 1.5)
-        if ylim is None:
-            ylim = (25.3, 18)
-        if xlim2 is None:
-            xlim2 = (0.8, 4e4)
+        xlim, ylim, xlim2 = nir_cmd_plot_limits(xlim=xlim,
+                                                ylim=ylim,
+                                                xlim2=xlim2)
+
         plot_LF_kw = {'ylim': ylim, 'xlim': xlim, 'xlim2': xlim2,
                       'color_hist': color_hist, 'title': True}
 
     result_dict = {}
     for target in targets:
+        logger.info('working on %s' % target)
         norm_sim_kw['object_mass'] = load_sim_masses(target)
         gal = load_galaxy(target, band=band)
+        leo_now = norm_sim_kw['leo_method']
+        if target in targets_leo_norm_ok():
+            norm_sim_kw['leo_method'] = True
+        else:
+            norm_sim_kw['leo_method'] = False
+        if leo_now != norm_sim_kw['leo_method']:
+            logger.info('over-ridcing input, leo_method is now %s' % leo_method)
 
         for model in models:
             logger.info('%s: %s' % (target, model))
@@ -1069,11 +1095,12 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                 result_dict[target].update(sub_dict)
             else:
                 result_dict[target] = sub_dict
-
+            smgs.append(smg)
     #print '   ', ' '.join(result_dict[result_dict.keys()[0]].keys())
     #for key, rd in result_dict.items():
     #    print key, ' '.join(['%.3f' % i for i in  rd.values()])
     pprint(result_dict)
+    return smgs
 
 def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={},
                 extra='', match_phot=None):
@@ -1193,17 +1220,29 @@ def translate_model_name(model):
     return model_name
 
 def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
-                   figname=None, dmag=0.1, dcol=0.05, modelB=None):
+                   figname=None, dmag=0.1, dcol=0.05, modelB=None,
+                   rgb_only=False):
 
-    sim_color = sgal.ast_color[sgal.norm_inds]
-    sim_mag2 = sgal.ast_mag2[sgal.norm_inds]
+    if rgb_only is True:
+        sgal.all_stages('RGB')
+        inds = np.intersect1d(sgal.irgb, sgal.norm_inds)
+    else:
+        inds = sgal.norm_inds
+    sim_color = sgal.ast_color[inds]
+    sim_mag2 = sgal.ast_mag2[inds]
 
-    if modelB is not None:
+    if modelB is None:
         data_color = gal.color
         data_mag2 = gal.mag2
     else:
-        data_color = gal.ast_color[gal.norm_inds]
-        data_mag2 = gal.ast_mag2[gal.norm_inds]
+        if rgb_only is True:
+            gal.all_stages('RGB')
+            ginds = np.intersect1d(gal.irgb, gal.norm_inds)
+        else:
+            ginds = gal.norm_inds
+
+        data_color = gal.ast_color[ginds]
+        data_mag2 = gal.ast_mag2[ginds]
 
     if verts is True or inverse_verts is True:
         agb_verts = load_agb_verts(gal)
@@ -1252,23 +1291,89 @@ def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
                                          **{'cbin': data_hess[0],
                                             'mbin': data_hess[1]})
 
-    chi2, dif, sig = rsp.Galaxies.stellar_prob(data_hess, sim_hess)
+    chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(data_hess, sim_hess)
 
 
     if make_plot is True:
         if figname is None:
-            figname = 'pgpro_%s_%s.png' % (gal.target, model)        
+            figname = 'pgpro_%s_%s_%s_%s%s.png' % (gal.target, model, gal.filter1, gal.filter2, extra)        
 
         model_name = translate_model_name(sgal.model)
 
-        ZS = [data_hess[2], sim_hess[2], dif, sig]
+        ZS = [data_hess[2], sim_hess[2], pct_dif, sig]
+        xlim, ylim, _ = nir_cmd_plot_limits()
+
         extent = [data_hess[0][0], data_hess[0][-1], data_hess[1][-1], data_hess[1][0]]
-        labels = [gal.target, model_name, '$Difference$', '$\chi^2=%.2f$' % chi2]
-        grid = rsp.match_graphics.match_plot(ZS, extent, labels=labels)
+        labels = ['${\\rm %s}$' % gal.target, model_name, '$\%\ {\\rm Difference}$', '$\chi^2=%.2f$' % chi2]
+        grid = rsp.match_graphics.match_plot(ZS, extent, xlim, ylim,
+                                             labels=labels,
+                                             **{'xlabel': '$%s-%s$' % (gal.filter1, gal.filter2),
+                                                'ylabel': '$%s$' % gal.filter2})
         plt.savefig(figname, dpi=300)
         plt.close()
 
     return chi2
+
+
+def get_nrgb_from_optical(targets, trgb_offset=1.5):
+    Nrgbs = []
+    targets = load_targets(targets)
+    for target in targets:
+        gal = load_galaxy(target, band='opt')
+
+        if target in gi10_overlap():
+            cmin, cmax = -100, 100
+        elif gal.filter1 == 'F475W':
+            cmin, cmax = 1.5, 2.6
+        elif gal.filter1 == 'F606W':
+            cmin, cmax = 0.5, 1.75
+        elif gal.filter1 == 'F555W':
+            cmin, cmax = 0.8, 2.0
+        else:
+            print 'what the fuck are you trying to do here?'
+    
+        mag_faint, mag_bright = gal.Trgb + trgb_offset, gal.Trgb
+    
+        big_box = np.array([[cmin, mag_faint],
+                            [cmin, mag_bright],
+                            [cmax, mag_bright],
+                            [cmax, mag_faint],
+                            [cmin, mag_faint]])
+        points = np.column_stack((gal.Color, gal.Mag2))
+        inside, = np.nonzero(nxutils.points_inside_poly(points, big_box))
+        
+        if target in gi10_overlap():
+            inds = inside
+        else:
+            inds = inside
+
+        #    # the 1/2 std around color mean
+        #    cmean = np.mean(gal.Color[inside])
+        #    cstd = np.std(gal.Color[inside])/2.
+        #    col_min = cmean - cstd
+        #    col_max = cmean + cstd
+        #    rgb_box = np.array([[col_min, mag_faint],
+        #                        [col_min, mag_bright],
+        #                        [col_max, mag_bright],
+        #                        [col_max, mag_faint],
+        #                        [col_min, mag_faint]])
+        #
+        #    inds, = np.nonzero(nxutils.points_inside_poly(points, rgb_box))    
+        #
+        Nrgb = len(inds)
+        print gal.target, gal.filter1, gal.filter2, Nrgb
+        Nrgbs.append(Nrgb)
+        fig, ax = gal.plot_cmd(gal.Color, gal.Mag2, scatter_off=True)
+        ax.plot(gal.Color[inds], gal.Mag2[inds], '.')
+        ax.set_title(gal.target)
+        if not target in gi10_overlap():
+            from matplotlib.pyplot import ginput
+            pts = ginput(0, timeout=-1)
+            xs, ys = np.transpose(pts)
+            inds, = np.nonzero(nxutils.points_inside_poly(points, pts))
+            print len(inds)
+            print pts
+    return Nrgbs
 
 def run_fuck_you_match(targets=None, models=None, band=None, inputs={},
                        modelB=None):
@@ -1333,7 +1438,6 @@ def run_fuck_you_match(targets=None, models=None, band=None, inputs={},
                                        inverse_verts=True, make_plot=True)
 
             print '%s %s %.2f %.2f %.2f' % (target, model.replace('.dat', '').split('_')[-1], full_chi2, agb_chi2, part_chi2)
-
 
 
 def run_match_tests(targets=None, models=None, band=None, inputs={},
@@ -1474,6 +1578,203 @@ def check_stats():
     # top: 96 
     # w,hspace: .2 
 
+
+def compare_LFs(smgs):
+
+    bmap = brewer2mpl.get_map('Paired', 'Qualitative', 9)
+    cols = bmap.mpl_colors
+
+    models, imod = np.unique([smg.sgal.model for smg in smgs], return_inverse=True)
+
+    # j will go in order of galaxy.
+    for i in range(len(models)):
+        resids = []
+        pct_diffs = []
+        fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, figsize=(10,12))
+        model_name = translate_model_name(models[i])
+        for j, smg in enumerate(np.array(smgs)[np.where(imod==i)]):
+            data_hist = smg.gal_hist
+            model_hist = smg.sgal_hist
+            bins = rsp.astronomy_utils.mag2Mag(smg.bins[1:], 'F160W',
+                                               'wfc3snap',
+                                               **{'target': smg.gal.target,
+                                                  'filter1': smg.gal.filter1})
+            #bins = smg.bins[1:]
+            comp_inds = np.nonzero(bins < smg.gal.trgb)
+            pct_diff = (model_hist - data_hist) / data_hist
+            resid = model_hist - data_hist
+            resids.append(np.mean(resid[comp_inds]))
+            pct_diffs.append(np.mean(pct_diff[comp_inds]))
+            # 3 panel
+            # top: # vs magnitude
+            # middle: residual model-data  vs mag
+            # bottom: %diff vs mag
+            label='$%s$' % smg.gal.target.replace('-','\!-\!')
+            plt_kw = {'ls': 'steps', 'color': cols[j], 'lw': 2}
+            #[ax.vlines(smg.gal.Trgb, *ax.get_ylim(), color=cols[j]) for ax in [ax1, ax2, ax3]]
+            ax1.semilogy(bins[comp_inds], model_hist[comp_inds], label=label, **plt_kw)
+            ax2.plot(bins[comp_inds], pct_diff[comp_inds], **plt_kw)
+            ax3.plot(bins[comp_inds], resid[comp_inds], **plt_kw)
+            plt_kw['ls'] += '--'
+            plt_kw['lw'] = 1
+            ax1.semilogy(bins[comp_inds], data_hist[comp_inds], **plt_kw)
+            print smg.gal.target, np.mean(resid[comp_inds]), np.std(resid[comp_inds]), np.mean(pct_diff[comp_inds]), np.std(pct_diff[comp_inds])
+        print model_name, np.mean(resids), np.std(resids), np.mean(pct_diffs), np.std(pct_diffs)
+        ax1.text(0.5, 0.85, '$%s$' % model_name, fontsize=20, transform=ax1.transAxes)
+        ax2.text(0.1, 0.85, '${\\rm \%\ Difference}$', fontsize=20,
+                 transform=ax2.transAxes)        
+        ax3.text(0.1, 0.85, '${\\rm Residual}$', fontsize=20,
+                 transform=ax3.transAxes)
+
+        ax1.legend(loc=0, numpoints=1, frameon=False)
+        ax1.set_ylabel('$\#$', fontsize=20)
+        ax2.set_ylabel('$(m-n)/n$', fontsize=20)
+        ax3.set_ylabel('$m-n$', fontsize=20)
+        [ax.set_xlabel('$F160W$', fontsize=20) for ax in [ax1, ax2, ax3]]
+        plt.tick_params(labelsize=16)
+        ax1.set_ylim(0, 400)
+        ax2.set_ylim(-1.5, 30)
+        ax3.set_ylim(-75, 275)
+        [ax.set_xlim(-10, -5.5) for ax in [ax1, ax2, ax3]]
+        plt.subplots_adjust(hspace=.25, top=.95)
+        plt.savefig('comp_lfs_%s.png' % models[i].replace('.dat','').split('_')[-1], dpi=300)
+    #fig, (axs) = plt.subplots(figsize=(10,10), nrows=2, ncols=2)
+    #axs = axs.ravel()
+    do_a_plot_that_wastes_time = True
+    if do_a_plot_that_wastes_time is True:
+        for i in range(len(models)):
+            model_name = translate_model_name(models[i])
+            fig, ax  = plt.subplots(figsize=(10, 10))
+
+            divider = make_axes_locatable(ax)
+            axt = divider.append_axes("top", 1.5, pad=0.1, sharex=ax)
+            #axl = divider.append_axes("left", 1.5, pad=0.1, sharey=ax)
+            axr = divider.append_axes("right", 1.5, pad=0.1, sharey=ax)
+            # this is for an awesome four panel that I spent to much time
+            # on and feel stupid deleting.
+            #divider.new_vertical(1.5, pad=0.1, pack_start=True)
+            #plt.draw()
+            #mid = ax.get_position().get_points()
+            #top = axt.get_position().get_points()
+            #bot = (mid[0][0], 0.1, top[1][0]-top[0][0],  top[1][1]-top[0][1])
+            #axb = plt.axes(bot, sharex=ax)
+
+            ax.text(1.12, 1.12, model_name, fontsize=20, transform=ax.transAxes)
+            for j, smg in enumerate(np.array(smgs)[np.where(imod==i)]):
+                plt_kw = {'histtype': 'step', 'color': cols[j], 'lw': 2}
+                smg.sgal.all_stages('TPAGB')
+                
+                #smg.sgal.convert_mag(target=smg.gal.target)
+                points = np.column_stack((smg.sgal.ast_color, smg.sgal.ast_mag2))
+                inregion, = np.nonzero(nxutils.points_inside_poly(points, smg.agb_verts))
+
+                tpagb_inds = list(set(smg.sgal.norm_inds) & set(smg.sgal.itpagb) & set(inregion))
+                poop = np.intersect1d(smg.sgal.norm_inds, inregion) 
+                not_tpagb = np.array([k for k in poop if k not in smg.sgal.itpagb])
+                label='$%s$' % smg.gal.target.replace('-','\!-\!')
+
+                mag2 = rsp.astronomy_utils.mag2Mag(smg.sgal.ast_mag2, 'F160W',
+                                               'wfc3snap',
+                                               **{'target': smg.gal.target,
+                                                  'filter1': smg.gal.filter1})
+                x = mag2[tpagb_inds]
+                xx = mag2[not_tpagb]
+                ydata = smg.sgal.data.get_col('logAge')
+                #ydata = smg.sgal.data.get_col('m_ini')
+                y = ydata[tpagb_inds]
+                yy = ydata[not_tpagb]
+    
+
+                #ax.plot(xx, yy, 'o', ms=3, alpha=.5, color=cols[j], mec=cols[j])
+                ax.plot(x, y, 'o', ms=5, alpha=.5, color=cols[j], mec=cols[j], label=label)
+            
+                ax.set_xlim(-10., -5.5)
+                #ax.set_ylim(0.5, 6.)
+                ax.set_ylim(10.5, 7.5)
+                # make some labels invisible
+                plt.setp(axt.get_xticklabels() + axr.get_yticklabels(),
+                         visible=False)
+
+                bins = int(np.round(np.sqrt(len(x))))
+                axt.hist(x, bins=bins, **plt_kw)
+                axr.hist(y, bins=bins, log=True, orientation='horizontal', **plt_kw)
+                #axb.hist(xx, bins=bins, log=True, **plt_kw)
+                #axl.hist(yy, bins=bins, orientation='horizontal', **plt_kw)
+            #axl.set_xlim(axl.get_xlim()[::-1])
+            #axl.xaxis.set_major_locator(MaxNLocator(4))
+            #axr.xaxis.set_major_locator(MaxNLocator(4))
+            #axb.xaxis.set_major_locator(MaxNLocator(4))
+            #axb.xaxis.set_major_locator(MaxNLocator(6))
+            
+            ax.set_xlabel('$F160W$', fontsize=20)
+            #ax.set_ylabel('$M (M_\odot)$', fontsize=20)
+            ax.set_ylabel('${\log \\rm Age\ (yr)}$', fontsize=20)
+            #axt.text(.1,.85, '$TP-AGB$', transform=axt.transAxes)
+            #axr.text(.1,.95, '$TP-AGB$', transform=axr.transAxes)
+            #axb.text(.1,.85, '${\rm All\ Stars}$', transform=axb.transAxes)
+            for tl in axt.get_xticklabels():
+                tl.set_visible(False)
+
+            for tl in axr.get_yticklabels():
+                tl.set_visible(False)
+            #axHisty.set_xticks([0, 50, 100])
+            #[ax.set_ylim(-2, -10) for ax in axs]
+            #[ax.set_xlim(0, 6) for ax in axs]
+            ax.legend(loc=0, numpoints=1, frameon=False)
+            plt.draw()
+            plt.savefig('age_mag_%s.png' % models[i].replace('.dat','').split('_')[-1], dpi=300)
+        #[ax.vlines(smg.gal.Trgb, *ax.get_ylim(), color=cols[j]) for ax in [ax1, ax2, ax3]]
+
+def match_metals():
+    '''
+    print the sfh weighted metallicity from the match input file. 
+    '''
+    sfh_loc = '/Users/phil/research/TP-AGBcalib/SNAP/data/sfh/'
+    sfh_files = rsp.fileIO.get_files(sfh_loc, '*.dat')
+    for sfh_file in sfh_files:
+        a, s, z = np.loadtxt(sfh_file, unpack=True)
+        o, = np.nonzero(np.log10(a*1e9) < 8.5)
+        print '%.4f %.4f %.4f %s ' % (np.min(z), np.sum(z*s)/np.sum(s), np.max(z), sfh_file.split('_')[2])
+        #print '%.4f %.4f %.4f %s ' % (np.min(z[o]), np.sum(z[o]*s[o])/np.sum(s[o]), np.max(z[o]), sfh_file.split('_')[2])
+
+def agb_logl_age():
+    for i in range(len(models)):
+        model_name = models[i].replace('.dat', '').split('_')[-1]
+        agb_track_loc = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09/S_%s/S12_Z0.002_Y0.252/' % model_name
+        if not os.path.isdir(agb_track_loc) is True:
+            print model_name, 'no agb tracks found'
+        model_name = translate_model_name(models[i])
+        agb_track_names = [os.path.join(agb_track_loc, a)
+                           for a in os.listdir(agb_track_loc)
+                           if a.startswith('agb_')]
+        tracks = [fileIO.get_numeric_data(agb_track)
+                  for agb_track in agb_track_names]
+
+        logls = np.array([t.get_col('L_star') for t in tracks])
+        logts = np.array([t.get_col('T_star') for t in tracks])
+        ages =  np.array([t.get_col('ageyr') for t in tracks])
+        [ax.plot(ages[i], logls[i]) for i in range(len(ages))]
+    
+def agb_lifetimes(models):
+    fig, ax = plt.subplots()
+    for i in range(len(models)):
+        model_name = models[i].replace('.dat', '').split('_')[-1]
+        agb_track_loc = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09/S_%s/S12_Z0.002_Y0.252/' % model_name
+        if not os.path.isdir(agb_track_loc) is True:
+            print model_name, 'no agb tracks found'
+        model_name = translate_model_name(models[i])
+        agb_track_names = [os.path.join(agb_track_loc, a)
+                           for a in os.listdir(agb_track_loc)
+                           if a.startswith('agb_')]
+        tracks = [fileIO.get_numeric_data(agb_track)
+                  for agb_track in agb_track_names]
+        masses = np.array([t.mass for t in tracks])
+        statuss = t.data_array['status']
+        taus = np.array([np.sum(t.data_array['dt']) for t in tracks])
+        ax.plot(masses, taus/1e6, lw=2, label=model_name)
+
+    ax.set_xlabel('${\\rm Initial\ Mass\ (M_\odot)}$', fontsize=20)
+    ax.set_ylabel('${\\rm Lifetime\ (Myr)}$', fontsize=20)
 def main(inputfile):
     #ch = logging.StreamHandler()
     #ch.setLevel(logging.DEBUG)

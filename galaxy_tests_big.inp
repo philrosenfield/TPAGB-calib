@@ -2,13 +2,13 @@
 snap_src    /Users/phil/research/TP-AGBcalib/SNAP
 
 # targets, either use all, or set targets (not implemented (leo_overlap, short_list)
-targets     DDO71, SCL-DE1, IC2574-SGS, UGC-4305-1, UGC-4305-2, NGC4163, UGC8508
+targets     DDO71, SCL-DE1, IC2574-SGS, NGC4163, UGC8508
 
 # cmd_input files
 models      cmd_input_CAF09_S_APR13.dat, cmd_input_CAF09_S_APR13VW93.dat, cmd_input_gi10_bow.dat, cmd_input_CAF09_S_MAR13.dat
 
 # plot LF
-make_plot   True
+make_plot   False
 plot_tpagb  False
 color_hist  False
 
@@ -36,13 +36,13 @@ leo_norm    False
 leo_method  False
 
 # load ast corrected file:
-renormalize     False
+renormalize     True
 
 # do agb_nir ratio
-make_lfs    True
+make_lfs    False
 
 debug   True
 
-mc_norm  True
+mc_norm  False
 
 stats_tests   True
