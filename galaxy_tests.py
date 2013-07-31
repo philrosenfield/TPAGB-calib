@@ -543,9 +543,9 @@ def setup_data_normalization(gal, filt1, filt2, band=None, leo_method=False):
         # the stars in the data marked as rgb between mag lims.
         rgb_norm = rsp.math_utils.between(mag2, gal.maglims[0], gal.maglims[1],
                                           inds=gal.irgb)
-        # the 1/2 std around color mean
+        # the 2 std around color mean
         cmean = np.mean(color[rgb_norm])
-        cstd = np.std(color[rgb_norm])/2.
+        cstd = np.std(color[rgb_norm]) * 2.
         col_min = cmean - cstd
         col_max = cmean + cstd
     else:
@@ -810,7 +810,8 @@ def call_mc_norm(targets=None, models=None, gi10=False, **mc_norm_kw):
             #sgal_rgb_agb(target, model, **mc_norm_kw)
 
 def mc_norm(target, model, band=None, input_file=None, maglims=None,
-            offsets=None, leo_norm=False, leo_method=False, **kwargs):
+            offsets=None, leo_norm=False, leo_method=False, opt_rgb=False,
+            **kwargs):
     '''
     One random draw to make the LF plots could be any number of TP-AGB stars
     within the Poisson noise, or perhaps even wider range. This code does the
@@ -824,6 +825,10 @@ def mc_norm(target, model, band=None, input_file=None, maglims=None,
 
     rgb_verts, ndata_rgb = setup_data_normalization(gal, gal.filter1, gal.filter2,
                                                     leo_method=leo_norm)
+    nir_ndata_rgb = -1
+    if opt_rgb is True:
+        nir_ndata_rgb = ndata_rgb
+        ndata_rgb = get_opt_nrgb(gal.target)
 
     points = np.column_stack((gal.color, gal.mag2))
     spoints = np.column_stack((sgal.ast_color[sgal.rec], sgal.ast_mag2[sgal.rec]))
@@ -856,9 +861,33 @@ def mc_norm(target, model, band=None, input_file=None, maglims=None,
         nmodel = np.append(nmodel, nrgb_nagb_sim)
         pct_diff = (np.mean(nmodel) - nrgb_nagb_data) / nrgb_nagb_data
 
-    print '%s %.2f %.2f %.4f %.2f %s' % (target, nrgb_nagb_data, np.mean(nmodel),
-                                         np.std(nmodel), pct_diff, model)
+    print '%s & %.3f & $%.3f\\pm%.4f$ & %.0f & \\\ %s %i %i' % (target, nrgb_nagb_data, np.mean(nmodel),
+                                               np.std(nmodel), (pct_diff*100), model, ndata_rgb, ndata_agb)
 
+def get_opt_nrgb(target):
+    offset_dict = {'SCL-DE1': 1554,
+                   #'NGC2403-HALO-6': -0.155,
+                   #'NGC7793-HALO-6': -0.307,
+                   #'UGC-04459': 0.063,
+                   'UGC-4305-1': 6242,
+                   'UGC-4305-2': 7814,
+                   #'UGC-5139': 0.105,
+                   'DDO78': 6542,
+                   'DDO82': 23796,
+                   #'KDG73': 0.157,
+                   #'KKH37': 0.085,
+                   #'NGC0300-WIDE1': -0.212,
+                   #'NGC2403-DEEP': -0.089,
+                   #'NGC2976-DEEP': -0.220,
+                   #'NGC3741': 0.143,
+                   'NGC4163': 10747,
+                   'UGC8508': 3047,
+                   #'UGCA292': 0.394,
+                   #'NGC3077-PHOENIX': -0.297,
+                   'IC2574-SGS': 15823,
+                   #'HS117': 0.092,
+                   'DDO71': 3665}
+    return float(offset_dict[target])
 
 def sgal_rgb_agb(target, model, band=None, input_file=None, maglims=None,
                  offsets=None, leo_norm=False):
@@ -1030,7 +1059,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      offsets=(1.5, 0.), models=None, maglims=None,
                      leo_method=False, leo_norm=False, make_plot=True,
                      xlim=None, ylim=None, xlim2=None, add_boxes=True,
-                     color_hist=False,  plt_tpagb=False, **kwargs):
+                     color_hist=False,  plot_tpagb=False, **kwargs):
     smgs = []
     targets = load_targets(targets)
 
@@ -1214,9 +1243,9 @@ def translate_model_name(model):
     elif 'apr13' in model.lower():
         model_name = '$\dot{M}_{BS95}$'
     elif 'gi10' in model.lower() or 'bow' in model.lower():
-        model_name = '$\dot{M}_{G10}$'
+        model_name = '$\dot{M}_{G10_b}$'
     elif 'mar13' in model.lower():
-        model_name = '$\dot{M}_{M13}$'
+        model_name = '$\dot{M}_{G10}$'
     return model_name
 
 def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
@@ -1637,93 +1666,88 @@ def compare_LFs(smgs):
         ax3.set_ylim(-75, 275)
         [ax.set_xlim(-10, -5.5) for ax in [ax1, ax2, ax3]]
         plt.subplots_adjust(hspace=.25, top=.95)
-        plt.savefig('comp_lfs_%s.png' % models[i].replace('.dat','').split('_')[-1], dpi=300)
-    #fig, (axs) = plt.subplots(figsize=(10,10), nrows=2, ncols=2)
-    #axs = axs.ravel()
+        mname = models[i].replace('.dat','').split('_')[-1]
+        plt.savefig('comp_lfs_%s.png' % mname, dpi=300)
+
     do_a_plot_that_wastes_time = True
     if do_a_plot_that_wastes_time is True:
         for i in range(len(models)):
-            model_name = translate_model_name(models[i])
-            fig, ax  = plt.subplots(figsize=(10, 10))
+            for ycol in ['age', 'mass']:
+                model_name = translate_model_name(models[i])
+                fig, ax  = plt.subplots(figsize=(10, 10))
 
-            divider = make_axes_locatable(ax)
-            axt = divider.append_axes("top", 1.5, pad=0.1, sharex=ax)
-            #axl = divider.append_axes("left", 1.5, pad=0.1, sharey=ax)
-            axr = divider.append_axes("right", 1.5, pad=0.1, sharey=ax)
-            # this is for an awesome four panel that I spent to much time
-            # on and feel stupid deleting.
-            #divider.new_vertical(1.5, pad=0.1, pack_start=True)
-            #plt.draw()
-            #mid = ax.get_position().get_points()
-            #top = axt.get_position().get_points()
-            #bot = (mid[0][0], 0.1, top[1][0]-top[0][0],  top[1][1]-top[0][1])
-            #axb = plt.axes(bot, sharex=ax)
+                divider = make_axes_locatable(ax)
+                axt = divider.append_axes("top", 1.5, pad=0.1, sharex=ax)
+                axr = divider.append_axes("right", 1.5, pad=0.1, sharey=ax)
 
-            ax.text(1.12, 1.12, model_name, fontsize=20, transform=ax.transAxes)
-            for j, smg in enumerate(np.array(smgs)[np.where(imod==i)]):
-                plt_kw = {'histtype': 'step', 'color': cols[j], 'lw': 2}
-                smg.sgal.all_stages('TPAGB')
+                ax.text(1.12, 1.12, model_name, fontsize=20,
+                        transform=ax.transAxes)
+                for j, smg in enumerate(np.array(smgs)[np.where(imod==i)]):
+                    plt_kw = {'histtype': 'step', 'color': cols[j], 'lw': 2}
+                    smg.sgal.all_stages('TPAGB')
                 
-                #smg.sgal.convert_mag(target=smg.gal.target)
-                points = np.column_stack((smg.sgal.ast_color, smg.sgal.ast_mag2))
-                inregion, = np.nonzero(nxutils.points_inside_poly(points, smg.agb_verts))
+                    points = np.column_stack((smg.sgal.ast_color,
+                                              smg.sgal.ast_mag2))
+                    inregion, = np.nonzero(nxutils.points_inside_poly(points,
+                                                                      smg.agb_verts))
 
-                tpagb_inds = list(set(smg.sgal.norm_inds) & set(smg.sgal.itpagb) & set(inregion))
-                poop = np.intersect1d(smg.sgal.norm_inds, inregion) 
-                not_tpagb = np.array([k for k in poop if k not in smg.sgal.itpagb])
-                label='$%s$' % smg.gal.target.replace('-','\!-\!')
+                    tpagb_inds = list(set(smg.sgal.norm_inds) &
+                                      set(smg.sgal.itpagb) &
+                                      set(inregion))
 
-                mag2 = rsp.astronomy_utils.mag2Mag(smg.sgal.ast_mag2, 'F160W',
-                                               'wfc3snap',
-                                               **{'target': smg.gal.target,
-                                                  'filter1': smg.gal.filter1})
-                x = mag2[tpagb_inds]
-                xx = mag2[not_tpagb]
-                ydata = smg.sgal.data.get_col('logAge')
-                #ydata = smg.sgal.data.get_col('m_ini')
-                y = ydata[tpagb_inds]
-                yy = ydata[not_tpagb]
+                    poop = np.intersect1d(smg.sgal.norm_inds, inregion) 
+                    not_tpagb = np.array([k for k in poop
+                                          if k not in smg.sgal.itpagb])
+                    label='$%s$' % smg.gal.target.replace('-','\!-\!')
+
+                    m2M_kw = {'target': smg.gal.target,
+                              'filter1': smg.gal.filter1}
+                    mag2 = rsp.astronomy_utils.mag2Mag(smg.sgal.ast_mag2,
+                                                       'F160W', 'wfc3snap',
+                                                        **m2M_kw)
+                    x = mag2[tpagb_inds]
+                    xx = mag2[not_tpagb]
+                    if ycol == 'age':
+                        ydata = smg.sgal.data.get_col('logAge')
+                    if ycol == 'mass':
+                        ydata = smg.sgal.data.get_col('m_ini')
+
+                    y = ydata[tpagb_inds]
+                    yy = ydata[not_tpagb]
     
-
-                #ax.plot(xx, yy, 'o', ms=3, alpha=.5, color=cols[j], mec=cols[j])
-                ax.plot(x, y, 'o', ms=5, alpha=.5, color=cols[j], mec=cols[j], label=label)
+                    ax.plot(x, y, 'o', ms=5, alpha=.5, color=cols[j],
+                            mec=cols[j], label=label)
             
-                ax.set_xlim(-10., -5.5)
-                #ax.set_ylim(0.5, 6.)
-                ax.set_ylim(10.5, 7.5)
-                # make some labels invisible
-                plt.setp(axt.get_xticklabels() + axr.get_yticklabels(),
-                         visible=False)
+                    ax.set_xlim(-10., -5.5)
+                    if ycol == 'mass':
+                        ax.set_ylim(0.5, 6.)
+                    if ycol == 'age':
+                        ax.set_ylim(10.5, 7.5)
+                    # make some labels invisible
+                    plt.setp(axt.get_xticklabels() + axr.get_yticklabels(),
+                             visible=False)
 
-                bins = int(np.round(np.sqrt(len(x))))
-                axt.hist(x, bins=bins, **plt_kw)
-                axr.hist(y, bins=bins, log=True, orientation='horizontal', **plt_kw)
-                #axb.hist(xx, bins=bins, log=True, **plt_kw)
-                #axl.hist(yy, bins=bins, orientation='horizontal', **plt_kw)
-            #axl.set_xlim(axl.get_xlim()[::-1])
-            #axl.xaxis.set_major_locator(MaxNLocator(4))
-            #axr.xaxis.set_major_locator(MaxNLocator(4))
-            #axb.xaxis.set_major_locator(MaxNLocator(4))
-            #axb.xaxis.set_major_locator(MaxNLocator(6))
+                    bins = int(np.round(np.sqrt(len(x))))
+                    axt.hist(x, bins=bins, **plt_kw)
+                    axr.hist(y, bins=bins, log=True, orientation='horizontal',
+                             **plt_kw)
             
-            ax.set_xlabel('$F160W$', fontsize=20)
-            #ax.set_ylabel('$M (M_\odot)$', fontsize=20)
-            ax.set_ylabel('${\log \\rm Age\ (yr)}$', fontsize=20)
-            #axt.text(.1,.85, '$TP-AGB$', transform=axt.transAxes)
-            #axr.text(.1,.95, '$TP-AGB$', transform=axr.transAxes)
-            #axb.text(.1,.85, '${\rm All\ Stars}$', transform=axb.transAxes)
-            for tl in axt.get_xticklabels():
-                tl.set_visible(False)
+                ax.set_xlabel('$F160W$', fontsize=20)
+                if ycol == 'mass':
+                    ax.set_ylabel('$M (M_\odot)$', fontsize=20)
+                if ycol == 'age':
+                    ax.set_ylabel('${\log \\rm Age\ (yr)}$', fontsize=20)
 
-            for tl in axr.get_yticklabels():
-                tl.set_visible(False)
-            #axHisty.set_xticks([0, 50, 100])
-            #[ax.set_ylim(-2, -10) for ax in axs]
-            #[ax.set_xlim(0, 6) for ax in axs]
-            ax.legend(loc=0, numpoints=1, frameon=False)
-            plt.draw()
-            plt.savefig('age_mag_%s.png' % models[i].replace('.dat','').split('_')[-1], dpi=300)
-        #[ax.vlines(smg.gal.Trgb, *ax.get_ylim(), color=cols[j]) for ax in [ax1, ax2, ax3]]
+                for tl in axt.get_xticklabels():
+                    tl.set_visible(False)
+
+                for tl in axr.get_yticklabels():
+                    tl.set_visible(False)
+
+                ax.legend(loc=0, numpoints=1, frameon=False)
+                mname = models[i].replace('.dat','').split('_')[-1]
+                plt.savefig('%s_mag_%s.png' % (ycol, mname), dpi=300)
+
 
 def match_metals():
     '''
@@ -1732,11 +1756,17 @@ def match_metals():
     sfh_loc = '/Users/phil/research/TP-AGBcalib/SNAP/data/sfh/'
     sfh_files = rsp.fileIO.get_files(sfh_loc, '*.dat')
     for sfh_file in sfh_files:
+        target = sfh_file.split('_')[2]
+        if not target in targets:
+            continue
         a, s, z = np.loadtxt(sfh_file, unpack=True)
         o, = np.nonzero(np.log10(a*1e9) < 8.5)
-        print '%.4f %.4f %.4f %s ' % (np.min(z), np.sum(z*s)/np.sum(s), np.max(z), sfh_file.split('_')[2])
+        print '%.4f %.4f %.4f %s ' % (np.min(z), np.sum(z*s)/np.sum(s), np.max(z), target)
         #print '%.4f %.4f %.4f %s ' % (np.min(z[o]), np.sum(z[o]*s[o])/np.sum(s[o]), np.max(z[o]), sfh_file.split('_')[2])
-
+        fig, ax = plt.subplots()
+        ax.plot(a, s)
+        ax.set_title(target)
+        
 def agb_logl_age():
     for i in range(len(models)):
         model_name = models[i].replace('.dat', '').split('_')[-1]
@@ -1756,7 +1786,13 @@ def agb_logl_age():
         [ax.plot(ages[i], logls[i]) for i in range(len(ages))]
     
 def agb_lifetimes(models):
+    import fileIO
+    tauss = []
+    btauss = []
+    bmap = brewer2mpl.get_map('Set1', 'Qualitative', 3)
+    cols = bmap.mpl_colors
     fig, ax = plt.subplots()
+    fig2, ax2 = plt.subplots()
     for i in range(len(models)):
         model_name = models[i].replace('.dat', '').split('_')[-1]
         agb_track_loc = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09/S_%s/S12_Z0.002_Y0.252/' % model_name
@@ -1769,12 +1805,32 @@ def agb_lifetimes(models):
         tracks = [fileIO.get_numeric_data(agb_track)
                   for agb_track in agb_track_names]
         masses = np.array([t.mass for t in tracks])
-        statuss = t.data_array['status']
-        taus = np.array([np.sum(t.data_array['dt']) for t in tracks])
-        ax.plot(masses, taus/1e6, lw=2, label=model_name)
+        logls = np.array([t.get_col('L_star') for t in tracks])
+        brights = np.array([np.nonzero(logl > 3.4)[0] for logl in logls])
+        #m_cs = np.array([t.get_col('M_c')[0] for t in tracks])
+        #ax2.plot(masses, m_cs, lw=2, color='black')
 
-    ax.set_xlabel('${\\rm Initial\ Mass\ (M_\odot)}$', fontsize=20)
-    ax.set_ylabel('${\\rm Lifetime\ (Myr)}$', fontsize=20)
+        taus = np.array([np.sum(t.data_array['dt']) for t in tracks])
+        btaus = np.array([np.sum(t.data_array['dt'][b]) for t,b in zip(tracks, brights)])
+        tauss.append(taus)
+        btauss.append(btaus)
+        ax.plot(masses, taus/1e6, lw=3, label=model_name, color=cols[i])
+        ax2.plot(masses, btaus/1e6, lw=3, label=model_name, color=cols[i])
+
+    ax.fill_between(masses, tauss[0]/1e6, tauss[2]/1e6, alpha=0.1, color='grey')
+    ax2.fill_between(masses, btauss[0]/1e6, btauss[2]/1e6, alpha=0.1, color='grey')
+
+
+    for ax in [ax, ax2]:
+        ax.set_xlabel('${\\rm Initial\ Mass\ (M_\odot)}$', fontsize=20)
+        ax.set_ylabel('${\\rm Lifetime\ (Myr)}$', fontsize=20)
+        ax.legend(loc=0, frameon=False)
+        ax.set_xlim(0, 5)
+        ax.set_ylim(0, 7)
+    fig.savefig('tpagb_lifetime.png', dpi=300)
+    fig2.savefig('tpagb_lifetime_bright.png', dpi=300)
+    #ax2.set_ylabel('${\\rm Pre\!-\!Flash\ Core\ Mass\ (M_\odot)}$', fontsize=20)
+
 def main(inputfile):
     #ch = logging.StreamHandler()
     #ch.setLevel(logging.DEBUG)

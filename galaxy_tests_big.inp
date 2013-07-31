@@ -2,7 +2,7 @@
 snap_src    /Users/phil/research/TP-AGBcalib/SNAP
 
 # targets, either use all, or set targets (not implemented (leo_overlap, short_list)
-targets     DDO71, SCL-DE1, IC2574-SGS, NGC4163, UGC8508
+targets     paper1
 
 # cmd_input files
 models      cmd_input_CAF09_S_APR13.dat, cmd_input_CAF09_S_APR13VW93.dat, cmd_input_gi10_bow.dat, cmd_input_CAF09_S_MAR13.dat
@@ -13,14 +13,14 @@ plot_tpagb  False
 color_hist  False
 
 # use IR data or OPT data
-band        opt
+band        ir
 
 # which filters for all cmds etc. gal means uses filters from data file.
 filt1       gal
 filt2       gal
 
 # make trilegal simulation
-run_trilegal    True
+run_trilegal    False
 
 # offsets refer to below/above trgb or just set maglims to number and ignore offsets
 maglims     trgb
@@ -43,6 +43,6 @@ make_lfs    False
 
 debug   True
 
-mc_norm  False
+mc_norm  True
 
-stats_tests   True
+stats_tests   False
