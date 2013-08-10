@@ -2,15 +2,15 @@
 snap_src    /Users/phil/research/TP-AGBcalib/SNAP
 
 # targets, either use all, or set targets (not implemented (leo_overlap, short_list)
-targets     DDO78
+targets     SCL-DE1
 
 # cmd_input files
 models      cmd_input_CAF09_S_APR13.dat, cmd_input_CAF09_S_APR13VW93.dat, cmd_input_gi10_bow.dat, cmd_input_CAF09_S_MAR13.dat
 
 # plot LF
 make_plot   True
-plot_tpagb  True
-color_hist  True
+plot_tpagb  False
+color_hist  False
 
 # use IR data or OPT data
 band        ir
@@ -20,7 +20,7 @@ filt1       gal
 filt2       gal
 
 # make trilegal simulation
-run_trilegal    True
+run_trilegal    False
 
 # offsets refer to below/above trgb or just set maglims to number and ignore offsets
 maglims     trgb
@@ -36,8 +36,12 @@ leo_norm    False
 leo_method  False
 
 # load ast corrected file:
-renormalize     False
+renormalize     True
 
 debug   True
 
 mc_norm  True
+
+make_lfs True
+
+use_opt_rgb True

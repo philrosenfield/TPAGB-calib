@@ -39,10 +39,12 @@ leo_method  False
 renormalize     True
 
 # do agb_nir ratio
-make_lfs    False
+make_lfs    True
 
 debug   True
 
-mc_norm  True
+mc_norm  False
 
 stats_tests   False
+
+use_opt_rgb True

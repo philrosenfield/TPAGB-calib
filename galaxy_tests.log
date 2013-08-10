@@ -59348,3 +59348,1619 @@ DEBUG:root:[[  0.51348767  22.912     ]
  [  0.97882638  22.912     ]
  [  0.51348767  22.912     ]]
 INFO:root:data stars in normalization range: 2079
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on SCL-DE1
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on SCL-DE1
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 1554
+DEBUG:root:normalization 0.6837
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_apr13_inds.dat
+INFO:root:start of run
+INFO:root:working on SCL-DE1
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 1554
+DEBUG:root:normalization 0.6837
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_apr13_inds.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 1554
+DEBUG:root:normalization 0.6780
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_apr13vw93_inds.dat
+INFO:root:SCL-DE1: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 1554
+DEBUG:root:normalization 0.5316
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_bow_inds.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 1554
+DEBUG:root:normalization 0.6695
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:normalization 0.6525
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13_inds.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:normalization 0.6036
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_apr13vw93_inds.dat
+INFO:root:DDO78: cmd_input_gi10_bow.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:normalization 0.5403
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_bow_inds.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:normalization 0.6094
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 3665
+DEBUG:root:normalization 0.9951
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+INFO:root:start of run
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+INFO:root:start of run
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_caf09_s_mar13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_caf09_s_apr13.dat exists, not overwriting
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+INFO:root:start of run
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+INFO:root:start of run
+INFO:root:start of run
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+INFO:root:start of run
+INFO:root:start of run
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_caf09_s_mar13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_caf09_s_mar13.dat exists, not overwriting
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+ERROR:root:bad filter match between sim gal and ast.
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_gi10_bow.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_gi10_bow.dat exists, not overwriting
+INFO:root:start of run
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_caf09_s_mar13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_caf09_s_mar13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_caf09_s_mar13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO82_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO82_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO82_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO82_caf09_s_mar13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F555W_F814W_output_UGC-4305-1_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F555W_F814W_output_UGC-4305-1_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F555W_F814W_output_UGC-4305-1_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F555W_F814W_output_UGC-4305-1_caf09_s_mar13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F555W_F814W_output_UGC-4305-2_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F555W_F814W_output_UGC-4305-2_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F555W_F814W_output_UGC-4305-2_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F555W_F814W_output_UGC-4305-2_caf09_s_mar13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_UGC8508_caf09_s_apr13.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_UGC8508_caf09_s_apr13vw93.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_UGC8508_gi10_bow.dat exists, not overwriting
+WARNING:root:/Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_UGC8508_caf09_s_mar13.dat exists, not overwriting
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on NGC4163
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC8508
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on NGC4163
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC8508
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_gi10_bow.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO71: cmd_input_gi10_bow.dat
+INFO:root:DDO71: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:SCL-DE1: cmd_input_gi10_bow.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO82: cmd_input_gi10_bow.dat
+INFO:root:DDO82: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:IC2574-SGS: cmd_input_gi10_bow.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-1: cmd_input_gi10_bow.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-2: cmd_input_gi10_bow.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on NGC4163
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:NGC4163: cmd_input_gi10_bow.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC8508
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC8508: cmd_input_gi10_bow.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_MAR13.dat
+INFO:root:start of run
+INFO:root:using F160W trgb
+INFO:root:using F160W trgb
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.60699801  23.545     ]
+ [  0.60699801  22.545     ]
+ [  1.04801171  22.545     ]
+ [  1.04801171  23.545     ]
+ [  0.60699801  23.545     ]]
+INFO:root:data stars in normalization range: 2098
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+06, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal00588139505484.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 30.8529
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.60699801  23.545     ]
+ [  0.60699801  22.545     ]
+ [  1.04801171  22.545     ]
+ [  1.04801171  23.545     ]
+ [  0.60699801  23.545     ]]
+INFO:root:data stars in normalization range: 2098
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_APR13.dat, Mass=5e+06, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_apr13.dat > trilegal0676753603027.msg 
+
+INFO:root:done.
+DEBUG:root:
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.60699801  23.545     ]
+ [  0.60699801  22.545     ]
+ [  1.04801171  22.545     ]
+ [  1.04801171  23.545     ]
+ [  0.60699801  23.545     ]]
+INFO:root:data stars in normalization range: 2098
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+06, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal0618819394011.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 26.2250
+INFO:root:start of run
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.60699801  23.545     ]
+ [  0.60699801  22.545     ]
+ [  1.04801171  22.545     ]
+ [  1.04801171  23.545     ]
+ [  0.60699801  23.545     ]]
+INFO:root:data stars in normalization range: 2098
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+06, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal0106276040544.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 27.2468
+INFO:root:start of run
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.60699801  23.545     ]
+ [  0.60699801  22.545     ]
+ [  1.04801171  22.545     ]
+ [  1.04801171  23.545     ]
+ [  0.60699801  23.545     ]]
+INFO:root:data stars in normalization range: 2098
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+06, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal0842875255733.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 26.5570
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=2.5e+07, Attempt 2
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal0223267537717.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 5.3114
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=1.25e+08, Attempt 3
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal0738741233892.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 1.0490
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=6.25e+08, Attempt 4
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal0339538232608.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.2152
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.56164368  23.642     ]
+ [  0.56164368  22.642     ]
+ [  1.06038695  22.642     ]
+ [  1.06038695  23.642     ]
+ [  0.56164368  23.642     ]]
+INFO:root:data stars in normalization range: 1467
+DEBUG:root:Trying DDO71 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+06, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks.dat > trilegal0494355808093.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 12.5385
+DEBUG:root:Trying DDO71 cmd_input_gi10_rev_old_tracks.dat, Mass=2.5e+07, Attempt 2
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks.dat > trilegal0479109573229.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 2.7523
+DEBUG:root:Trying DDO71 cmd_input_gi10_rev_old_tracks.dat, Mass=1.25e+08, Attempt 3
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks.dat > trilegal0260985494494.msg 
+
+INFO:root:done.
+DEBUG:root:
+INFO:root:start of run
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.60699801  23.545     ]
+ [  0.60699801  22.545     ]
+ [  1.04801171  22.545     ]
+ [  1.04801171  23.545     ]
+ [  0.60699801  23.545     ]]
+INFO:root:data stars in normalization range: 2098
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal0176932969489.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.2675
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.56164368  23.642     ]
+ [  0.56164368  22.642     ]
+ [  1.06038695  22.642     ]
+ [  1.06038695  23.642     ]
+ [  0.56164368  23.642     ]]
+INFO:root:data stars in normalization range: 1467
+DEBUG:root:Trying DDO71 cmd_input_gi10_rev_old_tracks.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks.dat > trilegal0978215051898.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.6508
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.45973936  24.07      ]
+ [  0.45973936  23.07      ]
+ [  1.08244841  23.07      ]
+ [  1.08244841  24.07      ]
+ [  0.45973936  24.07      ]]
+INFO:root:data stars in normalization range: 533
+DEBUG:root:Trying SCL-DE1 cmd_input_gi10_rev_old_tracks.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_rev_old_tracks.dat > trilegal0203869579885.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.2626
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.61917919  23.589     ]
+ [  0.61917919  22.589     ]
+ [  1.04950811  22.589     ]
+ [  1.04950811  23.589     ]
+ [  0.61917919  23.589     ]]
+INFO:root:data stars in normalization range: 5184
+DEBUG:root:Trying DDO82 cmd_input_gi10_rev_old_tracks.dat, Mass=2.5e+09, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO82.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO82_gi10_rev_old_tracks.dat > trilegal0196524343241.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.3176
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO82_gi10_rev_old_tracks_inds.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.50910227  23.732     ]
+ [  0.50910227  22.732     ]
+ [  1.02675572  22.732     ]
+ [  1.02675572  23.732     ]
+ [  0.50910227  23.732     ]]
+INFO:root:data stars in normalization range: 4659
+DEBUG:root:Trying IC2574-SGS cmd_input_gi10_rev_old_tracks.dat, Mass=2.5e+09, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_IC2574-SGS.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_IC2574-SGS_gi10_rev_old_tracks.dat > trilegal0466626411564.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.2574
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_IC2574-SGS_gi10_rev_old_tracks_inds.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.45723989  23.437     ]
+ [  0.45723989  22.437     ]
+ [  1.00799269  22.437     ]
+ [  1.00799269  23.437     ]
+ [  0.45723989  23.437     ]]
+INFO:root:data stars in normalization range: 2853
+DEBUG:root:Trying UGC-4305-1 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_UGC-4305-1.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC-4305-1_gi10_rev_old_tracks.dat > trilegal0992079174807.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.4545
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC-4305-1_gi10_rev_old_tracks_inds.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.45820674  23.447     ]
+ [  0.45820674  22.447     ]
+ [  0.98647968  22.447     ]
+ [  0.98647968  23.447     ]
+ [  0.45820674  23.447     ]]
+INFO:root:data stars in normalization range: 3130
+DEBUG:root:Trying UGC-4305-2 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_UGC-4305-2.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC-4305-2_gi10_rev_old_tracks.dat > trilegal0548357608613.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.5837
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC-4305-2_gi10_rev_old_tracks_inds.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.60524999  23.071     ]
+ [  0.60524999  22.071     ]
+ [  0.96575645  22.071     ]
+ [  0.96575645  23.071     ]
+ [  0.60524999  23.071     ]]
+INFO:root:data stars in normalization range: 2970
+DEBUG:root:Trying NGC4163 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_NGC4163.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_NGC4163_gi10_rev_old_tracks.dat > trilegal0615752569046.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.4932
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_NGC4163_gi10_rev_old_tracks_inds.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.5068437  22.912    ]
+ [  0.5068437  21.912    ]
+ [  0.9548529  21.912    ]
+ [  0.9548529  22.912    ]
+ [  0.5068437  22.912    ]]
+INFO:root:data stars in normalization range: 1593
+DEBUG:root:Trying UGC8508 cmd_input_gi10_rev_old_tracks.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_UGC8508.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC8508_gi10_rev_old_tracks.dat > trilegal192623705978e-05.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.6819
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC8508_gi10_rev_old_tracks_inds.dat
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36499977  25.299     ]
+ [ -0.36499977  23.799     ]
+ [  2.01799965  23.799     ]
+ [  2.01799965  25.299     ]
+ [ -0.36499977  25.299     ]]
+INFO:root:data stars in normalization range: 3970
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO78_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO71_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_SCL-DE1_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.81200218  23.589     ]
+ [ -0.81200218  22.089     ]
+ [  2.20299911  22.089     ]
+ [  2.20299911  23.589     ]
+ [ -0.81200218  23.589     ]]
+INFO:root:data stars in normalization range: 7525
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO82_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_DDO82_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.1966
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO82_gi10_rev_old_tracks_inds.dat
+INFO:root:working on IC2574-SGS
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:IC2574-SGS: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.5227242   23.732     ]
+ [  0.5227242   22.232     ]
+ [  1.05325452  22.232     ]
+ [  1.05325452  23.732     ]
+ [  0.5227242   23.732     ]]
+INFO:root:data stars in normalization range: 6357
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_IC2574-SGS_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_IC2574-SGS_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_IC2574-SGS_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.1393
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_IC2574-SGS_gi10_rev_old_tracks_inds.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.47167589  23.437     ]
+ [  0.47167589  21.937     ]
+ [  1.03401322  21.937     ]
+ [  1.03401322  23.437     ]
+ [  0.47167589  23.437     ]]
+INFO:root:data stars in normalization range: 3698
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC-4305-1_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-1_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC-4305-1_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.3464
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC-4305-1_gi10_rev_old_tracks_inds.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-2: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.46677364  23.447     ]
+ [  0.46677364  21.947     ]
+ [  1.01700956  21.947     ]
+ [  1.01700956  23.447     ]
+ [  0.46677364  23.447     ]]
+INFO:root:data stars in normalization range: 4147
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC-4305-2_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC4305-2_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC-4305-2_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.4436
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC-4305-2_gi10_rev_old_tracks_inds.dat
+INFO:root:working on NGC4163
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:NGC4163: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.37800026  23.071     ]
+ [ -0.37800026  21.571     ]
+ [  2.60699844  21.571     ]
+ [  2.60699844  23.071     ]
+ [ -0.37800026  23.071     ]]
+INFO:root:data stars in normalization range: 4224
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_NGC4163_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_NGC4163_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_NGC4163_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.3929
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_NGC4163_gi10_rev_old_tracks_inds.dat
+INFO:root:working on UGC8508
+INFO:root:UGC8508: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70000076  22.912     ]
+ [ -0.70000076  21.412     ]
+ [  2.82299995  21.412     ]
+ [  2.82299995  22.912     ]
+ [ -0.70000076  22.912     ]]
+INFO:root:data stars in normalization range: 2225
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_UGC8508_gi10_rev_old_tracks.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/11719_UGC8508_IR_F110W_F160W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC8508_gi10_rev_old_tracks.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.6186
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_UGC8508_gi10_rev_old_tracks_inds.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-2: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on NGC4163
+INFO:root:NGC4163: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC8508
+INFO:root:UGC8508: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-2: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on NGC4163
+INFO:root:NGC4163: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC8508
+INFO:root:UGC8508: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-2: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on NGC4163
+INFO:root:NGC4163: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC8508
+INFO:root:UGC8508: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-2: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on NGC4163
+INFO:root:NGC4163: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on UGC8508
+INFO:root:UGC8508: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat going into the mc loop.
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat plotting IR
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat plotting IR
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat plotting IR
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat plotting IR
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat plotting IR
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat plotting IR
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat plotting IR
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat plotting IR
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat plotting IR
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 5000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat plotting IR
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat plotting IR
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 10000
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat finished mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat plotting IR
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat loaded asts.
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat mc loop... 0
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat going into the mc loop.
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat mc loop... 0
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO71: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO82
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO82: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on IC2574-SGS
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-1
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on NGC4163
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC8508
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_MAR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO71
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO71: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:normalization color: using all stars in mag range
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO82
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO82: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on IC2574-SGS
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-1
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-2
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on NGC4163
+INFO:root:normalization color: using all stars in mag range
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC8508
+INFO:root:normalization color: using all stars in mag range
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_MAR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO71: gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:normalization color: using all stars in mag range
+INFO:root:SCL-DE1: gi10_rev_old_tracks.dat
+INFO:root:working on DDO82
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO82: gi10_rev_old_tracks.dat
+INFO:root:working on IC2574-SGS
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:IC2574-SGS: gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-1
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-1: gi10_rev_old_tracks.dat
+INFO:root:working on UGC-4305-2
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-2: gi10_rev_old_tracks.dat
+INFO:root:working on NGC4163
+INFO:root:normalization color: using all stars in mag range
+INFO:root:NGC4163: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on UGC8508
+INFO:root:normalization color: using all stars in mag range
+INFO:root:UGC8508: gi10_rev_old_tracks.dat
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat

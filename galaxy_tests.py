@@ -8,7 +8,10 @@ import os
 import sys
 import difflib
 import numpy as np
+import matplotlib
+
 import matplotlib.pyplot as plt
+plt.ioff()
 import matplotlib.nxutils as nxutils
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -16,6 +19,7 @@ from matplotlib.colors import LogNorm
 from pprint import pprint
 import brewer2mpl
 
+import multiprocessing
 angst_data = rsp.angst_tables.AngstTables()
 
 
@@ -60,6 +64,8 @@ def cmd_contamination(gal, dcolor=0.1, dmag=0.3, thresh=5):
         contaminated_agb = rstars_in_agb
         print u, l, color_sep
         # still doesn't work... not picking up double gaussians....
+
+
 def get_imf(target):
     filename = '/Users/phil/research/TP-AGBcalib/code/TPAGB-calib/best_fits_from_match_runs.dat'
     dtype = [('ID', '|S5'), ('Galaxy', '|S14'), ('filter1', '|S5'), ('filter2', '|S5'), ('Av', '<f8'), ('IMF', '<f8'), ('dmod', '<f8'), ('dlogZ', '<f8')]
@@ -503,10 +509,11 @@ def setup_trilegal(gal, model, object_mass=5e9):
     trilegal_output = os.path.join(snap_src, 'output', 'output_%s_%s.dat' %
                                    (gal.target, agb_model))
 
-    return galaxy_input, trilegal_output, galinp_kw
+    return galaxy_input, trilegal_output, galinp_kw, gal_inp
 
 
-def setup_data_normalization(gal, filt1, filt2, band=None, leo_method=False):
+def setup_data_normalization(gal, filt1, filt2, band=None, leo_method=False,
+                             use_opt_rgb=False):
     '''
     returns vertices and number of data stars used in normalization.
 
@@ -563,14 +570,34 @@ def setup_data_normalization(gal, filt1, filt2, band=None, leo_method=False):
 
     points = np.column_stack((color, mag2))
     inds, = np.nonzero(nxutils.points_inside_poly(points, verts))
-    gal.rgb_norm_inds = list(set(rgb_norm) & set(inds))
-    ndata_stars = len(gal.rgb_norm_inds)
+    if use_opt_rgb is True:
+        ndata_stars = get_opt_nrgb(gal.target)
+        gal.rgb_norm_inds = ndata_stars
+    else:
+        gal.rgb_norm_inds = list(set(rgb_norm) & set(inds))
+        ndata_stars = len(gal.rgb_norm_inds)
+
     gal.norm_verts = verts
     logger.debug('norm verts:')
     logger.debug(verts)
     logger.info('data stars in normalization range: %i' % ndata_stars)
     return verts, ndata_stars
 
+
+def run_make_normalized_simulation(targets, models):
+    targets = load_targets(targets)
+
+    if type(models) == str:
+        models = [models]
+
+    for target in targets:
+        gal = load_galaxy(target, 'ir')
+        print target
+        for model in models:
+            print model
+            make_normalized_simulation(gal, model, gal.filter1, gal.filter2,
+                                    object_mass=load_sim_masses(gal.target))
+        
 
 def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
                                over_write=False, object_mass=5e6,
@@ -580,7 +607,7 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
                                leo_method=False, spread_outfile=None,
                                leo_norm=False, leo_ast=False,
                                spread_outfile2=None, trilegal_output=None,
-                               norm_fname=None):
+                               norm_fname=None, use_opt_rgb=False):
     '''
     Will continue to run trilegal until galaxy is high enough mass to have
     proper normalization.
@@ -649,7 +676,7 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
         logger.info('using %s trgb' % gal.filter2)
 
     if run_trilegal is True or trilegal_output is None:
-        galaxy_input, trilegal_output, galinp_kw = setup_trilegal(gal, model,
+        galaxy_input, trilegal_output, galinp_kw, gal_inp = setup_trilegal(gal, model,
                                                                   object_mass=object_mass)
 
         cmd_input = os.path.join('/Users/phil/research/padova_apps/cmd_inputfiles/', model)
@@ -665,7 +692,8 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
         logger.info('normalization mag: %f to %f' % (offsets[0], offsets[1]))
 
     verts, ndata_stars = setup_data_normalization(gal, filt1, filt2,
-                                                  leo_method=leo_norm)
+                                                  leo_method=leo_norm,
+                                                  use_opt_rgb=use_opt_rgb)
 
     # initializations
     go = 0
@@ -676,7 +704,8 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
             # if we've been through this already, increase mass and try again.
             object_mass *= mass_inc_fact
             galinp_kw['object_mass'] = object_mass
-            rsp.TrilegalUtils.change_galaxy_input(galaxy_input, **galinp_kw)
+            gal_inp.add_params(galinp_kw)
+            gal_inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
         go += 1
 
         if run_trilegal is True:
@@ -809,6 +838,7 @@ def call_mc_norm(targets=None, models=None, gi10=False, **mc_norm_kw):
             mc_norm(target, model, **mc_norm_kw)
             #sgal_rgb_agb(target, model, **mc_norm_kw)
 
+
 def mc_norm(target, model, band=None, input_file=None, maglims=None,
             offsets=None, leo_norm=False, leo_method=False, opt_rgb=False,
             **kwargs):
@@ -864,6 +894,7 @@ def mc_norm(target, model, band=None, input_file=None, maglims=None,
     print '%s & %.3f & $%.3f\\pm%.4f$ & %.0f & \\\ %s %i %i' % (target, nrgb_nagb_data, np.mean(nmodel),
                                                np.std(nmodel), (pct_diff*100), model, ndata_rgb, ndata_agb)
 
+
 def get_opt_nrgb(target):
     offset_dict = {'SCL-DE1': 1554,
                    #'NGC2403-HALO-6': -0.155,
@@ -888,6 +919,63 @@ def get_opt_nrgb(target):
                    #'HS117': 0.092,
                    'DDO71': 3665}
     return float(offset_dict[target])
+
+
+def get_opt_rgb_polygons(target):
+    '''
+    I ran get_nrgb_from_optical with default args and pasted the ipython output here
+    # target filter1 filter2 NRGB_box NRGB_by_eye polygon
+    DDO78 F475W F814W 3842 3842 
+    DDO71 F606W F814W 2248 2248 
+    SCL-DE1 F606W F814W 944 944 
+    DDO82 F606W F814W 14314 14331     
+    IC2574-SGS F555W F814W 10485 8903 
+    UGC-4305-1 F555W F814W 5337 3654  
+    UGC-4305-2 F555W F814W 6555 4402  
+    NGC4163 F606W F814W 7010 6136     
+    UGC8508 F475W F814W 2411 2078     
+    '''
+    poly_dict = {'DDO78': 3842,
+                 'DDO71': 2248,
+                 'SCL-DE1': 944,
+                 'DDO82': np.array([(0.62328780081964297, -2.9660142201464623), (0.74828177882779023, -3.4194244355894625), (0.82520114990972671, -3.8224557382054627), (0.90212052099166362, -4.1247292151674628), (1.6232396248848207, -4.0575573313981295), (1.5270904110323995, -3.6377330578397959), (1.4597859613357049, -3.3858384937047958), (1.3828665902537685, -3.1171509586274624), (1.3059472191718315, -2.8652563944924623), (1.238642769475137, -2.5965688594151288), (0.50790874419673759, -2.5629829175304621)]),
+                 'IC2574-SGS': np.array([(0.88085277986008848, -2.594209765189702), (0.97055019845183477, -2.8857664759318862), (1.1179102432811323, -3.2502123643596157), (1.2012007034020398, -3.5539172713827236), (1.2844911635229472, -3.8333257858439822), (1.354967706702177, -4.0034005337769232), (1.3934094575272109, -4.0641415151815448), (1.9700357199027243, -4.0398451226196963), (1.8290826335442656, -3.6025100565064205), (1.6625017133024507, -3.2137677755168426), (1.6368738794190945, -2.9586556536174315), (1.5728042947107044, -2.6185061577515505), (1.5599903777690258, -2.5820615689087782)]),
+                 'UGC-4305-1': np.array([(0.96940535804821337, -2.6403426463456499), (1.0757322587834022, -3.0381712503347198), (1.182059159518591, -3.4239444420816976), (1.2508589188178307, -3.6409418624393717), (1.3321677252623871, -3.8217730460707675), (1.4134765317069435, -4.0628812909126282), (1.5385670031601064, -4.0990475276389073), (1.7824934224937756, -4.0990475276389073), (1.6636574746132702, -3.7735513971023953), (1.6073667624593462, -3.4721660910500698), (1.5510760503054231, -3.1105037237872781), (1.476021767433525, -2.7729521810086735), (1.4572581967155509, -2.5559547606509985)]),
+                 'UGC-4305-2': np.array([(0.9928229629548313, -2.6090931485301443), (1.0590397476993938, -2.8305905745508753), (1.1071974093318029, -3.1013096507984343), (1.1613747786682622, -3.2858908391490429), (1.2336112711168759, -3.6796640409636749), (1.2817689327492849, -3.8888560544276984), (1.3359463020857452, -4.0611318302215995), (1.4262419176465113, -4.098048067891721), (1.6008134410639934, -4.122658893005136), (1.7091681797369138, -4.1103534804484285), (1.7814046721855274, -4.073437242778307), (1.7212075951450161, -3.6796640409636749), (1.6369316872883002, -3.1751421261386783), (1.5707149025437386, -2.8182851619941678), (1.5285769486153806, -2.6213985610868518)]),
+                 'NGC4163': np.array([(0.59977446601686069, -2.5718587825132402), (0.7468419971858129, -2.9935726500356323), (0.89390952835476511, -3.523727226349497), (0.94035190661864476, -4.0177348997328703), (1.2886697435977403, -4.0418328350198642), (1.1803041943153563, -3.6080699998539747), (1.1416022124287899, -3.2104540676185764), (1.0951598341649103, -2.620054653087228)]),
+                 'UGC8508': np.array([(1.5332306001668927, -2.5908838137984285), (1.9516553658152, -3.9626182764768609), (2.0258920177850603, -4.0681363120675096), (2.4510655699760822, -4.0564120858907708), (2.5590461546595167, -3.9977909550070772), (2.2958434794936462, -3.4936492294073114), (2.093379883212207, -2.9777832776308069), (1.9246602196443412, -2.5557111352682123)])
+                 }
+    return poly_dict[target]
+
+
+def get_ir_rgb_polygons(gal, leo_method=False):
+    if leo_method is False:
+        # find normalization region
+        # (when hand picking cmd_regions, RGB includes AGB!)
+        irgb, = np.nonzero(gal.color > 0.4)
+        logger.info('normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4')
+        # the stars in the data marked as rgb between mag lims.
+        rgb_norm = rsp.math_utils.between(gal.mag2, gal.maglims[0], gal.maglims[1],
+                                          inds=irgb)
+        # the 2 std around color mean
+        cmean = np.mean(gal.color[rgb_norm])
+        cstd = np.std(gal.color[rgb_norm]) * 2.
+        col_min = cmean - cstd
+        col_max = cmean + cstd
+    else:
+        # Leo's method is to use all the stars between the mag lims.
+        logger.info('normalization color: using all stars in mag range')
+        rgb_norm = rsp.math_utils.between(gal.mag2, gal.maglims[0], gal.maglims[1])
+        col_min = np.min(gal.color)
+        col_max = np.max(gal.color)
+
+    verts = np.array([[col_min, gal.maglims[0]],
+                      [col_min, gal.maglims[1]],
+                      [col_max, gal.maglims[1]],
+                      [col_max, gal.maglims[0]],
+                      [col_min, gal.maglims[0]]])
+
+    return verts
 
 def sgal_rgb_agb(target, model, band=None, input_file=None, maglims=None,
                  offsets=None, leo_norm=False):
@@ -985,9 +1073,11 @@ def short_list():
 def targets_z002():
     return ['DDO82', 'IC2574-SGS', 'UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
 
+
 def targets_paper1():
     return np.concatenate([gi10_overlap(), targets_z002()])
     #return ['UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
+
 
 def targets_leo_norm_ok():
     '''
@@ -995,10 +1085,30 @@ def targets_leo_norm_ok():
     RGB
     '''
     return np.concatenate([gi10_overlap(), ['DDO82', 'NGC4163', 'UGC8508']])
+
+
+def add_opt_asts_to_ir_asts(targets, models):
+    targets = load_targets(targets)
+    for target in targets:
+        opt_fake = get_fake_files(target, band='opt')
+        print opt_fake
+        opt_gal = load_galaxy(target, band='opt')
+        print opt_gal
+        for model in models:
+            ir_gal = load_galaxy(target)
+            ir_ast_file = load_ast_file(ir_gal, model)
+            out_file = '_'.join(np.concatenate([ir_ast_file.split('_')[:3],
+                                opt_gal.filters, ir_ast_file.split('_')[3:]]))
+
+            sgal = rsp.Galaxies.simgalaxy(ir_ast_file, filter1=opt_gal.filter1, filter2=opt_gal.filter2)
+            print 'four filter ast: %s' % out_file
+            rsp.Galaxies.ast_correct_trilegal_sim(sgal, fake_file=opt_fake,
+                                                  outfile=out_file)
+
     
 def load_ast_file(gal, model):
     model_short = model.replace('cmd_input_','').lower()
-    search_str = '*'.join(('ast_%s' % gal.filter1, gal.filter2, gal.target,
+    search_str = '*'.join(('ast_%s' % gal.filter1, gal.filter2+'_output', gal.target,
                            model_short))
     try:
         sim_file, = rsp.fileIO.get_files(os.path.join(snap_src, 'output'),
@@ -1054,12 +1164,538 @@ def nir_cmd_plot_limits(xlim=None, ylim=None, xlim2=None):
     return xlim, ylim, xlim2 
 
 
+def model_ratio_once(target, model, ast_file_loc, rgb_verts, ndata_rgb, agb_verts,
+                     opt_agb_verts, nar_ratio_data, nar_ratio_data_opt, ir_gal,
+                     opt_gal, find_file, figname, ndata_agb, plot_LF_kw,
+                     ir_data_pts, gal_ir_hist, gal_ir_bins, gal_opt_hist,
+                     gal_opt_bins, data_pts, ndata_agb_opt):
+    logger.info('%s: %s' % (target, model))
+    model_short = model.replace('cmd_input_', '').lower()
+    # load four filter ast file
+    find_file['model'] = model_short 
+    search_str = 'ast_%(filter1)s_%(filter2)s_%(filter3)s_%(filter4)s_output_%(target)s_%(model)s' % find_file
+    sim_file, = rsp.fileIO.get_files(ast_file_loc, search_str)
+
+    sgal = rsp.Galaxies.simgalaxy(sim_file, filter1='F110W', filter2='F160W')
+    sgal.load_ast_corrections()
+    logger.info('%s: %s loaded asts.' % (target, model))
+    # so i dunno why, but filter3 is 814, filter4 is the other guy.
+    opt_sim_pts = np.column_stack((sgal.ast_mag4 - sgal.ast_mag3, sgal.ast_mag3))
+    ir_sim_pts = np.column_stack((sgal.ast_mag1 - sgal.ast_mag2, sgal.ast_mag2))
+    
+    # make normalization from the full simulation
+    rgb_in_sim, = np.nonzero(nxutils.points_inside_poly(opt_sim_pts,
+                                                        rgb_verts))
+    nsim_rgb = float(len(rgb_in_sim))
+    normalization = ndata_rgb / nsim_rgb
+
+    nmodel = np.array([])
+    nmodel_opt = np.array([])
+    # do lots of random sampling.
+    logger.info('%s: %s going into the mc loop.' % (target, model))
+    for i in range(10001):
+        # random sample the data distribution
+        rands = np.random.random(len(sgal.ast_mag4))
+        ind, = np.nonzero(rands < normalization)
+        if i % 5000 == 0: 
+            logger.info('%s: %s mc loop... %i' % (target, model, i))
+        norm_sim_pts_opt = opt_sim_pts[ind]
+        norm_sim_pts_ir = ir_sim_pts[ind]
+
+        # number of agb and rgb stars in the scaled simulation
+        sim_agb_norm, = np.nonzero(nxutils.points_inside_poly(norm_sim_pts_ir,
+                                                              agb_verts))
+        sim_rgb_norm, = np.nonzero(nxutils.points_inside_poly(norm_sim_pts_opt,
+                                                              rgb_verts))
+        sim_agb_norm_opt, = np.nonzero(nxutils.points_inside_poly(norm_sim_pts_opt,
+                                                                  opt_agb_verts))
+
+        # simulation's nagb/nrgb ratio
+        nsim_agb_opt = float(len(sim_agb_norm_opt))
+        nsim_agb = float(len(sim_agb_norm))
+        nsim_rgb = float(len(sim_rgb_norm))
+        nar_ratio_sim = nsim_agb / nsim_rgb
+
+        nar_ratio_sim_opt = nsim_agb_opt / nsim_rgb
+        nmodel = np.append(nmodel, nar_ratio_sim)
+        nmodel_opt = np.append(nmodel_opt, nar_ratio_sim_opt)
+    logger.info('%s: %s finished mc loop.' % (target, model))
+    mc_pct_diff = (np.mean(nmodel) - nar_ratio_data) / nar_ratio_data
+    mc_pct_diff_opt = (np.mean(nmodel_opt) - nar_ratio_data_opt) / nar_ratio_data_opt
+
+    sgal_ir_hist, sbins_ir = hist_it_up(norm_sim_pts_ir[:, 1])
+    sgal_opt_hist, sbins_opt = hist_it_up(norm_sim_pts_opt[:, 1])
+
+    # use mean nmodels for plots with lines.
+
+    # plot the IR LF
+    model_title = translate_model_name(model)
+    plot_LF_kw['model_title'] = model_title
+    logger.info('%s: %s plotting IR' % (target, model))
+    fig, axs, _ = ir_gal.plot_LF(ir_data_pts[:,0], ir_data_pts[:,1],
+                 norm_sim_pts_ir[:, 0], norm_sim_pts_ir[:, 1],
+                 ir_gal.filter1, ir_gal.filter2,
+                 gal_hist=gal_ir_hist, bins=gal_ir_bins,
+                 sgal_hist=sgal_ir_hist, sbins=sbins_ir,
+                 **plot_LF_kw)
+    logger.info('%s: %s IR plotted' % (target, model))
+    add_lines_LF(fig, axs, ir_gal, [ir_gal.trgb, ir_gal.trgb+2],
+                 [ir_gal.model_plt_color, ir_gal.data_plt_color],
+                 [ndata_agb, nsim_agb, ndata_rgb, nsim_rgb])  
+    
+    fig_name_kw = {'target': opt_gal.target,
+                   'model_name': model.replace('cmd_input_', '').replace('.dat', ''),
+                   'filter1': ir_gal.filter1,
+                   'filter2': ir_gal.filter2}
+    fig.savefig(figname % fig_name_kw, dpi=300,
+                bbox_to_inches='tight')
+    fig.close()
+    
+    if target in gi10_overlap():
+        # if it's part of G10 plot the OPT LF
+        logger.info('%s: %s plotting OPT' % (target, model))
+        fig, axs, _ = opt_gal.plot_LF(data_pts[:,0], data_pts[:,1],
+                       norm_sim_pts_opt[:, 0], norm_sim_pts_opt[:, 1],
+                       opt_gal.filter1, opt_gal.filter2,
+                       gal_hist=gal_opt_hist, bins=gal_opt_bins,
+                       sgal_hist=sgal_opt_hist, sbins=sbins_opt,
+                       model_title=model_title)
+        logger.info('%s: %s OPT plotted' % (target, model))
+        add_lines_LF(fig, axs, opt_gal, [opt_gal.trgb+0.5, opt_gal.trgb+2],
+                     [opt_gal.model_plt_color, opt_gal.data_plt_color],
+                     [ndata_agb_opt, nsim_agb_opt, ndata_rgb, nsim_rgb])  
+        fig_name_kw['filter1'] = opt_gal.filter1
+        fig_name_kw['filter2'] = opt_gal.filter2
+        fig.savefig(figname % fig_name_kw, dpi=300,
+                    bbox_to_inches='tight')
+        fig.close()
+    logger.info('IR %s %s %.3f $%.3f %.4f$ %.4f' % (opt_gal.target, model_short, nar_ratio_data, np.mean(nmodel), np.std(np.mean(nmodel)), mc_pct_diff))
+    logger.info('OPT %s %s %.3f $%.3f %.4f$ %.4f' % (opt_gal.target, model_short, nar_ratio_data_opt, np.mean(nmodel_opt), np.std(np.mean(nmodel_opt)), mc_pct_diff_opt))
+
+    print 'IR %s %s %.3f $%.3f\pm%.3f$ %.4f' % (opt_gal.target, model_short, nar_ratio_data, np.mean(nmodel), np.std(np.mean(nmodel)), mc_pct_diff)
+    print 'OPT %s %s %.3f $%.3f\pm%.3f$ %.4f' % (opt_gal.target, model_short, nar_ratio_data_opt, np.mean(nmodel_opt), np.std(np.mean(nmodel_opt)), mc_pct_diff_opt)
+    return
+
+
+def multi_opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=True, 
+                          offsets=(1.5, 0.), models=None, maglims=None,
+                          leo_method=False, leo_norm=False, make_plot=True,
+                          xlim=None, ylim=None, xlim2=None, add_boxes=True,
+                          color_hist=False,  plot_tpagb=False, **kwargs):
+
+    ast_file_loc = '/Users/phil/research/TP-AGBcalib/SNAP/output/'
+
+    # fix incoming args
+    targets = load_targets(targets)
+    if type(models) == str:
+        models = [models]
+
+    if make_plot is True:
+        xlim, ylim, xlim2 = nir_cmd_plot_limits(xlim=xlim,
+                                                ylim=ylim,
+                                                xlim2=xlim2)
+
+        plot_LF_kw = {'ylim': ylim, 'xlim': xlim, 'xlim2': xlim2,
+                      'color_hist': color_hist, 'title': True}
+
+    result_dict = {}
+    print 'target model name data sim pct_dif'
+    for target in targets:
+        # used for agb_verts, will use box if not leo method, otherwise
+        # will use all color space.
+        if target in targets_leo_norm_ok():
+            leo_method = True
+        else:
+            leo_method = False
+
+        logger.info('working on %s' % target)
+
+        # load data
+        ir_gal = load_galaxy(target, band='ir')
+        opt_gal = load_galaxy(target, band='opt')
+        data_pts = np.column_stack((opt_gal.color, opt_gal.mag2))
+        ir_data_pts = np.column_stack((ir_gal.color, ir_gal.mag2))
+
+        # make the data histograms
+        gal_opt_hist, gal_opt_bins = hist_it_up(opt_gal.mag2)
+        gal_ir_hist, gal_ir_bins = hist_it_up(ir_gal.mag2)
+
+        # get the rgb and agb polygons
+        rgb_poly = get_opt_rgb_polygons(target)
+
+        agb_verts = load_agb_verts(ir_gal, leo_method=leo_method)
+        opt_agb_verts = load_agb_verts(opt_gal, leo_method=leo_method)
+
+        if type(rgb_poly) == int:
+            magdim = opt_gal.trgb + 2
+            magbright = opt_gal.trgb + .5
+            colmin = np.min(opt_gal.color)
+            colmax = np.max(opt_gal.color)
+            rgb_verts = np.array([[colmin, magdim],
+                              [colmin, magbright],
+                              [colmax, magbright],
+                              [colmax, magdim],
+                              [colmin, magdim]])       
+        else:
+            rgb_Color = rgb_poly[:, 0]
+            rgb_Mag2 = rgb_poly[:, 1]
+            rgb_Mag1 = rgb_Color + rgb_Mag2
+            Mag2mag_kw = {'Av': opt_gal.Av, 'dmod': opt_gal.dmod}
+            rmag1 = rsp.astronomy_utils.Mag2mag(rgb_Mag1, opt_gal.filter1, opt_gal.photsys,
+                                                **Mag2mag_kw)
+
+            rmag2 = rsp.astronomy_utils.Mag2mag(rgb_Mag2, opt_gal.filter2, opt_gal.photsys,
+                                                **Mag2mag_kw)
+            rgb_color = rmag1 - rmag2
+            rgb_verts = np.column_stack([rgb_color, rmag2])
+
+        # rgb and agb inds in the data
+        rgb_in_data, = np.nonzero(nxutils.points_inside_poly(data_pts, rgb_verts))
+        agb_in_data, = np.nonzero(nxutils.points_inside_poly(ir_data_pts, agb_verts))
+        agb_in_data_opt, = np.nonzero(nxutils.points_inside_poly(data_pts, opt_agb_verts))
+
+        # the nagb/nrgb ratio in the data
+        ndata_rgb = float(len(rgb_in_data))                 
+        ndata_agb = float(len(agb_in_data))
+        nar_ratio_data = ndata_agb / ndata_rgb
+        ndata_agb_opt = float(len(agb_in_data_opt))
+        nar_ratio_data_opt = ndata_agb_opt / ndata_rgb
+
+        # find the four filter ast file
+        find_file = {'filter1': ir_gal.filter1, 
+                     'filter2': ir_gal.filter2,
+                     'filter3': opt_gal.filter1,
+                     'filter4': opt_gal.filter2,
+                     'target': opt_gal.target}
+        figname = '%(target)s_%(model_name)s_%(filter1)s_%(filter2)s_LF.pdf'
+
+        pool = multiprocessing.Pool()
+        res = []
+        for model in models:
+            res.append(pool.apply_async(model_ratio_once, 
+                                       (target, model, ast_file_loc, rgb_verts,
+                                        ndata_rgb, agb_verts, opt_agb_verts,
+                                        nar_ratio_data, nar_ratio_data_opt,
+                                        ir_gal, opt_gal, find_file, figname, 
+                                        ndata_agb, plot_LF_kw, ir_data_pts,
+                                        gal_ir_hist, gal_ir_bins, gal_opt_hist,
+                                        gal_opt_bins, data_pts, ndata_agb_opt),))
+
+        for r in res:
+            r.get()
+    return
+
+
+def count_uncert_ratio(numerator, denominator):
+    '''
+    combining poisson error for taking a ratio
+    '''
+    n = float(numerator)
+    d = float(denominator)
+    return (n / d) * (1./np.sqrt(n) + 1./np.sqrt(d))
+ 
+def opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=True, 
+                          offsets=(1.5, 0.), models=None, maglims=None,
+                          leo_method=False, leo_norm=False, make_plot=True,
+                          xlim=None, ylim=None, xlim2=None, add_boxes=True,
+                          color_hist=False,  plot_tpagb=False, norm_by_ir=False,
+                          **kwargs):
+    '''
+    this will do either rgb norm in nir or opt...
+    it's the right one to use, also hase uncertanties. it doesn't return 
+    anything, but prints error to the table fmt (ish) and makes figures.    
+    '''
+    ast_file_loc = '/Users/phil/research/TP-AGBcalib/SNAP/output/'
+
+    # fix incoming args
+    targets = load_targets(targets)
+    if type(models) == str:
+        models = [models]
+
+    if make_plot is True:
+        xlim, ylim, xlim2 = nir_cmd_plot_limits(xlim=xlim,
+                                                ylim=ylim,
+                                                xlim2=xlim2)
+
+        plot_LF_kw = {'ylim': ylim, 'xlim': xlim, 'xlim2': xlim2,
+                      'color_hist': color_hist, 'title': True}
+
+    print 'target model name data sim pct_dif'
+    for target in targets:
+        # used for agb_verts, will use box if not leo method, otherwise
+        # will use all color space.
+        if target in targets_leo_norm_ok():
+            leo_method = True
+        else:
+            leo_method = False
+
+        logger.info('working on %s' % target)
+
+        # load data
+        ir_gal = load_galaxy(target, band='ir')
+        opt_gal = load_galaxy(target, band='opt')
+        data_pts = np.column_stack((opt_gal.color, opt_gal.mag2))
+        ir_data_pts = np.column_stack((ir_gal.color, ir_gal.mag2))
+
+        # make the data histograms
+        gal_opt_hist, gal_opt_bins = hist_it_up(opt_gal.mag2)
+        gal_ir_hist, gal_ir_bins = hist_it_up(ir_gal.mag2)
+
+        # get the rgb and agb polygons
+        agb_verts = load_agb_verts(ir_gal, leo_method=leo_method)
+        opt_agb_verts = load_agb_verts(opt_gal, leo_method=leo_method)
+
+        ir_gal.maglims = [ir_gal.trgb, ir_gal.trgb+1.5]
+        rgb_verts_ir = get_ir_rgb_polygons(ir_gal, leo_method=leo_method)
+        rgb_poly = get_opt_rgb_polygons(target)
+
+        if type(rgb_poly) == int:
+            magdim = opt_gal.trgb + 2
+            magbright = opt_gal.trgb + .5
+            colmin = np.min(opt_gal.color)
+            colmax = np.max(opt_gal.color)
+            rgb_verts = np.array([[colmin, magdim],
+                              [colmin, magbright],
+                              [colmax, magbright],
+                              [colmax, magdim],
+                              [colmin, magdim]])       
+        else:
+            rgb_Color = rgb_poly[:, 0]
+            rgb_Mag2 = rgb_poly[:, 1]
+            rgb_Mag1 = rgb_Color + rgb_Mag2
+            Mag2mag_kw = {'Av': opt_gal.Av, 'dmod': opt_gal.dmod}
+            rmag1 = rsp.astronomy_utils.Mag2mag(rgb_Mag1, opt_gal.filter1, opt_gal.photsys,
+                                                **Mag2mag_kw)
+
+            rmag2 = rsp.astronomy_utils.Mag2mag(rgb_Mag2, opt_gal.filter2, opt_gal.photsys,
+                                                **Mag2mag_kw)
+            rgb_color = rmag1 - rmag2
+            rgb_verts = np.column_stack([rgb_color, rmag2])
+
+        # rgb and agb inds in the data
+        rgb_in_data, = np.nonzero(nxutils.points_inside_poly(data_pts, rgb_verts))
+        rgb_in_data_ir, = np.nonzero(nxutils.points_inside_poly(ir_data_pts, rgb_verts_ir))
+        agb_in_data, = np.nonzero(nxutils.points_inside_poly(ir_data_pts, agb_verts))
+        agb_in_data_opt, = np.nonzero(nxutils.points_inside_poly(data_pts, opt_agb_verts))
+
+        # the nagb/nrgb ratio in the data as well as errors
+        ndata_rgb = float(len(rgb_in_data))                 
+        ndata_rgb_ir = float(len(rgb_in_data_ir))
+        
+        ndata_agb = float(len(agb_in_data))
+        if norm_by_ir is True:
+            nar_ratio_data = ndata_agb / ndata_rgb_ir        
+            nar_ratio_data_err = count_uncert_ratio(ndata_agb, ndata_rgb_ir)
+        else:
+            nar_ratio_data = ndata_agb / ndata_rgb
+            nar_ratio_data_err = count_uncert_ratio(ndata_agb, ndata_rgb)
+            
+        ndata_agb_opt = float(len(agb_in_data_opt))
+        nar_ratio_data_opt = ndata_agb_opt / ndata_rgb
+
+        nar_ratio_data_opt_err = count_uncert_ratio(ndata_agb_opt, ndata_rgb)
+
+        # find the four filter ast file
+        find_file = {'filter1': ir_gal.filter1, 
+                     'filter2': ir_gal.filter2,
+                     'filter3': opt_gal.filter1,
+                     'filter4': opt_gal.filter2,
+                     'target': opt_gal.target}
+
+        # printing fmts
+        # will be:       band target model data, err model, err fdiff, ferr
+        pfmt = '%s %s %s & $%.3f\pm%.3f$ & $%.3f\pm%.3f$ & %.3f\pm%.3f'
+        figname = '%(target)s_%(model_name)s_%(filter1)s_%(filter2)s_LF.pdf'
+        for model in models:
+            logger.info('%s: %s' % (target, model))
+            model_short = model.replace('cmd_input_', '').lower()
+
+            # load four filter ast file
+            find_file['model'] = model_short 
+            search_str = 'ast_%(filter1)s_%(filter2)s_%(filter3)s_%(filter4)s_output_%(target)s_%(model)s' % find_file
+            sim_file, = rsp.fileIO.get_files(ast_file_loc, search_str)
+
+            sgal = rsp.Galaxies.simgalaxy(sim_file, filter1='F110W', filter2='F160W')
+            sgal.load_ast_corrections()
+
+            # so i dunno why, but filter3 is 814, filter4 is the other guy.
+            assert sgal.filter3 == 'F814W', 'uh uh.... %s' % sgal.filter3 
+            
+            opt_sim_pts = np.column_stack((sgal.ast_mag4 - sgal.ast_mag3,
+                                           sgal.ast_mag3))
+            ir_sim_pts = np.column_stack((sgal.ast_mag1 - sgal.ast_mag2,
+                                          sgal.ast_mag2))
+            
+            # make normalization from the full simulation
+            if norm_by_ir is True:
+                rgb_in_sim, = np.nonzero(nxutils.points_inside_poly(ir_sim_pts,
+                                                                    rgb_verts_ir))
+                nsim_rgb = float(len(rgb_in_sim))
+                normalization = ndata_rgb_ir / nsim_rgb
+            else:
+                rgb_in_sim, = np.nonzero(nxutils.points_inside_poly(opt_sim_pts,
+                                                                    rgb_verts))
+                nsim_rgb = float(len(rgb_in_sim))
+                normalization = ndata_rgb / nsim_rgb
+
+            # random sample the data distribution (all the same length)
+            rands = np.random.random(len(sgal.ast_mag4))
+            ind, = np.nonzero(rands < normalization)
+
+            # scale the simulation
+            norm_sim_pts_opt = opt_sim_pts[ind]
+            norm_sim_pts_ir = ir_sim_pts[ind]
+
+            # number of agb and rgb stars in the scaled simulation
+            sim_agb_norm, = np.nonzero(nxutils.points_inside_poly(norm_sim_pts_ir,
+                                                                  agb_verts))
+            sim_rgb_norm, = np.nonzero(nxutils.points_inside_poly(norm_sim_pts_opt,
+                                                                  rgb_verts))
+
+            sim_rgb_norm_ir, = np.nonzero(nxutils.points_inside_poly(norm_sim_pts_ir,
+                                                                     rgb_verts_ir))
+
+            sim_agb_norm_opt, = np.nonzero(nxutils.points_inside_poly(norm_sim_pts_opt,
+                                                                      opt_agb_verts))
+
+            # for simulation's nagb/nrgb ratio
+            nsim_agb_opt = float(len(sim_agb_norm_opt))
+            nsim_agb = float(len(sim_agb_norm))
+            nsim_rgb = float(len(sim_rgb_norm_ir))
+            nsim_rgb_opt = float(len(sim_rgb_norm))
+            
+            # if we are norm by optical use that instead of ir...
+            if norm_by_ir is True:
+                nsim_rgb = nsim_rgb_opt
+
+            # nagb/nrgb in the scaled simulation
+            nar_ratio_sim = nsim_agb / nsim_rgb
+            nar_ratio_sim_opt = nsim_agb_opt / nsim_rgb_opt
+
+            # calculate errors
+            nar_ratio_sim_err = count_uncert_ratio(nsim_agb, nsim_rgb)
+            nar_ratio_sim_opt_err = count_uncert_ratio(nsim_agb_opt, nsim_rgb_opt)
+            
+            # calculate fractional differences
+            pct_diff = (nar_ratio_sim - nar_ratio_data) / nar_ratio_data
+            pct_diff_opt = (nar_ratio_sim_opt - nar_ratio_data_opt) / nar_ratio_data_opt
+
+            # propagate uncertainties
+            pct_diff_err = nar_ratio_sim_err/nar_ratio_sim + nar_ratio_data_err/nar_ratio_data
+            pct_diff_opt_err = nar_ratio_sim_opt_err/nar_ratio_sim_err + nar_ratio_data_opt_err/nar_ratio_data_opt
+            
+            # make histogram, bins for plotting.
+            sgal_ir_hist, sbins_ir = hist_it_up(norm_sim_pts_ir[:, 1])
+            sgal_opt_hist, sbins_opt = hist_it_up(norm_sim_pts_opt[:, 1])
+
+            # plot the IR LF
+            model_title = translate_model_name(model)
+            plot_LF_kw['model_title'] = model_title
+            fig, axs, _ = ir_gal.plot_LF(ir_data_pts[:,0], ir_data_pts[:,1],
+                         norm_sim_pts_ir[:, 0], norm_sim_pts_ir[:, 1],
+                         ir_gal.filter1, ir_gal.filter2,
+                         gal_hist=gal_ir_hist, bins=gal_ir_bins,
+                         sgal_hist=sgal_ir_hist, sbins=sbins_ir,
+                         **plot_LF_kw)
+            # add the numbers of each population to the plots
+            add_lines_LF(fig, axs, ir_gal, [ir_gal.trgb, ir_gal.trgb+2],
+                         [ir_gal.model_plt_color, ir_gal.data_plt_color],
+                         [ndata_agb, nsim_agb, ndata_rgb, nsim_rgb])  
+            
+            # save fig
+            fig_name_kw = {'target': opt_gal.target,
+                           'model_name': model.replace('cmd_input_', '').replace('.dat', ''),
+                           'filter1': ir_gal.filter1,
+                           'filter2': ir_gal.filter2}
+            plt.savefig(figname % fig_name_kw, dpi=300,
+                        bbox_to_inches='tight')
+            
+            # print table to screen
+            print pfmt % ('IR', ir_gal.target, model_short, nar_ratio_data,
+                          nar_ratio_data_err, nar_ratio_sim, nar_ratio_sim_err,
+                          pct_diff, pct_diff_err)
+
+            # repeat above output steps in OPT if this is a G10 galaxy
+            if target in gi10_overlap():
+                # if it's part of G10 plot the OPT LF
+                fig, axs, _ = opt_gal.plot_LF(data_pts[:,0], data_pts[:,1],
+                               norm_sim_pts_opt[:, 0], norm_sim_pts_opt[:, 1],
+                               opt_gal.filter1, opt_gal.filter2,
+                               gal_hist=gal_opt_hist, bins=gal_opt_bins,
+                               sgal_hist=sgal_opt_hist, sbins=sbins_opt,
+                               model_title=model_title)
+                add_lines_LF(fig, axs, opt_gal, [opt_gal.trgb+0.5, opt_gal.trgb+2],
+                             [opt_gal.model_plt_color, opt_gal.data_plt_color],
+                             [ndata_agb_opt, nsim_agb_opt, ndata_rgb, nsim_rgb_opt])  
+                fig_name_kw['filter1'] = opt_gal.filter1
+                fig_name_kw['filter2'] = opt_gal.filter2
+                plt.savefig(figname % fig_name_kw, dpi=300,
+                            bbox_to_inches='tight')
+                print pfmt % ('OPT', opt_gal.target, model_short,
+                              nar_ratio_data_opt, nar_ratio_data_opt_err,
+                              nar_ratio_sim_opt, nar_ratio_sim_opt_err,
+                              pct_diff_opt, pct_diff_opt_err)
+
+    return
+
+
+def add_lines_LF(fig, axs, gal, maglims, colors, vals):
+    '''
+    must have attributes sgal, gal nbrighter
+    '''
+    j = 0
+    line_on_it_kw = {'annotate': 0, 'ls': '-'}
+    for i, maglim in enumerate(maglims):
+        # lines and numbers on plots
+        for ax, col in zip(axs[:2], colors):
+            gal.put_a_line_on_it(ax, maglim, color=col, **line_on_it_kw)
+            gal.annotate_cmd(ax, maglim, '$%i$' % vals[j], text_kw={'color': col})
+            j += 1
+    return fig, axs
+
+
+def hist_it_up(mag2, res=0.1):
+    # do fine binning and hist
+    bins = np.arange(np.nanmin(mag2), np.nanmax(mag2), res)
+    hist = np.histogram(mag2, bins=bins)[0]
+    # drop the too fine bins
+    binds = spread_bins(hist)
+    # return the hist, bins.
+    return np.histogram(mag2, bins=bins[binds])
+
+
+def spread_bins(hist, threash=10):
+    '''
+    goes through in index order of hist and returns indices such that
+    each bin will add to at least threash.
+    Returns the indices of the new bins to use (should then re-hist)
+    ex:
+    bins is something set that works well for large densities
+    h = np.histogram(mag2, bins=bins)[0]
+    binds = spread_bins(h)
+    hist, bins = np.histogram(mag2, bins=bins[binds])
+    '''
+    b = []
+    i = 1
+    j = 0
+    while i < len(hist):
+        while np.sum(hist[j:i]) < threash:
+            i += 1
+            #print j, i, len(hist)
+            if i > len(hist):
+                break
+        j = i
+        b.append(j)
+    return np.array(b[:-1])
+
+
 def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      targets=None, run_trilegal=False, leo_ast=True, 
                      offsets=(1.5, 0.), models=None, maglims=None,
                      leo_method=False, leo_norm=False, make_plot=True,
                      xlim=None, ylim=None, xlim2=None, add_boxes=True,
-                     color_hist=False,  plot_tpagb=False, **kwargs):
+                     color_hist=False,  plot_tpagb=False, use_opt_rgb=False,
+                     **kwargs):
     smgs = []
     targets = load_targets(targets)
 
@@ -1068,7 +1704,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
 
     norm_sim_kw = {'offsets': offsets, 'band': band, 'leo_ast': leo_ast,
                    'run_trilegal': run_trilegal, 'leo_method': leo_method,
-                   'leo_norm': leo_norm}
+                   'leo_norm': leo_norm, 'use_opt_rgb': use_opt_rgb}
 
     if make_plot is True:
         xlim, ylim, xlim2 = nir_cmd_plot_limits(xlim=xlim,
@@ -1130,6 +1766,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
     #    print key, ' '.join(['%.3f' % i for i in  rd.values()])
     pprint(result_dict)
     return smgs
+
 
 def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={},
                 extra='', match_phot=None):
@@ -1237,6 +1874,7 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
                                             figname=figname, loud=True)
     return chi2, fit
 
+
 def translate_model_name(model):
     if 'apr13vw93' in model.lower():
         model_name = '$\dot{M}_{VW93}$'
@@ -1247,6 +1885,7 @@ def translate_model_name(model):
     elif 'mar13' in model.lower():
         model_name = '$\dot{M}_{G10}$'
     return model_name
+
 
 def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
                    figname=None, dmag=0.1, dcol=0.05, modelB=None,
@@ -1390,7 +2029,6 @@ def get_nrgb_from_optical(targets, trgb_offset=1.5):
         #    inds, = np.nonzero(nxutils.points_inside_poly(points, rgb_box))    
         #
         Nrgb = len(inds)
-        print gal.target, gal.filter1, gal.filter2, Nrgb
         Nrgbs.append(Nrgb)
         fig, ax = gal.plot_cmd(gal.Color, gal.Mag2, scatter_off=True)
         ax.plot(gal.Color[inds], gal.Mag2[inds], '.')
@@ -1402,7 +2040,9 @@ def get_nrgb_from_optical(targets, trgb_offset=1.5):
             inds, = np.nonzero(nxutils.points_inside_poly(points, pts))
             print len(inds)
             print pts
+        print gal.target, gal.filter1, gal.filter2, Nrgb, len(inds)
     return Nrgbs
+
 
 def run_fuck_you_match(targets=None, models=None, band=None, inputs={},
                        modelB=None):
@@ -1516,6 +2156,7 @@ def run_match_tests(targets=None, models=None, band=None, inputs={},
 
             print target, model, full_chi2, agb_chi2, part_chi2
             #print target, model, agb_chi2
+
 
 def check_stats():
     filename = '/Users/phil/Desktop/tpagb_stats.dat'
@@ -1800,7 +2441,8 @@ def agb_logl_age():
         logts = np.array([t.get_col('T_star') for t in tracks])
         ages =  np.array([t.get_col('ageyr') for t in tracks])
         [ax.plot(ages[i], logls[i]) for i in range(len(ages))]
-    
+
+
 def agb_lifetimes(models):
     import fileIO
     tauss = []
@@ -1847,6 +2489,7 @@ def agb_lifetimes(models):
     fig2.savefig('tpagb_lifetime_bright.png', dpi=300)
     #ax2.set_ylabel('${\\rm Pre\!-\!Flash\ Core\ Mass\ (M_\odot)}$', fontsize=20)
 
+
 def main(inputfile):
     #ch = logging.StreamHandler()
     #ch.setLevel(logging.DEBUG)
@@ -1877,8 +2520,17 @@ def main(inputfile):
     if inputs['stats_tests'] is True:
         run_fuck_you_match(inputs=inputs)
 
+
 if __name__ == "__main__":
-    main(sys.argv[1])
+    snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
+    models =  ['gi10_rev_old_tracks.dat', 'cmd_input_CAF09_S_APR13.dat',
+               'cmd_input_CAF09_S_APR13VW93.dat', 'cmd_input_CAF09_S_MAR13.dat']
+    opt_rgb_nir_agb_ratio(targets='paper1', models=models, norm_by_ir=False)
+    #main(sys.argv[1])
 else:
     global snap_src
     snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
+
+
+
+
