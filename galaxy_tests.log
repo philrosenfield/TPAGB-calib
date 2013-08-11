@@ -60964,3 +60964,377 @@ INFO:root:DDO78: gi10_rev_old_tracks.dat
 INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
 INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
 INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO71
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO71: gi10_rev_old_tracks.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO71: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:normalization color: using all stars in mag range
+INFO:root:SCL-DE1: gi10_rev_old_tracks.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO82
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO82: gi10_rev_old_tracks.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO82: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on IC2574-SGS
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:IC2574-SGS: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_MAR13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on UGC-4305-1
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-1: gi10_rev_old_tracks.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-2
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-2: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on NGC4163
+INFO:root:normalization color: using all stars in mag range
+INFO:root:NGC4163: gi10_rev_old_tracks.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC8508
+INFO:root:normalization color: using all stars in mag range
+INFO:root:UGC8508: gi10_rev_old_tracks.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_MAR13.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO71
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO71: gi10_rev_old_tracks.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO71: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:normalization color: using all stars in mag range
+INFO:root:SCL-DE1: gi10_rev_old_tracks.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO82
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO82: gi10_rev_old_tracks.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO82: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on IC2574-SGS
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:IC2574-SGS: gi10_rev_old_tracks.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:start of run
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  1.49643508  25.299     ]
+ [  1.49643508  24.299     ]
+ [  2.43146616  24.299     ]
+ [  2.43146616  25.299     ]
+ [  1.49643508  25.299     ]]
+INFO:root:data stars in normalization range: 2914
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal0974823598245.msg 
+
+INFO:root:done.
+DEBUG:root:
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_MAR13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  1.49643508  25.299     ]
+ [  1.49643508  24.299     ]
+ [  2.43146616  24.299     ]
+ [  2.43146616  25.299     ]
+ [  1.49643508  25.299     ]]
+INFO:root:data stars in normalization range: 2914
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks.dat > trilegal0287978153099.msg 
+
+INFO:root:done.
+DEBUG:root:
+INFO:root:start of run
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  1.49643508  25.299     ]
+ [  1.49643508  24.299     ]
+ [  2.43146616  24.299     ]
+ [  2.43146616  25.299     ]
+ [  1.49643508  25.299     ]]
+INFO:root:data stars in normalization range: 2914
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_opt.dat > trilegal0842155401718.msg 
+
+INFO:root:working on UGC-4305-1
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-1: gi10_rev_old_tracks.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-2
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-2: gi10_rev_old_tracks.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on NGC4163
+INFO:root:normalization color: using all stars in mag range
+INFO:root:NGC4163: gi10_rev_old_tracks.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC8508
+INFO:root:normalization color: using all stars in mag range
+INFO:root:UGC8508: gi10_rev_old_tracks.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_MAR13.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.2423
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.88020298  25.208     ]
+ [  0.88020298  24.208     ]
+ [  1.29582699  24.208     ]
+ [  1.29582699  25.208     ]
+ [  0.88020298  25.208     ]]
+INFO:root:data stars in normalization range: 1790
+DEBUG:root:Trying DDO71 cmd_input_gi10_rev_old_tracks.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat > trilegal00674156877696.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.6205
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.500000 above
+WARNING:root:no stages marked in this file
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+DEBUG:root:norm verts:
+DEBUG:root:[[  0.54372643  25.59      ]
+ [  0.54372643  24.59      ]
+ [  1.28094417  24.59      ]
+ [  1.28094417  25.59      ]
+ [  0.54372643  25.59      ]]
+INFO:root:data stars in normalization range: 694
+DEBUG:root:Trying SCL-DE1 cmd_input_gi10_rev_old_tracks.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_rev_old_tracks_opt.dat > trilegal0930187729143.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.2412
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: gi10_rev_old_tracks.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO71
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO71: gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO71: gi10_rev_old_tracks.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO71: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO71: cmd_input_CAF09_S_MAR13.dat
+INFO:root:DDO71: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on SCL-DE1
+INFO:root:normalization color: using all stars in mag range
+INFO:root:SCL-DE1: gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:normalization color: using all stars in mag range
+INFO:root:SCL-DE1: gi10_rev_old_tracks.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:SCL-DE1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on DDO82
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO82: gi10_rev_old_tracks.dat
+INFO:root:working on DDO82
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO82: gi10_rev_old_tracks.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO82: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:DDO82: cmd_input_CAF09_S_MAR13.dat
+INFO:root:DDO82: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on IC2574-SGS
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:IC2574-SGS: gi10_rev_old_tracks.dat
+INFO:root:working on IC2574-SGS
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:IC2574-SGS: gi10_rev_old_tracks.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-1
+INFO:root:IC2574-SGS: cmd_input_CAF09_S_MAR13.dat
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-1: gi10_rev_old_tracks.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:working on UGC-4305-1
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-1: gi10_rev_old_tracks.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13.dat
+INFO:root:working on UGC-4305-2
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-2: gi10_rev_old_tracks.dat
+INFO:root:UGC-4305-1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC-4305-2
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:UGC-4305-2: gi10_rev_old_tracks.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_MAR13.dat
+INFO:root:UGC-4305-2: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on NGC4163
+INFO:root:normalization color: using all stars in mag range
+INFO:root:NGC4163: gi10_rev_old_tracks.dat
+INFO:root:working on NGC4163
+INFO:root:normalization color: using all stars in mag range
+INFO:root:NGC4163: gi10_rev_old_tracks.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_MAR13.dat
+INFO:root:NGC4163: cmd_input_CAF09_S_MAR13.dat
+INFO:root:working on UGC8508
+INFO:root:working on UGC8508
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:UGC8508: gi10_rev_old_tracks.dat
+INFO:root:UGC8508: gi10_rev_old_tracks.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_APR13VW93.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_MAR13.dat
+INFO:root:UGC8508: cmd_input_CAF09_S_MAR13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on DDO71
+INFO:root:normalization color: using all stars in mag range
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:working on SCL-DE1
+INFO:root:normalization color: using all stars in mag range
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
