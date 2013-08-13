@@ -61338,3 +61338,3110 @@ INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
 INFO:root:working on SCL-DE1
 INFO:root:normalization color: using all stars in mag range
 INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2327
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10915_DDO78_F475W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.3474
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 3665
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9650
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_opt.dat > trilegal0697085712918.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10915_DDO78_F475W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.3482
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 3665
+DEBUG:root:Trying DDO71 cmd_input_gi10_rev_old_tracks.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat > trilegal0353670386613.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.9655
+DEBUG:root:Trying DDO71 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 2
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat > trilegal0975863847964.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.1930
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 1554
+DEBUG:root:Trying SCL-DE1 cmd_input_gi10_rev_old_tracks.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_gi10_rev_old_tracks.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_rev_old_tracks_opt.dat > trilegal0627224433785.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_gi10_rev_old_tracks_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10503_SCL-DE1_F606W_F814W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_gi10_rev_old_tracks_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.3931
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2562
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.36500168  23.545     ]
+ [ -0.36500168  22.045     ]
+ [  2.33600044  22.045     ]
+ [  2.33600044  23.545     ]
+ [ -0.36500168  23.545     ]]
+INFO:root:data stars in normalization range: 2750
+DEBUG:root:normalization 0.2310
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5305
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.77799988  23.642     ]
+ [ -1.77799988  22.142     ]
+ [  2.35200119  22.142     ]
+ [  2.35200119  23.642     ]
+ [ -1.77799988  23.642     ]]
+INFO:root:data stars in normalization range: 1963
+DEBUG:root:normalization 0.5851
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.3119
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+INFO:root:filter1 set to F110W
+INFO:root:filter2 set to F160W
+INFO:root:using F160W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.30999947  24.07      ]
+ [ -1.30999947  22.57      ]
+ [  2.22500038  22.57      ]
+ [  2.22500038  24.07      ]
+ [ -1.30999947  24.07      ]]
+INFO:root:data stars in normalization range: 724
+DEBUG:root:normalization 0.2551
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2327
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2327
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2327
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2327
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+DEBUG:root:normalization 0.5200
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+DEBUG:root:normalization 0.5964
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+DEBUG:root:normalization 0.2953
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+DEBUG:root:normalization 0.2516
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_CAF09_S_MAR13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_MAR13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_mar13_opt.dat > trilegal0975729587139.msg 
+
+INFO:root:done.
+INFO:root:start of run
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_mar13_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10915_DDO78_F475W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_opt.dat
+DEBUG:root:Running spread_angst...
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.4354
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_opt_inds.dat
+DEBUG:root:normalization 0.2327
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_MAR13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 3665
+DEBUG:root:Trying DDO71 cmd_input_CAF09_S_MAR13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_mar13_opt.dat > trilegal0348677320653.msg 
+
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+DEBUG:root:normalization 0.5200
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+DEBUG:root:normalization 0.5964
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_DDO71_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+DEBUG:root:normalization 0.2953
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+DEBUG:root:normalization 0.2516
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F606W_F814W_output_SCL-DE1_gi10_rev_old_tracks_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2327
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F110W_F160W_F475W_F814W_output_DDO78_gi10_rev_old_tracks_inds.dat
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2539
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_mar13_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_mar13_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.8523
+DEBUG:root:Trying DDO71 cmd_input_CAF09_S_MAR13.dat, Mass=5e+08, Attempt 2
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_mar13_opt.dat > trilegal0771556684908.msg 
+
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2555
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2043
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+DEBUG:root:normalization 0.5223
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_mar13_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+DEBUG:root:normalization 0.1183
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2555
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_caf09_s_mar13_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 3839
+DEBUG:root:normalization 0.2043
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+DEBUG:root:normalization 0.5223
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_mar13_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 2246
+DEBUG:root:normalization 0.1183
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+DEBUG:root:normalization 0.2953
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_caf09_s_mar13_opt_inds.dat
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 942
+DEBUG:root:normalization 0.2383
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_mar13_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_mar13_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.1729
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_mar13_opt_inds.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_MAR13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 1554
+DEBUG:root:Trying SCL-DE1 cmd_input_CAF09_S_MAR13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /Users/phil/research/padova_apps/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat -a -l /Users/phil/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_mar13_opt.dat > trilegal0499529056943.msg 
+
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/Users/phil/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_mar13_opt.dat + /Users/phil/research/TP-AGBcalib/SNAP/data/fakes/10503_SCL-DE1_F606W_F814W_gst.matchfake -> /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_caf09_s_mar13_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.4992
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_caf09_s_mar13_opt_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using the stdev around the mean of stars in mag range using color cut of 0.4
+INFO:root:normalization color: using all stars in mag range
+INFO:root:normalization color: using all stars in mag range
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:normalization 0.3482
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F475W_F814W_output_DDO78_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  25.208     ]
+ [ -0.70299911  23.708     ]
+ [  3.20499992  23.708     ]
+ [  3.20499992  25.208     ]
+ [ -0.70299911  25.208     ]]
+INFO:root:data stars in normalization range: 3665
+DEBUG:root:normalization 0.1930
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_gi10_rev_old_tracks_opt_inds.dat
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  25.59      ]
+ [ -0.86900139  24.09      ]
+ [  3.20000076  24.09      ]
+ [  3.20000076  25.59      ]
+ [ -0.86900139  25.59      ]]
+INFO:root:data stars in normalization range: 1554
+DEBUG:root:normalization 0.3931
+INFO:root:normalization indices written to /Users/phil/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_gi10_rev_old_tracks_opt_inds.dat

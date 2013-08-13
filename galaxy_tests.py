@@ -971,15 +971,24 @@ def add_opt_asts_to_ir_asts(targets, models, ast_file=None,
                                                   outfile=out_file)
 
     
-def load_ast_file(gal, model):
-    model_short = model.replace('cmd_input_','').lower()
-    search_str = '*'.join(('ast_%s' % gal.filter1, gal.filter2+'_output', gal.target,
-                           model_short))
+def load_ast_file(gal, model, extra=''):
+    if not 'F1' in gal.filter2:
+        extra = '_opt'
+    model_short = model.replace('cmd_input_','').lower().replace('.dat','%s.dat' % extra)
+    search_str = '*'.join(('ast_%s' % gal.filter1, gal.filter2 + '_output',
+                           gal.target, model_short))
     try:
         sim_file, = rsp.fileIO.get_files(os.path.join(snap_src, 'output'),
                                          search_str)
     except ValueError:
-        raise ValueError, 'more than one or zero value(s) found when searching %s' % search_str
+        try:
+            search_str = '*'.join(('ast', gal.filter1, gal.filter2 + '_output',
+                               gal.target, model_short))
+            sim_file, = rsp.fileIO.get_files(os.path.join(snap_src, 'output'),
+                                             search_str)
+            print 'using four filter.'
+        except ValueError:
+            raise ValueError, 'more than one or zero value(s) found when searching %s' % search_str
     return sim_file
 
 
@@ -1483,7 +1492,7 @@ def opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=True,
             print pfmt % ('IR', ir_gal.target, model_short, nar_ratio_data_ir,
                           nar_ratio_data_ir_err, nar_ratio_sim_ir, nar_ratio_sim_ir_err,
                           pct_diff_ir, pct_diff_ir_err)
-
+            plot_comp_LF()
             # repeat above output steps in OPT if this is a G10 galaxy
             if target in gi10_overlap():
                 # if it's part of G10 plot the OPT LF
@@ -1504,8 +1513,216 @@ def opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=True,
                               nar_ratio_data_opt, nar_ratio_data_opt_err,
                               nar_ratio_sim_opt, nar_ratio_sim_opt_err,
                               pct_diff_opt, pct_diff_opt_err)
+                              
+
 
     return
+    
+def plot_comp_LF(models, targets, norm_by_ir=False ):
+    # fix incoming args
+    targets = load_targets(targets)
+    if type(models) == str:
+        models = [models]
+
+    young_color = 'navy'
+    old_color = 'darkred'
+    for model in models:
+        model_short = model.replace('cmd_input_', '').lower()
+        fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, figsize=(10,12))
+        resids = []
+        pct_diffs = []
+        model_name = translate_model_name(model)
+        for target in targets:
+            leo_method = target in targets_leo_norm_ok()
+
+            # load data
+            ir_gal = load_galaxy(target, band='ir')
+            opt_gal = load_galaxy(target, band='opt')
+            data_pts = np.column_stack((opt_gal.color, opt_gal.mag2))
+            ir_data_pts = np.column_stack((ir_gal.color, ir_gal.mag2))
+
+            ir_gal.maglims = [ir_gal.trgb, ir_gal.trgb+1.5]
+
+            rgb_verts_ir = get_ir_rgb_polygons(ir_gal, leo_method=leo_method)
+            rgb_verts_opt = get_rgb_verts_opt(opt_gal)
+
+            # get the rgb and agb polygons
+            ir_agb_verts = load_agb_verts(ir_gal, leo_method=leo_method)
+            opt_agb_verts = load_agb_verts(opt_gal, leo_method=leo_method)
+
+
+            # rgb and agb inds in the data
+            rgb_in_data_opt, = np.nonzero(nxutils.points_inside_poly(data_pts, rgb_verts_opt))
+            rgb_in_data_ir, = np.nonzero(nxutils.points_inside_poly(ir_data_pts, rgb_verts_ir))
+            agb_in_data_ir, = np.nonzero(nxutils.points_inside_poly(ir_data_pts, ir_agb_verts))
+            agb_in_data_opt, = np.nonzero(nxutils.points_inside_poly(data_pts, opt_agb_verts))
+
+            # the nagb/nrgb ratio in the data as well as errors
+            ndata_rgb_opt = float(len(rgb_in_data_opt))                 
+            ndata_rgb_ir = float(len(rgb_in_data_ir))
+        
+            ndata_agb_ir = float(len(agb_in_data_ir))
+            if norm_by_ir is True:
+                nar_ratio_data_ir = ndata_agb_ir / ndata_rgb_ir        
+                nar_ratio_data_ir_err = count_uncert_ratio(ndata_agb_ir, ndata_rgb_ir)
+            else:
+                nar_ratio_data_ir = ndata_agb_ir / ndata_rgb_opt
+                nar_ratio_data_ir_err = count_uncert_ratio(ndata_agb_ir, ndata_rgb_opt)
+            
+            ndata_agb_opt = float(len(agb_in_data_opt))
+            nar_ratio_data_opt = ndata_agb_opt / ndata_rgb_opt
+
+            nar_ratio_data_opt_err = count_uncert_ratio(ndata_agb_opt, ndata_rgb_opt)
+
+            # find the four filter ast file
+            find_file = {'filter1': ir_gal.filter1, 
+                         'filter2': ir_gal.filter2,
+                         'filter3': opt_gal.filter1,
+                         'filter4': opt_gal.filter2,
+                         'target': opt_gal.target}
+
+            # printing fmts
+            # will be:       band target model data, err model, err fdiff, ferr
+            pfmt = '%s %s %s & $%.3f\pm%.3f$ & $%.3f\pm%.3f$ & $%.3f\pm%.3f$'
+            if norm_by_ir is True:
+                figname = '%(target)s_%(model_name)s_%(filter1)s_%(filter2)s_LF.pdf'
+            else:
+                figname = '%(target)s_%(model_name)s_%(filter1)s_%(filter2)s_opt_norm_LF.pdf'
+            sim_file = load_ast_file(ir_gal, model)
+            sgal = rsp.Galaxies.simgalaxy(sim_file, filter1='F110W', filter2='F160W')
+            sgal.load_ast_corrections()
+
+            ir_sim_pts = np.column_stack((sgal.ast_mag1 - sgal.ast_mag2,
+                                          sgal.ast_mag2))
+        
+            # make normalization from the full simulation
+            rgb_in_sim, = np.nonzero(nxutils.points_inside_poly(ir_sim_pts,
+                                                                rgb_verts_ir))
+            nsim_rgb_ir = float(len(rgb_in_sim))
+            normalization = ndata_rgb_ir / nsim_rgb_ir
+
+            nsim_rgb_opt = float(len(rgb_in_sim))
+            normalization = ndata_rgb_opt / nsim_rgb_opt
+
+            # random sample the data distribution (all the same length)
+            rands = np.random.random(len(sgal.ast_mag2))
+            ind, = np.nonzero(rands < normalization)
+    
+            # scale the simulation
+            norm_sim_pts_ir = ir_sim_pts[ind]
+
+            # number of agb and rgb stars in the scaled simulation
+            sim_agb_norm_ir, = np.nonzero(nxutils.points_inside_poly(norm_sim_pts_ir,
+                                                                     ir_agb_verts))
+
+            sim_rgb_norm_ir, = np.nonzero(nxutils.points_inside_poly(norm_sim_pts_ir,
+                                                                     rgb_verts_ir))
+
+
+            # for simulation's nagb/nrgb ratio
+            nsim_agb_ir = float(len(sim_agb_norm_ir))
+            nsim_rgb_ir = float(len(sim_rgb_norm_ir))
+        
+            # if we are norm by optical use that instead of ir...
+
+            # nagb/nrgb in the scaled simulation
+            nar_ratio_sim_ir = nsim_agb_ir / nsim_rgb_ir
+
+            # calculate errors
+            nar_ratio_sim_ir_err = count_uncert_ratio(nsim_agb_ir, nsim_rgb_ir)
+        
+            # calculate fractional differences
+            pct_diff_ir = (nar_ratio_sim_ir - nar_ratio_data_ir) / nar_ratio_data_ir
+
+            # propagate uncertainties
+            pct_diff_ir_err = pct_diff_ir * (nar_ratio_sim_ir_err/nar_ratio_sim_ir + nar_ratio_data_ir_err/nar_ratio_data_ir)
+        
+            # make histogram, bins for plotting.
+            sgal_ir_hist, sbins_ir = hist_it_up(norm_sim_pts_ir[:, 1])
+
+            # make the data histograms --- use the bins from above!
+            gal_ir_hist = np.histogram(ir_gal.mag2, bins=sbins_ir)[0]
+
+            bins = rsp.astronomy_utils.mag2Mag(sbins_ir[1:], 'F160W',
+                                               'wfc3snap',
+                                               **{'target': ir_gal.target,
+                                                  'filter1': ir_gal.filter1})
+                                                  
+            # set to get all mags... should be Trgb if you want to slice.
+            comp_inds = np.nonzero(bins < ir_gal.Trgb)
+
+            pct_diff = (sgal_ir_hist - gal_ir_hist) / gal_ir_hist
+            resid = sgal_ir_hist - gal_ir_hist
+            resids.append(np.mean(resid[comp_inds]))
+            pct_diffs.append(np.mean(pct_diff[comp_inds]))
+            # 3 panel
+            # top: # vs magnitude
+            # middle: residual model-data  vs mag
+            # bottom: %diff vs mag
+            if target in ['DDO71', 'DDO78', 'DDO82', 'SCL-DE1']:
+                col = old_color
+            else:
+                col = young_color
+    
+            label = '$%s$' % ir_gal.target.replace('-', '\!-\!')
+            plt_kw = {'ls': 'steps', 'color': col, 'lw': 2}
+            #[ax.vlines(smg.gal.Trgb, *ax.get_ylim(), color=cols[j]) for ax in [ax1, ax2, ax3]]
+            ax1.semilogy(bins[comp_inds], sgal_ir_hist[comp_inds], label=label, **plt_kw)
+            ax2.plot(bins[comp_inds], pct_diff[comp_inds], **plt_kw)
+            ax3.plot(bins[comp_inds], resid[comp_inds], **plt_kw)
+            #plt_kw['ls'] += '--'
+            #plt_kw['lw'] = 1
+            #ax1.semilogy(bins[comp_inds], gal_ir_hist[comp_inds], **plt_kw)
+            print ir_gal.target, np.mean(resid[comp_inds]), np.std(resid[comp_inds]), np.mean(pct_diff[comp_inds]), np.std(pct_diff[comp_inds])
+        print model_name, np.mean(resids), np.std(resids), np.mean(pct_diffs), np.std(pct_diffs)
+        ax1.text(0.75, 0.85, '$%s$' % model_name, fontsize=20, transform=ax1.transAxes)
+        ax2.text(0.75, 0.85, '${\\rm Frac.\ Difference}$', fontsize=20,
+                 transform=ax2.transAxes)        
+        ax3.text(0.75, 0.85, '${\\rm Residual}$', fontsize=20,
+                 transform=ax3.transAxes)
+
+        #ax1.legend(loc=0, numpoints=1, frameon=False)
+        ax1.set_ylabel('$\#/{\\rm mag}$', fontsize=20)
+        ax2.set_ylabel('$(N_{\\rm model}-N_{\\rm data})/N_{\\rm data}$', fontsize=20)
+        ax3.set_ylabel('$N_{\\rm model}-N_{\\rm data}$', fontsize=20)
+        [ax.set_xlabel('$F160W$', fontsize=20) for ax in [ax1, ax2, ax3]]
+        plt.tick_params(labelsize=16)
+        ax1.set_ylim(10, ax1.get_ylim()[1])
+        ax2.set_ylim(-2, 50)
+        ax3.set_ylim(-100, 600)
+        [ax.set_xlim(-5.5, -9) for ax in [ax1, ax2, ax3]]
+        plt.subplots_adjust(hspace=.25, top=.95)
+        mname = model.replace('.dat','').split('_')[-1]
+        plt.savefig('comp_lfs_%s.png' % mname, dpi=300)
+
+    return
+
+def get_rgb_verts_opt(opt_gal):
+    rgb_poly_opt = get_opt_rgb_polygons(opt_gal.target)
+
+    if type(rgb_poly_opt) == int:
+        magdim = opt_gal.trgb + 2
+        magbright = opt_gal.trgb + .5
+        colmin = np.min(opt_gal.color)
+        colmax = np.max(opt_gal.color)
+        rgb_verts_opt = np.array([[colmin, magdim],
+                          [colmin, magbright],
+                          [colmax, magbright],
+                          [colmax, magdim],
+                          [colmin, magdim]])       
+    else:
+        rgb_Color = rgb_poly_opt[:, 0]
+        rgb_Mag2 = rgb_poly_opt[:, 1]
+        rgb_Mag1 = rgb_Color + rgb_Mag2
+        Mag2mag_kw = {'Av': opt_gal.Av, 'dmod': opt_gal.dmod}
+        rmag1 = rsp.astronomy_utils.Mag2mag(rgb_Mag1, opt_gal.filter1, opt_gal.photsys,
+                                            **Mag2mag_kw)
+
+        rmag2 = rsp.astronomy_utils.Mag2mag(rgb_Mag2, opt_gal.filter2, opt_gal.photsys,
+                                            **Mag2mag_kw)
+        rgb_color = rmag1 - rmag2
+        rgb_verts_opt = np.column_stack([rgb_color, rmag2])
+    return rgb_verts_opt
 
 
 def add_lines_LF(fig, axs, gal, maglims, colors, vals):
@@ -1576,9 +1793,10 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                    'leo_norm': leo_norm, 'use_opt_rgb': use_opt_rgb}
 
     if make_plot is True:
-        xlim, ylim, xlim2 = nir_cmd_plot_limits(xlim=xlim,
-                                                ylim=ylim,
-                                                xlim2=xlim2)
+        if band == 'ir':
+            xlim, ylim, xlim2 = nir_cmd_plot_limits(xlim=xlim,
+                                                    ylim=ylim,
+                                                    xlim2=xlim2)
 
         plot_LF_kw = {'ylim': ylim, 'xlim': xlim, 'xlim2': xlim2,
                       'color_hist': color_hist, 'title': True}
@@ -1758,11 +1976,14 @@ def translate_model_name(model):
 
 def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
                    figname=None, dmag=0.1, dcol=0.05, modelB=None,
-                   rgb_only=False):
+                   rgb_only=False, labels=None, skip_agb=False, band='ir'):
 
     if rgb_only is True:
         sgal.all_stages('RGB')
         inds = np.intersect1d(sgal.irgb, sgal.norm_inds)
+    elif skip_agb is True:
+        sgal.all_stages('TPAGB')
+        inds = [i for i in sgal.norm_inds if i not in sgal.itpagb]
     else:
         inds = sgal.norm_inds
     sim_color = sgal.ast_color[inds]
@@ -1775,6 +1996,9 @@ def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
         if rgb_only is True:
             gal.all_stages('RGB')
             ginds = np.intersect1d(gal.irgb, gal.norm_inds)
+        elif skip_agb is True:
+            gal.all_stages('TPAGB')
+            ginds = [i for i in gal.norm_inds if i not in gal.itpagb]
         else:
             ginds = gal.norm_inds
 
@@ -1833,15 +2057,24 @@ def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
 
     if make_plot is True:
         if figname is None:
-            figname = 'pgpro_%s_%s_%s_%s%s.png' % (gal.target, model, gal.filter1, gal.filter2, extra)        
+            figname = 'pgpro_%s_%s_%s_%s%s.pdf' % (gal.target, model, gal.filter1, gal.filter2, extra)        
 
         model_name = translate_model_name(sgal.model)
 
         ZS = [data_hess[2], sim_hess[2], pct_dif, sig]
         xlim, ylim, _ = nir_cmd_plot_limits()
+        if band == 'opt':
+            xlim = (-0.5, 2.5)
+            ylim = (28, 18)
 
         extent = [data_hess[0][0], data_hess[0][-1], data_hess[1][-1], data_hess[1][0]]
-        labels = ['${\\rm %s}$' % gal.target, model_name, '$\%\ {\\rm Difference}$', '$\chi^2=%.2f$' % chi2]
+        if labels is None:
+            labels = ['${\\rm %s}$' % gal.target, model_name, '${\\rm Frac.\ Difference}$', '$\chi^2=%.2f$' % chi2]
+        if labels[2] is None:
+            labels[2] = '${\\rm Frac.\ Difference}$'
+        if labels[3] is None:
+            labels[3] = '$\chi^2=%.2f$' % chi2
+            
         grid = rsp.match_graphics.match_plot(ZS, extent, xlim, ylim,
                                              labels=labels,
                                              **{'xlabel': '$%s-%s$' % (gal.filter1, gal.filter2),
@@ -1918,6 +2151,11 @@ def run_fuck_you_match(targets=None, models=None, band=None, inputs={},
     '''
     does the chi2 test for full field, agb region, and not-agb region.
     to compare model to model, use modelB.
+    
+    this is called fuck you match because I realized at 3 am that 
+    match smooths the bg cmd when doing stats tests, and was ruining 
+    my results, so I had to write my own (which didn't take long, but
+    still)
     '''
 
     if targets is None:
@@ -1932,7 +2170,7 @@ def run_fuck_you_match(targets=None, models=None, band=None, inputs={},
     if type(models) == str:
         models = [models]
 
-    figname_fmt = 'pgpro_%s_%s_%s.png'
+    figname_fmt = 'pgpro_%s_%s_%s.pdf'
 
     for target in targets:
         print target
@@ -1951,29 +2189,37 @@ def run_fuck_you_match(targets=None, models=None, band=None, inputs={},
 
                 # overwrite gal with modelB.
                 [gal.__setattr__(k, v) for k,v in sgal2.__dict__.items()]
+                model_name = translate_model_name(model)
+                modelB_name = translate_model_name(modelB)
+                if 'MAR13' in model:
+                    model_name = '${\\rm PARSEC}$'
+                labels = ['${\\rm Padova}$', model_name, None, None]
+
                 #gal.target = modelB.replace('.dat', '').split('_')[-1]
             # entire cmd fit
             extra = 'full'
             print extra
+            
+
             figname = figname_fmt % (target, model.replace('.dat',''), extra)
             full_chi2 = fuck_you_match(gal, sgal, figname=figname, modelB=modelB,
-                                       make_plot=True)
+                                       make_plot=True, labels=labels, band=band)
             
             if band == 'opt':
                 print '%s %s %.2f' % (target, model.replace('.dat', '').split('_')[-1], full_chi2)
-                return
+                continue
             # include agb only
             extra = 'agb'
             print extra
             figname = figname_fmt % (target, model.replace('.dat',''), extra)
             agb_chi2 = fuck_you_match(gal, sgal, figname=figname, verts=True,
-                                      make_plot=True, modelB=modelB)
+                                      make_plot=True, modelB=modelB, labels=labels)
             # exclude agb
             extra = 'not_agb'
             print extra
             figname = figname_fmt % (target, model.replace('.dat',''), extra)
             part_chi2 = fuck_you_match(gal, sgal, figname=figname, modelB=modelB,
-                                       inverse_verts=True, make_plot=True)
+                                       inverse_verts=True, make_plot=True, labels=labels)
 
             print '%s %s %.2f %.2f %.2f' % (target, model.replace('.dat', '').split('_')[-1], full_chi2, agb_chi2, part_chi2)
 
@@ -2259,6 +2505,46 @@ def compare_LFs(smgs):
                 plt.savefig('%s_mag_%s.png' % (ycol, mname), dpi=300)
 
 
+def sfh_plots(sfh_loc=None, targets='paper1', make_plot=False,
+                 ext='.dat', dan_fmt=False):
+    if sfh_loc is None:
+        sfh_loc = '/Users/phil/research/TP-AGBcalib/SNAP/data/sfh/'
+        sfh_loc = '/Users/phil/research/Italy/WFC3SNAP/PHIL/SFRfiles/noAGB/fullreszctmps/'
+        
+    #bmap = brewer2mpl.get_map('Paired', 'Qualitative', 9)
+    #cols = bmap.mpl_colors
+
+    fig, ax = plt.subplots()
+    for j, target in enumerate(targets):
+        sfh_file, = rsp.fileIO.get_files(sfh_loc, '*%s*%s' % (target, ext))
+        print sfh_file
+        if not target in sfh_file:
+            continue
+        if dan_fmt is False:
+            x = sfh_file.split('_')[2]
+        else:
+            x = os.path.split(sfh_file)[1].split('.')[0]
+        try:
+            a, s, z = np.loadtxt(sfh_file, unpack=True)
+        except ValueError:
+            to, tf, s, mh = np.genfromtxt(sfh_file, skip_header=6, skip_footer=2, usecols=[0,1,3,6], unpack=True)
+            a = (to + tf) / 2
+            from ResolvedStellarPops.convertz import convertz
+            z = np.array([convertz(mh=i)[1] for i in mh])
+
+        ax.plot(a[::-1], np.cumsum(s[::-1])/np.sum(s), lw=3, label=target,
+                color=col)
+    ax.set_xlim(10.13, 6.6)
+    ax.set_ylim(0, 1)
+    ax.hlines(0.6, *ax.get_xlim(), color='black', lw=4)
+    ax.set_ylabel('${\\rm Cumulative\ Star\ Formation}$', fontsize=20)
+    ax.set_xlabel('$\log {\\rm Time\ (yrs\ ago)}$', fontsize=20)
+    plt.tick_params(labelsize=16)
+    ax.legend(loc=0, frameon=False)
+    plt.savefig('cumsum_sfr.pdf', dpi=300)
+    
+
+
 def match_metals(sfh_loc=None, targets=None, make_plot=False,
                  ext='.dat', dan_fmt=False):
     '''
@@ -2445,13 +2731,12 @@ def fuckshitballs():
     galaxy_tests.opt_rgb_nir_agb_ratio(targets='gi10', models=models, search_string=search_string)
 
 
-
 if __name__ == "__main__":
-    snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
-    models =  ['gi10_rev_old_tracks.dat', 'cmd_input_CAF09_S_APR13.dat',
-               'cmd_input_CAF09_S_APR13VW93.dat', 'cmd_input_CAF09_S_MAR13.dat']
-    opt_rgb_nir_agb_ratio(targets='paper1', models=models, norm_by_ir=True)
-    #main(sys.argv[1])
+    #snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
+    #models =  ['gi10_rev_old_tracks.dat', 'cmd_input_CAF09_S_APR13.dat',
+    #           'cmd_input_CAF09_S_APR13VW93.dat', 'cmd_input_CAF09_S_MAR13.dat']
+    #opt_rgb_nir_agb_ratio(targets='paper1', models=models, norm_by_ir=True)
+    main(sys.argv[1])
 else:
     global snap_src
     snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
