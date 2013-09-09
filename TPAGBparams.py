@@ -5,7 +5,10 @@ hostname = socket.gethostname()
 if hostname.endswith('astro.washington.edu'):
     print 'better edit TPAGBparams.py...'
 else:
-    tpcalib_dir = '/Users/phil/research/TP-AGBcalib/'
+    if 'Linux' in os.uname():
+        tpcalib_dir = '/home/phil/research/TP-AGBcalib/'
+    else:
+        tpcalib_dir = '/Users/phil/research/TP-AGBcalib/'
 
 snap_src = os.path.join(tpcalib_dir, 'SNAP')
 

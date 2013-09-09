@@ -88,7 +88,6 @@ def get_imf(target):
     return tab_imf
 
 
-
 def sort_angst_data_table(table, targets):
     '''
     order table in the same index order as target list.
@@ -100,6 +99,33 @@ def sort_angst_data_table(table, targets):
     
     snap_tab_sort = [list(table['target']).index(st) for st in snap_targets]
     return table[snap_tab_sort]
+
+
+def plot_opt_hess(targets=None):
+    targets = load_target(targets)
+    gals = rsp.Galaxies.galaxies([load_galaxy(t, band='opt') for t in targets])
+    
+g606 = gals.select_on_key('filter1','F606W')
+for i,g in enumerate(g606):
+    ax.plot(g.Color, g.Mag2, '.', color=cols[i], alpha=0.3)
+
+poly_dict = {'DDO82': np.array([(0.62328780081964297, -2.9660142201464623), (0.74828177882779023, -3.4194244355894625), (0.82520114990972671, -3.8224557382054627), (0.90212052099166362, -4.1247292151674628), (1.6232396248848207, -4.0575573313981295), (1.5270904110323995, -3.6377330578397959), (1.4597859613357049, -3.3858384937047958), (1.3828665902537685, -3.1171509586274624), (1.3059472191718315, -2.8652563944924623), (1.238642769475137, -2.5965688594151288), (0.50790874419673759, -2.5629829175304621)]),
+             'NGC4163': np.array([(0.59977446601686069, -2.5718587825132402), (0.7468419971858129, -2.9935726500356323), (0.89390952835476511, -3.523727226349497), (0.94035190661864476, -4.0177348997328703), (1.2886697435977403, -4.0418328350198642), (1.1803041943153563, -3.6080699998539747), (1.1416022124287899, -3.2104540676185764), (1.0951598341649103, -2.620054653087228)]),                 }
+
+g606s = rsp.Galaxies.galaxies(g606)
+g606s.squish('Color')
+g606s.squish('Mag2')
+
+imshow_kw={'norm': LogNorm(vmin=None, vmax=g606hess[2].max()),
+                              'cmap': plt.cm.gray_r, 'interpolation': 'nearest'}
+
+g606hess =  rsp.astronomy_utils.hess(g606s.Colors, g606s.Mag2s, 0.2, cbinsize=0.1)
+cs = ax.imshow(g606hess[2], interpolation='nearest', cmap=plt.cm.gray_r, aspect=1, extent=[g606hess[0][0], g606hess[0][-1], g606hess[1][0], g606hess[1][-1]])
+
+plt.colorbar(cs)
+imshow_kw={'norm': LogNorm(vmin=None, vmax=g606hess[2].max()),
+                              'cmap': plt.cm.gray_r, 'interpolation': 'nearest'}
+# need extent....
     
 
 def multi_galaxy_hess(targets=None, split_by_color=False, ax=None, imshow_kw={},
@@ -837,6 +863,7 @@ def get_ir_rgb_polygons(gal, leo_method=False):
 
     return verts
 
+
 def sgal_rgb_agb(target, model, band=None, input_file=None, maglims=None,
                  offsets=None, leo_norm=False):
 
@@ -1157,7 +1184,7 @@ def multi_opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=Tr
                           xlim=None, ylim=None, xlim2=None, add_boxes=True,
                           color_hist=False,  plot_tpagb=False, **kwargs):
 
-    ast_file_loc = '/Users/phil/research/TP-AGBcalib/SNAP/output/'
+    ast_file_loc = snap_src + 'output/'
 
     # fix incoming args
     targets = load_targets(targets)
@@ -1268,6 +1295,7 @@ def count_uncert_ratio(numerator, denominator):
     d = float(denominator)
     return (n / d) * (1./np.sqrt(n) + 1./np.sqrt(d))
  
+
 def opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=True, 
                           offsets=(1.5, 0.), models=None, maglims=None,
                           leo_method=False, leo_norm=False, make_plot=True,
@@ -1279,7 +1307,7 @@ def opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=True,
     it's the right one to use, also hase uncertanties. it doesn't return 
     anything, but prints error to the table fmt (ish) and makes figures.    
     '''
-    ast_file_loc = '/Users/phil/research/TP-AGBcalib/SNAP/output/'
+    ast_file_loc = snap_src + 'output/'
 
     # fix incoming args
     targets = load_targets(targets)
@@ -1518,6 +1546,7 @@ def opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=True,
 
     return
     
+
 def plot_comp_LF(models, targets, norm_by_ir=False ):
     # fix incoming args
     targets = load_targets(targets)
@@ -1697,6 +1726,7 @@ def plot_comp_LF(models, targets, norm_by_ir=False ):
 
     return
 
+
 def get_rgb_verts_opt(opt_gal):
     rgb_poly_opt = get_opt_rgb_polygons(opt_gal.target)
 
@@ -1871,7 +1901,7 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
                                            maglims=inputs['maglims'],
                                            offsets=inputs['offsets'],
                                            leo_norm=inputs['leo_norm'])
-    models_loc = '/Users/phil/research/TP-AGBcalib/SNAP/models/match/'
+    models_loc = snap_src + 'models/match/'
     fmter = '_'.join(['match', extra, gal.target, gal.filter1, gal.filter2, model]).replace('.dat', '').lower()
 
     match_bg = os.path.join(models_loc, 'bg', fmter + '.bg')
@@ -2243,7 +2273,7 @@ def run_match_tests(targets=None, models=None, band=None, inputs={},
         models = [models]
 
     if modelB is not None:
-        bg_loc = '/Users/phil/research/TP-AGBcalib/SNAP/models/match/bg/'
+        bg_loc = snap_src + 'models/match/bg/'
         match_phot_fmt = 'match_%s_%s*%s.bg'
 
     for target in targets:
@@ -2508,7 +2538,7 @@ def compare_LFs(smgs):
 def sfh_plots(sfh_loc=None, targets='paper1', make_plot=False,
                  ext='.dat', dan_fmt=False):
     if sfh_loc is None:
-        sfh_loc = '/Users/phil/research/TP-AGBcalib/SNAP/data/sfh/'
+        sfh_loc = snap_src + 'data/sfh/'
         sfh_loc = '/Users/phil/research/Italy/WFC3SNAP/PHIL/SFRfiles/noAGB/fullreszctmps/'
         
     #bmap = brewer2mpl.get_map('Paired', 'Qualitative', 9)
@@ -2551,7 +2581,7 @@ def match_metals(sfh_loc=None, targets=None, make_plot=False,
     print the sfh weighted metallicity from the match input file. 
     '''
     if sfh_loc is None:
-        sfh_loc = '/Users/phil/research/TP-AGBcalib/SNAP/data/sfh/'
+        sfh_loc = snap_src + 'data/sfh/'
     sfh_files = rsp.fileIO.get_files(sfh_loc, '*%s' % ext)
     if targets is None:
         targets = sfh_files
@@ -2688,7 +2718,7 @@ def fuckshitballs():
                                     filter2=filter2, photsys='acs_wfc')
              for i in range(len(targets))]
 
-    tri_outs =[rsp.fileIO.get_files('/Users/phil/research/TP-AGBcalib/SNAP/output/','output_*%s*_opt.dat' % t)[0] for t in targets]
+    tri_outs =[rsp.fileIO.get_files(snap_src + 'output/','output_*%s*_opt.dat' % t)[0] for t in targets]
     sgals = [rsp.Galaxies.simgalaxy(tri_outs[i], filter1=filter1s[i],
                                     filter2=filter2, photsys='acs_wfc')
              for i in range(len(targets))]
@@ -2739,8 +2769,7 @@ if __name__ == "__main__":
     main(sys.argv[1])
 else:
     global snap_src
-    snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
-
-
-
-
+    if 'Linux' in os.uname():
+        snap_src = '/home/phil/research/TP-AGBcalib/SNAP'
+    else:
+        snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
