@@ -101,32 +101,62 @@ def sort_angst_data_table(table, targets):
     return table[snap_tab_sort]
 
 
-def plot_opt_hess(targets=None):
-    targets = load_target(targets)
+def plot_opt_hess():
+    targets = targets_paper1()
     gals = rsp.Galaxies.galaxies([load_galaxy(t, band='opt') for t in targets])
-    
-g606 = gals.select_on_key('filter1','F606W')
-for i,g in enumerate(g606):
-    ax.plot(g.Color, g.Mag2, '.', color=cols[i], alpha=0.3)
 
-poly_dict = {'DDO82': np.array([(0.62328780081964297, -2.9660142201464623), (0.74828177882779023, -3.4194244355894625), (0.82520114990972671, -3.8224557382054627), (0.90212052099166362, -4.1247292151674628), (1.6232396248848207, -4.0575573313981295), (1.5270904110323995, -3.6377330578397959), (1.4597859613357049, -3.3858384937047958), (1.3828665902537685, -3.1171509586274624), (1.3059472191718315, -2.8652563944924623), (1.238642769475137, -2.5965688594151288), (0.50790874419673759, -2.5629829175304621)]),
-             'NGC4163': np.array([(0.59977446601686069, -2.5718587825132402), (0.7468419971858129, -2.9935726500356323), (0.89390952835476511, -3.523727226349497), (0.94035190661864476, -4.0177348997328703), (1.2886697435977403, -4.0418328350198642), (1.1803041943153563, -3.6080699998539747), (1.1416022124287899, -3.2104540676185764), (1.0951598341649103, -2.620054653087228)]),                 }
+    g606 = gals.select_on_key('filter1','F606W')
 
-g606s = rsp.Galaxies.galaxies(g606)
-g606s.squish('Color')
-g606s.squish('Mag2')
+    poly_dict = {'DDO82': array([[ 0.6232878 , -2.96601422],
+                                 [ 0.74828178, -3.41942444],
+                                 [ 0.82520115, -3.82245574],
+                                 [ 0.90212052, -4.12472922],
+                                 [ 1.62323962, -4.05755733],
+                                 [ 1.52709041, -3.63773306],
+                                 [ 1.45978596, -3.38583849],
+                                 [ 1.38286659, -3.11715096],
+                                 [ 1.30594722, -2.86525639],
+                                 [ 1.23864277, -2.59656886],
+                                 [ 0.50790874, -2.56298292]]),
+                 'NGC4163': array([[ 0.59977447, -2.57185878],
+                                   [ 0.746842  , -2.99357265],
+                                   [ 0.89390953, -3.52372723],
+                                   [ 0.94035191, -4.0177349 ],
+                                   [ 1.28866974, -4.04183284],
+                                   [ 1.18030419, -3.60807   ],
+                                   [ 1.14160221, -3.21045407],
+                                   [ 1.09515983, -2.62005465]])}
 
-imshow_kw={'norm': LogNorm(vmin=None, vmax=g606hess[2].max()),
-                              'cmap': plt.cm.gray_r, 'interpolation': 'nearest'}
 
-g606hess =  rsp.astronomy_utils.hess(g606s.Colors, g606s.Mag2s, 0.2, cbinsize=0.1)
-cs = ax.imshow(g606hess[2], interpolation='nearest', cmap=plt.cm.gray_r, aspect=1, extent=[g606hess[0][0], g606hess[0][-1], g606hess[1][0], g606hess[1][-1]])
+    g606s = rsp.Galaxies.galaxies(g606)
+    g606s.squish('Color', 'Mag2', 'Trgb')
 
-plt.colorbar(cs)
-imshow_kw={'norm': LogNorm(vmin=None, vmax=g606hess[2].max()),
-                              'cmap': plt.cm.gray_r, 'interpolation': 'nearest'}
-# need extent....
-    
+    mean_trgb = np.mean(g606s.Trgbs)
+    offset = g606s.Trgbs - np.mean(g606s.Trgbs)
+    g606s.Mag2o = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(g606s.galaxies)])
+
+    g606hess =  rsp.astronomy_utils.hess(g606s.Colors, g606s.Mag2o, 0.1, cbinsize=0.05)
+
+
+    extent = [g606hess[0][0], g606hess[0][-1], g606hess[1][-1], g606hess[1][0]]
+    imshow_kw={'norm': LogNorm(vmin=None, vmax=g606hess[2].max()),
+               'cmap': plt.cm.gray_r, 'interpolation': 'nearest',
+               'aspect': 'equal', 'extent': extent}
+
+    fig, ax = plt.subplots()
+    ax.autoscale(False)
+    ax.set_xlim(-1, 3)
+    ax.set_ylim(0.5, -7)
+    cs = ax.imshow(g606hess[2], **imshow_kw)
+    ax.set_aspect(1./2.)
+    ax.set_xlabel('$F606W-F814W$', fontsize=20)
+    ax.set_ylabel('$F814W$', fontsize=20)
+    ax.hlines(mean_trgb, *ax.get_xlim(), lw=2, color='red', zorder=100)
+    #ax.hlines(mean_trgb+1.5, *ax.get_xlim(), lw=2, color='red', zorder=100)
+    #for k, v in poly_dict.items():
+    #    ax.plot(v[:,0], v[:,1])
+    #plt.colorbar(cs)
+    plt.savefig('opt_cmd_f606w.png', dpi=300)
 
 def multi_galaxy_hess(targets=None, split_by_color=False, ax=None, imshow_kw={},
                       make_hess=False, band='ir'):
