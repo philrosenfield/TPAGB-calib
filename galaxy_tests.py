@@ -21,8 +21,64 @@ import brewer2mpl
 import multiprocessing
 angst_data = rsp.angst_tables.AngstTables()
 
+def double_gaussian_optical_cmd_boxes(target=None):
+    dg_box = {'DDO82': [0.6, 1.],
+              'IC2574-SGS': [1., 1.8],
+              'UGC-4305-1': [0.8, 1.6],
+              'UGC-4305-2': [0.8, 1.6],
+              'NGC4163': [0.5, 1.2],
+              'UGC8508':  [0.5, 2.]}
+    if target is None:
+        return dg_box
+    else:
+        return dg_box[target]
 
-def cmd_contamination(targets, dcolor=0.02, dmag=0.2, thresh=5):
+def opt_cmd_contamination(target):
+    gal = load_galaxy(target, band=band)
+    dg_box = double_gaussian_optical_cmd_boxes(target=target)
+    mag_bins = np.arange(gal.Trgb, gal.Trgb + 1.5, 0.15)
+    
+    1. Define rgb_verts box
+    2. Define rheb+rgb box
+    3. logical: stars in 2 not in 1
+    4. fit gaussian to 3
+    5. see how many stars from 4 are in 1
+        do an intersection of 2 and 1 and find reddest color? 
+    6. take percentage of 5, adjust the edge of 1 closer if necessary.
+    
+    
+    
+    '''
+    for u, l in zip(mag_bins, np.roll(mag_bins,-1))[:-1]:
+        print u
+        verts = np.array([[dg_box[0], l],
+                          [dg_box[0], u],
+                          [dg_box[1], u],
+                          [dg_box[1], l],
+                          [dg_box[0], l]])
+        ax.plot(verts[:, 0], verts[:, 1])
+        rstars_in_agb, agb_in_rstars, poisson_noise, nstars, color_sep = \
+        gal.double_gaussian_contamination(verts, diag_plot=True,   
+                                                   dcol=0.05, Color=gal.Color,
+                                                   Mag2=gal.Mag2)
+    '''
+    '''
+    targets = load_targets('paper1')
+    gals = rsp.Galaxies.galaxies([load_galaxy(t, band=band) for t in targets])
+    g555 = rsp.Galaxies.galaxies(gals.select_on_key('filter1', 'F555W'))
+    g606 = rsp.Galaxies.galaxies(gals.select_on_key('filter1', 'F606W'))
+    g475 = rsp.Galaxies.galaxies(gals.select_on_key('filter1', 'F475W'))
+    
+    for g in [g555, g606, g475]:
+        g.squish('Color', 'Mag2', 'Trgb')
+        offset = gals.Trgbs - np.mean(gals.Trgbs)
+        Mag2 = np.concatenate([gg.Mag2 - offset[i] for i, gg in enumerate(g.galaxies)])
+        Color = g.Colors
+        
+    
+    '''
+    
+def cmd_contamination(targets, band='ir', dcolor=0.02, dmag=0.2, thresh=5):
     '''
     , verts_file_fmt=None,
     diag_plot=True, isoch_base=None,
@@ -32,7 +88,7 @@ def cmd_contamination(targets, dcolor=0.02, dmag=0.2, thresh=5):
     '''
     targets = load_targets(targets)
     # load galaxies class
-    gals = rsp.Galaxies.galaxies([load_galaxy(t, band='ir') for t in targets])
+    gals = rsp.Galaxies.galaxies([load_galaxy(t, band=band) for t in targets])
     # combine all galaxies
     gals.squish('Color', 'Mag2', 'Trgb')    
     mean_trgb = np.mean(gals.Trgbs)
