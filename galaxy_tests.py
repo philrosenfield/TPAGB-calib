@@ -33,18 +33,77 @@ def double_gaussian_optical_cmd_boxes(target=None):
     else:
         return dg_box[target]
 
+
+def gaussian(x, p0, p1, p2):
+    '''
+    gaussian(arr,p): p[0] = norm, p[1] = mean, p[2]=sigma
+    '''
+    return p0 * np.exp( -1 * (x - p1) ** 2 / (2 * p2 ** 2))
+
 def opt_cmd_contamination(target):
     gal = load_galaxy(target, band=band)
+    points = np.column_stack((gal.Color, gal.Mag2))
+
+    # stars in rgb box
+    rgb_poly = get_opt_rgb_polygons(target)
+    all_rgb_stars, = np.nonzero(nxutils.points_inside_poly(points, rgb_poly))
+    
+    # stars in the rheb and rgb region
     dg_box = double_gaussian_optical_cmd_boxes(target=target)
+    col_bins = np.arange(dg_box[0], dg_box[1], 0.05)
     mag_bins = np.arange(gal.Trgb, gal.Trgb + 1.5, 0.15)
     
-    1. Define rgb_verts box
-    2. Define rheb+rgb box
-    3. logical: stars in 2 not in 1
-    4. fit gaussian to 3
-    5. see how many stars from 4 are in 1
-        do an intersection of 2 and 1 and find reddest color? 
-    6. take percentage of 5, adjust the edge of 1 closer if necessary.
+    # Define rheb+rgb boxes
+    rheb_rgb_starss = []
+    rgb_starss = []
+    for u, l in zip(mag_bins, np.roll(mag_bins,-1))[:-1]:
+        verts = np.array([[dg_box[0], l],
+                          [dg_box[0], u],
+                          [dg_box[1], u],
+                          [dg_box[1], l],
+                          [dg_box[0], l]])
+        rheb_rgb_stars, = np.nonzero(nxutils.points_inside_poly(points, verts))
+        rheb_rgb_starss.append(rheb_rgb_stars)
+        rgb_stars, = np.nonzero(nxutils.points_inside_poly(np.column_stack((gal.Color[all_rgb_stars],
+                                                                           gal.Mag2[all_rgb_stars])),
+                                                           verts))
+        rgb_starss.append(rgb_stars)
+    
+    for i in range(len(rheb_rgb_starss)):
+        # stars in rheb+rgb and not in rgb box
+        rgb_stars = rgb_starss[i]
+        rheb_stars = list(set(rheb_rgb_starss[i]) - set(rgb_stars))
+        #ax.plot(gal.Color[rheb_stars], gal.Mag2[rheb_stars], '.')
+        mag_hist = np.histogram(gal.Color[rheb_stars], bins=col_bins)[0]
+        # fit gaussian to rheb_stars
+        try:
+            parameters, covariance = curve_fit(gaussian, col_bins[1:],
+                                               mag_hist, p0=[np.max(mag_hist), 1, 0.5])
+        except RuntimeError:
+            print 'can not fit %i' % i
+        big_color_array = np.arange(col_bins[0], col_bins[-1], 0.001)
+        fit_gauss = gaussian(big_color_array, *parameters)
+        fig, ax = plt.subplots()
+        ax.plot(big_color_array, fit_gauss)
+        ax.plot(col_bins[1:], mag_hist, ls='steps--')
+        rgb_mag_hist = np.histogram(gal.Color[rgb_stars], bins=col_bins)[0]
+        ax.plot(col_bins[1:], rgb_mag_hist, ls='steps--')
+        ax.set_title(mag_bins[i])
+        
+        # see how many stars from rheb are in rgb box
+        rgb_blue_edge = col_bins[np.max(np.nonzero(mag_hist > 1)) + 1]
+        rheb_in_rgb, err = scipy.integrate.quad(gaussian, rgb_blue_edge, np.inf,
+                                                args=(parameters[0], parameters[1],
+                                                      parameters[2]))
+        
+        
+        
+        ax.set_title('%.2f, %.2f' % (mag_bins[i], rheb_in_rgb))
+        
+        
+        # now do the same with rgb_stars and see how many are redder than the rgb
+        # blue edge
+    #6. take percentage of 5, adjust the edge of 1 closer if necessary.
     
     
     
