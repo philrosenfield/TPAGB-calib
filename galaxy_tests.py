@@ -64,16 +64,16 @@ def opt_cmd_contamination(target):
                           [dg_box[0], l]])
         rheb_rgb_stars, = np.nonzero(nxutils.points_inside_poly(points, verts))
         rheb_rgb_starss.append(rheb_rgb_stars)
-        rgb_stars, = np.nonzero(nxutils.points_inside_poly(np.column_stack((gal.Color[all_rgb_stars],
-                                                                           gal.Mag2[all_rgb_stars])),
-                                                           verts))
+        rgb_stars = list(set(all_rgb_stars) & set(rheb_rgb_stars))
         rgb_starss.append(rgb_stars)
     
     for i in range(len(rheb_rgb_starss)):
         # stars in rheb+rgb and not in rgb box
         rgb_stars = rgb_starss[i]
         rheb_stars = list(set(rheb_rgb_starss[i]) - set(rgb_stars))
-        #ax.plot(gal.Color[rheb_stars], gal.Mag2[rheb_stars], '.')
+        ax.plot(gal.Color[rheb_stars], gal.Mag2[rheb_stars], '.')
+        ax.plot(gal.Color[rgb_stars], gal.Mag2[rgb_stars], '.')
+
         mag_hist = np.histogram(gal.Color[rheb_stars], bins=col_bins)[0]
         # fit gaussian to rheb_stars
         try:
