@@ -137,7 +137,7 @@ def opt_cmd_contamination(target):
     
     '''
     
-def cmd_contamination(targets, band='ir', dcolor=0.02, dmag=0.2, thresh=5):
+def cmd_contamination(targets, band='ir', dcol=0.02, dmag=0.2, thresh=5):
     '''
     , verts_file_fmt=None,
     diag_plot=True, isoch_base=None,
@@ -154,39 +154,166 @@ def cmd_contamination(targets, band='ir', dcolor=0.02, dmag=0.2, thresh=5):
     offset = gals.Trgbs - np.mean(gals.Trgbs)
     Mag2 = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(gals.galaxies)])
     Color = gals.Colors
-
+    gals.Mag2o = Mag2
+    verts = agb_rheb_separation()
+    fig, ax = gals.galaxies[0].plot_cmd(gals.Colors, gals.Mag2o,
+                                        threshold=75, levels=5,
+                                        hist_bin_res=.1)
     # rough outline of the RGB/AGB area. Exclude MS (~0.0)
-    color_limits = [0.6, 1.25]
-    bright_mag_limit = -11
-
+    ms_cut = 0.6
     # minimum size of dmag bin spacing
-    dmag = 0.5
 
-    rstars_in_agb, agb_in_rstars, poisson_noise, nstars, color_sep = \
-        gals.galaxies[0].double_gaussian_contamination(verts, diag_plot=True,   
-                                                       dcol=0.02, Color=Color,
-                                                       Mag2=Mag2)
+    #rstars_in_agb, agb_in_rstars, poisson_noise, nstars, color_sep = \
+    #    gals.galaxies[0].double_gaussian_contamination(verts, diag_plot=True,   
+    #                                                   dcol=0.02, Color=Color,
+    #                                                   Mag2=Mag2)
     points = np.column_stack((Color, Mag2))
-
-    mag_bins = np.arange(bright_mag_limit, mean_trgb + dmag,  dmag)
-
+    agb_stars, = np.nonzero(nxutils.points_inside_poly(points, verts))
+    rgb_rheb_stars = list(set(np.nonzero((Color > ms_cut) &
+                                          (Mag2 > np.min(verts[:,1])) &
+                                          (Mag2 < np.max(verts[:,1])))[0]) - \
+                          set(agb_stars))
+    out = open('tpagb_contamination.dat', 'w')
+    mag_bins = np.arange(-10, mean_trgb + dmag,  dmag)
     for u, l in zip(mag_bins, np.roll(mag_bins,-1))[:-1]:
-        verts = np.array([[color_limits[0], l],
-                          [color_limits[0], u],
-                          [color_limits[1], u],
-                          [color_limits[1], l],
-                          [color_limits[0], l]])
-        inside, = np.nonzero(nxutils.points_inside_poly(points, verts))
-        print len(inside)
-        if len(inside) < thresh:
-            print len(inside)
-            continue
+        cbinsl = np.arange(ms_cut, np.max(Color[rgb_rheb_stars]), dcol)
+        mag_left, = np.nonzero((Mag2[rgb_rheb_stars] > u) &
+                               (Mag2[rgb_rheb_stars] < l))
 
+        mag_right, = np.nonzero((Mag2[agb_stars] > u) &
+                                (Mag2[agb_stars] < l))
+        cbinsr = np.arange(np.min(Color[agb_stars][mag_right]),
+                           np.max(Color[agb_stars][mag_right]), dcol)
+        
+        ax.plot(Color[rgb_rheb_stars][mag_left], Mag2[rgb_rheb_stars][mag_left],'o')
+        ax.plot(Color[agb_stars][mag_right], Mag2[agb_stars][mag_right], 'o')
+        mag_hist_left, _ = np.histogram(Color[rgb_rheb_stars][mag_left],
+                                        bins=cbinsl)
+        mag_hist_right, _ = np.histogram(Color[agb_stars][mag_right],
+                                         bins=cbinsr)
+        linr, rinl = HeB_contamination(cbinsl, mag_hist_left, cbinsr, mag_hist_right,
+                          diag_plot=True, ax=ax, mag=np.mean([u, l]))
+        out.write('%.3f %.3f %.3f \n' % (u, linr/float(np.sum(mag_hist_right)), rinl/float(np.sum(mag_hist_left))))
+    out.close()
 
-        lost_agb = agb_in_rstars
-        contaminated_agb = rstars_in_agb
-        print u, l, color_sep, lost_agb, contaminated_agb
-        # still doesn't work... not picking up double gaussians....
+def HeB_contamination(color_left, mag_hist_left, color_right, mag_hist_right,
+                      diag_plot=False, ax=None, mag=0):
+    '''
+    This function fits a double gaussian to a color histogram of stars
+    within the <maglimits> and <colorlimits> (tuples).
+
+    It then finds the intersection of the two gaussians, and the fraction
+    of each integrated gaussian that crosses over the intersection color
+    line.
+    '''
+    try:
+        mpfit
+    except NameError:
+        from mpfit import mpfit
+        
+    try:
+        integrate
+    except NameError:
+        from scipy import integrate
+    # the indices of the stars within the MS/BHeB regions
+    import functions
+    # uniform errors
+    erra = np.zeros(len(color_left[:1])) + 1.
+    errb = np.zeros(len(color_right[:1])) + 1.
+
+    # set up inputs
+    hist_ina = {'x': color_left[1:], 'y': mag_hist_left, 'err': erra}
+    hist_inb = {'x': color_right[1:], 'y': mag_hist_right, 'err': errb}
+    
+    # set up initial parameters:
+    # norm = max(hist),
+    # mean set to be half mean, and 3/2 mean,
+    # sigma set to be same as dcol spacing...
+    p0a = [np.nanmax(mag_hist_left), np.mean(color_left) / 2,
+           np.diff(color_left)[0]]
+    p0b = [np.nanmax(mag_hist_right), np.mean(color_right) / 2,
+           np.diff(color_right)[0]]
+
+    #mp_dg = mpfit(functions.mp_double_gauss, p0, functkw=hist_in, quiet=True)
+    mp_dga = mpfit(functions.mp_gaussian, p0a, functkw=hist_ina, quiet=True)
+    mp_dgb = mpfit(functions.mp_gaussian, p0b, functkw=hist_inb, quiet=True)
+    #
+    #if mp_dg.covar is None:
+    #    return 0., 0., 0., 0.
+    #perc_err = (np.array(mp_dg.perror) - np.array(mp_dg.params)) / \
+    #            np.array(mp_dg.params)
+    #if np.sum([p ** 2 for p in perc_err]) > 10.:
+    #    return 0., 0., 0., 0.
+    # take fit params and apply to guassians on an arb color scale
+    color_array = np.linspace(-10, 10, 1000)
+    #g_p1 = mp_dg.params[0: 3]
+    #g_p2 = mp_dg.params[3:]
+    #gauss1 = functions.gaussian(color_array, g_p1)
+    #gauss2 = functions.gaussian(color_array, g_p2)
+    gauss1 = functions.gaussian(color_array, mp_dga.params)
+    gauss2 = functions.gaussian(color_array, mp_dgb.params)
+    # color separatrion is the intersection of the two gaussians..
+    min_locs = rsp.math_utils.find_peaks(gauss1 + gauss2)['minima_locations']
+    auto_color_sep = [] #color_array[min_locs]
+    if len(auto_color_sep) == 0:
+        auto_color_sep = np.mean([np.max(color_left), np.min(color_right)])
+    print np.max(color_left), auto_color_sep, np.min(color_right)
+    # find contamination past the color sep...
+    #g12_Integral = integrate.quad(functions.double_gaussian, -np.inf, np.inf, mp_dg.params)
+    #try:
+    #    norm =  float(len(all_inds)) / g12_Integral[0] 
+    #except ZeroDivisionError:
+    #    norm = 0.
+    g1_Integral = integrate.quad(functions.gaussian, -np.inf, np.inf,
+                                 mp_dga.params)
+    g2_Integral = integrate.quad(functions.gaussian, -np.inf, np.inf,
+                                 mp_dgb.params)
+    norm = g1_Integral[0] + g2_Integral[0]
+    if norm == 0:
+        norm = 1.
+    g1_Int_colsep = integrate.quad(functions.gaussian, -np.inf, auto_color_sep,
+                                   mp_dga.params)
+    g2_Int_colsep = integrate.quad(functions.gaussian, auto_color_sep, np.inf,
+                                   mp_dgb.params)
+
+    left_in_right = (g1_Integral[0] - g1_Int_colsep[0])
+    right_in_left = (g2_Integral[0] - g2_Int_colsep[0])
+    '''
+    
+    try:
+        left_in_right = g1_Int_colsep[0] / g1_Integral[0]
+    
+        left_in_right = 0.
+
+    try:
+        right_in_left = g2_Int_colsep[0] / g2_Integral[0]
+    except ZeroDivisionError:
+        right_in_left = 0.
+    '''
+    # diagnostic
+    #print color_sep
+    if diag_plot is True:
+        if ax is None:
+            fig, ax = plt.subplots()
+        ax.plot(color_left[1:], mag_hist_left/np.sum(mag_hist_left) + mag, ls='steps', lw=2, color='navy')
+        ax.plot(color_right[1:], mag_hist_right/np.sum(mag_hist_left) + mag, ls='steps', lw=2, color='darkred')
+        #ax1.plot(color_array,
+        #        functions.double_gaussian(color_array, mp_dg.params))
+        ax.plot(color_array, gauss1//np.sum(gauss1)+gauss2/np.sum(gauss2) + mag,
+                color='purple', lw=2)
+        ax.plot(color_array, gauss1/np.sum(gauss1) + mag, color='blue', lw=2)
+        ax.plot(color_array, gauss2/np.sum(gauss2) + mag, color='red', lw=2)
+        #ax1.set_ylim((0, 100))
+        #ax.set_xlim(-1, 2.5)
+        #ax1.set_xlabel('$%s-%s$' % (gal.filter1, gal.filter2), fontsize=20)
+        #ax.set_ylabel('$\#$', fontsize=20)
+        #ax1.set_title('$%s$' % gal.target)
+        ax.vlines(auto_color_sep, *ax.get_ylim())
+        ax.text(-0.5, mag, 'left in right: %i' % left_in_right)
+        ax.text(2, mag, 'right in left: %i' % right_in_left, ha='right')
+        #fig1.savefig('heb_contamination_%s_%s_%s_mag2_%.2f.png' % (gal.filter1, gal.filter2, gal.target,np.mean(np.array(all_verts)[:, 1])))
+        #plt.close()
+    return left_in_right, right_in_left
 
 
 def get_imf(target):
@@ -272,6 +399,7 @@ def plot_opt_hess():
     #    ax.plot(v[:,0], v[:,1])
     #plt.colorbar(cs)
     plt.savefig('opt_cmd_f606w.png', dpi=300)
+
 
 def multi_galaxy_hess(targets=None, split_by_color=False, ax=None, imshow_kw={},
                       make_hess=False, band='ir'):
