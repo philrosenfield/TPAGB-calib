@@ -211,7 +211,7 @@ def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
     smg = rsp.Galaxies.sim_and_gal(gal, sgal)
     outfile = output.replace('.dat','_%s.png' % extra)
     fig, axs, top_axs = smg.make_LF(filter1, filter2, color_hist=False,
-                                    plot_tpagb=True, add_boxes=False,
+                                    plot_tpagb=True , add_boxes=False,
                                     plot_LF_kw={'xlim': (0.5, 4)},
                                     figname=outfile)
     axs[1].cla()
