@@ -40,62 +40,6 @@ def write_sfh(age, z, ofile):
     oo.close()
 
 
-def write_tri_par(sfh, ofile):
-    o = ['photosys           2mass           ',
-         'mag_num            3               ',
-         'mag_lim            -3.0            ',
-         'mag_res            0.1             ',
-         'dust               1               ',
-         'dustM              dpmod60alox40   ',
-         'dustC              AMCSIC15        ',
-         'binary_kind        0               ',
-         'binary_frac        0.3             ',
-         'binary_mrinf       0.7             ',
-         'binary_mrsup       1.0             ',
-         'extinction_kind    2               ',
-         'thindisk_kind      0               ',
-         'thickdisk_kind     0               ',
-         'halo_kind          0               ',
-         'bulge_kind         0               ',
-         'object_kind        1               ',
-         'object_mass        1.0e7           ',
-         'object_dist        10.0            ',
-         'object_avkind      1               ',
-         'object_av          0.000           ',
-         'object_cutoffmass  0.8             ',
-         'object_sfr         %s' % os.path.abspath(sfh),
-         'object_sfr_A       1e9             ',
-         'object_sfr_B       0.0             ']
-
-    with open(ofile, 'w') as oo:
-        [oo.write(line + '\n') for line in o]
-    return
-
-
-def xrun_trilegal(track, parfile, inp, out):
-    track_file = 'cmd_input_%s.dat' % track
-    # Phil changed this for his computer!!
-    cmd = '/Users/phil/research/PyTRILEGAL/run_trilegal.py -e code/main'
-    cmd += ' %s' % parfile
-    cmd += ' -a'
-    cmd += ' -l'
-    # Phil made these abs paths!
-    cmd += ' -i %s' % os.path.abspath(inp)
-    cmd += ' -o %s' % os.path.abspath(out)
-    cmd += ' -f ../cmd_inputfiles/%s' % track_file
-
-    print cmd
-    #print out
-    p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout, stderr = (p.stdout, p.stderr)
-
-    p.wait()
-    ff = open(out, 'a')
-    for l in stdout.readlines():
-        ff.write('# %s' % l)
-    ff.close()
-
-
 def make_galaxy_input(galaxy_input, sfh_file):
     import ResolvedStellarPops as rsp
 
@@ -208,7 +152,7 @@ def plot_em(ifile, lf_file, cmd_file, age, z, track):
     if sum(oAGB):
         pdf, bins, patches = ax2.hist(mbol[oAGB], bins, histtype='stepfilled',
                                       color=colorO)
-        ax2.set_ylim(0.01, pdf.max()*1.1)
+        ax2.set_ylim(0.01, pdf.max() * 1.1)
 
     ax1.annotate('Age=%.2e' % age, (.7, .1), va='center',
                  xycoords='axes fraction')
@@ -247,7 +191,6 @@ def plot_em(ifile, lf_file, cmd_file, age, z, track):
 
 def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
     sfh_file = '%s/sfh_Z%.2e_A%.2e.dat' % (sfh_dir, z, age)
-    #par_file = '%s/trilegal_pars_Z%.2e_A%.2e.dat' % (tri_dir, z, age)
     inp_file = '%s/trilegal_input_Z%.2e_A%.2e.dat' % (tri_dir, z, age)
     out_file = '%s/trilegal_output_Z%.2e_A%.2e.dat' % (tri_dir, z, age)
 
@@ -262,20 +205,15 @@ def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
     f_cmd.close()
 
     write_sfh(age, z, sfh_file)
-    #write_tri_par(sfh_file, par_file)
     make_galaxy_input(inp_file, sfh_file)
-    #if not os.path.isfile(out_file) or over_write is True:
     track_file = '../cmd_inputfiles/cmd_input_%s.dat' % track_set
     run_trilegal(track_file, inp_file, out_file)
-    #check = check_trilegal_run(out_file)
-    check = 1
-    if check == 1:
-        plot_em(out_file, lf_file, cmd_file, age, z, track_set)
-    else:
-        print check
+
+    plot_em(out_file, lf_file, cmd_file, age, z, track_set)
 
 
-def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
+def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False,
+         multi=True):
 
     if os.path.isdir(plt_dir):
         shutil.rmtree(plt_dir)
@@ -285,18 +223,20 @@ def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
         if not os.path.isdir(d):
             os.makedirs(d)
             print 'made directories', d
+    if multi is False:        
+        for age, z in itertools.product(sim_age, sim_z):
+            run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir)
+    else:
+        pool = multiprocessing.Pool()
+        res = []
 
-    pool = multiprocessing.Pool()
-    res = []
+        for age, z in itertools.product(sim_age, sim_z):    
+            res.append(pool.apply_async(run_all,
+                                        (age, z, track_set, sfh_dir, tri_dir, plt_dir),
+                                        ))
 
-    for age, z in itertools.product(sim_age, sim_z):
-
-        res.append(pool.apply_async(run_all,
-                                    (age, z, track_set, sfh_dir, tri_dir, plt_dir),
-                                    ))
-
-    for r in res:
-        r.get()
+        for r in res:
+            r.get()
 
     return
 
@@ -345,7 +285,7 @@ if __name__ == '__main__':
         sfh_dir = os.path.join(tri_dir, 'sfh')
         plt_dir = os.path.join(diagnostic_dir, agb_mix, set_name, track_set)
         main(track_set, sfh_dir, tri_dir, plt_dir,
-             over_write=infile.over_write)
+             over_write=infile.over_write, multi=False)
     else:
         cwd = os.getcwd()
         track_set = args[0]

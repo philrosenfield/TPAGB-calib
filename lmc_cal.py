@@ -137,6 +137,7 @@ def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
 
     return outputs
 
+
 def read_vmc_table(filename):
     dtype = [('DEJ2000d', '<f8'),
              ('RAJ2000d', '<f8'),
@@ -174,13 +175,15 @@ def read_vmc_table(filename):
              ('chi2C', '<f8'),
              ('chi2O', '<f8')]
     return np.genfromtxt(filename, dtype=dtype)
-    
+
+
 def read_lmc_cat(filename):
     with open(filename, 'r') as f:
         header = f.readline()
     col_keys = header.replace('#', '').strip().split()
     
     return np.genfromtxt(filename, names=col_keys)
+
 
 def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
     if tpagb_mass_bins is None:
@@ -207,8 +210,10 @@ def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
 
     smg = rsp.Galaxies.sim_and_gal(gal, sgal)
     outfile = output.replace('.dat','_%s.png' % extra)
-    fig, axs, top_axs = smg.make_LF(filter1, filter2, color_hist=True, plot_tpagb=True,
-                                    add_boxes=False, plot_LF_kw={'xlim': (0.5, 4)}, figname=outfile)
+    fig, axs, top_axs = smg.make_LF(filter1, filter2, color_hist=False,
+                                    plot_tpagb=True, add_boxes=False,
+                                    plot_LF_kw={'xlim': (0.5, 4)},
+                                    figname=outfile)
     axs[1].cla()
     ax = sgal.color_by_arg(0,0,0, xdata=sgal.color, ydata=sgal.mag2,
                            coldata=sgal.data.get_col('m_ini'),
@@ -247,7 +252,9 @@ def main():
     overwrite = True
     photsyss = ['2mass']
     for photsys in photsyss:
-        outputs = make_trilegal_sim(loidl=True, photsys=photsys, overwrite=overwrite)
+        outputs = make_trilegal_sim(loidl=True,
+                                    photsys=photsys,
+                                    overwrite=overwrite)
         extra = '_loidl_%s' % photsys
         [make_plot(output, extra=extra) for output in outputs]
         extra = '_%s' % photsys

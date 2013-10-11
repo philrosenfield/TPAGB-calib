@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 import multiprocessing
 
 
-
 def metallicity_from_dir(met):
     if met.endswith('/'):
         met = met[:-1]
@@ -61,7 +60,8 @@ def AGB_file_setup(infile):
                   if os.path.isdir(m)]
     if infile.metals_subset is not None:
         print 'doing a subset of metallicities'
-        metal_dirs = [m for m in metal_dirs if metallicity_from_dir(m)[0] in infile.metals_subset]
+        metal_dirs = [m for m in metal_dirs
+                      if metallicity_from_dir(m)[0] in infile.metals_subset]
     metals = np.argsort([metallicity_from_dir(m)[0] for m in metal_dirs])
     infile.metal_dirs = np.array(metal_dirs)[metals]
     print 'found %i metallicities' % len(metal_dirs)
@@ -197,8 +197,8 @@ def do_everything(infile):
 
             # make diagnostic plots
             if infile.diagnostic_dir0 is not None:
-                assert metallicity_from_dir(infile.diagnostic_dir)[0] == track.metallicity, \
-                    'diag dir met wrong!'
+                assert metallicity_from_dir(infile.diagnostic_dir)[0] == \
+                    track.metallicity, 'diag dir met wrong!'
                 graphics.diag_plots(track, infile)
 
             # save information for imfr
@@ -223,10 +223,11 @@ def do_everything(infile):
     fileIO.make_local_copy(infile.tracce_file, dest=infile.make_copy)
 
     # make cmd_input file
-    cmd_input = fileIO.write_cmd_input_file(**{'cmd_input_file': infile.cmd_input_file,
-                                               'file_tpagb': infile.tracce_file_rel,
-                                               'mass_loss': infile.mass_loss,
-                                               'file_isotrack': infile.file_isotrack})
+    cmd_in_kw = {'cmd_input_file': infile.cmd_input_file,
+                'file_tpagb': infile.tracce_file_rel,
+                'mass_loss': infile.mass_loss,
+                'file_isotrack': infile.file_isotrack}
+    cmd_input = fileIO.write_cmd_input_file(**cmd_in_kw)
 
     if infile.make_imfr is True and infile.diagnostic_dir0 is not None:
         ifmr_file = os.path.join(infile.diagnostic_dir0, infile.agb_mix,
