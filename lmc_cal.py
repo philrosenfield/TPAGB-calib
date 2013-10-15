@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator, MultipleLocator, NullFormatter
 import os
 import brewer2mpl
+
+research_path = '/home/rosenfield/'
 '''
 actually for the LMC, you can simplify things a lot:
 
@@ -30,9 +32,9 @@ already, and the values you find in Stefano's paper (distance, Av, etc).
 Let me know in case this is not clear.
 '''
 
-def parse_stefano_sfr():    
-    filename = '/Users/phil/research/TP-AGBcalib/LMC_Calib/SFR_LMC88.dat'
-    outfile = '/Users/phil/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88.dat'
+def parse_stefano_sfr():
+    filename = research_path + 'research/TP-AGBcalib/LMC_Calib/SFR_LMC88.dat'
+    outfile = research_path + 'research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88.dat'
     data = rsp.fileIO.readfile(filename, col_key_line=1)
 
     to = data['Center_age_bin']
@@ -90,9 +92,9 @@ def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
     elif 'ubv' in photsys:
         filter1 = 'K'
 
-    cmd_inputs = ['/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat',
-                  '/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat',
-                  '/Users/phil/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat']
+    cmd_inputs = [research_path + 'research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat',
+                  research_path + 'research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat',
+                  research_path + 'research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat']
     outputs = []
     for cmd_input in cmd_inputs:
         object_sfr_file, object_mass = parse_stefano_sfr()
@@ -198,10 +200,10 @@ def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
     sgal.all_stages('TPAGB')
     sgal.mix_modelname(sgal.name)
     # http://vizier.cfa.harvard.edu/viz-bin/VizieR?-source=J/A+A/537/A105
-    #vmcagbs = '/Users/phil/research/TP-AGBcalib/LMC_Calib/VMCAGBS_fmt.dat'
+    #vmcagbs = research_path + 'research/TP-AGBcalib/LMC_Calib/VMCAGBS_fmt.dat'
     #data = read_vmc_table(vmcagbs)
 
-    vmcagbs = '/Users/phil/research/TP-AGBcalib/LMC_Calib/VMCAGBS_fmt2.dat'
+    vmcagbs = research_path + 'research/TP-AGBcalib/LMC_Calib/VMCAGBS_fmt2.dat'
     gal = rsp.Galaxies.galaxy(vmcagbs, filter1='Jmag2', filter2='Ksmag2', hla=False, 
                               angst=False)
     gal.filters = [filter1, filter2]
@@ -248,6 +250,35 @@ def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
     print 'wrote %s' % outfile
 
 
+def cslf(tri_outs, filter1, filter2, photsys='2mass', outfile=None):
+    '''
+    A simple CSLF plot.
+    Takes trilegal catalogs (list of strings) and loads them as simgalaxies.
+    This takes the mag to be Mbol, and uses the first line of the trilegal
+    catalogue to get dmod and Av.
+    
+    If an outfile is specified, will save fig.
+    '''
+    sgals = [rsp.Galaxies.simgalaxy(tri_out, filter1='J', filter2='Ks',
+                                    photsys='2mass') for tri_out in tri_outs]
+
+    [sgal.load_ic_mstar() for sgal in sgals]
+    
+    bins = np.arange(-6.5, -2.5, 0.15)
+    fig, ax = plt.subplots()
+    for sgal in sgals:
+        lab = '$%s$' % sgal.name.split('S_')[1].replace('.dat','')
+        Mbol = sgal.data.get_col('mbol') - sgal.data.get_col('m-M0')[0] - sgal.data.get_col('Av')[0]
+        plt.hist(Mbol[sgal.icstar], bins=bins, histtype='step', label=lab)
+    ax.legend()
+    ax.set_xlim()[::-1]
+    if outfile is None:
+        plt.show()
+    else:
+        plt.savefig(outfile, dpi=300)
+    return
+
+
 def main():
     overwrite = True
     photsyss = ['2mass']
@@ -260,6 +291,7 @@ def main():
         extra = '_%s' % photsys
         outputs = make_trilegal_sim(photsys=photsys, overwrite=overwrite)
         [make_plot(output) for output in outputs]
+        cslf(outputs, outfile='cslf%s.png' % extra)
 
 if __name__ == "__main__":
     import pdb

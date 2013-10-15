@@ -5,6 +5,8 @@ import LFUtils
 import os
 import fileIO
 import matplotlib.pyplot as plt
+from TPAGBparams import research_path
+
 '''
 This is a work in progress, which sorts of intro figures should I have for the paper??
 
@@ -22,7 +24,7 @@ def compare_mass_loss(mass=1.0, z=0.002, sets=['S_APR13', 'S_APR13VW93', 'S_MAR1
     else:
         norm = 1.                
 
-    agb_tracks_dir = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09'
+    agb_tracks_dir = research_path + 'AGBTracks/CAF09'
     direcs = []
     labels = []
     for set in sets:
@@ -52,7 +54,7 @@ def compare_mass_loss(mass=1.0, z=0.002, sets=['S_APR13', 'S_APR13VW93', 'S_MAR1
     
     
 def tp_initial_conditions():
-    init_cond_base = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09/S12_FIRST_TP/'
+    init_cond_base = research_path + 'AGBTracks/CAF09/S12_FIRST_TP/'
     search_term = '*.INP'
     init_conds = rsp.fileIO.get_files(init_cond_base, search_term)
 
@@ -81,14 +83,14 @@ Mass/$\msun$) & $\log L/\Lsun$ & $\log T_{eff}$ (K) & Age (yr) \\
 \tablecomments{All data from \citet{Bressan2012} Tracks}
 \end{table}
 '''
-    with open('/Users/phil/research/TP-AGBcalib/communication/TPAGB Paper/init_cond_tab.tex', 'w') as f:
+    with open(research_path + 'communication/TPAGB Paper/init_cond_tab.tex', 'w') as f:
         f.write(header % ''.join('l' * 4))
         f.write(fmt)
         f.write(footer)
 
 def not_sure_what_this_was_for():
     angst_tab = rsp.angst_tables.AngstTables()
-    snap_sample = '/Users/phil/research/TP-AGBcalib/SNAP/data/galaxies'
+    snap_sample = research_path + 'SNAP/data/galaxies'
 
 
     opt_snap = rsp.fileIO.get_files(snap_sample, '*trim.fits')
@@ -96,7 +98,7 @@ def not_sure_what_this_was_for():
 
 
     for opt in opt_snap:
-        if opt == '/Users/phil/research/TP-AGBcalib/SNAP/data/galaxies/10182_SN-NGC2403-PR_F606W_F814W.gst.trim.fits':
+        if opt == research_path + 'SNAP/data/galaxies/10182_SN-NGC2403-PR_F606W_F814W.gst.trim.fits':
             continue
 
         gal = rsp.Galaxies.galaxy(opt, hla=False, filetype='fitstable')
@@ -152,7 +154,7 @@ def bolometric_correction_plot(filter1=None, filter2=None, tp_mass=1., logg_val=
     bc_mag2 = bc[filter2]
     
     # read in the initial conditions file
-    tp_inpfile = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09/S12_FIRST_TP/S12_Z0.02_Y0.284_1TP.INP'    
+    tp_inpfile = research_path + 'AGBTracks/CAF09/S12_FIRST_TP/S12_Z0.02_Y0.284_1TP.INP'    
     tp_inp = rsp.fileIO.readfile(tp_inpfile, col_key_line=-2) 
 
     # get the teff of the the inital mass tp_mass
@@ -346,15 +348,15 @@ Target/name & Opt.~Filters & $A_V$ & Mean NIR & $m_{\rm F160W}$ & $m_{\rm F160W}
 \end{deluxetable*}
 '''
     if deluxe is True:
-        table_file = '/Users/phil/research/TP-AGBcalib/communication/TPAGB Paper/rgbagb2_deluxetable.tex'
+        table_file = research_path + 'communication/TPAGB Paper/rgbagb2_deluxetable.tex'
         header = deluxe_header
         footer = deluxe_footer
     else:
-        table_file = '/Users/phil/research/TP-AGBcalib/communication/TPAGB Paper/rgbagb2_table.tex'
+        table_file = research_path + 'communication/TPAGB Paper/rgbagb2_table.tex'
         header = plain_header
         footer = plain_footer
 
-    with open('/Users/phil/research/TP-AGBcalib/communication/TPAGB Paper/rgbagb2_table.tex', 'w') as f:
+    with open(research_path + 'communication/TPAGB Paper/rgbagb2_table.tex', 'w') as f:
         f.write(header % ('l' * 13, '%'))
         f.write(fmt)
         f.write(footer)

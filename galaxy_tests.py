@@ -17,7 +17,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 from pprint import pprint
 import brewer2mpl
-
+from TPAGBparams import research_path
 import multiprocessing
 angst_data = rsp.angst_tables.AngstTables()
 
@@ -317,7 +317,7 @@ def HeB_contamination(color_left, mag_hist_left, color_right, mag_hist_right,
 
 
 def get_imf(target):
-    filename = '/Users/phil/research/TP-AGBcalib/code/TPAGB-calib/best_fits_from_match_runs.dat'
+    filename = research_path + 'code/TPAGB-calib/best_fits_from_match_runs.dat'
     dtype = [('ID', '|S5'), ('Galaxy', '|S14'), ('filter1', '|S5'), ('filter2', '|S5'), ('Av', '<f8'), ('IMF', '<f8'), ('dmod', '<f8'), ('dlogZ', '<f8')]
     data = np.genfromtxt(filename, dtype=dtype)
     imf, = data['IMF'][np.nonzero(data['Galaxy']==target)]
@@ -504,7 +504,7 @@ def load_agb_verts(gal, leo_method=False):
     there is a file that contains the contents of this dictionary, it's vert_file
     I just didn't feel like writing a reader for it so I pasted it. What?
     don't look at me like that I have a lot to do.
-    vert_file = '/Users/phil/research/TP-AGBcalib/code/TPAGB-calib/agb_rheb_sep.dat'
+    vert_file = research_path + 'code/TPAGB-calib/agb_rheb_sep.dat'
     '''
     if leo_method is False:
         offset_dict = {'SCL-DE1': 0.186,
@@ -918,12 +918,13 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
         logger.info('using %s trgb' % gal.filter2)
 
     if run_trilegal is True or trilegal_output is None:
-        galaxy_input, trilegal_output, galinp_kw, gal_inp = setup_trilegal(gal, model,
-                                                                  object_mass=object_mass)
+        galaxy_input, trilegal_output, galinp_kw, gal_inp = \
+            setup_trilegal(gal, model, bject_mass=object_mass)
         if band == 'opt':
             trilegal_output = trilegal_output.replace('.dat', '_opt.dat')
 
-        cmd_input = os.path.join('/Users/phil/research/padova_apps/cmd_inputfiles/', model)
+        cmd_input = os.path.join(research_path + 'padova_apps/cmd_inputfiles/',
+                                 model)
 
     # might not be needed, but better to load them outside the while loop.
     fake_files = get_fake_files(gal.target, band=band)
@@ -2885,7 +2886,7 @@ def match_metals(sfh_loc=None, targets=None, make_plot=False,
 def agb_logl_age():
     for i in range(len(models)):
         model_name = models[i].replace('.dat', '').split('_')[-1]
-        agb_track_loc = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09/S_%s/S12_Z0.002_Y0.252/' % model_name
+        agb_track_loc = research_path + 'AGBTracks/CAF09/S_%s/S12_Z0.002_Y0.252/' % model_name
         if not os.path.isdir(agb_track_loc) is True:
             print model_name, 'no agb tracks found'
         model_name = translate_model_name(models[i])
@@ -2911,7 +2912,7 @@ def agb_lifetimes(models):
     fig2, ax2 = plt.subplots()
     for i in range(len(models)):
         model_name = models[i].replace('.dat', '').split('_')[-1]
-        agb_track_loc = '/Users/phil/research/TP-AGBcalib/AGBTracks/CAF09/S_%s/S12_Z0.002_Y0.252/' % model_name
+        agb_track_loc = research_path + 'AGBTracks/CAF09/S_%s/S12_Z0.002_Y0.252/' % model_name
         if not os.path.isdir(agb_track_loc) is True:
             print model_name, 'no agb tracks found'
         model_name = translate_model_name(models[i])
@@ -3035,7 +3036,7 @@ def fuckshitballs():
 
 
 if __name__ == "__main__":
-    #snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
+    #snap_src = research_path + 'SNAP'
     #models =  ['gi10_rev_old_tracks.dat', 'cmd_input_CAF09_S_APR13.dat',
     #           'cmd_input_CAF09_S_APR13VW93.dat', 'cmd_input_CAF09_S_MAR13.dat']
     #opt_rgb_nir_agb_ratio(targets='paper1', models=models, norm_by_ir=True)
@@ -3045,4 +3046,4 @@ else:
     if 'Linux' in os.uname():
         snap_src = '/home/phil/research/TP-AGBcalib/SNAP'
     else:
-        snap_src = '/Users/phil/research/TP-AGBcalib/SNAP'
+        snap_src = research_path + 'SNAP'
