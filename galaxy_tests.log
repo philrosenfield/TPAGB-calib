@@ -64495,3 +64495,57 @@ INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_OCT13.dat > trilegal0982955868053.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_MAR13.dat > trilegal037720808739.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_OCT13.dat > trilegal074036925242.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_APR13VW93.dat > trilegal0787173881653.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_MAR13.dat > trilegal0926017344035.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_OCT13.dat > trilegal0192463869148.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_APR13VW93.dat > trilegal047762238914.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_MAR13.dat > trilegal0516843885468.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_OCT13.dat > trilegal0221450192595.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_APR13VW93.dat > trilegal066049060619.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_MAR13.dat > trilegal0585158495063.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_OCT13.dat > trilegal0526012716489.msg 
+
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code/main -f /home/rosenfield/research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat -a -l /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_galinp.dat /home/rosenfield/research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88_2mass_CAF09_S_APR13VW93.dat > trilegal0168518747909.msg 
+
+INFO:root:done.
+INFO:root:start of run

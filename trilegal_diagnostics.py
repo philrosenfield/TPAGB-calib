@@ -1,5 +1,4 @@
-import matplotlib
-matplotlib.use('Agg')
+import ResolvedStellarPops as rsp
 import matplotlib.pyplot as plt
 import fileIO
 import matplotlib.transforms as mtransforms
@@ -10,7 +9,6 @@ except:
 import os
 from optparse import OptionParser
 import itertools
-from subprocess import Popen, PIPE
 import numpy as np
 import shutil
 
@@ -41,7 +39,6 @@ def write_sfh(age, z, ofile):
 
 
 def make_galaxy_input(galaxy_input, sfh_file):
-    import ResolvedStellarPops as rsp
 
     gal_dict_inp = {'photsys': '2mass',
                     'filter1': 'Ks',
@@ -62,42 +59,11 @@ def make_galaxy_input(galaxy_input, sfh_file):
     return
 
 
-def run_trilegal(cmd_input, galaxy_input, output):
-    '''
-    runs trilegal with os.system. might be better with subprocess? Also
-    changes directory to trilegal root, if that's not in a .cshrc need to
-    somehow tell it where to go.
-
-    to do:
-    add -a or any other flag options
-    possibly add the stream output to the end of the output file.
-    '''
-    here = os.getcwd()
-    os.chdir(os.environ['TRILEGAL_ROOT'])
-
-    logger.info('running trilegal...')
-    cmd = 'code/main -f %s -l -a %s %s > %s.msg\n' % (cmd_input, galaxy_input,
-                                                   output, output)
-    print cmd
-    logger.debug(cmd)
-    t = os.system(cmd)
-    logger.info('done.')
-
-    if t != 0:
-        for l in open('%s.msg' % output).readlines():
-            logger.debug(l.strip())
-    else:
-        os.remove('%s.msg' % output)
-
-    os.chdir(here)
-    return
-
-
 def plot_em(ifile, lf_file, cmd_file, age, z, track):
     print 'Plotting', ifile
 
-    logL, mbol, j, k, mcore, co = np.loadtxt(ifile,
-                                             usecols=(4, 10, 11, 13, 14, 15),
+    logL, logTe, mbol, j, k, mcore, co = np.loadtxt(ifile,
+                                             usecols=(4, 5, 10, 11, 13, 14, 15),
                                              unpack=True)
 
     nAGB = (mcore == 0)
@@ -106,6 +72,32 @@ def plot_em(ifile, lf_file, cmd_file, age, z, track):
 
     jk = j - k
     bins = np.arange(-10, 20, 0.1)
+
+    ###### HRD
+    fig = plt.figure()
+    ax = fig.add_axes([.1, .1, .8, .8])
+    ax.plot(logTe[nAGB], logL[nAGB], '.k')
+    ax.plot(logTe[cAGB], logL[cAGB], 'o', mfc='None', ms=5, mew=1, mec=colorC,
+            alpha=0.3)
+    ax.plot(logTe[oAGB], logL[oAGB], 'o', mfc='None', ms=5, mew=1, mec=colorO,
+            alpha=0.3)
+
+    ax.annotate('Age=%.2e' % age, (.7, .1), va='center',
+                xycoords='axes fraction')
+    ax.annotate('Z=%.2e' % z, (.7, .15), va='center',
+                xycoords='axes fraction')
+    ax.annotate('[M/H]=%.2f' % ztomh(z), (.7, .2), va='center',
+                xycoords='axes fraction')
+
+    ax.annotate(r'$%s$' % track.replace('_', '\ '), (.1, .9), va='center',
+                xycoords='axes fraction')
+
+    ax.set_xlim(ax.get_xlim()[::-1])
+    #ax.set_ylim(-3.1, -9.5)
+    ax.set_xlabel(r'$\log\ T_{\\eff}$')
+    ax.set_ylabel(r'$\log L$')
+    plt.savefig(cmd_file.replace('cmd', 'hrd'))
+
 
     ###### CMD
     fig = plt.figure()
@@ -207,8 +199,8 @@ def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
     write_sfh(age, z, sfh_file)
     make_galaxy_input(inp_file, sfh_file)
     track_file = '../cmd_inputfiles/cmd_input_%s.dat' % track_set
-    run_trilegal(track_file, inp_file, out_file)
-
+    rsp.TrilegalUtils.run_trilegal(track_file, inp_file, out_file,
+                                   rmfiles=False)
     plot_em(out_file, lf_file, cmd_file, age, z, track_set)
 
 
@@ -239,24 +231,6 @@ def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False,
             r.get()
 
     return
-
-
-def check_trilegal_run(out_file):
-    with open(out_file, 'r') as f:
-        lines = f.readlines()
-
-    comments = filter(lambda x: x.startswith('#'), lines)
-    if 'TRILEGAL normally terminated' not in comments:
-        print 'TRILEGAL NOT normally terminated, no plots for %s' % out_file
-    try:
-        mcore_ind = comments[0].split().index('Mcore')
-        data = filter(lambda x: not x.startswith('#'), lines)
-        mcore = [float(d.split()[mcore_ind]) for d in data]
-        if np.sum(mcore) == 0.:
-            return 'No AGB stars in %s' % out_file
-    except:
-        pass
-    return 0
 
 
 if __name__ == '__main__':

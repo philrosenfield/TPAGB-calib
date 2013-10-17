@@ -3,11 +3,12 @@ import ResolvedStellarPops as rsp
 import ResolvedStellarPops.convertz as convertz
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator, MultipleLocator, NullFormatter
 import os
 import brewer2mpl
-
-research_path = '/home/rosenfield/'
+from TPAGBparams import research_path
+import scipy.integrate
+import galaxy_tests
+from matplotlib.ticker import MultipleLocator
 '''
 actually for the LMC, you can simplify things a lot:
 
@@ -33,8 +34,8 @@ Let me know in case this is not clear.
 '''
 
 def parse_stefano_sfr():
-    filename = research_path + 'research/TP-AGBcalib/LMC_Calib/SFR_LMC88.dat'
-    outfile = research_path + 'research/TP-AGBcalib/LMC_Calib/tri_SFR_LMC88.dat'
+    filename = research_path + 'TP-AGBcalib/LMC_Calib/SFR_LMC88.dat'
+    outfile = research_path + 'TP-AGBcalib/LMC_Calib/tri_SFR_LMC88.dat'
     data = rsp.fileIO.readfile(filename, col_key_line=1)
 
     to = data['Center_age_bin']
@@ -78,29 +79,30 @@ def parse_stefano_sfr():
             out.write(fmt % (age1p[i], sfr[i], z2[i], zdisp[i]))
             out.write(fmt % (age2a[i], sfr[i], z1[i], zdisp[i]))
             out.write(fmt % (age2p[i], 0.0, z1[i], zdisp[i]))
-        
-    object_mass = np.sum(data['med_MASS']) * 1e6
+
+    mass = data['med_MASS'] * 1e6
+    object_mass = scipy.integrate.simps(mass, to)
 
     return outfile, object_mass
 
 
 def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
-                      overwrite=True):
+                      overwrite=True, extra=''):
 
     if '2mass' in photsys:
         filter1 = 'Ks'
     elif 'ubv' in photsys:
         filter1 = 'K'
 
-    cmd_inputs = [research_path + 'research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat',
-                  research_path + 'research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13.dat',
-                  research_path + 'research/TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat']
+    cmd_inputs = [research_path + 'TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat',
+                  research_path + 'TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_OCT13.dat',
+                  research_path + 'TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat']
     outputs = []
     for cmd_input in cmd_inputs:
         object_sfr_file, object_mass = parse_stefano_sfr()
         galaxy_input = object_sfr_file.replace('.dat','_galinp.dat')
-        output = '%s_%s' % (object_sfr_file.replace('.dat',''),
-                            cmd_input.split('cmd_input_')[1])
+        output = '%s%s_%s' % (object_sfr_file.replace('.dat',''), extra,
+                               cmd_input.split('cmd_input_')[1])
 
         gal_dict_inp = {'photsys': photsys,
                         'filter1': filter1,
@@ -121,7 +123,8 @@ def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
             gal_inp_pars['kind_mag'] = 2
         else:
             gal_inp_pars['kind_mag'] = 3
-            del gal_inp_pars['file_bcspec']
+            if 'file_bcspec' in gal_inp_pars.keys():
+                del gal_inp_pars['file_bcspec']
 
         gal_inp = rsp.fileIO.input_parameters(default_dict=gal_dict)
         gal_inp.add_params(gal_inp_pars)
@@ -139,6 +142,24 @@ def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
 
     return outputs
 
+
+def load_raw_vmc_data():
+    #photom_file = research_path + 'TP-AGBcalib/LMC_Calib/photom.dat'
+    #photom = rsp.fileIO.readfile(photom_file)
+    results_file = research_path + 'TP-AGBcalib/LMC_Calib/photom_model.dat'
+    dtype = [('RAJ2000', '<f8'), ('DEJ2000', '<f8'), ('recno', '<f8'),
+             ('Seq', '<f8'), ('tau', '<f8'), ('logML', '<f8'), ('Lsun', '<f8'),
+             ('Cl', '|S4'), ('Q', '|S1'), ('P', '|S1'), ('SED', '|S3'),
+             ('recno1', '<f8'), ('Seq1', '<f8'), ('Umag', '<f8'),
+             ('Bmag', '<f8'), ('Vmag', '<f8'), ('Imag', '<f8'),
+             ('YmagV', '<f8'), ('JmagV', '<f8'), ('KsmagV', '<f8'),
+             ('Jmag2', '<f8'), ('Hmag2', '<f8'), ('Ksmag2', '<f8'),
+             ('[3.6]1', '<f8'), ('[3.6]2', '<f8'), ('[4.5]1', '<f8'),
+             ('[4.5]2', '<f8'), ('[5.8]1', '<f8'), ('[5.8]2', '<f8'),
+             ('[8.0]1', '<f8'), ('[8.0]2', '<f8'), ('[24]1', '<f8'),
+             ('[24]2', '<f8'), ('chi2C', '<f8'), ('chi2O', '<f8')] 
+    results = np.genfromtxt(results_file, dtype=dtype)
+    return results
 
 def read_vmc_table(filename):
     dtype = [('DEJ2000d', '<f8'),
@@ -200,10 +221,10 @@ def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
     sgal.all_stages('TPAGB')
     sgal.mix_modelname(sgal.name)
     # http://vizier.cfa.harvard.edu/viz-bin/VizieR?-source=J/A+A/537/A105
-    #vmcagbs = research_path + 'research/TP-AGBcalib/LMC_Calib/VMCAGBS_fmt.dat'
+    #vmcagbs = research_path + 'TP-AGBcalib/LMC_Calib/VMCAGBS_fmt.dat'
     #data = read_vmc_table(vmcagbs)
 
-    vmcagbs = research_path + 'research/TP-AGBcalib/LMC_Calib/VMCAGBS_fmt2.dat'
+    vmcagbs = research_path + 'TP-AGBcalib/LMC_Calib/VMCAGBS_fmt2.dat'
     gal = rsp.Galaxies.galaxy(vmcagbs, filter1='Jmag2', filter2='Ksmag2', hla=False, 
                               angst=False)
     gal.filters = [filter1, filter2]
@@ -245,54 +266,94 @@ def make_plot(output, extra='', photsys='2mass', tpagb_mass_bins=None):
     dm = tpagb_imasses-tpagb_amasses
     ax1.plot(dm, sgal.mag2[sgal.itpagb], '.')
     
-    outfile = outfile.replace('_%s.png' % extra, '_%s_by_mass.png' % extra)
+    outfile = outfile.replace('%s.png' % extra, '%s_by_mass.png' % extra)
     plt.savefig(outfile, dpi=300, bbox_to_inches='tight')
     print 'wrote %s' % outfile
+    return sgal
 
-
-def cslf(tri_outs, filter1, filter2, photsys='2mass', outfile=None):
+def cslf(sgals, outfile=None):
     '''
     A simple CSLF plot.
-    Takes trilegal catalogs (list of strings) and loads them as simgalaxies.
+    Takes a list of rsp.simgalaxy types.
     This takes the mag to be Mbol, and uses the first line of the trilegal
     catalogue to get dmod and Av.
     
     If an outfile is specified, will save fig.
     '''
-    sgals = [rsp.Galaxies.simgalaxy(tri_out, filter1='J', filter2='Ks',
-                                    photsys='2mass') for tri_out in tri_outs]
+    #sgals = [rsp.Galaxies.simgalaxy(tri_out, filter1='J', filter2='Ks',
+    #                                photsys='2mass') for tri_out in tri_outs]
 
     [sgal.load_ic_mstar() for sgal in sgals]
-    
+    bmap = brewer2mpl.get_map('Set1', 'Qualitative', 3)
+    cols = bmap.mpl_colors  
     bins = np.arange(-6.5, -2.5, 0.15)
-    fig, ax = plt.subplots()
-    for sgal in sgals:
-        lab = '$%s$' % sgal.name.split('S_')[1].replace('.dat','')
+
+    fig, ax = plt.subplots(figsize=(8, 8))
+    for i, sgal in enumerate(sgals):
+        model = sgal.name.split('_')[-1].split('.dat')[0]
+        lab = galaxy_tests.translate_model_name(model) + ', $N=%i$' % (len(sgal.icstar))
         Mbol = sgal.data.get_col('mbol') - sgal.data.get_col('m-M0')[0] - sgal.data.get_col('Av')[0]
-        plt.hist(Mbol[sgal.icstar], bins=bins, histtype='step', label=lab)
-    ax.legend()
+        plt.hist(Mbol[sgal.icstar], bins=bins, histtype='step', lw=5-i, color='white')
+        plt.hist(Mbol[sgal.icstar], bins=bins, histtype='step', label=lab, lw=4-i, color=cols[i])
+    ax.legend(frameon=False, prop={'size': 16}, loc=0)
     ax.set_xlim()[::-1]
-    if outfile is None:
-        plt.show()
-    else:
+    ax.set_xlabel('$M_{\\rm bol}$', fontsize=20)
+    ax.set_ylabel('$N_c$', fontsize=20)
+    plt.tick_params(labelsize=16)
+    if outfile is not None:
         plt.savefig(outfile, dpi=300)
     return
 
+def color_mdot_plot(sgals):
+    nmodels = len(sgals)
+    bmap = brewer2mpl.get_map('Set1', 'Qualitative', nmodels)
+    cols = bmap.mpl_colors
+    results = load_raw_vmc_data()
+    data_color = results['Jmag2'] - results['Ksmag2']
+    data_logML = results['logML']
+    data_icstar = np.nonzero(results['Cl'] == 'C')
+    data_imstar = np.nonzero(results['Cl'] == 'O')
+    fig, (axs) = plt.subplots(nrows=nmodels, sharex=True, sharey=True, figsize=(8,8))
+    for i, sgal in enumerate(sgals):
+        model = sgal.name.split('_')[-1].split('.dat')[0]
+        lab = galaxy_tests.translate_model_name(model)
+        logml = sgal.data.get_col('logML')
+        color = sgal.data.get_col('J') - sgal.data.get_col('Ks')
+        axs[i].plot(color[sgal.icstar], logml[sgal.icstar], '.', label=lab, color=cols[i])
+        axs[i].plot(color[sgal.imstar], logml[sgal.imstar], 'x', label=lab, color=cols[i])
+        axs[i].plot(data_color[data_icstar], data_logML[data_icstar], '.', color='k')
+        axs[i].plot(data_color[data_imstar], data_logML[data_imstar], 'x', color='k')
+        axs[i].text(0.85, 0.1, lab, transform=axs[i].transAxes, fontsize=16)
+    
+    axs[1].set_ylabel('$\log \dot{M}\ ({\\rm M_\odot/yr})$', fontsize=20)
+    axs[0].set_ylim(-11, -4)
+    axs[0].yaxis.set_major_locator(MultipleLocator(2))
+    axs[0].yaxis.set_minor_locator(MultipleLocator(.5))
+    axs[0].xaxis.set_minor_locator(MultipleLocator(.2))
+    axs[2].set_xlabel('$J-Ks$', fontsize=20)
+    plt.tick_params(labelsize=16)
+    fig.savefig('mdot_jks.png', dpi=300)
+    return
 
 def main():
     overwrite = True
-    photsyss = ['2mass']
-    for photsys in photsyss:
-        outputs = make_trilegal_sim(loidl=True,
+    loidl = [True, False]
+    photsys = '2mass'
+    extra = ''
+    for i in range(len(loidl)):
+        if loidl is True:
+            extra = '_loidl_%s' % photsys
+        else:
+            extra = '_%s' % photsys
+        outputs = make_trilegal_sim(loidl=loidl[i],
                                     photsys=photsys,
-                                    overwrite=overwrite)
-        extra = '_loidl_%s' % photsys
-        [make_plot(output, extra=extra) for output in outputs]
-        extra = '_%s' % photsys
-        outputs = make_trilegal_sim(photsys=photsys, overwrite=overwrite)
-        [make_plot(output) for output in outputs]
-        cslf(outputs, outfile='cslf%s.png' % extra)
+                                    overwrite=overwrite,
+                                    extra=extra)
 
+        sgals = [make_plot(output, extra=extra) for output in outputs]
+        outfile = os.path.join(os.path.split(output)[0], 'cslf%s.png' % extra)
+        cslf(sgals, outfile=outfile)
+        
 if __name__ == "__main__":
     import pdb
     pdb.set_trace()

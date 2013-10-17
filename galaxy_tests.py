@@ -2275,6 +2275,8 @@ def translate_model_name(model):
         model_name = '$\dot{M}_{G10_b}$'
     elif 'mar13' in model.lower():
         model_name = '$\dot{M}_{G10}$'
+    elif 'oct13' in model.lower():
+        model_name = '$\dot{M}_{M13}$'
     return model_name
 
 
