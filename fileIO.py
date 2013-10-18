@@ -360,7 +360,7 @@ class input_file(object):
         [self.__setattr__(k, v) for k, v in udict.items()]
 
 
-def input_defaults(profile=None):
+def agb_input_defaults(profile=None):
     '''
     the input file should be formatted in this way (comments are optional):
     # Paola's tracks are here:

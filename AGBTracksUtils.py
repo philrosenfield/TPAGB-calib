@@ -7,9 +7,8 @@ import sys
 import numpy as np
 import fileIO
 import graphics
-import matplotlib.pyplot as plt
 import multiprocessing
-
+import ResolvedStellarPops as rsp
 
 def metallicity_from_dir(met):
     if met.endswith('/'):
@@ -24,11 +23,11 @@ def metallicity_from_dir(met):
 def AGB_file_setup(infile):
     
     # Check for Paola's formatted tracks
-    fileIO.ensure_dir(infile.isotrack_dir)
+    rsp.fileIO.ensure_dir(infile.isotrack_dir)
 
     # are we making diagnostic plots, check directory.
     if infile.diagnostic_dir0:
-        fileIO.ensure_dir(os.path.join(infile.diagnostic_dir0,
+        rsp.fileIO.ensure_dir(os.path.join(infile.diagnostic_dir0,
                                        infile.agb_mix,
                                        infile.set_name + '/'))
     else:
@@ -57,7 +56,8 @@ def AGB_file_setup(infile):
                                       infile.set_name)
     os.chdir(infile.working_dir)
     metal_dirs = [m for m in os.listdir(infile.working_dir)
-                  if os.path.isdir(m)]
+                  if os.path.isdir(m) and 'Z' in m]
+
     if infile.metals_subset is not None:
         print 'doing a subset of metallicities'
         metal_dirs = [m for m in metal_dirs
@@ -76,7 +76,7 @@ def multipro_plots(agb_tracks, infile):
         # make diagnostic plots
         graphics.diag_plots(track, infile)    
     return
-    
+
 def make_plots(infile):
     if infile.diagnostic_dir0 is None:
         return 
@@ -216,6 +216,7 @@ def do_everything(infile):
         isofiles.append(isofile_rel_name)
         Ys.append(Y)
         Zs.append(metallicity)
+        graphics.bigplots(agb_tracks, infile)
 
     # make file to link cmd_input to formatted agb tracks
     metfile = fileIO.make_met_file(infile.tracce_file, Zs, Ys, isofiles)
@@ -259,7 +260,7 @@ if __name__ == "__main__":
     except:
         print do_everything.__doc__
     pdb.set_trace()
-    infile = fileIO.input_file(input_file, default_dict=fileIO.input_defaults())
+    infile = rsp.fileIO.input_file(input_file, default_dict=fileIO.agb_input_defaults())
     # Paola's tracks -> trilegal + tests based only on tracks
     if infile.parse_tracks:
         do_everything(infile)
@@ -284,7 +285,7 @@ if __name__ == "__main__":
             GoogleSitesTable.trilegal_diag_table(image_location)
 
     # Scripts to make LF compared to data
-    if hasattr('galaxy_test_inp', infile):
+    if hasattr(infile, 'galaxy_test_inp'):
         gt_kw = {'outdir': infile.galaxy_outdir}
         if infile.google_table:
            gt_kw['make_plots'] = True
