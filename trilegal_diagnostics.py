@@ -123,7 +123,7 @@ def plot_em(ifile, lf_file, cmd_file, age, z, track):
     ax.set_xlabel(r'$J-K$')
     ax.set_ylabel(r'$K$')
     plt.savefig(cmd_file)
-
+    plt.close()
     ###### LF
     fig = plt.figure()
 
@@ -179,7 +179,7 @@ def plot_em(ifile, lf_file, cmd_file, age, z, track):
     fig.subplots_adjust(left=.1, bottom=None, right=0.98, top=None,
                         wspace=0, hspace=0)
     plt.savefig(lf_file)
-
+    plt.close()
 
 def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
     sfh_file = '%s/sfh_Z%.2e_A%.2e.dat' % (sfh_dir, z, age)
@@ -218,6 +218,7 @@ def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False,
     if multi is False:        
         for age, z in itertools.product(sim_age, sim_z):
             run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir)
+            plt.close('all')
     else:
         pool = multiprocessing.Pool()
         res = []

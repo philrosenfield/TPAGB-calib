@@ -21,6 +21,10 @@ def metallicity_from_dir(met):
 
 
 def AGB_file_setup(infile):
+    '''
+    Sets up files and directories for TPAGB parsing.
+    '''
+    infile.home = os.getcwd()
     
     # Check for Paola's formatted tracks
     rsp.fileIO.ensure_dir(infile.isotrack_dir)
@@ -28,8 +32,8 @@ def AGB_file_setup(infile):
     # are we making diagnostic plots, check directory.
     if infile.diagnostic_dir0:
         rsp.fileIO.ensure_dir(os.path.join(infile.diagnostic_dir0,
-                                       infile.agb_mix,
-                                       infile.set_name + '/'))
+                                           infile.agb_mix,
+                                           infile.set_name + '/'))
     else:
         print 'not making diagnostic plots'
 
@@ -135,8 +139,6 @@ def do_everything(infile):
        b. cmd_input_file that links to the track file
           goes here trilegal_1.3/cmd_input_[mix]_[set].dat
     '''
-    infile.home = os.getcwd()
-
     # set up file names and directories, cd to paola's tracks.
     AGB_file_setup(infile)
 
@@ -151,7 +153,7 @@ def do_everything(infile):
             diagnostic_dir = os.path.join(infile.diagnostic_dir0,
                                           infile.agb_mix,
                                           infile.set_name,
-                                          metal_dir) + '/'
+                                          metal_dir)  + '/'
             fileIO.ensure_dir(diagnostic_dir)
             # update infile class to place plots in this directory
             infile.diagnostic_dir = diagnostic_dir
@@ -190,9 +192,11 @@ def do_everything(infile):
             # make iso file for trilegal
             if out is not None:
                 fileIO.make_iso_file(track, out)
+
             # save information for lifetime file.
             lifetime_datum = np.array([metallicity, track.mass, track.tauc,
                                        track.taum])
+
             lifetime_data = np.append(lifetime_data, lifetime_datum)
 
             # make diagnostic plots
@@ -216,7 +220,7 @@ def do_everything(infile):
         isofiles.append(isofile_rel_name)
         Ys.append(Y)
         Zs.append(metallicity)
-        graphics.bigplots(agb_tracks, infile)
+        #graphics.bigplots(agb_tracks, infile)
 
     # make file to link cmd_input to formatted agb tracks
     metfile = fileIO.make_met_file(infile.tracce_file, Zs, Ys, isofiles)
@@ -225,9 +229,9 @@ def do_everything(infile):
 
     # make cmd_input file
     cmd_in_kw = {'cmd_input_file': infile.cmd_input_file,
-                'file_tpagb': infile.tracce_file_rel,
-                'mass_loss': infile.mass_loss,
-                'file_isotrack': infile.file_isotrack}
+                 'file_tpagb': infile.tracce_file_rel,
+                 'mass_loss': infile.mass_loss,
+                 'file_isotrack': infile.file_isotrack}
     cmd_input = fileIO.write_cmd_input_file(**cmd_in_kw)
 
     if infile.make_imfr is True and infile.diagnostic_dir0 is not None:
@@ -277,7 +281,7 @@ if __name__ == "__main__":
         sfh_dir = os.path.join(tri_dir, 'sfh')
         plt_dir = os.path.join(diagnostic_dir, agb_mix, set_name, track_set)
         trilegal_diagnostics.main(track_set, sfh_dir, tri_dir, plt_dir,
-                                  over_write=infile.over_write)
+                                  over_write=infile.over_write, multi=False)
         if infile.google_table:
             image_location = infile.image_location
             if not image_location:

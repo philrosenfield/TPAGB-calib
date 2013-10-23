@@ -251,28 +251,6 @@ def get_numeric_data(filename):
     return AGBTracks(data, col_keys, filename)
 
 
-def get_numeric_data_not_yet_working(filename):
-    f = open(filename, 'r')
-    lines = f.readlines()
-    f.close()
-    col_keys = lines[0].replace('#', '').replace('lg', '').replace('*', 'star').replace('/','')
-    col_keys = col_keys.strip().split()
-    ncols = len(col_keys)
-    nrows = len(lines) - 1
-    dtype = [(c, '<f8') for c in col_keys]
-    data = np.ndarray((nrows,), dtype=dtype)
-    for i in range(len(lines)-1):
-        if lines[i].startswith('#'):
-            continue
-        try:
-            data[i] = np.array(map(float,lines[i].strip().split()))
-        except ValueError:
-            err = sys.exc_info()[1]
-            tb = sys.exc_info()[-1]
-            print ("%s %s"%(tb.tb_frame.f_code.co_filename, err))
-    return AGBTracks(data, col_keys, filename)
-
-
 def make_iso_file(track, isofile):
     '''
     this only writes the quiescent lines and the first line.
