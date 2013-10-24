@@ -3,7 +3,6 @@ logging.basicConfig(filename='galaxy_tests.log',level=logging.DEBUG)
 logger = logging.getLogger()
 logger.info('start of run')
 import ResolvedStellarPops as rsp
-import LFUtils
 import os
 import sys
 import difflib
@@ -20,6 +19,29 @@ import brewer2mpl
 from TPAGBparams import research_path
 import multiprocessing
 angst_data = rsp.angst_tables.AngstTables()
+
+
+def read_mettable():
+    tab = os.path.join(table_src, 'IR_NAGBs.dat')
+    dtype = [('fitstable', '|S46'),
+             ('IR_TRGB', '<f8'),
+
+
+             ('N_AGB', '<f8'),
+             ('logOH', '<f8'),
+             ('OHerr', '<f8'),
+             ('Z', '<f8'),
+             ('FeH', '<f8'),
+             ('Ttype', '<f8')]
+    table = np.genfromtxt(tab, dtype=dtype, delimiter=',')
+    return table
+
+
+def get_key_fromtable(ID, key):
+    tab = read_mettable()
+    names = list(tab['fitstable'])
+    i, = [names.index(i) for i in names if ID in i]
+    return tab[key][i]
 
 def double_gaussian_optical_cmd_boxes(target=None):
     dg_box = {'DDO82': [0.6, 1.],
@@ -624,7 +646,7 @@ def load_galaxy(ID, band='ir'):
     gal_kw = {'hla': False, 'photsys': 'wfc3snap', 'angst': True,
               'filetype': filetype, 'band': band}
 
-    gal_kw['z'] = LFUtils.get_key_fromtable(ID, 'Z')
+    gal_kw['z'] = get_key_fromtable(ID, 'Z')
 
     gal = rsp.Galaxies.galaxy(fitsname, **gal_kw)
 
@@ -686,7 +708,7 @@ def compare_metallicities():
     IDs = all_targets()
     zs = match_metallicities(IDs)
     for ID in IDs:
-        zs[ID]['zmeas'] = LFUtils.get_key_fromtable(ID, 'Z')
+        zs[ID]['zmeas'] = get_key_fromtable(ID, 'Z')
 
     for id, zdict in sorted(zs.items(), key=lambda(k, v): (v['avez'], k)):
         print '%s %.4f %.4f' % (id, zdict['avez'], zdict['zmeas'])

@@ -158,7 +158,7 @@ def do_everything(infile):
             # update infile class to place plots in this directory
             infile.diagnostic_dir = diagnostic_dir
 
-        agb_tracks = fileIO.get_files(os.path.join(infile.working_dir,
+        agb_tracks = rsp.fileIO.get_files(os.path.join(infile.working_dir,
                                                    metal_dir),
                                                    infile.track_identifier)
         agb_tracks.sort()

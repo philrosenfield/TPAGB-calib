@@ -1,7 +1,6 @@
 import ResolvedStellarPops as rsp
 import numpy as np
 import galaxy_tests
-import LFUtils
 import os
 import fileIO
 import matplotlib.pyplot as plt
@@ -277,10 +276,10 @@ def make_table(targets=None, deluxe=True):
         filters = [key for key in datum.keys() if ',' in key]
         datum['filters'] = ','.join(np.unique(','.join(filters).split(',')))
         datum['Av'] = datum[filters[0]]['Av'] 
-        datum['logoh'] = LFUtils.get_key_fromtable(target, 'logOH')
-        datum['logoherr'] = LFUtils.get_key_fromtable(target, 'OHerr')
-        #datum['Z'] = LFUtils.get_key_fromtable(target, 'Z')
-        datum['nagb'] = LFUtils.get_key_fromtable(target, 'N_AGB')
+        datum['logoh'] = galaxy_tests.get_key_fromtable(target, 'logOH')
+        datum['logoherr'] = galaxy_tests.get_key_fromtable(target, 'OHerr')
+        #datum['Z'] = galaxy_tests.get_key_fromtable(target, 'Z')
+        datum['nagb'] = galaxy_tests.get_key_fromtable(target, 'N_AGB')
         datum['nrgb'] = '...'
         datum['ratio'] = '...'
         fmt += line % datum

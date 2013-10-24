@@ -274,7 +274,8 @@ def make_iso_file(track, isofile):
 
     # cull agb track to quiescent, write out.
     rows = [q for q in track.Qs]  # cutting the final point for the file.
-    rows[0] += 1
+    # I don't know why this is here.
+    #rows[0] += 1
 
     keys = track.key_dict.keys()
     vals = track.key_dict.values()
@@ -302,7 +303,7 @@ def make_iso_file(track, isofile):
             try:
                 slope = 1. / track.slopes[list(rows).index(r)]
             except:
-                print 'fucked',track.firstname
+                print 'fucked', track.firstname
                 graphics.hrd_slopes(track)
         try:
             isofile.write(fmt % (row['ageyr'], row['L_star'], row['T_star'],
@@ -312,7 +313,7 @@ def make_iso_file(track, isofile):
         except IndexError:
             print list(rows).index(r)
             print len(rows), len(track.slopes)
-            print 1. / slopes[list(rows).index(r)]
+            print 1. / slope[list(rows).index(r)]
     return
 
 
