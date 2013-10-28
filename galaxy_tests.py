@@ -16,7 +16,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 from pprint import pprint
 import brewer2mpl
-from TPAGBparams import research_path
+from TPAGBparams import research_path, table_src
 import multiprocessing
 angst_data = rsp.angst_tables.AngstTables()
 
@@ -43,6 +43,7 @@ def get_key_fromtable(ID, key):
     i, = [names.index(i) for i in names if ID in i]
     return tab[key][i]
 
+
 def double_gaussian_optical_cmd_boxes(target=None):
     dg_box = {'DDO82': [0.6, 1.],
               'IC2574-SGS': [1., 1.8],
@@ -61,6 +62,7 @@ def gaussian(x, p0, p1, p2):
     gaussian(arr,p): p[0] = norm, p[1] = mean, p[2]=sigma
     '''
     return p0 * np.exp( -1 * (x - p1) ** 2 / (2 * p2 ** 2))
+
 
 def opt_cmd_contamination(target):
     gal = load_galaxy(target, band=band)
@@ -158,6 +160,7 @@ def opt_cmd_contamination(target):
         
     
     '''
+
     
 def cmd_contamination(targets, band='ir', dcol=0.02, dmag=0.2, thresh=5):
     '''
@@ -217,6 +220,7 @@ def cmd_contamination(targets, band='ir', dcol=0.02, dmag=0.2, thresh=5):
                           diag_plot=True, ax=ax, mag=np.mean([u, l]))
         out.write('%.3f %.3f %.3f \n' % (u, linr/float(np.sum(mag_hist_right)), rinl/float(np.sum(mag_hist_left))))
     out.close()
+
 
 def HeB_contamination(color_left, mag_hist_left, color_right, mag_hist_right,
                       diag_plot=False, ax=None, mag=0):
@@ -339,8 +343,10 @@ def HeB_contamination(color_left, mag_hist_left, color_right, mag_hist_right,
 
 
 def get_imf(target):
-    filename = research_path + 'code/TPAGB-calib/best_fits_from_match_runs.dat'
-    dtype = [('ID', '|S5'), ('Galaxy', '|S14'), ('filter1', '|S5'), ('filter2', '|S5'), ('Av', '<f8'), ('IMF', '<f8'), ('dmod', '<f8'), ('dlogZ', '<f8')]
+    filename = os.path.join(table_src, 'best_fits_from_match_runs.dat')
+    dtype = [('ID', '|S5'), ('Galaxy', '|S14'), ('filter1', '|S5'),
+             ('filter2', '|S5'), ('Av', '<f8'), ('IMF', '<f8'),
+             ('dmod', '<f8'), ('dlogZ', '<f8')]
     data = np.genfromtxt(filename, dtype=dtype)
     imf, = data['IMF'][np.nonzero(data['Galaxy']==target)]
     if imf == 1.30:
@@ -424,13 +430,13 @@ def plot_opt_hess():
 
 
 def multi_galaxy_hess(targets=None, split_by_color=False, ax=None, imshow_kw={},
-                      make_hess=False, band='ir'):
+                      make_hess=False, band='ir', fits_src='default'):
     if ax is None:
         fig, ax = plt.subplots()
 
     targets = load_targets(targets)
     # load galaxies class
-    gals = rsp.Galaxies.galaxies([load_galaxy(t, band=band) for t in targets])
+    gals = rsp.Galaxies.galaxies([load_galaxy(t, band=band, fits_src=fits_src) for t in targets])
     # combine all galaxies
     gals.squish('Color', 'Mag2', 'Trgb')
 
@@ -630,20 +636,29 @@ def tag_cmds(IDs):
     return
 
 
-def load_galaxy(ID, band='ir'):
+def load_galaxy(ID, band='ir', fits_src='default'):
     '''
     '''
-    fits_src = os.path.join(snap_src, 'data', 'galaxies')
+    if fits_src == 'default':
+        fits_src = os.path.join(snap_src, 'data', 'galaxies')
+
     if band is None:
         fits_src = os.path.join(snap_src, 'data', 'opt_ir_matched_v2')
+
     fitsname = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID)
-    if len(fitsname) > 1:
+    hla = False
+    if len(fitsname) == 0:
+        fitsname = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID.lower())
+        hla = True
+
+    if band == 'opt':
         filetype = 'fitstable'
     else:
         filetype = 'agbsnap'
+
     fitsname = ir_or_opt_file(fitsname, band=band)
 
-    gal_kw = {'hla': False, 'photsys': 'wfc3snap', 'angst': True,
+    gal_kw = {'hla': hla, 'photsys': 'wfc3snap', 'angst': True,
               'filetype': filetype, 'band': band}
 
     gal_kw['z'] = get_key_fromtable(ID, 'Z')
@@ -699,8 +714,9 @@ def get_fake_files(ID, band=None):
     return fake_file
 
 
-def get_sfr_file(ID):
-    sfr_dir = os.path.join(snap_src, 'data', 'sfh')
+def get_sfr_file(ID, sfr_dir='default'):
+    if sfr_dir == 'default':
+        sfr_dir = os.path.join(snap_src, 'data', 'sfh')
     return rsp.fileIO.get_files(sfr_dir, '*%s*' % ID)[0]
 
 
@@ -714,7 +730,7 @@ def compare_metallicities():
         print '%s %.4f %.4f' % (id, zdict['avez'], zdict['zmeas'])
 
 
-def setup_trilegal(gal, model, object_mass=5e9):
+def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default'):
     '''
     Sets up files for trilegal simulations (same files that will be overwritten
         in a loop).
@@ -745,13 +761,12 @@ def setup_trilegal(gal, model, object_mass=5e9):
     agb_model = model.replace('cmd_input_', '').replace('.dat', '').lower()
 
     object_dist = 10 ** ((5 + gal.dmod) / 5)
-    sfr_file = get_sfr_file(gal.target)
-    file_mag = 'tab_mag_odfnew/tab_mag_%s.dat' % gal.photsys
+    sfr_file = get_sfr_file(gal.target, sfr_dir=sfr_dir)
 
     gal_dict_inp = {'photsys': gal.photsys,
                     'filter1': gal.filter2,
                     'object_mass': object_mass,
-                    'object_sfr_file': get_sfr_file(gal.target)}
+                    'object_sfr_file': sfr_file}
 
     gal_dict = rsp.TrilegalUtils.galaxy_input_dict(**gal_dict_inp)
     gal_inp = rsp.fileIO.input_parameters(default_dict=gal_dict)
@@ -847,7 +862,7 @@ def setup_data_normalization(gal, filt1, filt2, band=None, leo_method=False,
     return verts, ndata_stars
 
 
-def run_make_normalized_simulation(targets, models, band='ir'):
+def run_make_normalized_simulation(targets, models, band='ir', sfr_dir='default'):
     targets = load_targets(targets)
 
     if type(models) == str:
@@ -860,7 +875,7 @@ def run_make_normalized_simulation(targets, models, band='ir'):
             print model
             make_normalized_simulation(gal, model, gal.filter1, gal.filter2,
                                        object_mass=load_sim_masses(gal.target),
-                                       band=band)
+                                       band=band, sfr_dir=sfr_dir)
         
 
 def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
@@ -871,7 +886,8 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
                                leo_method=False, spread_outfile=None,
                                leo_norm=False, leo_ast=False,
                                spread_outfile2=None, trilegal_output=None,
-                               norm_fname=None, use_opt_rgb=False):
+                               norm_fname=None, use_opt_rgb=False,
+                               sfr_dir='default'):
     '''
     Will continue to run trilegal until galaxy is high enough mass to have
     proper normalization.
@@ -941,7 +957,7 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
 
     if run_trilegal is True or trilegal_output is None:
         galaxy_input, trilegal_output, galinp_kw, gal_inp = \
-            setup_trilegal(gal, model, bject_mass=object_mass)
+            setup_trilegal(gal, model, object_mass=object_mass, sfr_dir=sfr_dir)
         if band == 'opt':
             trilegal_output = trilegal_output.replace('.dat', '_opt.dat')
 
@@ -981,7 +997,7 @@ def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
                          (gal.target, model, object_mass, go))
 
             rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input,
-                                           trilegal_output)
+                                           trilegal_output, rmfiles=False)
 
         # load sim galaxy
         sgal = rsp.Galaxies.simgalaxy(trilegal_output, gal.filter1, gal.filter2,
@@ -1049,7 +1065,8 @@ def write_norm_inds(filename, sgal):
 
 
 def load_normalized_simulation(target, model, band=None, input_file=None,
-                               maglims=None, offsets=None, leo_norm=False):
+                               maglims=None, offsets=None, leo_norm=False,
+                               sfr_dir='default'):
 
     gal = load_galaxy(target, band=band)
     sim_file = load_ast_file(gal, model)
@@ -1072,7 +1089,7 @@ def load_normalized_simulation(target, model, band=None, input_file=None,
     sgal = make_normalized_simulation(gal, model, 'gal', 'gal', maglims=maglims,
                                       band=band, offsets=offsets,
                                       run_trilegal=False, leo_norm=leo_norm,
-                                      trilegal_output=sim_file)
+                                      trilegal_output=sim_file, sfr_dir=sfr_dir)
 
     return gal, sgal
 
@@ -2107,7 +2124,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      leo_method=False, leo_norm=False, make_plot=True,
                      xlim=None, ylim=None, xlim2=None, add_boxes=True,
                      color_hist=False,  plot_tpagb=False, use_opt_rgb=False,
-                     **kwargs):
+                     sfr_dir='default', **kwargs):
     smgs = []
     targets = load_targets(targets)
 
@@ -2116,7 +2133,8 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
 
     norm_sim_kw = {'offsets': offsets, 'band': band, 'leo_ast': leo_ast,
                    'run_trilegal': run_trilegal, 'leo_method': leo_method,
-                   'leo_norm': leo_norm, 'use_opt_rgb': use_opt_rgb}
+                   'leo_norm': leo_norm, 'use_opt_rgb': use_opt_rgb,
+                   'sfr_dir': sfr_dir}
 
     if make_plot is True:
         if band == 'ir':
@@ -2474,7 +2492,7 @@ def get_nrgb_from_optical(targets, trgb_offset=1.5):
     return Nrgbs
 
 
-def run_fuck_you_match(targets=None, models=None, band=None, inputs={},
+def run_fuck_you_match(targets=None, models=None, band=None, inputs=None,
                        modelB=None):
     '''
     does the chi2 test for full field, agb region, and not-agb region.
@@ -2485,7 +2503,7 @@ def run_fuck_you_match(targets=None, models=None, band=None, inputs={},
     my results, so I had to write my own (which didn't take long, but
     still)
     '''
-
+    inputs = inputs or {}
     if targets is None:
         targets = inputs['targets']
     if band is None:
@@ -2872,7 +2890,6 @@ def sfh_plots(sfh_loc=None, targets='paper1', make_plot=False,
     plt.savefig('cumsum_sfr.pdf', dpi=300)
     
 
-
 def match_metals(sfh_loc=None, targets=None, make_plot=False,
                  ext='.dat', dan_fmt=False):
     '''
@@ -2906,6 +2923,7 @@ def match_metals(sfh_loc=None, targets=None, make_plot=False,
             ax.plot(a, s)
             ax.set_title(target)
             fig.savefig(target.replace('.dat','_sfh.png'))
+
 
 def agb_logl_age():
     for i in range(len(models)):

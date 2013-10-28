@@ -1,5 +1,5 @@
 # where should everything come from and go
-snap_src    /Users/phil/research/TP-AGBcalib/SNAP
+snap_src    /home/rosenfield/research/TP-AGBcalib/SNAP
 
 # targets, either use all, or set targets (not implemented (leo_overlap, short_list)
 targets     gi10
@@ -20,7 +20,7 @@ filt1       gal
 filt2       gal
 
 # make trilegal simulation
-run_trilegal    False
+run_trilegal    True
 
 # offsets refer to below/above trgb or just set maglims to number and ignore offsets
 maglims     trgb
@@ -36,7 +36,7 @@ leo_norm    False
 leo_method  False
 
 # load ast corrected file:
-renormalize     True
+renormalize     False
 
 debug   True
 
@@ -45,3 +45,4 @@ mc_norm  False
 make_lfs True
 
 use_opt_rgb True
+
