@@ -7,11 +7,9 @@ import os
 import sys
 import difflib
 import numpy as np
-import matplotlib
 
 import matplotlib.pyplot as plt
 import matplotlib.nxutils as nxutils
-from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 from pprint import pprint
