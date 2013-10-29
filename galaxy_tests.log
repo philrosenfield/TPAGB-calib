@@ -64732,3 +64732,123 @@ INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_gi10_rev_old_tracks.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_opt.dat > trilegal0288995211959.msg
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_gi10_rev_old_tracks.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_opt.dat > trilegal0237820813433.msg
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_gi10_rev_old_tracks.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:Trying DDO78 cmd_input_gi10_rev_old_tracks.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_gi10_rev_old_tracks.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_gi10_rev_old_tracks_opt.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: ccmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:Trying DDO78 ccmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f ccmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_ccaf09_s_oct13_opt.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: ccmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:Trying DDO78 ccmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f ccmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_ccaf09_s_oct13_opt.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:DDO78: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 1.500000 below the trgb to 0.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  25.299     ]
+ [ -2.11499977  23.799     ]
+ [  4.54500008  23.799     ]
+ [  4.54500008  25.299     ]
+ [ -2.11499977  25.299     ]]
+INFO:root:data stars in normalization range: 6542
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_oct13_opt.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run

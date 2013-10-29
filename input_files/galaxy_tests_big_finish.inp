@@ -5,7 +5,8 @@ snap_src    /home/rosenfield/research/TP-AGBcalib/SNAP
 targets     gi10
 
 # cmd_input files
-models      cmd_input_gi10_rev_old_tracks.dat
+models      cmd_input_CAF09_S_OCT13.dat
+# cmd_input_gi10_rev_old_tracks.dat
 
 # plot LF
 make_plot   True
