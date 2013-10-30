@@ -265,17 +265,24 @@ if __name__ == "__main__":
         print do_everything.__doc__
     pdb.set_trace()
     infile = rsp.fileIO.input_file(input_file, default_dict=fileIO.agb_input_defaults())
-    # Paola's tracks -> trilegal + tests based only on tracks
-    if infile.parse_tracks:
-        do_everything(infile)
-    
+
     agb_mix = infile.agb_mix
     set_name = infile.set_name
     track_set = '_'.join((agb_mix, set_name))
 
-    diagnostic_dir = infile.diagnostic_dir0
-    # Marco's scripts to run trilegal at age and z
 
+    # Paola's tracks -> trilegal + tests based only on tracks
+    if infile.parse_tracks:
+        do_everything(infile)
+        if infile.examineAGB is True:
+            here = os.getcwd()
+            os.chdir(os.environ['TRILEGAL_ROOT'])
+            os.system('./examine1TP.pl cmd_input_%s_%s.dat > examine1TP_%s_%s.dat' % (agb_mix, set_name,
+                                                                                    agb_mix, set_name))
+            os.chdir(here)
+
+    # Marco's scripts to run trilegal at age and z
+    diagnostic_dir = infile.diagnostic_dir0
     if infile.trilegal_diagnostics and diagnostic_dir:
         tri_dir = os.path.join(diagnostic_dir, 'trilegal_files')
         sfh_dir = os.path.join(tri_dir, 'sfh')

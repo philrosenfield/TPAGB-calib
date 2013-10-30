@@ -19,12 +19,62 @@ import multiprocessing
 angst_data = rsp.angst_tables.AngstTables()
 
 
+class VarySFHs(rsp.match_utils.StarFormationHistories):
+    def __init__(self, galaxy_input, match_sfh_file, outfile_loc='default'):
+        super(VarySFHs, self).__init__(match_sfh_file)
+        self.galaxy_input = galaxy_input
+        if outfile_loc == 'default':
+            self.outfile_loc = '/home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/'
+        rsp.fileIO.ensure_dir(self.outfile_loc)
+
+    def prepare_trilegal_sfr(self, make_many_kw=None):
+        make_many_kw = make_many_kw or {}
+        self.sfr_files = self.make_many_trilegal_sfhs(**make_many_kw)
+
+    def prepare_galaxy_input(self):
+        '''
+        writes the galaxy input file from a previously written template.
+        Simply overwrites the filename.
+        '''
+        self.galaxy_inputs = []
+
+        lines = open(self.galaxy_input).readlines()
+        extra = ' '.join(lines[-3].split(' ')[1:])
+
+        for i, sfr_file in enumerate(self.sfr_files):
+            lines[-3] = ' '.join([self.sfr_files[i], extra])
+            new_out = os.path.join(self.outfile_loc,
+                                   os.path.split(self.galaxy_input)[1].replace('.dat', '%02i.dat' % i))
+            with open(new_out, 'w') as f:
+                f.write(''.join(lines))
+            print 'wrote %s' % new_out
+            self.galaxy_inputs.append(new_out)
+
+    def write_results_table(self, trilgal_output):
+        sgal = rsp.Galaxies.simgalaxy(trilegal_output, filter1='F606W', filter2='F814W')
+        
+
+    def vary_the_SFH(self, cmd_input_file, make_many_kw=None):
+        make_many_kw = make_many_kw or {}
+        self.prepare_trilegal_sfr(make_many_kw=make_many_kw)
+
+        self.prepare_galaxy_input()
+
+        agb_model = cmd_input_file.replace('cmd_input_', '').lower()
+        target = os.path.split(self.galaxy_input)[1].replace('input_', '').replace('.dat', '').lower()
+
+        trilegal_output = os.path.join(self.outfile_loc,
+                                       'output_%s_%s' % (target, agb_model))
+        for galaxy_input in self.galaxy_inputs:
+            rsp.TrilegalUtils.run_trilegal(cmd_input_file, galaxy_input,
+                                           trilegal_output, rmfiles=False,
+                                           dry_run=True)
+            self.write_results_table(trilegal_output)
+
 def read_mettable():
     tab = os.path.join(table_src, 'IR_NAGBs.dat')
     dtype = [('fitstable', '|S46'),
              ('IR_TRGB', '<f8'),
-
-
              ('N_AGB', '<f8'),
              ('logOH', '<f8'),
              ('OHerr', '<f8'),
@@ -62,7 +112,9 @@ def gaussian(x, p0, p1, p2):
     return p0 * np.exp( -1 * (x - p1) ** 2 / (2 * p2 ** 2))
 
 
-def opt_cmd_contamination(target):
+def opt_cmd_contamination(target, band='opt'):
+    import scipy
+    from scipy import curve_fit
     gal = load_galaxy(target, band=band)
     points = np.column_stack((gal.Color, gal.Mag2))
 
@@ -78,6 +130,7 @@ def opt_cmd_contamination(target):
     # Define rheb+rgb boxes
     rheb_rgb_starss = []
     rgb_starss = []
+    fig, ax = plt.subplots()
     for u, l in zip(mag_bins, np.roll(mag_bins,-1))[:-1]:
         verts = np.array([[dg_box[0], l],
                           [dg_box[0], u],
@@ -277,7 +330,7 @@ def HeB_contamination(color_left, mag_hist_left, color_right, mag_hist_right,
     gauss1 = functions.gaussian(color_array, mp_dga.params)
     gauss2 = functions.gaussian(color_array, mp_dgb.params)
     # color separatrion is the intersection of the two gaussians..
-    min_locs = rsp.math_utils.find_peaks(gauss1 + gauss2)['minima_locations']
+    # min_locs = rsp.math_utils.find_peaks(gauss1 + gauss2)['minima_locations']
     auto_color_sep = [] #color_array[min_locs]
     if len(auto_color_sep) == 0:
         auto_color_sep = np.mean([np.max(color_left), np.min(color_right)])
@@ -374,8 +427,8 @@ def plot_opt_hess():
     gals = rsp.Galaxies.galaxies([load_galaxy(t, band='opt') for t in targets])
 
     g606 = gals.select_on_key('filter1','F606W')
-
-    poly_dict = {'DDO82': array([[ 0.6232878 , -2.96601422],
+    '''
+    poly_dict = {'DDO82': np.array([[ 0.6232878 , -2.96601422],
                                  [ 0.74828178, -3.41942444],
                                  [ 0.82520115, -3.82245574],
                                  [ 0.90212052, -4.12472922],
@@ -394,7 +447,7 @@ def plot_opt_hess():
                                    [ 1.18030419, -3.60807   ],
                                    [ 1.14160221, -3.21045407],
                                    [ 1.09515983, -2.62005465]])}
-
+    '''
 
     g606s = rsp.Galaxies.galaxies(g606)
     g606s.squish('Color', 'Mag2', 'Trgb')
@@ -415,7 +468,7 @@ def plot_opt_hess():
     ax.autoscale(False)
     ax.set_xlim(-1, 3)
     ax.set_ylim(0.5, -7)
-    cs = ax.imshow(g606hess[2], **imshow_kw)
+    ax.imshow(g606hess[2], **imshow_kw)
     ax.set_aspect(1./2.)
     ax.set_xlabel('$F606W-F814W$', fontsize=20)
     ax.set_ylabel('$F814W$', fontsize=20)
@@ -728,7 +781,8 @@ def compare_metallicities():
         print '%s %.4f %.4f' % (id, zdict['avez'], zdict['zmeas'])
 
 
-def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default'):
+def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default',
+                   sfr_file=None, outfile_loc='default'):
     '''
     Sets up files for trilegal simulations (same files that will be overwritten
         in a loop).
@@ -756,10 +810,13 @@ def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default'):
     model, agb model. string, e.g: 'cmd_input_CAF09_S_SCS.dat'
 
     '''
+    if outfile_loc == 'default':
+        outfile_loc = snap_src
     agb_model = model.replace('cmd_input_', '').replace('.dat', '').lower()
 
     object_dist = 10 ** ((5 + gal.dmod) / 5)
-    sfr_file = get_sfr_file(gal.target, sfr_dir=sfr_dir)
+    if sfr_file is None:
+        sfr_file = get_sfr_file(gal.target, sfr_dir=sfr_dir)
 
     gal_dict_inp = {'photsys': gal.photsys,
                     'filter1': gal.filter2,
@@ -780,9 +837,9 @@ def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default'):
 
     gal_inp.add_params(galinp_kw)
 
-    galaxy_input = os.path.join(snap_src, 'input', 'input_%s.dat' % gal.target)
+    galaxy_input = os.path.join(outfile_loc, 'input', 'input_%s.dat' % gal.target)
     gal_inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
-    trilegal_output = os.path.join(snap_src, 'output', 'output_%s_%s.dat' %
+    trilegal_output = os.path.join(outfile_loc, 'output', 'output_%s_%s.dat' %
                                    (gal.target, agb_model))
 
     return galaxy_input, trilegal_output, galinp_kw, gal_inp
@@ -874,7 +931,7 @@ def run_make_normalized_simulation(targets, models, band='ir', sfr_dir='default'
             make_normalized_simulation(gal, model, gal.filter1, gal.filter2,
                                        object_mass=load_sim_masses(gal.target),
                                        band=band, sfr_dir=sfr_dir)
-        
+
 
 def make_normalized_simulation(gal, model, filt1, filt2, photsys='wfc3snap',
                                over_write=False, object_mass=5e6,
@@ -1273,8 +1330,8 @@ def targets_z002():
 
 
 def targets_paper1():
-    return np.concatenate([gi10_overlap(), targets_z002()])
     #return ['UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
+    return np.concatenate([gi10_overlap(), targets_z002()])
 
 
 def targets_leo_norm_ok():
@@ -2614,7 +2671,6 @@ def run_match_tests(targets=None, models=None, band=None, inputs={},
                                               match_phot=match_phot)
 
             print target, model, full_chi2, agb_chi2, part_chi2
-            #print target, model, agb_chi2
 
 
 def check_stats():
@@ -2701,11 +2757,6 @@ def check_stats():
     plt.subplots_adjust(bottom=0.2)
     ax.set_ylabel('$\chi^2_{G10}-\chi^2_i$', fontsize=20)
     plt.savefig('chi2_gi10_comp.png', dpi=300)
-    # left: 12
-    # bottom: 22
-    # right: 96
-    # top: 96 
-    # w,hspace: .2 
 
 
 def compare_LFs(smgs):
@@ -2984,9 +3035,9 @@ def agb_lifetimes(models):
         ax.legend(loc=0, frameon=False)
         ax.set_xlim(0, 5)
         ax.set_ylim(0, 7)
+    #ax2.set_ylabel('${\\rm Pre\!-\!Flash\ Core\ Mass\ (M_\odot)}$', fontsize=20)
     fig.savefig('tpagb_lifetime.png', dpi=300)
     fig2.savefig('tpagb_lifetime_bright.png', dpi=300)
-    #ax2.set_ylabel('${\\rm Pre\!-\!Flash\ Core\ Mass\ (M_\odot)}$', fontsize=20)
 
 
 def main(inputfile):

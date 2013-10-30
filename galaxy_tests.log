@@ -64852,3 +64852,816 @@ INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7100.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7101.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7102.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7103.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7104.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7105.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7106.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7107.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7108.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7109.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7110.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7111.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7112.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7113.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7114.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7115.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7116.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7117.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7118.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7119.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7120.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7121.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7122.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7123.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7124.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7125.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7126.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7127.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7128.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7129.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7130.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7131.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7132.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7133.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7134.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7135.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7136.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7137.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7138.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7139.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7140.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7141.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7142.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7143.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7144.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7145.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7146.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7147.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7148.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7149.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7150.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7151.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7152.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7153.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7154.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7155.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7156.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7157.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7158.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7159.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7160.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7161.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7162.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7163.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7164.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7165.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7166.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7167.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7168.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7169.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7170.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7171.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7172.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7173.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7174.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7175.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7176.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7177.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7178.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7179.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7180.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7181.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7182.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7183.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7184.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7185.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7186.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7187.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7188.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7189.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7190.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7191.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7192.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7193.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7194.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7195.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7196.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7197.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7198.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7199.dat output_/home/rosenfield/research/tp-agbcalib/snap/input/ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7100.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7101.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7102.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7103.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7104.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7105.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7106.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7107.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7108.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7109.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7110.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7111.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7112.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7113.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7114.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7115.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7116.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7117.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7118.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7119.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7120.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7121.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7122.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7123.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7124.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7125.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7126.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7127.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7128.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7129.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7130.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7131.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7132.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7133.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7134.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7135.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7136.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7137.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7138.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7139.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7140.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7141.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7142.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7143.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7144.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7145.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7146.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7147.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7148.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7149.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7150.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7151.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7152.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7153.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7154.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7155.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7156.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7157.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7158.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7159.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7160.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7161.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7162.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7163.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7164.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7165.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7166.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7167.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7168.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7169.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7170.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7171.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7172.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7173.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7174.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7175.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7176.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7177.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7178.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7179.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7180.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7181.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7182.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7183.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7184.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7185.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7186.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7187.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7188.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7189.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7190.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7191.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7192.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7193.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7194.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7195.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7196.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7197.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7198.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_parsecCAF09_S12.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/input_DDO7199.dat /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/output_ddo71.dat_parseccaf09_s12.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
