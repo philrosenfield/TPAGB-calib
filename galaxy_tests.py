@@ -28,6 +28,9 @@ class VarySFHs(rsp.match_utils.StarFormationHistories):
         rsp.fileIO.ensure_dir(self.outfile_loc)
 
     def prepare_trilegal_sfr(self, make_many_kw=None):
+        '''
+        a call to make_many_trilegal_sfhs
+        '''
         make_many_kw = make_many_kw or {}
         self.sfr_files = self.make_many_trilegal_sfhs(**make_many_kw)
 
@@ -51,10 +54,68 @@ class VarySFHs(rsp.match_utils.StarFormationHistories):
             self.galaxy_inputs.append(new_out)
 
     def write_results_table(self, trilgal_output):
-        sgal = rsp.Galaxies.simgalaxy(trilegal_output, filter1='F606W', filter2='F814W')
-        
+        pass
 
-    def vary_the_SFH(self, cmd_input_file, make_many_kw=None):
+    def gather_results(self, trilegal_output, target,
+                       filter1='F606W', diag_plots=False):
+        '''
+        Save small part of outputs.
+        Nrgb, Nagb: using verts and trilegal stage number
+        Nagb below trgb (stage numbers only)
+        LF (F814W, F160W) with verts and by stage
+        '''
+        sgal = rsp.Galaxies.simgalaxy(trilegal_output, filter1=filter1,
+                                      filter2='F814W')
+        # ast correction
+        fake_files = get_fake_files(target)
+        rsp.Galaxies.ast_correct_trilegal_sim(sgal, fake_file=fake_files)
+        sgal.load_ast_corrections()
+
+        # need to get normalization...
+        ndata_stars
+        verts = HERE
+        sgal.normalize('rgb', sgal.filter1, sgal.filter2, useasts=True,
+                       by_stage=False, ndata_stars=ndata_stars,
+                       verts=verts)
+        opt_rec = list(set(sgal.rec1) & set(sgal.rec2))
+        nir_rec = list(set(sgal.rec3) & set(sgal.rec4))
+        # with stages
+        sgal.all_stages()
+        #nrgb
+        opt_rgb = list(set(opt_rec) & set(sgal.irgb))
+        nir_rgb = list(set(nir_rec) & set(sgal.irgb))
+
+        #nagb
+        opt_agb = list(set(opt_rec) & set(sgal.itpagb))
+        nir_agb = list(set(nir_rec) & set(sgal.itpagb))
+
+        #nagb below NIR trgb
+        
+        #nagb below OPT trgb
+
+        #save LF in both filters
+
+
+        # with verts
+        # two options, one with ancients only, the other with recent sf.
+        # if ancienct, only do mag cut, keep all colors for rgb/agb separation.
+        # if not ancient -- need robust contamination.
+        #nrgb
+        #nagb
+        # save LF in both figures
+        
+        # title the best fit triout something so as not to write over it,
+        # LF can be rebinned etc with that one.
+
+        if diag_plots is True:
+            sgal.diagnostic_cmd()
+
+
+    def vary_the_SFH(self, cmd_input_file, make_many_kw=None, dry_run=False):
+        '''
+        make the sfhs, make the galaxy inputs, run trilegal. For no trilegal
+        runs, set dry_run True.
+        '''
         make_many_kw = make_many_kw or {}
         self.prepare_trilegal_sfr(make_many_kw=make_many_kw)
 
@@ -68,7 +129,7 @@ class VarySFHs(rsp.match_utils.StarFormationHistories):
         for galaxy_input in self.galaxy_inputs:
             rsp.TrilegalUtils.run_trilegal(cmd_input_file, galaxy_input,
                                            trilegal_output, rmfiles=False,
-                                           dry_run=True)
+                                           dry_run=dry_run)
             self.write_results_table(trilegal_output)
 
 def read_mettable():
@@ -747,6 +808,10 @@ def get_mix_modelname(model):
 
 
 def get_fake_files(ID, band=None):
+    '''
+    returns the fake file for a given ID and band. If band is None, gives
+    both opt and nir.
+    '''
     fake_dir = os.path.join(snap_src, 'data', 'fakes')
     fake_files = rsp.fileIO.get_files(fake_dir, '*%s*' %
                                       ID.replace('C-0', 'C-').replace('C-', 'C'))
@@ -904,7 +969,7 @@ def setup_data_normalization(gal, filt1, filt2, band=None, leo_method=False,
     points = np.column_stack((color, mag2))
     inds, = np.nonzero(nxutils.points_inside_poly(points, verts))
     if use_opt_rgb is True:
-        ndata_stars = get_opt_nrgb(gal.target)
+        ccc
         gal.rgb_norm_inds = ndata_stars
     else:
         gal.rgb_norm_inds = list(set(rgb_norm) & set(inds))

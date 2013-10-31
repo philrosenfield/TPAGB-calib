@@ -223,7 +223,7 @@ def do_everything(infile):
         #graphics.bigplots(agb_tracks, infile)
 
     # make file to link cmd_input to formatted agb tracks
-    metfile = fileIO.make_met_file(infile.tracce_file, Zs, Ys, isofiles)
+    fileIO.make_met_file(infile.tracce_file, Zs, Ys, isofiles)
 
     fileIO.make_local_copy(infile.tracce_file, dest=infile.make_copy)
 
@@ -232,7 +232,7 @@ def do_everything(infile):
                  'file_tpagb': infile.tracce_file_rel,
                  'mass_loss': infile.mass_loss,
                  'file_isotrack': infile.file_isotrack}
-    cmd_input = fileIO.write_cmd_input_file(**cmd_in_kw)
+    fileIO.write_cmd_input_file(**cmd_in_kw)
 
     if infile.make_imfr is True and infile.diagnostic_dir0 is not None:
         ifmr_file = os.path.join(infile.diagnostic_dir0, infile.agb_mix,
@@ -257,6 +257,28 @@ def do_everything(infile):
     os.chdir(infile.home)
     return infile.cmd_input_file
 
+def examine_1TP(agb_mix, set_name):
+    here = os.getcwd()
+    os.chdir(os.environ['TRILEGAL_ROOT'])
+    outfile = 'examine1TP_%s_%s.dat' % (agb_mix, set_name)
+    infile = 'cmd_input_%s_%s.dat' % (agb_mix, set_name)
+    os.system('./examine1TP.pl %s > %s' % (infile, outfile))
+    lines = open(outfile, 'r').readlines()
+    warns = [l for l in lines if 'Warning' in l]
+    print 'Found %i warnings' % len(warns)
+    print warns
+
+    data = np.array([l for l in lines if l.startswith('Z')])
+    nind = [i for i,l in enumerate(data) if not 'COLIBRI' in l]
+    mass = np.array([m.strip().split()[3] for m in data], dtype=float)
+    inds, = np.nonzero((mass>0.55) & (mass < 5.))
+    missing = list(set(nind) & set(inds))
+    print 'Missing TPAGB Tracks:'
+    for i in missing:
+        if len(data[i].split()) < len(data[i-1].split()):
+            print data[i].strip()
+
+    os.chdir(here)
 
 if __name__ == "__main__":
     try:
@@ -275,11 +297,7 @@ if __name__ == "__main__":
     if infile.parse_tracks:
         do_everything(infile)
         if infile.examineAGB is True:
-            here = os.getcwd()
-            os.chdir(os.environ['TRILEGAL_ROOT'])
-            os.system('./examine1TP.pl cmd_input_%s_%s.dat > examine1TP_%s_%s.dat' % (agb_mix, set_name,
-                                                                                    agb_mix, set_name))
-            os.chdir(here)
+            examine_1TP(agb_mix, set_name)
 
     # Marco's scripts to run trilegal at age and z
     diagnostic_dir = infile.diagnostic_dir0
