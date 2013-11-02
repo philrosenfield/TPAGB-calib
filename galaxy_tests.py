@@ -14,18 +14,135 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 from pprint import pprint
 import brewer2mpl
-from TPAGBparams import research_path, table_src
+from TPAGBparams import research_path, table_src, snap_src
 import multiprocessing
 angst_data = rsp.angst_tables.AngstTables()
 
 
-class VarySFHs(rsp.match_utils.StarFormationHistories):
-    def __init__(self, galaxy_input, match_sfh_file, outfile_loc='default'):
+def gi10_overlap():
+    return ['DDO78', 'DDO71', 'SCL-DE1']
+
+def ancients():
+    return ['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'KDG73',
+            'NGC404-DEEP', 'SCL-DE1']
+
+def all_targets():
+    return ['SCL-DE1',
+            'DDO78',
+            'DDO71',
+            'NGC7793-HALO-6',
+            'NGC300-WIDE1',
+            'NGC3077-PHOENIX',
+            'NGC2403-DEEP',
+            'NGC2403-HALO-6',
+            'UGC-5139',
+            'DDO82',
+            'IC2574-SGS',
+            'UGC4305-1',
+            'UGC4305-2',
+            'NGC4163',
+            'UGC8508',
+            'UGC-04459',
+            'NGC3741',
+            'UGCA292',
+            'HS117',
+            'KDG73',
+            'KKH37',
+            'NGC2976-DEEP']
+
+
+def short_list():
+    return['DDO82', 'NGC2403-HALO-6', 'NGC2976-DEEP', 'NGC4163',
+           'NGC7793-HALO-6', 'UGC8508', 'UGCA292']
+
+
+def targets_z002():
+    return ['DDO82', 'IC2574-SGS', 'UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
+
+
+def targets_paper1():
+    #return ['UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
+    return np.concatenate([gi10_overlap(), targets_z002()])
+
+
+def targets_leo_norm_ok():
+    '''
+    targets that don't have MS to cut out, might as well use the whole
+    RGB
+    '''
+    return np.concatenate([gi10_overlap(), ['DDO82', 'NGC4163', 'UGC8508']])
+
+class AncientGalaxies(object):
+    def __init__(self):
+        pass
+
+    def write_trgb_table(self, targets='ancients', offset=2):
+        '''
+        writes the trgb and number of stars within 2 mags of trgb
+        '''
+        if targets == 'ancients':
+            tstring = targets
+            targets = ancients()
+        fits_srcs = [snap_src + '/data/angst_no_trim',
+                     'default']
+        gal_dict = {}
+        for i, band in enumerate(['opt', 'ir']):
+            print band
+            gals = rsp.Galaxies.galaxies([load_galaxy(t, band=band,
+                                                      fits_src=fits_srcs[i])
+                                          for t in targets])
+            for gal in gals.galaxies:
+                if 'ngc404-deep' == gal.target:
+                    gal.target = 'ngc404'
+                else:
+                    gal.target = gal.target.lower()
+                # more complex? Add color information or verts to the
+                # stars in region call.
+                ntrgb = len(gal.stars_in_region(gal.mag2, gal.trgb + offset,
+                                                gal.trgb))
+                nagb = len(gal.stars_in_region(gal.mag2, gal.trgb, -999.))
+                gdict = {'%s_rgb' % band: gal.trgb,
+                         'n%s_rgb' % band: ntrgb,
+                         'n%s_agb' % band: nagb}
+                try:
+                    gal_dict[gal.target].update(gdict)
+                except KeyError:
+                    gal_dict[gal.target] = gdict
+
+        fmt = '%(target)s %(opt_rgb).2f %(nopt_rgb)i %(nopt_agb)i %(ir_rgb).2f %(nir_rgb)i %(nir_agb)i \n'
+        outfile = os.path.join(table_src, '%s_galaxies_%i_mag_below.dat' %
+                              (tstring, offset))
+
+        with open(outfile, 'w') as out:
+            out.write('# target opt_rgb nopt_rgb nopt_agb ir_rgb nir_rgb nir_agb \n')
+            for k, v in gal_dict.items():
+                gal_dict[k]['target'] = k
+                out.write(fmt % gal_dict[k])
+        print 'wrote %s' % outfile
+
+    def read_trgb_table(self, table_name):
+        dtype = [('target', '|S16'), ('opt_rgb', '<f8'), ('nopt_rgb', '<f8'),
+                 ('nopt_agb', '<f8'), ('ir_rgb', '<f8'), ('nir_rgb', '<f8'),
+                 ('nir_agb', '<f8')]
+        data = np.genfromtxt(table_name, dtype=dtype)
+        self.data = data.view(np.recarray)
+
+class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
+    def __init__(self, galaxy_input, match_sfh_file, outfile_loc='default',
+                 table_file='default'):
         super(VarySFHs, self).__init__(match_sfh_file)
         self.galaxy_input = galaxy_input
         if outfile_loc == 'default':
             self.outfile_loc = '/home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/'
         rsp.fileIO.ensure_dir(self.outfile_loc)
+
+        if table_file is 'default':
+            table_file = os.path.join(table_src,
+                                      'ancients_galaxies_2_mag_below.dat')
+        # else:
+        # maybe write one?
+        self.ags = AncientGalaxies()
+        self.ags.read_trgb_table(table_file)
 
     def prepare_trilegal_sfr(self, make_many_kw=None):
         '''
@@ -53,10 +170,89 @@ class VarySFHs(rsp.match_utils.StarFormationHistories):
             print 'wrote %s' % new_out
             self.galaxy_inputs.append(new_out)
 
-    def write_results_table(self, trilgal_output):
+
+    def prepare_outfiles(self):
+        opt_fname = os.path.join(self.outfile_loc,
+                                 '%s_opt_lf.dat' % self.target)
+        ir_fname = os.path.join(self.outfile_loc,
+                                '%s_ir_lf.dat' % self.target)
+        self.opt_lf_file = open(opt_fname, 'a')
+        self.ir_lf_file = open(ir_fname, 'a')
+
+        fmt =  '%(target)s %(nopt_rgb)i %(nopt_agb)i %(nir_rgb)i '
+        fmt += '%(nir_agb)i %(opt_ar_ratio).3f %(ir_ar_ratio).3f '
+        fmt += '%(opt_ar_ratio_err).3f  %(ir_ar_ratio_err).3f \n'
+        narratio_fname = os.path.join(self.outfile_loc,
+                                      '%s_narratio.dat' % self.target)
+        self.narratio_file = open(narratio_fname, 'a')
+        self.narratio_fmt = fmt
+        header = '# target nopt_rgb nopt_agb nir_rgb nir_agb opt_ar_ratio '
+        header += 'ir_ar_ratio opt_ar_ratio_err ir_ar_ratio_err \n'
+        self.narratio_file.write(header)
+        return opt_fname, ir_fname, narratio_fname
+
+    def write_LF(self, opt_rec, ir_rec, opt_file, ir_file):
+        '''
+        writes out the LF to files. opt_file, ir_file can already be
+        file objects.
+        must have attr sgal loaded.
+        opt_rec and ir_rec are indices of sgal f814w f160w.
+        first line is histogram
+        next line is bins[1:]
+        etc.
+        '''
+        opt_mag = self.sgal.data.get_col('F814W')[opt_rec]
+        ir_mag = self.sgal.data.get_col('F814W')[ir_rec]
+
+        opt_hist, opt_bins = hist_it_up(opt_mag)
+        ir_hist, ir_bins = hist_it_up(ir_mag)
+
+        np.savetxt(opt_file, (opt_hist, opt_bins[1:]), fmt='%g')
+        np.savetxt(ir_file, (ir_hist, ir_bins[1:]), fmt='%g')
+        return
+
+    def write_ratio(self, opt_rgb, opt_agb, ir_rgb, ir_agb, out_file):
+        '''
+        write the numbers of stars, the ratio, and the poisson uncertainty in
+        the ratio.
+        see prepare_files for fmt information
+        '''
+
+        nopt_rgb = float(len(opt_rgb))
+        nopt_agb = float(len(opt_agb))
+        nir_rgb = float(len(ir_rgb))
+        nir_agb = float(len(ir_agb))
+        out_dict = {'target': self.target,
+                    'opt_ar_ratio': nopt_agb / nopt_rgb,
+                    'ir_ar_ratio': nir_agb / nir_rgb,
+                    'opt_ar_ratio_err': count_uncert_ratio(nopt_agb, nopt_rgb),
+                    'ir_ar_ratio_err': count_uncert_ratio(nir_agb, nir_rgb),
+                    'nopt_rgb': nopt_rgb,
+                    'nopt_agb': nopt_agb,
+                    'nir_rgb': nir_rgb,
+                    'nir_agb': nir_agb}
+
+        out_file.write(self.narratio_fmt % out_dict)
+
+    def write_scaled_files(self):
         pass
 
-    def gather_results(self, trilegal_output, target,
+    def load_data_for_normalization(self):
+        # need to get normalization...
+        # for ancients, this is just a mag cut, no color cut.
+        self.nopt_rgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                                 self.target, 'nopt_rgb')
+        self.nir_rgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                                self.target, 'nir_rgb')
+        return self.nopt_rgb, self.nir_rgb
+
+    def load_asts(self):
+        fake_files = get_fake_files(self.target.upper())
+        ast_objs = [rsp.Galaxies.artificial_star_tests(f)
+                    for f in fake_files]
+        self.ast_objs = ast_objs
+
+    def gather_results(self, trilegal_output, mc=True,
                        filter1='F606W', diag_plots=False):
         '''
         Save small part of outputs.
@@ -66,52 +262,75 @@ class VarySFHs(rsp.match_utils.StarFormationHistories):
         '''
         sgal = rsp.Galaxies.simgalaxy(trilegal_output, filter1=filter1,
                                       filter2='F814W')
+
+        if not hasattr(self, 'ast_objs'):
+            # should be loaded outside this method if mc is running.
+            self.load_asts()
+
         # ast correction
-        fake_files = get_fake_files(target)
-        rsp.Galaxies.ast_correct_trilegal_sim(sgal, fake_file=fake_files)
+        rsp.Galaxies.ast_correct_trilegal_sim(sgal, asts_obj=self.ast_objs)
         sgal.load_ast_corrections()
 
-        # need to get normalization...
-        ndata_stars
-        verts = HERE
-        sgal.normalize('rgb', sgal.filter1, sgal.filter2, useasts=True,
-                       by_stage=False, ndata_stars=ndata_stars,
-                       verts=verts)
-        opt_rec = list(set(sgal.rec1) & set(sgal.rec2))
-        nir_rec = list(set(sgal.rec3) & set(sgal.rec4))
-        # with stages
-        sgal.all_stages()
-        #nrgb
-        opt_rgb = list(set(opt_rec) & set(sgal.irgb))
-        nir_rgb = list(set(nir_rec) & set(sgal.irgb))
+        # TRGB from table
+        opt_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                            self.target, 'opt_rgb')
+        ir_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                           self.target, 'ir_rgb')
 
-        #nagb
-        opt_agb = list(set(opt_rec) & set(sgal.itpagb))
-        nir_agb = list(set(nir_rec) & set(sgal.itpagb))
+        # Stars in simulated RGB region.
+        sopt_rgb = sgal.stars_in_region(sgal.data.get_col('F814W'),
+                                        opt_trgb + 2, opt_trgb)
+        sir_rgb = sgal.stars_in_region(sgal.data.get_col('F160W'),
+                                       ir_trgb + 1.5, ir_trgb)
 
-        #nagb below NIR trgb
-        
-        #nagb below OPT trgb
+        # Stars in simulated AGB region.
+        sopt_agb = sgal.stars_in_region(sgal.data.get_col('F814W'),
+                                        opt_trgb, -99.)
+        sir_agb = sgal.stars_in_region(sgal.data.get_col('F160W'),
+                                       ir_trgb, -99.)
+
+        # Stars in data RGB region
+        nopt_rgb, nir_rgb = self.load_data_for_normalization()
+
+        # normalization
+        opt_norm = nopt_rgb / float(len(sopt_rgb))
+        sim_norm = nir_rgb / float(len(sir_rgb))
+
+        # random sample the data distribution
+        rands = np.random.random(len(sgal.mag1))
+        opt_ind, = np.nonzero(rands < opt_norm)
+        ir_ind, = np.nonzero(rands < sim_norm)
+
+        # recovered indices include ast corrections and normalization scaling
+        opt_rec = list(set(sgal.rec1) & set(sgal.rec2) & set(opt_ind))
+        ir_rec = list(set(sgal.rec3) & set(sgal.rec4) & set(ir_ind))
+
+        # scaled rgb
+        opt_rgb = list(set(opt_rec) & set(sopt_rgb))
+        ir_rgb = list(set(ir_rec) & set(sir_rgb))
+
+        # scaled agb
+        opt_agb = list(set(opt_rec) & set(sopt_agb))
+        ir_agb = list(set(ir_rec) & set(sir_agb))
+
+        self.sgal = sgal
 
         #save LF in both filters
-
-
-        # with verts
-        # two options, one with ancients only, the other with recent sf.
-        # if ancienct, only do mag cut, keep all colors for rgb/agb separation.
-        # if not ancient -- need robust contamination.
-        #nrgb
-        #nagb
-        # save LF in both figures
-        
-        # title the best fit triout something so as not to write over it,
-        # LF can be rebinned etc with that one.
+        if mc:
+            # only need to save the LF and the ratios.
+            self.write_LF(opt_rec, ir_rec, self.opt_lf_file, self.ir_lf_file)
+            self.write_ratio(opt_rgb, opt_agb, ir_rgb, ir_agb,
+                             self.narratio_file)
+        else:
+            # save scaled files to make full LFs and have choice in binning
+            self.write_scaled_files(opt_rec, ir_rec)
 
         if diag_plots is True:
             sgal.diagnostic_cmd()
 
 
-    def vary_the_SFH(self, cmd_input_file, make_many_kw=None, dry_run=False):
+    def vary_the_SFH(self, cmd_input_file, make_many_kw=None, dry_run=False,
+                     mc=True):
         '''
         make the sfhs, make the galaxy inputs, run trilegal. For no trilegal
         runs, set dry_run True.
@@ -122,15 +341,49 @@ class VarySFHs(rsp.match_utils.StarFormationHistories):
         self.prepare_galaxy_input()
 
         agb_model = cmd_input_file.replace('cmd_input_', '').lower()
-        target = os.path.split(self.galaxy_input)[1].replace('input_', '').replace('.dat', '').lower()
+        target = os.path.split(self.galaxy_input)[1].replace('triinput_', '').replace('.dat', '').lower()
+
+        self.target = target
 
         trilegal_output = os.path.join(self.outfile_loc,
                                        'output_%s_%s' % (target, agb_model))
+
+        self.load_asts()
+
+        opt_fname, ir_fname, narratio_fname = self.prepare_outfiles()
+
         for galaxy_input in self.galaxy_inputs:
             rsp.TrilegalUtils.run_trilegal(cmd_input_file, galaxy_input,
                                            trilegal_output, rmfiles=False,
                                            dry_run=dry_run)
-            self.write_results_table(trilegal_output)
+            self.gather_results(trilegal_output, mc=mc, filter1='F606W')
+
+    def plot_lf_file(self, opt_lf_file, ir_lf_file, target=None):
+        if not hasattr(self, 'target'):
+            self.target = target
+        assert self.target is not None, 'Need target name'
+        opt_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                            self.target, 'opt_rgb')
+        ir_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                           self.target, 'ir_rgb')
+        offset = [0, -1.8]
+        fig, (axs) = plt.subplots(ncols=2)
+        for i, (trgb, lf_file) in enumerate(zip([opt_trgb, ir_trgb],
+                                 [opt_lf_file, ir_lf_file])):
+
+            with open(lf_file, 'r') as lff:
+                lines = [l.strip() for l in lff.readlines()
+                         if not l.startswith('#')]
+
+            hists = [np.array(l.split(), dtype=float) for l in lines[0::2]]
+            binss = [np.array(l.split(), dtype=float) for l in lines[1::2]]
+
+            for hist, bins in zip(hists, binss):
+                if len(hist) != len(bins):
+                    continue
+                axs[i].plot(bins+offset[i], hist, linestyle='steps', color='k', alpha=0.2)
+            axs[i].vlines(trgb, *axs[i].get_ylim(), lw=2, color='darkred')
+        return axs
 
 def read_mettable():
     tab = os.path.join(table_src, 'IR_NAGBs.dat')
@@ -149,6 +402,8 @@ def read_mettable():
 def get_key_fromtable(ID, key):
     tab = read_mettable()
     names = list(tab['fitstable'])
+    if '404-DEEP' in ID:
+        ID = 'NGC404'
     i, = [names.index(i) for i in names if ID in i]
     return tab[key][i]
 
@@ -756,7 +1011,8 @@ def load_galaxy(ID, band='ir', fits_src='default'):
 
     if band is None:
         fits_src = os.path.join(snap_src, 'data', 'opt_ir_matched_v2')
-
+    if '404-DEEP' in ID:
+        ID = 'NGC404'
     fitsname = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID)
     hla = False
     if len(fitsname) == 0:
@@ -767,6 +1023,7 @@ def load_galaxy(ID, band='ir', fits_src='default'):
         filetype = 'fitstable'
     else:
         filetype = 'agbsnap'
+        filetype = 'fitstable'
 
     fitsname = ir_or_opt_file(fitsname, band=band)
 
@@ -789,7 +1046,10 @@ def ir_or_opt_file(filenames, band='ir'):
     if len(filenames) <= 1:
         filename, = filenames
     else:
-        file_ir = [a for a in filenames if 'IR' in a][0]
+        try:
+            file_ir = [a for a in filenames if 'IR' in a][0]
+        except IndexError:
+            print 'looks like no IR fits table'
         try:
             file_opt = [a for a in filenames if not 'IR' in a][0]
         except IndexError:
@@ -969,7 +1229,7 @@ def setup_data_normalization(gal, filt1, filt2, band=None, leo_method=False,
     points = np.column_stack((color, mag2))
     inds, = np.nonzero(nxutils.points_inside_poly(points, verts))
     if use_opt_rgb is True:
-        ccc
+        ndata_stars = get_opt_nrgb(gal.target)
         gal.rgb_norm_inds = ndata_stars
     else:
         gal.rgb_norm_inds = list(set(rgb_norm) & set(inds))
@@ -1354,57 +1614,6 @@ def compare_models():
     [ax.text(i, max(resids.T[i]+0.01), '$%s$' % fyeah['galaxy'][i], fontsize=10) for i in range(len(resids.T))]
     [ax.text(i, min(resids.T[i]-0.01), '$%.4f$' % fyeah['Z'][i], fontsize=10) for i in range(len(resids.T))]
     ax.xaxis.set_major_formatter(NullFormatter()) 
-
-
-def gi10_overlap():
-    return ['DDO78', 'DDO71', 'SCL-DE1']
-
-
-def all_targets():
-    return ['SCL-DE1',
-            'DDO78',
-            'DDO71',
-            'NGC7793-HALO-6',
-            'NGC300-WIDE1',
-            'NGC3077-PHOENIX',
-            'NGC2403-DEEP',
-            'NGC2403-HALO-6',
-            'UGC-5139',
-            'DDO82',
-            'IC2574-SGS',
-            'UGC4305-1',
-            'UGC4305-2',
-            'NGC4163',
-            'UGC8508',
-            'UGC-04459',
-            'NGC3741',
-            'UGCA292',
-            'HS117',
-            'KDG73',
-            'KKH37',
-            'NGC2976-DEEP']
-
-
-def short_list():
-    return['DDO82', 'NGC2403-HALO-6', 'NGC2976-DEEP', 'NGC4163',
-           'NGC7793-HALO-6', 'UGC8508', 'UGCA292']
-
-
-def targets_z002():
-    return ['DDO82', 'IC2574-SGS', 'UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
-
-
-def targets_paper1():
-    #return ['UGC-4305-1', 'UGC-4305-2', 'NGC4163', 'UGC8508']
-    return np.concatenate([gi10_overlap(), targets_z002()])
-
-
-def targets_leo_norm_ok():
-    '''
-    targets that don't have MS to cut out, might as well use the whole
-    RGB
-    '''
-    return np.concatenate([gi10_overlap(), ['DDO82', 'NGC4163', 'UGC8508']])
 
 
 def add_opt_asts_to_ir_asts(targets, models, ast_file=None,
@@ -2168,21 +2377,19 @@ def get_rgb_verts_opt(opt_gal):
         magbright = opt_gal.trgb + .5
         colmin = np.min(opt_gal.color)
         colmax = np.max(opt_gal.color)
-        rgb_verts_opt = np.array([[colmin, magdim],
-                          [colmin, magbright],
-                          [colmax, magbright],
-                          [colmax, magdim],
-                          [colmin, magdim]])       
+        rgb_verts_opt = np.array([[colmin, magdim], [colmin, magbright],
+                                  [colmax, magbright], [colmax, magdim],
+                                  [colmin, magdim]])
     else:
         rgb_Color = rgb_poly_opt[:, 0]
         rgb_Mag2 = rgb_poly_opt[:, 1]
         rgb_Mag1 = rgb_Color + rgb_Mag2
         Mag2mag_kw = {'Av': opt_gal.Av, 'dmod': opt_gal.dmod}
-        rmag1 = rsp.astronomy_utils.Mag2mag(rgb_Mag1, opt_gal.filter1, opt_gal.photsys,
-                                            **Mag2mag_kw)
+        rmag1 = rsp.astronomy_utils.Mag2mag(rgb_Mag1, opt_gal.filter1,
+                                            opt_gal.photsys, **Mag2mag_kw)
 
-        rmag2 = rsp.astronomy_utils.Mag2mag(rgb_Mag2, opt_gal.filter2, opt_gal.photsys,
-                                            **Mag2mag_kw)
+        rmag2 = rsp.astronomy_utils.Mag2mag(rgb_Mag2, opt_gal.filter2,
+                                            opt_gal.photsys, **Mag2mag_kw)
         rgb_color = rmag1 - rmag2
         rgb_verts_opt = np.column_stack([rgb_color, rmag2])
     return rgb_verts_opt
@@ -3197,9 +3404,3 @@ if __name__ == "__main__":
     #           'cmd_input_CAF09_S_APR13VW93.dat', 'cmd_input_CAF09_S_MAR13.dat']
     #opt_rgb_nir_agb_ratio(targets='paper1', models=models, norm_by_ir=True)
     main(sys.argv[1])
-else:
-    global snap_src
-    if 'Linux' in os.uname():
-        snap_src = '/home/phil/research/TP-AGBcalib/SNAP'
-    else:
-        snap_src = research_path + 'SNAP'

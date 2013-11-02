@@ -296,8 +296,8 @@ if __name__ == "__main__":
     # Paola's tracks -> trilegal + tests based only on tracks
     if infile.parse_tracks:
         do_everything(infile)
-        if infile.examineAGB is True:
-            examine_1TP(agb_mix, set_name)
+    if infile.examineAGB is True:
+        examine_1TP(agb_mix, set_name)
 
     # Marco's scripts to run trilegal at age and z
     diagnostic_dir = infile.diagnostic_dir0

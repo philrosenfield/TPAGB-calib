@@ -26,3 +26,8 @@ data_src = os.path.join(snap_src, 'data')
 
 output_src = os.path.join(model_src, 'ast')
 fits_src = os.path.join(data_src, 'galaxies')
+
+for directory in [research_path, tpcalib_dir, snap_src, table_src, plt_dir,
+                  model_src, model_src, data_src, output_src, fits_src]:
+    if not os.path.isdir(directory):
+        print 'Warning. Can not find %s.' % directory
