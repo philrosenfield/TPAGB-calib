@@ -3,6 +3,9 @@ logging.basicConfig(filename='galaxy_tests.log',level=logging.DEBUG)
 logger = logging.getLogger()
 logger.info('start of run')
 import ResolvedStellarPops as rsp
+from ResolvedStellarPops.convertz import convertz
+from mpl_toolkits.axes_grid1 import ImageGrid
+from astroML.stats import binned_statistic_2d
 import os
 import sys
 import difflib
@@ -22,9 +25,11 @@ angst_data = rsp.angst_tables.AngstTables()
 def gi10_overlap():
     return ['DDO78', 'DDO71', 'SCL-DE1']
 
+
 def ancients():
     return ['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'KDG73',
             'NGC404-DEEP', 'SCL-DE1']
+
 
 def all_targets():
     return ['SCL-DE1',
@@ -72,13 +77,15 @@ def targets_leo_norm_ok():
     '''
     return np.concatenate([gi10_overlap(), ['DDO82', 'NGC4163', 'UGC8508']])
 
+
 class AncientGalaxies(object):
     def __init__(self):
         pass
 
-    def write_trgb_table(self, targets='ancients', offset=2):
+    def write_trgb_table(self, targets='ancients', offsets=[2, 1.5]):
         '''
-        writes the trgb and number of stars within 2 mags of trgb
+        writes the trgb and number of stars within offsets (opt, ir) mags of
+        trgb
         '''
         if targets == 'ancients':
             tstring = targets
@@ -98,10 +105,10 @@ class AncientGalaxies(object):
                     gal.target = gal.target.lower()
                 # more complex? Add color information or verts to the
                 # stars in region call.
-                ntrgb = len(gal.stars_in_region(gal.mag2, gal.trgb + offset,
+                ntrgb = len(gal.stars_in_region(gal.mag2, gal.trgb + offsets[i],
                                                 gal.trgb))
-                nagb = len(gal.stars_in_region(gal.mag2, gal.trgb, -999.))
-                gdict = {'%s_rgb' % band: gal.trgb,
+                nagb = len(gal.stars_in_region(gal.mag2, gal.trgb, 99.))
+                gdict = {'%s_trgb' % band: gal.trgb,
                          'n%s_rgb' % band: ntrgb,
                          'n%s_agb' % band: nagb}
                 try:
@@ -109,40 +116,65 @@ class AncientGalaxies(object):
                 except KeyError:
                     gal_dict[gal.target] = gdict
 
-        fmt = '%(target)s %(opt_rgb).2f %(nopt_rgb)i %(nopt_agb)i %(ir_rgb).2f %(nir_rgb)i %(nir_agb)i \n'
-        outfile = os.path.join(table_src, '%s_galaxies_%i_mag_below.dat' %
-                              (tstring, offset))
+        fmt = '%(target)s %(opt_trgb).2f %(nopt_rgb)i %(nopt_agb)i %(ir_trgb).2f %(nir_rgb)i %(nir_agb)i \n'
+        outfile = os.path.join(table_src, '%s_galaxies_%s_mag_below.dat' %
+                              (tstring, '_'.join(map(str, offsets))))
 
         with open(outfile, 'w') as out:
-            out.write('# target opt_rgb nopt_rgb nopt_agb ir_rgb nir_rgb nir_agb \n')
+            out.write('# target opt_trgb nopt_rgb nopt_agb ir_trgb nir_rgb nir_agb \n')
             for k, v in gal_dict.items():
                 gal_dict[k]['target'] = k
                 out.write(fmt % gal_dict[k])
         print 'wrote %s' % outfile
 
     def read_trgb_table(self, table_name):
-        dtype = [('target', '|S16'), ('opt_rgb', '<f8'), ('nopt_rgb', '<f8'),
-                 ('nopt_agb', '<f8'), ('ir_rgb', '<f8'), ('nir_rgb', '<f8'),
+        dtype = [('target', '|S16'), ('opt_trgb', '<f8'), ('nopt_rgb', '<f8'),
+                 ('nopt_agb', '<f8'), ('ir_trgb', '<f8'), ('nir_rgb', '<f8'),
                  ('nir_agb', '<f8')]
         data = np.genfromtxt(table_name, dtype=dtype)
         self.data = data.view(np.recarray)
 
+
 class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
+    '''
+    This class was made to run several variations of the age sfr z zdisp
+    table and save the resulting optical and nir LF, as well as the number of
+    rgb and agb stars in the simulation.
+    To save time, this need to be done first:
+    table_file: Create a table of trgb and nrgb and nagb stars. Currently
+       this is in AncientGalaxies and just takes all the stars within 1.5 or
+       2 mag below trgb. Will not be appropriate for galaxies with recent SF.
+    
+    the main method is vary_the_SFH, which sets up the files, calls
+    StarFormationHistories and calls the other methods to write out the LFs and
+    ratios.
+    '''
     def __init__(self, galaxy_input, match_sfh_file, outfile_loc='default',
-                 table_file='default'):
+                 table_file='default', target=None):
         super(VarySFHs, self).__init__(match_sfh_file)
         self.galaxy_input = galaxy_input
         if outfile_loc == 'default':
-            self.outfile_loc = '/home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec/templates/ddo71/mc/inputs/'
+            self.outfile_loc = snap_src + '/data/sfh_parsec/templates/ddo71/mc/inputs/'
         rsp.fileIO.ensure_dir(self.outfile_loc)
+
+        if target is None:
+            gname = os.path.split(self.galaxy_input)[1]
+            target = gname.split('_')[1].replace('.dat', '').lower()
+        self.target = target
 
         if table_file is 'default':
             table_file = os.path.join(table_src,
-                                      'ancients_galaxies_2_mag_below.dat')
+                                      'ancients_galaxies_2_1.5_mag_below.dat')
+        # hmm better way?
+        self.offsets = [2, 1.5]
         # else:
         # maybe write one?
         self.ags = AncientGalaxies()
         self.ags.read_trgb_table(table_file)
+
+        # load stars in data RGB and AGB region as well as TRGBs.
+        # this is just a call to self.ags.data
+        self.load_data_for_normalization()
 
     def prepare_trilegal_sfr(self, make_many_kw=None):
         '''
@@ -154,7 +186,7 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
     def prepare_galaxy_input(self):
         '''
         writes the galaxy input file from a previously written template.
-        Simply overwrites the filename.
+        simply overwrites the filename line to link to the new sfr file.
         '''
         self.galaxy_inputs = []
 
@@ -170,8 +202,12 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
             print 'wrote %s' % new_out
             self.galaxy_inputs.append(new_out)
 
-
     def prepare_outfiles(self):
+        '''
+        note, all attrs saved are file objects. Probably should have something
+        to not keep adding to the same files on different runs. 
+        '''
+        # LF file
         opt_fname = os.path.join(self.outfile_loc,
                                  '%s_opt_lf.dat' % self.target)
         ir_fname = os.path.join(self.outfile_loc,
@@ -179,17 +215,32 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
         self.opt_lf_file = open(opt_fname, 'a')
         self.ir_lf_file = open(ir_fname, 'a')
 
+        # N agb/rgb ratio file
         fmt =  '%(target)s %(nopt_rgb)i %(nopt_agb)i %(nir_rgb)i '
         fmt += '%(nir_agb)i %(opt_ar_ratio).3f %(ir_ar_ratio).3f '
         fmt += '%(opt_ar_ratio_err).3f  %(ir_ar_ratio_err).3f \n'
-        narratio_fname = os.path.join(self.outfile_loc,
-                                      '%s_narratio.dat' % self.target)
-        self.narratio_file = open(narratio_fname, 'a')
-        self.narratio_fmt = fmt
+        
         header = '# target nopt_rgb nopt_agb nir_rgb nir_agb opt_ar_ratio '
         header += 'ir_ar_ratio opt_ar_ratio_err ir_ar_ratio_err \n'
+        narratio_fname = os.path.join(self.outfile_loc,
+                                      '%s_narratio.dat' % self.target)
+        
+        self.narratio_fmt = fmt
+        self.narratio_file = open(narratio_fname, 'a')
         self.narratio_file.write(header)
+        
+        # mass_met_file
+        omass_met_fname = os.path.join(self.outfile_loc,
+                                      '%s_opt_mass_met.dat' % self.target)
+        imass_met_fname = os.path.join(self.outfile_loc,
+                                      '%s_ir_mass_met.dat' % self.target)
+
+        self.opt_mass_met_file = open(omass_met_fname, 'a')
+        self.ir_mass_met_file = open(imass_met_fname, 'a')
         return opt_fname, ir_fname, narratio_fname
+    
+    def close_files(self):
+        [f.close() for f in self.__dict__.values() if type(f) is file]
 
     def write_LF(self, opt_rec, ir_rec, opt_file, ir_file):
         '''
@@ -201,14 +252,16 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
         next line is bins[1:]
         etc.
         '''
-        opt_mag = self.sgal.data.get_col('F814W')[opt_rec]
-        ir_mag = self.sgal.data.get_col('F814W')[ir_rec]
+        opt_mag = self.sgal.ast_mag2[opt_rec]
+        ir_mag = self.sgal.ast_mag4[ir_rec]
 
-        opt_hist, opt_bins = hist_it_up(opt_mag)
-        ir_hist, ir_bins = hist_it_up(ir_mag)
+        opt_hist, opt_bins = hist_it_up(opt_mag, threash=5)
+        ir_hist, ir_bins = hist_it_up(ir_mag, threash=5)
 
         np.savetxt(opt_file, (opt_hist, opt_bins[1:]), fmt='%g')
         np.savetxt(ir_file, (ir_hist, ir_bins[1:]), fmt='%g')
+
+        print 'wrote %s, %s' % (opt_file.name, ir_file.name)
         return
 
     def write_ratio(self, opt_rgb, opt_agb, ir_rgb, ir_agb, out_file):
@@ -216,8 +269,8 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
         write the numbers of stars, the ratio, and the poisson uncertainty in
         the ratio.
         see prepare_files for fmt information
+        out_file is an opened file object.
         '''
-
         nopt_rgb = float(len(opt_rgb))
         nopt_agb = float(len(opt_agb))
         nir_rgb = float(len(ir_rgb))
@@ -233,17 +286,42 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
                     'nir_agb': nir_agb}
 
         out_file.write(self.narratio_fmt % out_dict)
+        print 'wrote %s' % out_file.name
 
     def write_scaled_files(self):
         pass
 
+    def write_mass_met_file(self):
+        self.sgal.all_stages('TPAGB')
+        opt_inds = np.intersect1d(self.sgal.itpagb, self.sgal.rec)
+        ir_inds = np.intersect1d(self.sgal.itpagb, self.sgal.ir_rec)
+        mag2 = self.sgal.mag2
+        mag4 = self.sgal.data.get_col('F160W')
+        for mag, inds, ofile in zip([mag2, mag4], [opt_inds, ir_inds],
+                                    [self.opt_mass_met_file,
+                                     self.ir_mass_met_file]):
+            mass = self.sgal.data.get_col('m_ini')[inds]
+            mag = mag[inds]
+            mh = self.sgal.data.get_col('[M/H]')[inds]
+            np.savetxt(ofile, (mag, mass, mh), fmt='%g')
+            
+        print 'wrote %s, %s' % (self.opt_mass_met_file.name,
+                                self.ir_mass_met_file.name)
+        
     def load_data_for_normalization(self):
+        '''
+        load the numbers of data rgb and agb stars. The file was already read
+        '''
         # need to get normalization...
         # for ancients, this is just a mag cut, no color cut.
         self.nopt_rgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
                                                  self.target, 'nopt_rgb')
         self.nir_rgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
                                                 self.target, 'nir_rgb')
+        self.opt_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                                self.target, 'opt_trgb')
+        self.ir_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                                self.target, 'ir_trgb')
         return self.nopt_rgb, self.nir_rgb
 
     def load_asts(self):
@@ -252,17 +330,12 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
                     for f in fake_files]
         self.ast_objs = ast_objs
 
-    def gather_results(self, trilegal_output, mc=True,
-                       filter1='F606W', diag_plots=False):
+    def read_trilegal_catalog(self, trilegal_output, filter1='F606W'):
         '''
-        Save small part of outputs.
-        Nrgb, Nagb: using verts and trilegal stage number
-        Nagb below trgb (stage numbers only)
-        LF (F814W, F160W) with verts and by stage
+        reads the trilegal cat and does ast corrections.
         '''
         sgal = rsp.Galaxies.simgalaxy(trilegal_output, filter1=filter1,
-                                      filter2='F814W')
-
+                                           filter2='F814W')
         if not hasattr(self, 'ast_objs'):
             # should be loaded outside this method if mc is running.
             self.load_asts()
@@ -270,54 +343,68 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
         # ast correction
         rsp.Galaxies.ast_correct_trilegal_sim(sgal, asts_obj=self.ast_objs)
         sgal.load_ast_corrections()
+        
+        self.sgal = sgal
 
-        # TRGB from table
-        opt_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
-                                            self.target, 'opt_rgb')
-        ir_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
-                                           self.target, 'ir_rgb')
+    def do_normalization(self, mc=True, filter1='F606W', trilegal_output=None):
+        '''
+        Do the normalization and save small part of outputs.
+        '''
+        if not hasattr(self, 'sgal'):
+            assert trilegal_output is not None, \
+                'need sgal loaded or pass trilegal catalog file name'
+            self.read_trilegal_catalog(trilegal_output, filter1='F606W')
 
-        # Stars in simulated RGB region.
-        sopt_rgb = sgal.stars_in_region(sgal.data.get_col('F814W'),
-                                        opt_trgb + 2, opt_trgb)
-        sir_rgb = sgal.stars_in_region(sgal.data.get_col('F160W'),
-                                       ir_trgb + 1.5, ir_trgb)
+        tget = self.target.upper()
 
-        # Stars in simulated AGB region.
-        sopt_agb = sgal.stars_in_region(sgal.data.get_col('F814W'),
-                                        opt_trgb, -99.)
-        sir_agb = sgal.stars_in_region(sgal.data.get_col('F160W'),
-                                       ir_trgb, -99.)
+        min_opt = angst_data.__getattribute__(tget)['F814W']['50_completeness']
+        min_ir = angst_data.get_snap_50compmag(tget, 'F160W')
 
-        # Stars in data RGB region
-        nopt_rgb, nir_rgb = self.load_data_for_normalization()
+        imag2, = np.nonzero(self.sgal.ast_mag2 < min_opt)
+        imag4, = np.nonzero(self.sgal.ast_mag4 < min_ir)
+
+        mag2 = self.sgal.ast_mag2
+        mag4 = self.sgal.ast_mag4
+
+        # Recovered stars in simulated RGB region.
+        sopt_rgb = self.sgal.stars_in_region(mag2, self.opt_trgb + self.offsets[0],
+                                        self.opt_trgb)
+        sir_rgb = self.sgal.stars_in_region(mag4, self.ir_trgb + self.offsets[1],
+                                       self.ir_trgb)
+
+        # Recovered stars in simulated AGB region.
+        sopt_agb = self.sgal.stars_in_region(mag2, self.opt_trgb, 10.)
+        sir_agb = self.sgal.stars_in_region(mag4, self.ir_trgb, 10.)
 
         # normalization
-        opt_norm = nopt_rgb / float(len(sopt_rgb))
-        sim_norm = nir_rgb / float(len(sir_rgb))
+        opt_norm = self.nopt_rgb / float(len(sopt_rgb))
+        sim_norm = self.nir_rgb / float(len(sir_rgb))
+
+        print opt_norm, sim_norm
 
         # random sample the data distribution
-        rands = np.random.random(len(sgal.mag1))
-        opt_ind, = np.nonzero(rands < opt_norm)
-        ir_ind, = np.nonzero(rands < sim_norm)
+        opt_ind, = np.nonzero(np.random.random(len(self.sgal.ast_mag2)) < opt_norm)
+        ir_ind, = np.nonzero(np.random.random(len(self.sgal.ast_mag4)) < sim_norm)
 
-        # recovered indices include ast corrections and normalization scaling
-        opt_rec = list(set(sgal.rec1) & set(sgal.rec2) & set(opt_ind))
-        ir_rec = list(set(sgal.rec3) & set(sgal.rec4) & set(ir_ind))
+        # scaled: ast + norm
+        opt_rec = list(set(opt_ind) & set(self.sgal.rec) & set(imag2))
+        ir_rec = list(set(ir_ind) & set(self.sgal.ir_rec) & set(imag4))
 
-        # scaled rgb
-        opt_rgb = list(set(opt_rec) & set(sopt_rgb))
-        ir_rgb = list(set(ir_rec) & set(sir_rgb))
+        # scaled rgb: ast + norm + in rgb
+        opt_rgb = list(set(opt_ind) & set(sopt_rgb) & set(self.sgal.rec))
+        ir_rgb = list(set(ir_ind) & set(sir_rgb) & set(self.sgal.ir_rec))
+
+        print len(opt_rgb), self.nopt_rgb
+        print len(ir_rgb), self.nir_rgb
 
         # scaled agb
-        opt_agb = list(set(opt_rec) & set(sopt_agb))
-        ir_agb = list(set(ir_rec) & set(sir_agb))
-
-        self.sgal = sgal
+        opt_agb = list(set(opt_ind) & set(sopt_agb) & set(self.sgal.rec))
+        ir_agb = list(set(ir_ind) & set(sir_agb) & set(self.sgal.ir_rec))
 
         #save LF in both filters
         if mc:
             # only need to save the LF and the ratios.
+            self.write_mass_met_file()
             self.write_LF(opt_rec, ir_rec, self.opt_lf_file, self.ir_lf_file)
             self.write_ratio(opt_rgb, opt_agb, ir_rgb, ir_agb,
                              self.narratio_file)
@@ -325,12 +412,8 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
             # save scaled files to make full LFs and have choice in binning
             self.write_scaled_files(opt_rec, ir_rec)
 
-        if diag_plots is True:
-            sgal.diagnostic_cmd()
-
-
     def vary_the_SFH(self, cmd_input_file, make_many_kw=None, dry_run=False,
-                     mc=True):
+                     mc=True, diag_plots=False):
         '''
         make the sfhs, make the galaxy inputs, run trilegal. For no trilegal
         runs, set dry_run True.
@@ -341,12 +424,8 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
         self.prepare_galaxy_input()
 
         agb_model = cmd_input_file.replace('cmd_input_', '').lower()
-        target = os.path.split(self.galaxy_input)[1].replace('triinput_', '').replace('.dat', '').lower()
-
-        self.target = target
-
-        trilegal_output = os.path.join(self.outfile_loc,
-                                       'output_%s_%s' % (target, agb_model))
+        tname = 'output_%s_%s' % (self.target, agb_model)
+        trilegal_output = os.path.join(self.outfile_loc, tname)
 
         self.load_asts()
 
@@ -356,20 +435,25 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
             rsp.TrilegalUtils.run_trilegal(cmd_input_file, galaxy_input,
                                            trilegal_output, rmfiles=False,
                                            dry_run=dry_run)
-            self.gather_results(trilegal_output, mc=mc, filter1='F606W')
-
-    def plot_lf_file(self, opt_lf_file, ir_lf_file, target=None):
-        if not hasattr(self, 'target'):
-            self.target = target
-        assert self.target is not None, 'Need target name'
-        opt_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
-                                            self.target, 'opt_rgb')
-        ir_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
-                                           self.target, 'ir_rgb')
-        offset = [0, -1.8]
-        fig, (axs) = plt.subplots(ncols=2)
-        for i, (trgb, lf_file) in enumerate(zip([opt_trgb, ir_trgb],
-                                 [opt_lf_file, ir_lf_file])):
+            self.do_normalization(trilegal_output=trilegal_output,
+                                  mc=mc, filter1='F606W')
+        self.close_files()
+        if diag_plots is True:
+            [self.plot_random_arrays(attr_str, from_files=True,
+                                     outfile='%s_random_%s.png' % (self.target,
+                                                                   attr_str))
+             for attr_str in ['sfr', 'mh']]
+            
+            self.compare_to_gal()
+            self.plot_mass_met_table(self.opt_mass_met_file.name,
+                                     self.ir_mass_met_file.name)
+    
+    def plot_lf_file(self, opt_lf_file, ir_lf_file):
+        '''
+        needs work, but will plot the lf files.
+        '''
+        fig, (axs) = plt.subplots(ncols=2, figsize=(8, 8))
+        for i, lf_file in enumerate([opt_lf_file, ir_lf_file]):
 
             with open(lf_file, 'r') as lff:
                 lines = [l.strip() for l in lff.readlines()
@@ -381,9 +465,88 @@ class VarySFHs(rsp.match_utils.StarFormationHistories, AncientGalaxies):
             for hist, bins in zip(hists, binss):
                 if len(hist) != len(bins):
                     continue
-                axs[i].plot(bins+offset[i], hist, linestyle='steps', color='k', alpha=0.2)
-            axs[i].vlines(trgb, *axs[i].get_ylim(), lw=2, color='darkred')
+                axs[i].plot(bins, hist, linestyle='steps', color='k', alpha=0.2)
         return axs
+
+    def compare_to_gal(self):
+        '''
+        work in progress...
+        '''
+        ir_gal = load_galaxy(self.target, band='ir')
+        ir_hist, ir_bins =  hist_it_up(ir_gal.mag2, threash=5)
+
+        fits_src = snap_src + '/data/angst_no_trim'
+        opt_gal = load_galaxy(self.target, band='opt', fits_src=fits_src)
+        opt_hist, opt_bins =  hist_it_up(opt_gal.mag2, threash=5)
+
+        ax1, ax2 = self.plot_lf_file(self.opt_lf_file.name,
+                                     self.ir_lf_file.name)
+
+        ax2.plot(ir_bins[1:], ir_hist, linestyle='steps', color='navy', lw=2)
+        ax1.plot(opt_bins[1:], opt_hist, linestyle='steps', color='navy', lw=2,
+                 label='$%s$' % self.target.upper())
+
+        for ax, gal, offset in zip([ax1, ax2], [opt_gal, ir_gal], self.offsets):
+            ax.set_yscale('log')
+            ax.set_xlim(ax.get_xlim()[0], gal.comp50mag2)
+            ax.vlines(gal.trgb, *ax1.get_ylim(), lw=2, color='darkred')
+            ax.vlines(gal.trgb + offset, *ax.get_ylim(),
+                      color='darkred')
+
+            ax.set_xlabel('$%s$' % gal.filter2, fontsize=20)
+            ax.set_ylabel('$\#$', fontsize=20)
+
+        ax1.legend(loc=1, frameon=False)
+        plt.savefig('%s_lfs.png' % self.target, dpi=300)
+        return ax1, ax2
+    
+    def plot_mass_met_table(self, opt_mass_met_file, ir_mass_met_file):
+        fig = plt.figure(figsize=(9, 9))
+        grid = ImageGrid(fig, 111,
+                         nrows_ncols=(2, 2),
+                         axes_pad=.5,
+                         add_all=True,
+                         label_mode="all",
+                         cbar_location="top",
+                         cbar_mode="each",
+                         cbar_size="7%",
+                         cbar_pad="2%",
+                         aspect=0)
+        cmaps = [plt.cm.get_cmap('jet', 9), plt.cm.gray_r]
+        #cmap = 
+        #cmap.set_bad('w', 1.)
+        #fig, (axs) = plt.subplots(ncols=2, figsize=(8, 8), sharey=True)
+        types = ['mean', 'count']
+        k =-1
+        for j in range(len(types)):
+            for i, mass_met in enumerate([opt_mass_met_file, ir_mass_met_file]):
+                k += 1            
+                with open(mass_met, 'r') as mmf:
+                    lines = [l.strip() for l in mmf.readlines()
+                             if not l.startswith('#')]
+    
+                mag = np.concatenate([np.array(l.split(), dtype=float)
+                                      for l in lines[0::3]])
+                mass = np.concatenate([np.array(l.split(), dtype=float)
+                                       for l in lines[1::3]])
+                mh = np.concatenate([np.array(l.split(), dtype=float)
+                                     for l in lines[2::3]])
+                
+                N, xedges, yedges = binned_statistic_2d(mag, mass, mh, types[j], bins=50)
+                im = grid[k].imshow(N.T, origin='lower',
+                               extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]],
+                               aspect='auto', interpolation='nearest', cmap=cmaps[j])
+                grid[k].cax.colorbar(im)
+                #grid[i].cax.set_label('$[M/H]$')
+
+        grid.axes_all[0].set_ylabel('${\\rm Mass}\ (M_\odot)$', fontsize=20)
+        grid.axes_all[2].set_ylabel('${\\rm Mass}\ (M_\odot)$', fontsize=20)
+        grid.axes_all[2].set_xlabel('$F814W$', fontsize=20)
+        grid.axes_all[3].set_xlabel('$F160W$', fontsize=20)
+        fig.suptitle('$DDO71$', fontsize=20)
+        plt.savefig('%s_mass_met.png' % self.target, dpi=300)
+        return grid
+
 
 def read_mettable():
     tab = os.path.join(table_src, 'IR_NAGBs.dat')
@@ -1011,14 +1174,21 @@ def load_galaxy(ID, band='ir', fits_src='default'):
 
     if band is None:
         fits_src = os.path.join(snap_src, 'data', 'opt_ir_matched_v2')
+    
     if '404-DEEP' in ID:
         ID = 'NGC404'
-    fitsname = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID)
+    
+    
+    fitsname = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID.upper())
+    
     hla = False
     if len(fitsname) == 0:
         fitsname = rsp.fileIO.get_files(fits_src, '*%s*fits' % ID.lower())
         hla = True
 
+    if len(fitsname) == 0:
+        raise OSError, 'No files not found %s/*%s*fits' % (fits_src, ID.lower())
+    
     if band == 'opt':
         filetype = 'fitstable'
     else:
@@ -1030,7 +1200,10 @@ def load_galaxy(ID, band='ir', fits_src='default'):
     gal_kw = {'hla': hla, 'photsys': 'wfc3snap', 'angst': True,
               'filetype': filetype, 'band': band}
 
-    gal_kw['z'] = get_key_fromtable(ID, 'Z')
+    try:
+        gal_kw['z'] = get_key_fromtable(ID, 'Z')
+    except ValueError:
+        pass
 
     gal = rsp.Galaxies.galaxy(fitsname, **gal_kw)
 
@@ -2410,12 +2583,12 @@ def add_lines_LF(fig, axs, gal, maglims, colors, vals):
     return fig, axs
 
 
-def hist_it_up(mag2, res=0.1):
+def hist_it_up(mag2, res=0.1, threash=10):
     # do fine binning and hist
     bins = np.arange(np.nanmin(mag2), np.nanmax(mag2), res)
     hist = np.histogram(mag2, bins=bins)[0]
     # drop the too fine bins
-    binds = spread_bins(hist)
+    binds = spread_bins(hist, threash=threash)
     # return the hist, bins.
     return np.histogram(mag2, bins=bins[binds])
 

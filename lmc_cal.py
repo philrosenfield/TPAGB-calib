@@ -9,6 +9,7 @@ from TPAGBparams import research_path
 import scipy.integrate
 import galaxy_tests
 from matplotlib.ticker import MultipleLocator
+import sfh_tests
 '''
 actually for the LMC, you can simplify things a lot:
 
@@ -33,81 +34,170 @@ already, and the values you find in Stefano's paper (distance, Av, etc).
 Let me know in case this is not clear.
 '''
 
-def parse_stefano_sfr():
-    filename = research_path + 'TP-AGBcalib/LMC_Calib/SFR_LMC88.dat'
-    outfile = research_path + 'TP-AGBcalib/LMC_Calib/tri_SFR_LMC88.dat'
-    data = rsp.fileIO.readfile(filename, col_key_line=1)
+class VaryVMCSFHs(sfh_tests.StarFormationHistories):
+    def __init__(self, galaxy_input, filename='default', outfile_loc='default'):
+        if filename == 'default':
+            filename = research_path + 'TP-AGBcalib/LMC_Calib/SFR_LMC88.dat'
+        self.prefix = os.path.split(filename)[1].split('.')[0]
 
-    to = data['Center_age_bin']
-    half_lagebin = np.diff(to)
-    tf = to[:-1] + half_lagebin
-    tf = np.append(tf, 10.13)
+        self.galaxy_input = galaxy_input
+        if outfile_loc == 'default':
+            self.outfile_loc = research_path + 'TP-AGBcalib/LMC_Calib/mc/'
+        rsp.fileIO.ensure_dir(self.outfile_loc)
 
-    to = data['Center_age_bin']
-    to = np.insert(to, 0, 6.6)
-    half_lagebin = np.diff(to)
-    tf = to[:-1] + half_lagebin
-    to = to[:-1]
+        self.data = self.parse_stefano_sfr()
+
+        sfh_tests.StarFormationHistories.__init__(data=self.data)
+
+
+    def prepare_outfiles(self):
+        '''
+        note, all attrs saved are file objects. Probably should have something
+        to not keep adding to the same files on different runs. 
+        '''
+        # LF file
+        lfname = os.path.join(self.outfile_loc, '%s_lf.dat' % self.prefix)
+        self.lf_file = open(lfname, 'a')
+
+        # mass_met_file
+        mass_met_fname = os.path.join(self.outfile_loc,
+                                      '%s_mass_met.dat' % self.prefix)
+
+        self.mass_met_file = open(mass_met_fname, 'a')
+        
+        # CSLF file
+        cslf_fname = os.path.join(self.outfile_loc,
+                                  '%s_mass_met.dat' % self.prefix)
+        self.cslf_file = open(cslf_fname, 'a')
+        return
     
-    sfr = data['med_SFR'] * 1e-3/ 2.
+    def parse_stefano_sfr(self):
+        orig_data = rsp.fileIO.readfile(self.filename, col_key_line=1)
+    
+        to = orig_data['Center_age_bin']
+        half_lagebin = np.diff(to)
+        tf = to[:-1] + half_lagebin
+        tf = np.append(tf, 10.13)
+    
+        to = orig_data['Center_age_bin']
+        to = np.insert(to, 0, 6.6)
+        half_lagebin = np.diff(to)
+        tf = to[:-1] + half_lagebin
+        to = to[:-1]
+    
+        sfr = orig_data['med_SFR'] * 1e-3/ 2.
+        sfr_errp = orig_data['max_SFR'] * 1e-3/ 2.
+        sfr_errm = orig_data['min_SFR'] * 1e-3/ 2.
+        
+        feh = orig_data['med_FeH']
+        feh_errp = orig_data['max_FeH']
+        feh_errm = orig_data['min_FeH']
+        
+        mass = orig_data['med_MASS'] * 1e6
+        mass_errp = orig_data['max_MASS'] * 1e6
+        mass_errm = orig_data['min_MASS'] * 1e6
+    
+        dtype = [('lagei', '<f8'),
+                 ('lagef', '<f8'),
+                 ('sfr', '<f8'),
+                 ('sfr_errp', '<f8'),
+                 ('sfr_errm', '<f8'),
+                 ('feh', '<f8'),
+                 ('feh_errp', '<f8'),
+                 ('feh_errm', '<f8'),
+                 ('mass', '<f8'),
+                 ('mass_errp', '<f8'),
+                 ('mass_errm', '<f8')]
+        
+        # err... mh_disp is mass here and mh is feh...
+        arr = np.vstack([to, tf, sfr, sfr_errp, sfr_errm, feh, feh_errp, feh_errm,
+                         mass, mass_errp, mass_errm])
+        data = arr.T.ravel().view(dtype)
+        return data.view(np.recarray)
+        
+    
+    def _make_trilegal_sfh(self, random_sfr=True, random_z=False,
+                          zdisp=True, random_mass=True, outfile='default'):
 
-    z = convertz.convertz(feh=data['med_FeH'])[1]
-    zmin = convertz.convertz(feh=data['min_FeH'])[1]
-    zmax = convertz.convertz(feh=data['max_FeH'])[1]
-    # even dispersions
-    zdisp = [np.mean([(zmax[i] - z[i]),
-                      (z[i] - zmin[i])]) for i in range(len(z))]
+        if outfile == 'default':
+            outfile = os.path.join(self.base,
+                                   self.name.replace('dat', '.sfr'))
 
-    half_zbin = np.diff(z)/2.
-    half_zbin = np.append(half_zbin, half_zbin[-1])
-    z1 = z - half_zbin 
-    z2 = z + half_zbin
+        if random_z is False:
+            feh = self.data.feh
+        else:
+            feh = self.random_draw_within_uncertainty('feh')
 
-    age1a = 10 ** (to)
-    age1p = 1.0 * 10 ** (to + 0.0001)
-    age2a = 1.0 * 10 ** tf
-    age2p = 1.0 * 10 ** (tf + 0.0001)
+        z = convertz.convertz(feh=feh)[1]
 
-    fmt = '%.4e %.3f %.4f %.4f\n'
-    with open(outfile, 'w') as out:
-        for i in range(len(sfr)):        
-            out.write(fmt % (age1a[i], 0.0, z1[i], zdisp[i]))
-            out.write(fmt % (age1p[i], sfr[i], z1[i], zdisp[i]))
-            out.write(fmt % (age2a[i], sfr[i], z2[i], zdisp[i]))
-            out.write(fmt % (age2p[i], 0.0, z2[i], zdisp[i]))
-            out.write(fmt % (age1a[i], 0.0, z2[i], zdisp[i]))
-            out.write(fmt % (age1p[i], sfr[i], z2[i], zdisp[i]))
-            out.write(fmt % (age2a[i], sfr[i], z1[i], zdisp[i]))
-            out.write(fmt % (age2p[i], 0.0, z1[i], zdisp[i]))
+        # this could be done better...
+        # even dispersions
+        zmin = convertz.convertz(feh=self.data.feh_errm)[1]
+        zmax = convertz.convertz(feh=self.data.feh_errp)[1]
+        zdisp = [np.mean([(zmax[i] - z[i]),
+                          (z[i] - zmin[i])]) for i in range(len(z))]
+        
+        half_zbin = np.diff(z)/2.
+        half_zbin = np.append(half_zbin, half_zbin[-1])
+        z1 = z - half_zbin 
+        z2 = z + half_zbin
 
-    mass = data['med_MASS'] * 1e6
-    object_mass = scipy.integrate.simps(mass, to)
+        age1a = 10 ** (self.data.lagei)
+        age1p = 1.0 * 10 ** (self.data.lagei + 0.0001)
+        age2a = 1.0 * 10 ** self.data.lagef
+        age2p = 1.0 * 10 ** (self.data.lagef + 0.0001)
 
-    return outfile, object_mass
+        if random_sfr is False:
+            sfr = self.data.sfr
+        else:
+            sfr = self.random_draw_within_uncertainty('sfr')
+
+        if zdisp is True:
+            zdisp = z * np.median(zdisp[np.nonzero(zdisp)])
+            #zdisp = self.data.mh_disp
+            fmt = '%.4e %.3e %.4f %.4f \n'
+        else:
+            zdisp = [''] * len(z)
+            fmt = '%.4e %.3e %.4f %s\n'
 
 
-def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
-                      overwrite=True, extra=''):
+        fmt = '%.4e %.3f %.4f %.4f\n'
+        with open(outfile, 'w') as out:
+            for i in range(len(sfr)):        
+                out.write(fmt % (age1a[i], 0.0, z1[i], zdisp[i]))
+                out.write(fmt % (age1p[i], sfr[i], z1[i], zdisp[i]))
+                out.write(fmt % (age2a[i], sfr[i], z2[i], zdisp[i]))
+                out.write(fmt % (age2p[i], 0.0, z2[i], zdisp[i]))
+                out.write(fmt % (age1a[i], 0.0, z2[i], zdisp[i]))
+                out.write(fmt % (age1p[i], sfr[i], z2[i], zdisp[i]))
+                out.write(fmt % (age2a[i], sfr[i], z1[i], zdisp[i]))
+                out.write(fmt % (age2p[i], 0.0, z1[i], zdisp[i]))
+    
+        mass = self.random_draw_within_uncertainty('mass')
 
-    if '2mass' in photsys:
-        filter1 = 'Ks'
-    elif 'ubv' in photsys:
-        filter1 = 'K'
+        object_mass = scipy.integrate.simps(mass, self.data.lagei)
+        return outfile, object_mass
+    
+    
+    def prepare_trilegal(self, loidl=True, photsys='2mass', object_mass=None,
+                         tri_inp_file='default', tri_sfr_file=None):
+        tri_sfh_kw = tri_sfh_kw or {}
 
-    cmd_inputs = [research_path + 'TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_MAR13.dat',
-                  research_path + 'TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_OCT13.dat',
-                  research_path + 'TP-AGBcalib/cmd_inputfiles/cmd_input_CAF09_S_APR13VW93.dat']
-    outputs = []
-    for cmd_input in cmd_inputs:
-        object_sfr_file, object_mass = parse_stefano_sfr()
-        galaxy_input = object_sfr_file.replace('.dat','_galinp.dat')
-        output = '%s%s_%s' % (object_sfr_file.replace('.dat',''), extra,
-                               cmd_input.split('cmd_input_')[1])
+        if '2mass' in photsys:
+            filter1 = 'Ks'
+        elif 'ubv' in photsys:
+            filter1 = 'K'
 
+        if tri_inp_file == 'default':
+            if loidl is True:
+                tri_inp_file = tri_sfr_file.replace('.sfr','_loidl.inp')
+            else:
+                tri_inp_file = tri_sfr_file.replace('.sfr','.inp')
+        
         gal_dict_inp = {'photsys': photsys,
                         'filter1': filter1,
                         'object_mass': object_mass,
-                        'object_sfr_file': object_sfr_file}
+                        'object_sfr_file': sfr_out_file}
 
         gal_dict = rsp.TrilegalUtils.galaxy_input_dict(**gal_dict_inp)
         gal_inp_pars = {'mag_limit_val': 20.6,
@@ -128,19 +218,29 @@ def make_trilegal_sim(cmd_input=None, loidl=True, photsys='2mass',
 
         gal_inp = rsp.fileIO.input_parameters(default_dict=gal_dict)
         gal_inp.add_params(gal_inp_pars)
-        gal_inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
-        if os.path.isfile(output):
-            if overwrite is True:
-                rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input, output,
-                                               loud=True)
-            else:
-                print output, 'found, not going to run trilegal and overwrite.'
-        else:
-            rsp.TrilegalUtils.run_trilegal(cmd_input, galaxy_input, output,
-                                           loud=True)
-        outputs.append(output)
+        gal_inp.write_params(tri_inp_file,
+                             rsp.TrilegalUtils.galaxy_input_fmt())
+        return tri_inp_file
+    
+    def vary_the_SFH(self, cmd_input_file, prep_tri_kw=None, make_many_kw=None,
+                     dry_run=False, diag_plots=False):
+        
+        tri_sfr_fmt = os.path.join(self.outfile_loc, 'tri_%s' % self.prefix)
+        tri_sfr_fmt += '_003i.sfr'
 
-    return outputs
+        (sfr_out_file, object_mass) = zip(*[self._make_trilegal_sfh(outfile=tri_sfr_fmt % i, **make_many_kw)
+                                            for i in range(nsfhs)])
+        self.sfr_files = list(sfr_out_file)
+
+        prep_tri_kw = dict({'loidl': True, photsys: '2mass'}.items() + prep_tri_kw.items())
+        self.galaxy_inputs = [self.prepare_trilegal(tri_sfr_file=self.sfr_files[i], object_mass[i],
+                                                    **prep_tri_kw)
+                              for i in range(len(nsfhs))
+
+        output = ADKLJSFL:KAJD        
+        rsp.TrilegalUtils.run_trilegal(cmd_input_file, self.galaxy_input[i], output,
+                                               loud=True)
+
 
 
 def load_raw_vmc_data():
