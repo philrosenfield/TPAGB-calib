@@ -237,7 +237,8 @@ class VaryVMCSFHs(sfh_tests.StarFormationHistories):
                                                     **prep_tri_kw)
                               for i in range(len(nsfhs))
 
-        output = ADKLJSFL:KAJD        
+        output = ADKLJSFL:KAJD
+        # set up the trilegal run and then test!!!
         rsp.TrilegalUtils.run_trilegal(cmd_input_file, self.galaxy_input[i], output,
                                                loud=True)
 
