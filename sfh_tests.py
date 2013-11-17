@@ -27,17 +27,18 @@ class AncientGalaxies(object):
     def __init__(self):
         pass
 
-    def number_of_stars(self, gal, offset):
+    def number_of_stars(self, gal, offset, trgb_offset=0):
         '''
         more complex? Add color information or verts to the
         stars in region call. Also write a robust contamination code.
         '''
         nrgb = len(gal.stars_in_region(gal.mag2, gal.trgb + offset,
-                                                gal.trgb))
+                                                gal.trgb + trgb_offset))
         nagb = len(gal.stars_in_region(gal.mag2, gal.trgb, 99.))
         return nrgb, nagb
         
-    def write_trgb_table(self, targets='ancients', offsets=[2, 1.5]):
+    def write_trgb_table(self, targets='ancients', offsets=[2, 1.5],
+                         trgb_offset=0):
         '''
         writes the trgb and number of stars within offsets (opt, ir) mags of
         trgb
@@ -75,7 +76,9 @@ class AncientGalaxies(object):
         fmt = '%(target)s %(opt_trgb).2f %(nopt_rgb)i %(nopt_agb)i %(ir_trgb).2f %(nir_rgb)i %(nir_agb)i \n'
         outfile = os.path.join(table_src, '%s_galaxies_%s_mag_below.dat' %
                               (tstring, '_'.join(map(str, offsets))))
-
+        if trgb_offset > 0:
+            outfile = outfile.replace('_below.dat', '_below_trgb_%s.dat' % str(trgb_offset))
+            
         with open(outfile, 'w') as out:
             out.write('# target opt_trgb nopt_rgb nopt_agb ir_trgb nir_rgb nir_agb \n')
             for k, v in gal_dict.items():
@@ -711,9 +714,10 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
                                   mc=mc, filter1='F606W')
         self.close_files()
         if diag_plots is True:
+            outfile_fmt = os.path.join(self.outfile_loc, '%s_random' % self.target)
+            outfile_fmt += '_%s.png'
             [self.plot_random_arrays(attr_str, from_files=True,
-                                     outfile='%s_random_%s.png' % (self.target,
-                                                                   attr_str))
+                                     outfile=outfile_fmt % attr_str)
              for attr_str in ['sfr', 'mh']]
             
             self.compare_to_gal()
@@ -770,7 +774,8 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
             ax.set_ylabel('$\#$', fontsize=20)
 
         ax1.legend(loc=1, frameon=False)
-        plt.savefig('%s_lfs.png' % self.target, dpi=300)
+        outfile = os.path.join(self.outfile_loc, '%s_lfs.png' % self.target)
+        plt.savefig(outfile, dpi=300)
         return ax1, ax2
     
     def plot_mass_met_table(self, opt_mass_met_file, ir_mass_met_file):
@@ -817,6 +822,6 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         grid.axes_all[2].set_xlabel('$F814W$', fontsize=20)
         grid.axes_all[3].set_xlabel('$F160W$', fontsize=20)
         fig.suptitle('$DDO71$', fontsize=20)
-        plt.savefig('%s_mass_met.png' % self.target, dpi=300)
+        plt.savefig(os.path.join(self.outfile_loc, '%s_mass_met.png' % self.target), dpi=300)
         return grid
 
