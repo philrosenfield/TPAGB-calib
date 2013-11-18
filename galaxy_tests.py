@@ -78,63 +78,6 @@ def targets_leo_norm_ok():
     return np.concatenate([gi10_overlap(), ['DDO82', 'NGC4163', 'UGC8508']])
 
 
-class AncientGalaxies(object):
-    def __init__(self):
-        pass
-
-    def write_trgb_table(self, targets='ancients', offsets=[2, 1.5]):
-        '''
-        writes the trgb and number of stars within offsets (opt, ir) mags of
-        trgb
-        '''
-        if targets == 'ancients':
-            tstring = targets
-            targets = ancients()
-        fits_srcs = [snap_src + '/data/angst_no_trim',
-                     'default']
-        gal_dict = {}
-        for i, band in enumerate(['opt', 'ir']):
-            print band
-            gals = rsp.Galaxies.galaxies([load_galaxy(t, band=band,
-                                                      fits_src=fits_srcs[i])
-                                          for t in targets])
-            for gal in gals.galaxies:
-                if 'ngc404-deep' == gal.target:
-                    gal.target = 'ngc404'
-                else:
-                    gal.target = gal.target.lower()
-                # more complex? Add color information or verts to the
-                # stars in region call.
-                ntrgb = len(gal.stars_in_region(gal.mag2, gal.trgb + offsets[i],
-                                                gal.trgb))
-                nagb = len(gal.stars_in_region(gal.mag2, gal.trgb, 99.))
-                gdict = {'%s_trgb' % band: gal.trgb,
-                         'n%s_rgb' % band: ntrgb,
-                         'n%s_agb' % band: nagb}
-                try:
-                    gal_dict[gal.target].update(gdict)
-                except KeyError:
-                    gal_dict[gal.target] = gdict
-
-        fmt = '%(target)s %(opt_trgb).2f %(nopt_rgb)i %(nopt_agb)i %(ir_trgb).2f %(nir_rgb)i %(nir_agb)i \n'
-        outfile = os.path.join(table_src, '%s_galaxies_%s_mag_below.dat' %
-                              (tstring, '_'.join(map(str, offsets))))
-
-        with open(outfile, 'w') as out:
-            out.write('# target opt_trgb nopt_rgb nopt_agb ir_trgb nir_rgb nir_agb \n')
-            for k, v in gal_dict.items():
-                gal_dict[k]['target'] = k
-                out.write(fmt % gal_dict[k])
-        print 'wrote %s' % outfile
-
-    def read_trgb_table(self, table_name):
-        dtype = [('target', '|S16'), ('opt_trgb', '<f8'), ('nopt_rgb', '<f8'),
-                 ('nopt_agb', '<f8'), ('ir_trgb', '<f8'), ('nir_rgb', '<f8'),
-                 ('nir_agb', '<f8')]
-        data = np.genfromtxt(table_name, dtype=dtype)
-        self.data = data.view(np.recarray)
-
-
 def read_mettable():
     tab = os.path.join(table_src, 'IR_NAGBs.dat')
     dtype = [('fitstable', '|S46'),
@@ -651,6 +594,7 @@ def load_agb_verts(gal, leo_method=False):
     don't look at me like that I have a lot to do.
     vert_file = research_path + 'code/TPAGB-calib/agb_rheb_sep.dat'
     '''
+
     if leo_method is False:
         offset_dict = {'SCL-DE1': 0.186,
                        'NGC2403-HALO-6': -0.155,
@@ -853,7 +797,11 @@ def get_fake_files(ID, band=None):
 def get_sfr_file(ID, sfr_dir='default'):
     if sfr_dir == 'default':
         sfr_dir = os.path.join(snap_src, 'data', 'sfh')
-    return rsp.fileIO.get_files(sfr_dir, '*%s*' % ID)[0]
+    try:
+        sfr_file = rsp.fileIO.get_files(sfr_dir, '*%s*' % ID)[0]
+    except IndexError:
+        sfr_file = rsp.fileIO.get_files(sfr_dir, '*%s*' % ID.lower())[0]
+    return sfr_file
 
 
 def compare_metallicities():
@@ -897,11 +845,24 @@ def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default',
     '''
     if outfile_loc == 'default':
         outfile_loc = snap_src
+
     agb_model = model.replace('cmd_input_', '').replace('.dat', '').lower()
 
     object_dist = 10 ** ((5 + gal.dmod) / 5)
+
     if sfr_file is None:
         sfr_file = get_sfr_file(gal.target, sfr_dir=sfr_dir)
+
+    # HACK. If sfr_dir is set, this assumes it's a parsec run, so use
+    # the IMF Dan used and no scaling of the trilegal sfr file.
+    # Careful, just running a new sfr_dir won't make the correct trilegal
+    # input files.
+    if sfr_dir is None:
+        file_imf = get_imf(gal.target)
+        object_sfr_mult_factorA = 1e9
+    else:
+        file_imf = 'tab_imf/imf_kroupa_orig.dat'
+        object_sfr_mult_factorA = 1.
 
     gal_dict_inp = {'photsys': gal.photsys,
                     'filter1': gal.filter2,
@@ -915,8 +876,8 @@ def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default',
                  'object_sfr_file': sfr_file,
                  'object_av': gal.Av,
                  'object_dist': object_dist,
-                 'object_sfr_mult_factorA': 1e9,
-                 'file_imf': get_imf(gal.target),
+                 'object_sfr_mult_factorA': object_sfr_mult_factorA,
+                 'file_imf': file_imf,
                  'binary_kind': 1,
                  'binary_frac': 0.35}
 
@@ -1450,6 +1411,8 @@ def load_targets(targets):
         targets = targets_z002()
     elif targets == 'paper1':
         targets = targets_paper1()
+    elif targets == 'ancients':
+        targets = ancients()
 
     if type(targets) == str:
         targets = [targets]
@@ -2238,10 +2201,12 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
         norm_sim_kw['object_mass'] = load_sim_masses(target)
         gal = load_galaxy(target, band=band)
         leo_now = norm_sim_kw['leo_method']
+
         if target in targets_leo_norm_ok():
             norm_sim_kw['leo_method'] = True
         else:
             norm_sim_kw['leo_method'] = False
+
         if leo_now != norm_sim_kw['leo_method']:
             logger.info('over-ridcing input, leo_method is now %s' % leo_method)
 
@@ -3085,10 +3050,6 @@ def main(inputfile):
         import pdb
         pdb.set_trace()
         del inputs['debug']
-
-    global snap_src
-    snap_src = inputs['snap_src']
-    del inputs['snap_src']
 
     mc_norm = inputs['mc_norm']
     del inputs['mc_norm']

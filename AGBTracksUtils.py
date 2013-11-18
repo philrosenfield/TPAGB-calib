@@ -266,7 +266,7 @@ def examine_1TP(agb_mix, set_name):
     lines = open(outfile, 'r').readlines()
     warns = [l for l in lines if 'Warning' in l]
     print 'Found %i warnings' % len(warns)
-    print warns
+    print [l.strip() for l in warns]
 
     data = np.array([l for l in lines if l.startswith('Z')])
     nind = [i for i,l in enumerate(data) if not 'COLIBRI' in l]

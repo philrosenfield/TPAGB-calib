@@ -94,18 +94,31 @@ class AncientGalaxies(object):
         self.data = data.view(np.recarray)
 
 
-def parse_sfh_data(filename, file_origin):
+def parse_sfh_data(filename, file_origin, frac=0.2):
     '''
-    supply a match_sfh (.zs.sfh) file to parse, or np.recarray containing
-        dtype = [('lagei', '<f8'),
-                ('lagef', '<f8'),
-                ('sfr', '<f8'),
-                ('sfr_errp', '<f8'),
-                ('sfr_errm', '<f8'),
-                ('mh', '<f8'),
-                ('mh_errp', '<f8'),
-                ('mh_errm', '<f8'),
-                ('mh_disp', '<f8')]
+    parse match sfh into a np.recarray
+    ARGS:
+    filename: a match sfh file to parse, needs to have at least:
+              dtype = [('lagei', '<f8'),
+                       ('lagef', '<f8'),
+                       ('sfr', '<f8'),
+                       ('sfr_errp', '<f8'),
+                       ('sfr_errm', '<f8'),
+                       ('mh', '<f8'),
+                       ('mh_errp', '<f8'),
+                       ('mh_errm', '<f8'),
+                       ('mh_disp', '<f8')]
+    file_origin: 'match' or 'match-grid'
+        if 'match': reads the binned sfh as takes sfr_errs as is
+        if 'match-grid': will overwrite sfr_errs.
+            if sfr = 0: sfr_errp = min(sfr) * frac
+            if sfr != 0: sfr_errp = sfr_errm = sfr * frac
+    frac: multiplicitve factor to set sfr_err, only used if file_origin
+        is set to match-grid.
+    RETURNS:
+    np.recarray of the sfh file
+
+    use file_origin='match' only if Hybrid MonteCarlo has been run.
     '''
     if 'match' in file_origin.lower():
         data = rsp.match_utils.read_binned_sfh(filename)
@@ -113,11 +126,11 @@ def parse_sfh_data(filename, file_origin):
         print 'please add a new data reader'
     
     if 'grid' in file_origin.lower():
-        # at least have a uniform error that is 10% the smallest sfr.
-        data.sfr_errp = np.min(data.sfr[data.sfr > 0]) * 0.2
+        # at least have a uniform error that is 20% the smallest sfr.
+        data.sfr_errp = np.min(data.sfr[data.sfr > 0]) * frac
         # now take 10% as nominal error in each sfr bin.
-        data.sfr_errp[data.sfr > 0] = data.sfr[data.sfr > 0] * 0.2
-        data.sfr_errm[data.sfr > 0] = data.sfr[data.sfr > 0] * 0.2
+        data.sfr_errp[data.sfr > 0] = data.sfr[data.sfr > 0] * frac
+        data.sfr_errm[data.sfr > 0] = data.sfr[data.sfr > 0] * frac
     return data
 
 
@@ -217,7 +230,7 @@ class StarFormationHistories(object):
 
         if outfile == 'default':
           outfile = os.path.join(self.base,
-                                 self.name.replace('.zc.sfh', '.tri.dat'))
+                                 self.name.replace('.sfh', '.tri.dat'))
 
         age1a = 10 ** (self.data.lagei)
         age1p = 1.0 * 10 ** (self.data.lagei + 0.0001)
@@ -328,8 +341,8 @@ class StarFormationHistories(object):
             new_dir = os.path.join(self.base, 'mc/')
             rsp.fileIO.ensure_dir(new_dir)
             outfile_fmt = os.path.join(new_dir,
-                                       self.name.replace('.zc.sfh',
-                                                         '_%02i.tri.dat'))
+                                       os.path.split(self.name)[1].replace('.zc.sfh',
+                                                                           '_%02i.tri.dat'))
         else:
             # need to iterate outside of dict... see below.
             del mk_tri_sfh_kw['outfile_fmt']
@@ -390,20 +403,21 @@ class StarFormationHistories(object):
 
 class VarySFHs(StarFormationHistories, AncientGalaxies):
     '''
-    This class was made to run several variations of the age sfr z zdisp
-    table and save the resulting optical and nir LF, as well as the number of
-    rgb and agb stars in the simulation.
+    This class was made to run several variations of the age sfr z
+    zdisp table and save the resulting optical and nir LF, as well as
+    the number of rgb and agb stars in the simulation.
     To save time, this need to be done first:
-    table_file: Create a table of trgb and nrgb and nagb stars. Currently
-       this is in AncientGalaxies and just takes all the stars within 1.5 or
-       2 mag below trgb. Will not be appropriate for galaxies with recent SF.
+    table_file: Create a table of trgb and nrgb and nagb stars.
+       Currently this is in AncientGalaxies and just takes all the
+       stars within 1.5 or 2 mag below trgb. Will not be appropriate
+       for galaxies with recent SF.
     
     the main method is vary_the_SFH, which sets up the files, calls
-    StarFormationHistories and calls the other methods to write out the LFs and
-    ratios.
+    StarFormationHistories and calls the other methods to write out the
+    LFs and ratios.
     '''
-    def __init__(self, galaxy_input, sfh_file, file_origin, outfile_loc='default',
-                 table_file='default', target=None):
+    def __init__(self, galaxy_input, sfh_file, file_origin, target=None,
+                 outfile_loc='default', table_file='default'):
         StarFormationHistories.__init__(self, sfh_file, file_origin)
         self.galaxy_input = galaxy_input
 
@@ -413,7 +427,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         self.target = target
 
         if outfile_loc == 'default':
-            self.outfile_loc = os.path.join(snap_src, 'data', 'sfh_parsec',
+            self.outfile_loc = os.path.join(snap_src, 'models', 'varysfh',
                                             self.target, 'mc/')
 
         rsp.fileIO.ensure_dir(self.outfile_loc)
@@ -433,16 +447,15 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         self.load_data_for_normalization()
 
     def prepare_trilegal_sfr(self, make_many_kw=None):
-        '''
-        a call to make_many_trilegal_sfhs
-        '''
+        '''call make_many_trilegal_sfhs'''
         make_many_kw = make_many_kw or {}
         self.sfr_files = self.make_many_trilegal_sfhs(**make_many_kw)
 
     def prepare_galaxy_input(self, object_mass=None):
         '''
-        writes the galaxy input file from a previously written template.
-        simply overwrites the filename line to link to the new sfr file.
+        write the galaxy input file from a previously written template.
+        simply overwrites the filename line to link to the new sfr
+        file.
         '''
         self.galaxy_inputs = []
 
@@ -467,8 +480,8 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
 
     def prepare_outfiles(self):
         '''
-        note, all attrs saved are file objects. Probably should have something
-        to not keep adding to the same files on different runs. 
+        prepare outfiles for vary_the_sfh.
+        NOTE: all attrs saved are file objects.
         '''
         # LF file
         opt_fname = os.path.join(self.outfile_loc,
@@ -507,23 +520,30 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         return opt_fname, ir_fname, narratio_fname
     
     def close_files(self):
+        '''close all open files'''
         [f.close() for f in self.__dict__.values() if type(f) is file]
 
-    def write_LF(self, opt_rec, ir_rec, opt_file, ir_file):
+    def write_LF(self, opt_norm, ir_norm, opt_file, ir_file):
         '''
-        writes out the LF to files. opt_file, ir_file can already be
-        file objects.
-        must have attr sgal loaded.
+        write the LF to files.
+        ARGS:
+        opt_file, ir_file: write out files, can be file objects.
         opt_rec and ir_rec are indices of sgal f814w f160w.
-        first line is histogram
-        next line is bins[1:]
-        etc.
-        '''
-        opt_mag = self.sgal.ast_mag2[opt_rec]
-        ir_mag = self.sgal.ast_mag4[ir_rec]
 
+        NOTE: must have attr sgal loaded.
+        Formatting is a repeat of first line is histogram, next line is bins[1:]
+        '''
+        # load mags, set here in case incase I want to pass this in the future.
+        opt_mag = self.sgal.ast_mag2
+        ir_mag = self.sgal.ast_mag4
+
+        # hist it up!
         opt_hist, opt_bins = galaxy_tests.hist_it_up(opt_mag, threash=5)
         ir_hist, ir_bins = galaxy_tests.hist_it_up(ir_mag, threash=5)
+
+        # scale the simulated LF to match the data LF
+        opt_hist *= opt_norm
+        ir_hist *= ir_norm
 
         np.savetxt(opt_file, (opt_hist, opt_bins[1:]), fmt='%g')
         np.savetxt(ir_file, (ir_hist, ir_bins[1:]), fmt='%g')
@@ -533,10 +553,16 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
 
     def write_ratio(self, opt_rgb, opt_agb, ir_rgb, ir_agb, out_file):
         '''
-        write the numbers of stars, the ratio, and the poisson uncertainty in
-        the ratio.
-        see prepare_files for fmt information
-        out_file is an opened file object.
+        write the numbers of stars, the ratio, and the poisson
+        uncertainty in the ratio.
+        see self.prepare_outfiles for file format information
+
+        ARGS:
+        opt_rgb: list of optical rgb star indices
+        opt_agb: list of optical agb star indices
+        ir_rgb: list of NIR rgb star indices
+        ir_agb: list of NIR agb star indices
+        out_file: is an opened file object.
         '''
         nopt_rgb = float(len(opt_rgb))
         nopt_agb = float(len(opt_agb))
@@ -555,13 +581,21 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         out_file.write(self.narratio_fmt % out_dict)
         print 'wrote %s' % out_file.name
 
-    def write_scaled_files(self):
-        pass
-
     def write_mass_met_file(self):
+        '''
+        Write the magnitudes, masses, and [M/H] values of tpagb stars
+        to files.
+
+        Format of the file is blocks of three lines, mag, mass, [M/H] for
+        each sfh run.
+        '''
+        # load tpagb indices
         self.sgal.all_stages('TPAGB')
+
+        # recovered tpagb stars
         opt_inds = np.intersect1d(self.sgal.itpagb, self.sgal.rec)
         ir_inds = np.intersect1d(self.sgal.itpagb, self.sgal.ir_rec)
+
         mag2 = self.sgal.mag2
         mag4 = self.sgal.data.get_col('F160W')
         for mag, inds, ofile in zip([mag2, mag4], [opt_inds, ir_inds],
@@ -574,7 +608,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
             
         print 'wrote %s, %s' % (self.opt_mass_met_file.name,
                                 self.ir_mass_met_file.name)
-        
+
     def load_data_for_normalization(self):
         '''
         load the numbers of data rgb and agb stars. The file was already read
@@ -614,21 +648,11 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         self.sgal = sgal
 
     def do_normalization(self, mc=True, filter1='F606W', trilegal_output=None):
-        '''
-        Do the normalization and save small part of outputs.
-        '''
+        '''Do the normalization and save small part of outputs.'''
         if not hasattr(self, 'sgal'):
             assert trilegal_output is not None, \
                 'need sgal loaded or pass trilegal catalog file name'
-            self.read_trilegal_catalog(trilegal_output, filter1='F606W')
-
-        tget = self.target.upper()
-
-        min_opt = angst_data.__getattribute__(tget)['F814W']['50_completeness']
-        min_ir = angst_data.get_snap_50compmag(tget, 'F160W')
-
-        imag2, = np.nonzero(self.sgal.ast_mag2 < min_opt)
-        imag4, = np.nonzero(self.sgal.ast_mag4 < min_ir)
+            self.read_trilegal_catalog(trilegal_output, filter1=filter1)
 
         mag2 = self.sgal.ast_mag2
         mag4 = self.sgal.ast_mag4
@@ -647,25 +671,21 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
 
         # normalization
         opt_norm = self.nopt_rgb / float(len(sopt_rgb))
-        sim_norm = self.nir_rgb / float(len(sir_rgb))
+        ir_norm = self.nir_rgb / float(len(sir_rgb))
 
-        print opt_norm, sim_norm
+        #print opt_norm, ir_norm
 
         # random sample the data distribution
         rands = np.random.random(len(self.sgal.ast_mag2))
         opt_ind, = np.nonzero(rands < opt_norm)
-        ir_ind, = np.nonzero(rands < sim_norm)
-
-        # scaled: ast + norm
-        opt_rec = list(set(opt_ind) & set(self.sgal.rec) & set(imag2))
-        ir_rec = list(set(ir_ind) & set(self.sgal.ir_rec) & set(imag4))
+        ir_ind, = np.nonzero(rands < ir_norm)
 
         # scaled rgb: ast + norm + in rgb
         opt_rgb = list(set(opt_ind) & set(sopt_rgb) & set(self.sgal.rec))
         ir_rgb = list(set(ir_ind) & set(sir_rgb) & set(self.sgal.ir_rec))
 
-        print len(opt_rgb), self.nopt_rgb
-        print len(ir_rgb), self.nir_rgb
+        #print len(opt_rgb), self.nopt_rgb
+        #print len(ir_rgb), self.nir_rgb
 
         # scaled agb
         opt_agb = list(set(opt_ind) & set(sopt_agb) & set(self.sgal.rec))
@@ -675,12 +695,9 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         if mc:
             # only need to save the LF and the ratios.
             self.write_mass_met_file()
-            self.write_LF(opt_rec, ir_rec, self.opt_lf_file, self.ir_lf_file)
+            self.write_LF(opt_norm, ir_norm, self.opt_lf_file, self.ir_lf_file)
             self.write_ratio(opt_rgb, opt_agb, ir_rgb, ir_agb,
                              self.narratio_file)
-        else:
-            # save scaled files to make full LFs and have choice in binning
-            self.write_scaled_files(opt_rec, ir_rec)
 
     def vary_the_SFH(self, cmd_input_file, make_many_kw=None, dry_run=False,
                      mc=True, diag_plots=False):
@@ -705,13 +722,14 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         trilegal_output = os.path.join(self.outfile_loc, tname)
 
         self.load_asts()
+        filter1 = self.ast_objs[0].filter1
 
         for galaxy_input in self.galaxy_inputs:
             rsp.TrilegalUtils.run_trilegal(cmd_input_file, galaxy_input,
                                            trilegal_output, rmfiles=False,
                                            dry_run=dry_run)
             self.do_normalization(trilegal_output=trilegal_output,
-                                  mc=mc, filter1='F606W')
+                                  mc=mc, filter1=filter1)
         self.close_files()
         if diag_plots is True:
             outfile_fmt = os.path.join(self.outfile_loc, '%s_random' % self.target)
@@ -724,11 +742,11 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
             self.plot_mass_met_table(self.opt_mass_met_file.name,
                                      self.ir_mass_met_file.name)
     
-    def plot_lf_file(self, opt_lf_file, ir_lf_file):
-        '''
-        needs work, but will plot the lf files.
-        '''
-        fig, (axs) = plt.subplots(ncols=2, figsize=(8, 8))
+    def plot_lf_file(self, opt_lf_file, ir_lf_file, axs=None):
+        '''needs work, but: plot the lf files.'''
+        if axs is None:
+            fig, (axs) = plt.subplots(ncols=2, figsize=(8, 8))
+
         for i, lf_file in enumerate([opt_lf_file, ir_lf_file]):
 
             with open(lf_file, 'r') as lff:
@@ -825,3 +843,101 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         plt.savefig(os.path.join(self.outfile_loc, '%s_mass_met.png' % self.target), dpi=300)
         return grid
 
+    def plot_ratio(self):
+        from astroML.plotting import hist
+        ratio = rsp.fileIO.readfile(self.narratio_file.name)
+        hist(ratio['opt_ar_ratio'], bins='blocks')
+        plt.hist(ratio['ir_ar_ratio'])
+        pass
+
+
+def convert_match_to_trilegal_sfh(sfr_dir, fileorigin='match',
+                                  search_str='*.sfh',
+                                  make_trilegal_sfh_kw=None):
+    '''
+    call StarFormationHistories.make_trilegal_sfh for a number of files in a
+    directory.
+
+    ARGS:
+    sfr_dir     base location of match sfr files
+    fileorigin  'match' sfr fileorigin, match or match-grid
+    search_str  '*.sfh' extenstion of match sfh file
+    make_trilegal_sfh_kw    {'random_sfr': False, 'random_z': False} kwargs to
+                            send to make_trilegal_sfh
+    RETURNS:
+    list of trilegal SFR files written
+    '''
+    # make_trilegal_sfh kwargs will set both randoms to False by default
+    make_trilegal_sfh_kw = make_trilegal_sfh_kw or {}
+    make_trilegal_sfh_kw = dict({'random_sfr': False, 'random_z': False}.items() +
+                                 make_trilegal_sfh_kw.items())
+    # find match sfh files
+    sfhs = rsp.fileIO.get_files(sfr_dir, search_str)
+
+    # load SFHs
+    SFHs = [StarFormationHistories(s, fileorigin) for s in sfhs]
+
+    # write trilegal sfh
+    tri_sfhs = [S.make_trilegal_sfh(**make_trilegal_sfh_kw) for S in SFHs]
+    return tri_sfhs
+
+
+def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, mk_tri_sfh_kw=None,
+                            match_sfh_file='default', vary_sfh_kw=None,
+                            match_fileorigin='match-grid', make_many_kw=None,
+                            galaxy_input_file='default'):
+    '''
+    Run a number of SFH variations on a galaxy.
+    If passed default to the args, will attempt to find the file based on the
+    galaxy name.
+
+    ARGS:
+    galaxy_name: target name, ex: ddo71 (case doesn't matter)
+    cmd_input_file: filename, ex: 'cmd_input_CAF09_S_OCT13.dat'
+    match_sfh_file: 'default', the sfh file from match.
+    match_fileorigin: 'match-grid', which type of sfh file 'match' or 'match-grid'
+    galaxy_input_file: 'default', base input file for trilegal, will be copied.
+
+    mk_tri_sfh_kw: A dict to be passed to VarySFH.make_trilegal_sfh
+        default: random_sfh = True, random_z = False
+
+    make_many_kw: A dict to be passed to VarySFH.prepare_trilegal_sfr
+        default: nsfhs = 50, mk_tri_sfh_kw dict.
+
+    vary_sfh_kw: A dict to be passed to VarySFH.vary_the_sfh
+        default: diag_plots = True, make_many_kw dict
+
+    RETURNS:
+    VarySFHs class
+    '''
+    # load and possibly overwrite make_many_kw from defaults
+    make_many_kw = make_many_kw or {}
+    vary_sfh_kw = vary_sfh_kw or {}
+    mk_tri_sfh_kw = mk_tri_sfh_kw or {}
+
+    mk_tri_sfh_kw = dict({'random_sfr': True, 'random_z': False}.items()
+        + mk_tri_sfh_kw.items())
+
+    make_many_kw = dict({'nsfhs': 50, 'mk_tri_sfh_kw': mk_tri_sfh_kw}.items()
+        + make_many_kw.items())
+
+    vary_sfh_kw = dict({'diag_plots': True,
+                        'make_many_kw': make_many_kw}.items() + vary_sfh_kw.items())
+
+    # load input files if not supplied
+    if match_sfh_file == 'default':
+        match_sfh_src = snap_src + '/data/sfh_parsec/match_files/'
+        match_sfh_file, = rsp.fileIO.get_files(match_sfh_src, '%s*sfh' % galaxy_name.lower())
+
+    if galaxy_input_file == 'default':
+        galaxy_input_src = snap_src + '/input/'
+        galaxy_input_file, = rsp.fileIO.get_files(galaxy_input_src, '*%s*dat' % galaxy_name.upper())
+
+    # initialize VarySFHs object, loads ASTs, obs data
+    vSFH = VarySFHs(galaxy_input_file, match_sfh_file, match_fileorigin,
+                    target=galaxy_name.lower())
+
+    # vary the SFH
+    vSFH.vary_the_SFH(cmd_input_file, **vary_sfh_kw)
+
+    return vSFH
