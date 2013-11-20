@@ -62,13 +62,13 @@ def make_galaxy_input(galaxy_input, sfh_file):
 def plot_em(ifile, lf_file, cmd_file, age, z, track):
     print 'Plotting', ifile
 
-    logL, logTe, mbol, j, k, mcore, co = np.loadtxt(ifile,
-                                             usecols=(4, 5, 10, 11, 13, 14, 15),
+    logL, logTe, mbol, j, k, mcore, co, dmdt = np.loadtxt(ifile,
+                                             usecols=(4, 5, 10, 11, 13, 14, 15, 18),
                                              unpack=True)
 
     nAGB = (mcore == 0)
-    cAGB = ((mcore > 0) & (co >= 1))
-    oAGB = ((mcore > 0) & (co < 1))
+    cAGB = ((co >= 1) & (dmdt <= -5))
+    oAGB = ((co <= 1) & (logL >= 3.3) & (dmdt < -5))
 
     jk = j - k
     bins = np.arange(-10, 20, 0.1)

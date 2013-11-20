@@ -3,9 +3,6 @@ logging.basicConfig(filename='galaxy_tests.log',level=logging.DEBUG)
 logger = logging.getLogger()
 logger.info('start of run')
 import ResolvedStellarPops as rsp
-from ResolvedStellarPops.convertz import convertz
-from mpl_toolkits.axes_grid1 import ImageGrid
-from astroML.stats import binned_statistic_2d
 import os
 import sys
 import difflib
@@ -27,8 +24,9 @@ def gi10_overlap():
 
 
 def ancients():
+    #['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'KDG73', 'NGC404-DEEP', 'SCL-DE1'][::-1]
     return ['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'KDG73',
-            'NGC404-DEEP', 'SCL-DE1']
+            'NGC404-DEEP']
 
 
 def all_targets():
@@ -587,15 +585,15 @@ def agb_rheb_separation(targets=None):
     return verts
 
 
-def load_agb_verts(gal, leo_method=False):
+def load_agb_verts(gal, leo_norm=False):
     '''
     there is a file that contains the contents of this dictionary, it's vert_file
     I just didn't feel like writing a reader for it so I pasted it. What?
     don't look at me like that I have a lot to do.
     vert_file = research_path + 'code/TPAGB-calib/agb_rheb_sep.dat'
     '''
-
-    if leo_method is False:
+    if leo_norm is False:
+        assert gal.filter1 == 'F110W', 'should not use IR AGB verts with opt'
         offset_dict = {'SCL-DE1': 0.186,
                        'NGC2403-HALO-6': -0.155,
                        'NGC7793-HALO-6': -0.307,
@@ -634,7 +632,7 @@ def load_agb_verts(gal, leo_method=False):
 
         verts = np.column_stack((vmag1 - vmag2, vmag2))
     else:
-        magdim = gal.trgb
+        magdim = gal.trgb - .1
         magbright = 0.
         colmin = np.min(gal.color)
         colmax = np.max(gal.color)
@@ -652,6 +650,8 @@ def load_sim_masses(ID):
     jan13 tracks to run. Some are a bit higher than necessary, but by no more
     than a factor of 2.5
     '''
+    if 'NGC404' in ID:
+        ID = 'NGC404'
     mass_dict = {'SCL-DE1': 1e+08,
                  'NGC2403-HALO-6': 1e+08,
                  'NGC7793-HALO-6': 1e+08,
@@ -776,6 +776,9 @@ def get_fake_files(ID, band=None):
     returns the fake file for a given ID and band. If band is None, gives
     both opt and nir.
     '''
+    if 'NGC404' in ID:
+        ID = 'NGC404'
+    ID = ID.upper()
     fake_dir = os.path.join(snap_src, 'data', 'fakes')
     fake_files = rsp.fileIO.get_files(fake_dir, '*%s*' %
                                       ID.replace('C-0', 'C-').replace('C-', 'C'))
@@ -1291,7 +1294,7 @@ def sgal_rgb_agb(target, model, band=None, input_file=None, maglims=None,
 
     raw_ratio = float(sgal.itpagb.size)/float(sgal.irgb.size)
     rgb_verts = sgal.norm_verts
-    agb_verts = load_agb_verts(gal)
+    agb_verts = load_agb_verts(gal, leo_norm=leo_norm)
 
     spoints = np.column_stack((sgal.ast_color, sgal.ast_mag2))
 
@@ -1589,8 +1592,8 @@ def multi_opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=Tr
         # get the rgb and agb polygons
         rgb_poly = get_opt_rgb_polygons(target)
 
-        agb_verts = load_agb_verts(ir_gal, leo_method=leo_method)
-        opt_agb_verts = load_agb_verts(opt_gal, leo_method=leo_method)
+        agb_verts = load_agb_verts(ir_gal, leo_norm=leo_norm)
+        opt_agb_verts = load_agb_verts(opt_gal, leo_norm=leo_norm)
 
         if type(rgb_poly) == int:
             magdim = opt_gal.trgb + 2
@@ -1709,8 +1712,8 @@ def opt_rgb_nir_agb_ratio(filt1=None, filt2=None, targets=None, leo_ast=True,
         gal_ir_hist, gal_ir_bins = hist_it_up(ir_gal.mag2)
 
         # get the rgb and agb polygons
-        ir_agb_verts = load_agb_verts(ir_gal, leo_method=leo_method)
-        opt_agb_verts = load_agb_verts(opt_gal, leo_method=leo_method)
+        ir_agb_verts = load_agb_verts(ir_gal, leo_norm=leo_norm)
+        opt_agb_verts = load_agb_verts(opt_gal, leo_norm=leo_norm)
 
         ir_gal.maglims = [ir_gal.trgb, ir_gal.trgb+1.5]
         rgb_verts_ir = get_ir_rgb_polygons(ir_gal, leo_method=leo_method)
@@ -1941,8 +1944,8 @@ def plot_comp_LF(models, targets, norm_by_ir=False ):
             rgb_verts_opt = get_rgb_verts_opt(opt_gal)
 
             # get the rgb and agb polygons
-            ir_agb_verts = load_agb_verts(ir_gal, leo_method=leo_method)
-            opt_agb_verts = load_agb_verts(opt_gal, leo_method=leo_method)
+            ir_agb_verts = load_agb_verts(ir_gal, leo_norm=leo_norm)
+            opt_agb_verts = load_agb_verts(opt_gal, leo_norm=leo_norm)
 
 
             # rgb and agb inds in the data
@@ -2174,7 +2177,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
                      leo_method=False, leo_norm=False, make_plot=True,
                      xlim=None, ylim=None, xlim2=None, add_boxes=True,
                      color_hist=False,  plot_tpagb=False, use_opt_rgb=False,
-                     sfr_dir='default', **kwargs):
+                     sfr_dir='default', fits_src='default', **kwargs):
     smgs = []
     targets = load_targets(targets)
 
@@ -2199,16 +2202,16 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
     for target in targets:
         logger.info('working on %s' % target)
         norm_sim_kw['object_mass'] = load_sim_masses(target)
-        gal = load_galaxy(target, band=band)
-        leo_now = norm_sim_kw['leo_method']
+        gal = load_galaxy(target, band=band, fits_src=fits_src)
+        #leo_now = norm_sim_kw['leo_method']
 
-        if target in targets_leo_norm_ok():
-            norm_sim_kw['leo_method'] = True
-        else:
-            norm_sim_kw['leo_method'] = False
+        #if target in targets_leo_norm_ok():
+        #    norm_sim_kw['leo_method'] = True
+        #else:
+        #    norm_sim_kw['leo_method'] = False
 
-        if leo_now != norm_sim_kw['leo_method']:
-            logger.info('over-ridcing input, leo_method is now %s' % leo_method)
+        #if leo_now != norm_sim_kw['leo_method']:
+        #    logger.info('over-ridcing input, leo_method is now %s' % leo_method)
 
         for model in models:
             logger.info('%s: %s' % (target, model))
@@ -2223,7 +2226,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
 
             sgal = make_normalized_simulation(gal, model, filt1, filt2,
                                               **norm_sim_kw)
-            agb_verts = load_agb_verts(gal, leo_method=leo_method)
+            agb_verts = load_agb_verts(gal, leo_norm=leo_norm)
             smg = rsp.Galaxies.sim_and_gal(gal, sgal)
             nrgb_nagb_data, nrgb_nagb_sim = smg.nrgb_nagb(band=band,
                                                           agb_verts=agb_verts)
@@ -2280,7 +2283,7 @@ def match_tests(target, model, band, verts=False, inverse_verts=False, inputs={}
                                            '*%s*.gst.match' % gal.target)
 
     if verts is True or inverse_verts is True:
-        agb_verts = load_agb_verts(gal)
+        agb_verts = load_agb_verts(gal, leo_norm=leo_norm)
 
         # load photometry verts, will need to save new file
         m1, m2 = np.loadtxt(match_phot, unpack=True)
@@ -2369,6 +2372,8 @@ def translate_model_name(model):
         model_name = '$\dot{M}_{G10}$'
     elif 'oct13' in model.lower():
         model_name = '$\dot{M}_{M13}$'
+    else:
+        model_name = '$\dot{M}$'
     return model_name
 
 
@@ -2404,7 +2409,7 @@ def fuck_you_match(gal, sgal, verts=False, inverse_verts=False, make_plot=False,
         data_mag2 = gal.ast_mag2[ginds]
 
     if verts is True or inverse_verts is True:
-        agb_verts = load_agb_verts(gal)
+        agb_verts = load_agb_verts(gal, leo_norm=leo_norm)
 
         # load photometry verts, will need to save new file
         phot_points = np.column_stack((data_color, data_mag2))

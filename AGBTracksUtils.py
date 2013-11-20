@@ -11,19 +11,21 @@ import multiprocessing
 import ResolvedStellarPops as rsp
 
 def metallicity_from_dir(met):
+    ''' take Z and Y values from string'''
     if met.endswith('/'):
         met = met[:-1]
+
     if len(os.path.split(met)) > 0:
         met = os.path.split(met)[1]
+
     z = float(met.split('_')[1].replace('Z', ''))
     y = float(met.split('_')[-1].replace('Y', ''))
+
     return z, y
 
 
 def AGB_file_setup(infile):
-    '''
-    Sets up files and directories for TPAGB parsing.
-    '''
+    '''set up files and directories for TPAGB parsing.'''
     infile.home = os.getcwd()
     
     # Check for Paola's formatted tracks
@@ -38,7 +40,7 @@ def AGB_file_setup(infile):
         print 'not making diagnostic plots'
 
     # set name convention: [mix]_[set].dat
-    infile.name_conv = '_'.join((infile.agb_mix, infile.set_name)) + '.dat'
+    infile.name_conv = '%s.dat' % '_'.join((infile.agb_mix, infile.set_name))
 
     # set track search string
     infile.track_identifier = 'agb_*Z*.dat'
@@ -50,8 +52,10 @@ def AGB_file_setup(infile):
 
     # track file to link from cmd_input to paola's formatted tracks
     tracce_fh = '_'.join(('tracce', infile.name_conv))
+
     infile.tracce_file = os.path.join(infile.home, infile.tracce_dir,
                                       tracce_fh)
+
     infile.tracce_file_rel = os.path.join('isotrack', infile.tracce_dir,
                                           tracce_fh)
 
@@ -200,7 +204,7 @@ def do_everything(infile):
             lifetime_data = np.append(lifetime_data, lifetime_datum)
 
             # make diagnostic plots
-            if infile.diagnostic_dir0 is not None:
+            if infile.diagnostic_dir0 is not None and infile.diag_plots is True:
                 assert metallicity_from_dir(infile.diagnostic_dir)[0] == \
                     track.metallicity, 'diag dir met wrong!'
                 graphics.diag_plots(track, infile)

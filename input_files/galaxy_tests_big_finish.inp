@@ -1,8 +1,8 @@
 # targets, either use all, or set targets (not implemented (leo_overlap, short_list)
-targets     NGC2976-DEEP
+targets     DDO71
 
 # cmd_input files
-models      cmd_input_CAF09_S_OCT13.dat
+models      cmd_input_CAF09_S_NOV13.dat
 # cmd_input_gi10_rev_old_tracks.dat
 
 # plot LF
@@ -22,16 +22,16 @@ run_trilegal    False
 
 # offsets refer to below/above trgb or just set maglims to number and ignore offsets
 maglims     trgb
-offsets     2.5, 1.
+offsets     2., .2
 
 # use leo's method of determining ast corrections
-leo_ast     True
+leo_ast     False
 
 # use girardi10 method of rgb normalization (color mag limits)
 leo_norm    True
 
 # use both leo_norm and leo_ast
-leo_method  True
+leo_method  False
 
 # load ast corrected file:
 renormalize     False
@@ -45,3 +45,4 @@ make_lfs True
 use_opt_rgb False
 
 sfr_dir   /home/rosenfield/research/TP-AGBcalib/SNAP/data/sfh_parsec
+fits_src  /home/rosenfield/research/TP-AGBcalib/SNAP/data/angst_no_trim/

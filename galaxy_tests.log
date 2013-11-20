@@ -69509,3 +69509,895 @@ WARNING:root:no ast corrections.
 INFO:root:completeness using Leo's method
 DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC2976-DEEP_caf09_s_oct13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/10915_NGC2976-DEEP_F475W_F606W_F814W_gst.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_NGC2976-DEEP_caf09_s_oct13_opt.dat
 DEBUG:root:Running spread_angst...
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  26.208     ]
+ [ -0.70299911  24.708     ]
+ [  3.20499992  24.708     ]
+ [  3.20499992  26.208     ]
+ [ -0.70299911  26.208     ]]
+INFO:root:data stars in normalization range: 4825
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_oct13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_oct13_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.4199
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_oct13_opt_inds.dat
+INFO:root:start of run
+INFO:root:working on NGC2976-DEEP
+INFO:root:over-ridcing input, leo_method is now True
+INFO:root:NGC2976-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -3.08800125  26.238     ]
+ [ -3.08800125  24.738     ]
+ [  4.01799965  24.738     ]
+ [  4.01799965  26.238     ]
+ [ -3.08800125  26.238     ]]
+INFO:root:data stars in normalization range: 6629
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  26.208     ]
+ [ -0.70299911  24.708     ]
+ [  3.20499992  24.708     ]
+ [  3.20499992  26.208     ]
+ [ -0.70299911  26.208     ]]
+INFO:root:data stars in normalization range: 4825
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_oct13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_oct13_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.4199
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_oct13_opt_inds.dat
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  26.208     ]
+ [ -0.70299911  24.708     ]
+ [  3.20499992  24.708     ]
+ [  3.20499992  26.208     ]
+ [ -0.70299911  26.208     ]]
+INFO:root:data stars in normalization range: 4825
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_oct13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_oct13_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 0.4199
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_DDO71_caf09_s_oct13_opt_inds.dat
+INFO:root:start of run
+INFO:root:working on NGC2976-DEEP
+INFO:root:over-ridcing input, leo_method is now True
+INFO:root:NGC2976-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -3.08800125  26.238     ]
+ [ -3.08800125  24.738     ]
+ [  4.01799965  24.738     ]
+ [  4.01799965  26.238     ]
+ [ -3.08800125  26.238     ]]
+INFO:root:data stars in normalization range: 6629
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC2976-DEEP_caf09_s_oct13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/10915_NGC2976-DEEP_F475W_F606W_F814W_gst.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_NGC2976-DEEP_caf09_s_oct13_opt.dat
+DEBUG:root:Running spread_angst...
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on NGC2976-DEEP
+INFO:root:over-ridcing input, leo_method is now True
+INFO:root:NGC2976-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -3.08800125  26.238     ]
+ [ -3.08800125  24.738     ]
+ [  4.01799965  24.738     ]
+ [  4.01799965  26.238     ]
+ [ -3.08800125  26.238     ]]
+INFO:root:data stars in normalization range: 6629
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.0977
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC2976-DEEP_caf09_s_oct13_opt_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.59      ]
+ [ -0.86900139  25.09      ]
+ [  3.20000076  25.09      ]
+ [  3.20000076  26.59      ]
+ [ -0.86900139  26.59      ]]
+INFO:root:data stars in normalization range: 2041
+INFO:root:start of run
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.59      ]
+ [ -0.86900139  25.09      ]
+ [  3.20000076  25.09      ]
+ [  3.20000076  26.59      ]
+ [ -0.86900139  26.59      ]]
+INFO:root:data stars in normalization range: 2041
+INFO:root:start of run
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.59      ]
+ [ -0.86900139  25.09      ]
+ [  3.20000076  25.09      ]
+ [  3.20000076  26.59      ]
+ [ -0.86900139  26.59      ]]
+INFO:root:data stars in normalization range: 2041
+DEBUG:root:Trying SCL-DE1 cmd_input_CAF09_S_OCT13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_oct13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/10503_SCL-DE1_F606W_F814W_gst.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_caf09_s_oct13_opt.dat
+DEBUG:root:Running spread_angst...
+INFO:root:start of run
+INFO:root:working on SCL-DE1
+INFO:root:over-ridcing input, leo_method is now False
+INFO:root:SCL-DE1: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.59      ]
+ [ -0.86900139  25.09      ]
+ [  3.20000076  25.09      ]
+ [  3.20000076  26.59      ]
+ [ -0.86900139  26.59      ]]
+INFO:root:data stars in normalization range: 2041
+DEBUG:root:Trying SCL-DE1 cmd_input_CAF09_S_OCT13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_oct13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/10503_SCL-DE1_F606W_F814W_gst.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_SCL-DE1_caf09_s_oct13_opt.dat
+DEBUG:root:Running spread_angst...
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.59      ]
+ [ -0.86900139  25.09      ]
+ [  3.20000076  25.09      ]
+ [  3.20000076  26.59      ]
+ [ -0.86900139  26.59      ]]
+INFO:root:data stars in normalization range: 2041
+DEBUG:root:Trying SCL-DE1 cmd_input_CAF09_S_OCT13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.0922
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_oct13_opt_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on SCL-DE1
+INFO:root:SCL-DE1: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.86900139  26.59      ]
+ [ -0.86900139  25.09      ]
+ [  3.20000076  25.09      ]
+ [  3.20000076  26.59      ]
+ [ -0.86900139  26.59      ]]
+INFO:root:data stars in normalization range: 2041
+DEBUG:root:Trying SCL-DE1 cmd_input_CAF09_S_OCT13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_SCL-DE1.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_oct13_opt.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.0925
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_SCL-DE1_caf09_s_oct13_opt_inds.dat
+INFO:root:working on NGC404-DEEP
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on NGC404-DEEP
+INFO:root:start of run
+INFO:root:working on NGC404-DEEP
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on NGC404-DEEP
+INFO:root:NGC404-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on NGC404-DEEP
+INFO:root:NGC404-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on NGC404-DEEP
+INFO:root:NGC404-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.28199959  25.934     ]
+ [ -1.28199959  24.434     ]
+ [  4.21800041  24.434     ]
+ [  4.21800041  25.934     ]
+ [ -1.28199959  25.934     ]]
+INFO:root:data stars in normalization range: 11159
+DEBUG:root:Trying NGC404-DEEP cmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_NGC404-DEEP.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC404-DEEP_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:start of run
+INFO:root:working on NGC404-DEEP
+INFO:root:NGC404-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.28199959  25.934     ]
+ [ -1.28199959  24.434     ]
+ [  4.21800041  24.434     ]
+ [  4.21800041  25.934     ]
+ [ -1.28199959  25.934     ]]
+INFO:root:data stars in normalization range: 11159
+DEBUG:root:Trying NGC404-DEEP cmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_NGC404-DEEP.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC404-DEEP_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:start of run
+INFO:root:working on NGC404-DEEP
+INFO:root:NGC404-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.28199959  25.934     ]
+ [ -1.28199959  24.434     ]
+ [  4.21800041  24.434     ]
+ [  4.21800041  25.934     ]
+ [ -1.28199959  25.934     ]]
+INFO:root:data stars in normalization range: 11159
+DEBUG:root:Trying NGC404-DEEP cmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_NGC404-DEEP.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC404-DEEP_caf09_s_oct13_opt.dat
+INFO:root:start of run
+INFO:root:working on NGC404-DEEP
+INFO:root:NGC404-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -1.28199959  25.934     ]
+ [ -1.28199959  24.434     ]
+ [  4.21800041  24.434     ]
+ [  4.21800041  25.934     ]
+ [ -1.28199959  25.934     ]]
+INFO:root:data stars in normalization range: 11159
+DEBUG:root:Trying NGC404-DEEP cmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_NGC404-DEEP.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC404-DEEP_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.3112
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC404-DEEP_caf09_s_oct13_opt_inds.dat
+INFO:root:working on KDG73
+INFO:root:KDG73: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.93900108  26.491     ]
+ [ -0.93900108  24.991     ]
+ [  4.73099899  24.991     ]
+ [  4.73099899  26.491     ]
+ [ -0.93900108  26.491     ]]
+INFO:root:data stars in normalization range: 1686
+DEBUG:root:Trying KDG73 cmd_input_CAF09_S_OCT13.dat, Mass=2e+07, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_KDG73.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_KDG73_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.2612
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_KDG73_caf09_s_oct13_opt_inds.dat
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  26.299     ]
+ [ -2.11499977  24.799     ]
+ [  4.54500008  24.799     ]
+ [  4.54500008  26.299     ]
+ [ -2.11499977  26.299     ]]
+INFO:root:data stars in normalization range: 8358
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.1496
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_oct13_opt_inds.dat
+INFO:root:working on NGC2976-DEEP
+INFO:root:NGC2976-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -3.08800125  26.238     ]
+ [ -3.08800125  24.738     ]
+ [  4.01799965  24.738     ]
+ [  4.01799965  26.238     ]
+ [ -3.08800125  26.238     ]]
+INFO:root:data stars in normalization range: 6629
+DEBUG:root:Trying NGC2976-DEEP cmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_NGC2976-DEEP.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC2976-DEEP_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on NGC2976-DEEP
+INFO:root:NGC2976-DEEP: cmd_input_CAF09_S_OCT13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -3.08800125  26.238     ]
+ [ -3.08800125  24.738     ]
+ [  4.01799965  24.738     ]
+ [  4.01799965  26.238     ]
+ [ -3.08800125  26.238     ]]
+INFO:root:data stars in normalization range: 6629
+DEBUG:root:Trying NGC2976-DEEP cmd_input_CAF09_S_OCT13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_NGC2976-DEEP.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC2976-DEEP_caf09_s_oct13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.0982
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_NGC2976-DEEP_caf09_s_oct13_opt_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  26.208     ]
+ [ -0.70299911  24.708     ]
+ [  3.20499992  24.708     ]
+ [  3.20499992  26.208     ]
+ [ -0.70299911  26.208     ]]
+INFO:root:data stars in normalization range: 4825
+DEBUG:root:Trying DDO71 cmd_input_CAF09_S_NOV13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_DDO71.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.4449
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_nov13_opt_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70299911  26.208     ]
+ [ -0.70299911  24.708     ]
+ [  3.20499992  24.708     ]
+ [  3.20499992  26.208     ]
+ [ -0.70299911  26.208     ]]
+INFO:root:data stars in normalization range: 4825
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.4438
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO71_caf09_s_nov13_opt_inds.dat
+INFO:root:start of run
+INFO:root:working on DDO78
+INFO:root:DDO78: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.11499977  26.299     ]
+ [ -2.11499977  24.799     ]
+ [  4.54500008  24.799     ]
+ [  4.54500008  26.299     ]
+ [ -2.11499977  26.299     ]]
+INFO:root:data stars in normalization range: 8358
+DEBUG:root:Trying DDO78 cmd_input_CAF09_S_NOV13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_DDO78.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.1508
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_DDO78_caf09_s_nov13_opt_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  26.208     ]
+ [ -0.70800018  24.708     ]
+ [  3.38499832  24.708     ]
+ [  3.38499832  26.208     ]
+ [ -0.70800018  26.208     ]]
+INFO:root:data stars in normalization range: 7313
+DEBUG:root:Trying ddo71 cmd_input_CAF09_S_NOV13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_ddo71.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.6712
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt_inds.dat
+INFO:root:working on HS117
+INFO:root:HS117: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -5.61499977  26.362     ]
+ [ -5.61499977  24.862     ]
+ [  3.98199844  24.862     ]
+ [  3.98199844  26.362     ]
+ [ -5.61499977  26.362     ]]
+INFO:root:data stars in normalization range: 2584
+DEBUG:root:Trying hs117 cmd_input_CAF09_S_NOV13.dat, Mass=2e+07, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_hs117.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_hs117_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.7631
+DEBUG:root:Trying hs117 cmd_input_CAF09_S_NOV13.dat, Mass=1e+08, Attempt 2
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_hs117.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_hs117_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.1508
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_hs117_caf09_s_nov13_opt_inds.dat
+INFO:root:working on KKH37
+INFO:root:KKH37: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.95699692  26.04      ]
+ [ -2.95699692  24.54      ]
+ [  5.604002    24.54      ]
+ [  5.604002    26.04      ]
+ [ -2.95699692  26.04      ]]
+INFO:root:data stars in normalization range: 3399
+DEBUG:root:Trying kkh37 cmd_input_CAF09_S_NOV13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_kkh37.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_kkh37_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.2053
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_kkh37_caf09_s_nov13_opt_inds.dat
+INFO:root:working on NGC2976-DEEP
+INFO:root:NGC2976-DEEP: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.91799927  26.236     ]
+ [ -2.91799927  24.736     ]
+ [  5.89500046  24.736     ]
+ [  5.89500046  26.236     ]
+ [ -2.91799927  26.236     ]]
+INFO:root:data stars in normalization range: 10120
+DEBUG:root:Trying ngc2976-deep cmd_input_CAF09_S_NOV13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_ngc2976-deep.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ngc2976-deep_caf09_s_nov13_opt.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  26.208     ]
+ [ -0.70800018  24.708     ]
+ [  3.38499832  24.708     ]
+ [  3.38499832  26.208     ]
+ [ -0.70800018  26.208     ]]
+INFO:root:data stars in normalization range: 7313
+DEBUG:root:Trying ddo71 cmd_input_CAF09_S_NOV13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_ddo71.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.6705
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt_inds.dat
+INFO:root:working on HS117
+INFO:root:HS117: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -5.61499977  26.362     ]
+ [ -5.61499977  24.862     ]
+ [  3.98199844  24.862     ]
+ [  3.98199844  26.362     ]
+ [ -5.61499977  26.362     ]]
+INFO:root:data stars in normalization range: 2584
+DEBUG:root:Trying hs117 cmd_input_CAF09_S_NOV13.dat, Mass=2e+07, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_hs117.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_hs117_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.7455
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_hs117_caf09_s_nov13_opt_inds.dat
+INFO:root:working on KKH37
+INFO:root:KKH37: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.95699692  26.04      ]
+ [ -2.95699692  24.54      ]
+ [  5.604002    24.54      ]
+ [  5.604002    26.04      ]
+ [ -2.95699692  26.04      ]]
+INFO:root:data stars in normalization range: 3399
+DEBUG:root:Trying kkh37 cmd_input_CAF09_S_NOV13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_kkh37.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_kkh37_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.2053
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_kkh37_caf09_s_nov13_opt_inds.dat
+INFO:root:working on NGC2976-DEEP
+INFO:root:NGC2976-DEEP: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F475W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -2.91799927  26.236     ]
+ [ -2.91799927  24.736     ]
+ [  5.89500046  24.736     ]
+ [  5.89500046  26.236     ]
+ [ -2.91799927  26.236     ]]
+INFO:root:data stars in normalization range: 10120
+DEBUG:root:Trying ngc2976-deep cmd_input_CAF09_S_NOV13.dat, Mass=5e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_ngc2976-deep.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ngc2976-deep_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  26.208     ]
+ [ -0.70800018  24.708     ]
+ [  3.38499832  24.708     ]
+ [  3.38499832  26.208     ]
+ [ -0.70800018  26.208     ]]
+INFO:root:data stars in normalization range: 7313
+DEBUG:root:Trying ddo71 cmd_input_CAF09_S_NOV13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_ddo71.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_ddo71_caf09_s_nov13_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 1.2650
+DEBUG:root:Trying ddo71 cmd_input_CAF09_S_NOV13.dat, Mass=5e+08, Attempt 2
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_ddo71.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_ddo71_caf09_s_nov13_opt.dat
+DEBUG:root:Running spread_angst...
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  26.208     ]
+ [ -0.70800018  24.708     ]
+ [  3.38499832  24.708     ]
+ [  3.38499832  26.208     ]
+ [ -0.70800018  26.208     ]]
+INFO:root:data stars in normalization range: 7313
+DEBUG:root:Trying ddo71 cmd_input_CAF09_S_NOV13.dat, Mass=1e+08, Attempt 1
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_ddo71.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_ddo71_caf09_s_nov13_opt.dat
+DEBUG:root:Running spread_angst...
+DEBUG:root:normalization 1.2776
+DEBUG:root:Trying ddo71 cmd_input_CAF09_S_NOV13.dat, Mass=5e+08, Attempt 2
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/input/input_ddo71.dat /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat
+INFO:root:done.
+WARNING:root:no ast corrections.
+INFO:root:completeness using Leo's method
+DEBUG:root:/home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt.dat + /home/rosenfield/research/TP-AGBcalib/SNAP/data/fakes/9884_DDO71_F606W_F814W_gst.fake.fits.matchfake -> /home/rosenfield/research/TP-AGBcalib/SNAP/output/ast_F606W_F814W_output_ddo71_caf09_s_nov13_opt.dat
+DEBUG:root:Running spread_angst...
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  26.208     ]
+ [ -0.70800018  24.708     ]
+ [  3.38499832  24.708     ]
+ [  3.38499832  26.208     ]
+ [ -0.70800018  26.208     ]]
+INFO:root:data stars in normalization range: 7313
+WARNING:root:no ast corrections.
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.500000 below the trgb to 1.000000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  26.208     ]
+ [ -0.70800018  24.708     ]
+ [  3.38499832  24.708     ]
+ [  3.38499832  26.208     ]
+ [ -0.70800018  26.208     ]]
+INFO:root:data stars in normalization range: 7313
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.1343
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt_inds.dat
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.200000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  25.708     ]
+ [ -0.70800018  23.908     ]
+ [  3.38499832  23.908     ]
+ [  3.38499832  25.708     ]
+ [ -0.70800018  25.708     ]]
+INFO:root:data stars in normalization range: 5486
+WARNING:root:no ast corrections.
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.200000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  25.708     ]
+ [ -0.70800018  23.908     ]
+ [  3.38499832  23.908     ]
+ [  3.38499832  25.708     ]
+ [ -0.70800018  25.708     ]]
+INFO:root:data stars in normalization range: 5486
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.200000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  25.708     ]
+ [ -0.70800018  23.908     ]
+ [  3.38499832  23.908     ]
+ [  3.38499832  25.708     ]
+ [ -0.70800018  25.708     ]]
+INFO:root:data stars in normalization range: 5486
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.1302
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.200000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  25.708     ]
+ [ -0.70800018  23.908     ]
+ [  3.38499832  23.908     ]
+ [  3.38499832  25.708     ]
+ [ -0.70800018  25.708     ]]
+INFO:root:data stars in normalization range: 5486
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.1304
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt_inds.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:working on DDO71
+INFO:root:DDO71: cmd_input_CAF09_S_NOV13.dat
+INFO:root:filter1 set to F606W
+INFO:root:filter2 set to F814W
+INFO:root:using F814W trgb
+INFO:root:normalization mag: 2.000000 below the trgb to 0.200000 above
+INFO:root:normalization color: using all stars in mag range
+DEBUG:root:norm verts:
+DEBUG:root:[[ -0.70800018  25.708     ]
+ [ -0.70800018  23.908     ]
+ [  3.38499832  23.908     ]
+ [  3.38499832  25.708     ]
+ [ -0.70800018  25.708     ]]
+INFO:root:data stars in normalization range: 5486
+WARNING:root:no ast corrections.
+DEBUG:root:normalization 0.1307
+INFO:root:normalization indices written to /home/rosenfield/research/TP-AGBcalib/SNAP/output/output_ddo71_caf09_s_nov13_opt_inds.dat
