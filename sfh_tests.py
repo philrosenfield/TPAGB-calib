@@ -16,6 +16,56 @@ angst_data = rsp.angst_tables.AngstTables()
 import galaxy_tests
 import random
 
+def number_of_stars(gal, exclude_region='default', mag_below_trgb=2.):
+        '''
+        Count the number of rgb and agb stars (in F814W or F160W)
+
+        ARGS:
+        exclude_region: mags above and below the trgb to exclude from
+                        star counts [twice the trgb mag error]
+        mag_below_trgb: mags below the trgb to call rgb stars [2]
+
+        RETURNS:
+        nrgb: int number of rgb stars
+        nagb: int number of agb stars
+
+        There are two reasons to use exclude_region.
+        1) the TRGB mag is uncertain, and when counting agb stars,
+           there should be no chance of scattering up rgb stars.
+        2) TPAGB stars scatter below the TRGB due to the P in TP.
+           Statistically, there are few TPAGB stars below the TRGB.
+
+        TO DO:
+        Test the number of AGB stars below the TRGB as a function of
+        mag to test how many mTRGB_err exclude_region should use.
+
+        Adapt for recent star formation:
+        Add color information or verts to the stars in region call.
+        Will need a robust contamination code.
+        '''
+        if exclude_region == 'default':
+            if gal.filter2 == 'F814W':
+                gal.trgb_err = angst_data.get_item(gal.target, 'mTRGB_err',
+                                               extra_key='%s,%s' % (gal.filter1,
+                                                                    gal.filter2))
+            if gal.filter2 == 'F160W':
+                gal.trgb_err = rsp.fileIO.item_from_row(angst_data.snap_tab3,
+                                                    'target',
+                                                    gal.target.upper(),
+                                                    'mTRGB_F160W_err')
+
+            exclude_region = gal.trgb_err * 2.
+
+        # rgb will go from mag_below_trgb to trgb + exclude_region
+        nrgb = len(gal.stars_in_region(gal.mag2, gal.trgb + mag_below_trgb,
+                                       gal.trgb + exclude_region))
+
+        # agb will go from trgb - exclude_region to very bright
+        nagb = len(gal.stars_in_region(gal.mag2,
+                                       gal.trgb - exclude_region, -99.))
+        return nrgb, nagb, exclude_region
+
+
 class AncientGalaxies(object):
     '''
     This class is to set up a run for VarySFHs.
@@ -27,21 +77,10 @@ class AncientGalaxies(object):
     def __init__(self):
         pass
 
-    def number_of_stars(self, gal, offset, trgb_offset=0):
+    def write_trgb_table(self, targets='ancients', mag_below_trgb=[2, 1.5],
+                         exclude_region='default'):
         '''
-        more complex? Add color information or verts to the
-        stars in region call. Also write a robust contamination code.
-        '''
-        nrgb = len(gal.stars_in_region(gal.mag2, gal.trgb + offset,
-                                                gal.trgb + trgb_offset))
-        nagb = len(gal.stars_in_region(gal.mag2, gal.trgb, 99.))
-        return nrgb, nagb
-        
-    def write_trgb_table(self, targets='ancients', offsets=[2, 1.5],
-                         trgb_offset=0):
-        '''
-        writes the trgb and number of stars within offsets (opt, ir) mags of
-        trgb
+        write the trgb, trgb_err, and the number of stars (opt, ir) rgb and agb
         '''
         if targets == 'ancients':
             tstring = targets
@@ -49,11 +88,10 @@ class AncientGalaxies(object):
         else:
             print 'need to write how to read other targets'
 
-        fits_srcs = [snap_src + '/data/angst_no_trim',
-                     'default']
+        fits_srcs = [snap_src + '/data/angst_no_trim', 'default']
+
         gal_dict = {}
         for i, band in enumerate(['opt', 'ir']):
-            print band
             gals = rsp.Galaxies.galaxies([galaxy_tests.load_galaxy(t, band=band,
                                                       fits_src=fits_srcs[i])
                                           for t in targets])
@@ -63,9 +101,12 @@ class AncientGalaxies(object):
                 else:
                     gal.target = gal.target.lower()
 
-                nrgb, nagb = self.number_of_stars(gal, offsets[i])
+                nrgb, nagb, ex_region = number_of_stars(gal,
+                                                        mag_below_trgb=mag_below_trgb[i],
+                                                        exclude_region=exclude_region)
                 
                 gdict = {'%s_trgb' % band: gal.trgb,
+                         '%s_trgb_err' % band: gal.trgb_err,
                          'n%s_rgb' % band: nrgb,
                          'n%s_agb' % band: nagb}
                 try:
@@ -73,22 +114,30 @@ class AncientGalaxies(object):
                 except KeyError:
                     gal_dict[gal.target] = gdict
 
-        fmt = '%(target)s %(opt_trgb).2f %(nopt_rgb)i %(nopt_agb)i %(ir_trgb).2f %(nir_rgb)i %(nir_agb)i \n'
-        outfile = os.path.join(table_src, '%s_galaxies_%s_mag_below.dat' %
-                              (tstring, '_'.join(map(str, offsets))))
-        if trgb_offset > 0:
-            outfile = outfile.replace('_below.dat', '_below_trgb_%s.dat' % str(trgb_offset))
-            
+        fmt = '%(target)s '
+        fmt += '%(opt_trgb).2f %(opt_trgb_err).2f %(nopt_rgb)i %(nopt_agb)i '
+        fmt += '%(ir_trgb).2f %(ir_trgb_err).2f %(nir_rgb)i %(nir_agb)i \n'
+        outfile = os.path.join(table_src, '%s_galaxies.dat' % tstring)
+
+        header = '# mags below trgb: optical=%.2f nir=%.2f \n' % (mag_below_trgb[0],
+                                                                  mag_below_trgb[1])
+        if exclude_region == 'default':
+            header += '# excluded trgb region: %.2f * trgb mag_err \n' % ex_region
+        header += '# target opt_trgb opt_trgb_err nopt_rgb nopt_agb '
+        header += 'nir_trgb nir_trgb_err nir_rgb nir_agb \n'
+
         with open(outfile, 'w') as out:
-            out.write('# target opt_trgb nopt_rgb nopt_agb ir_trgb nir_rgb nir_agb \n')
+            out.write(header)
             for k, v in gal_dict.items():
                 gal_dict[k]['target'] = k
                 out.write(fmt % gal_dict[k])
         print 'wrote %s' % outfile
 
     def read_trgb_table(self, table_name):
-        dtype = [('target', '|S16'), ('opt_trgb', '<f8'), ('nopt_rgb', '<f8'),
-                 ('nopt_agb', '<f8'), ('ir_trgb', '<f8'), ('nir_rgb', '<f8'),
+        dtype = [('target', '|S16'), ('opt_trgb', '<f8'),
+                 ('opt_trgb_err', '<f8'), ('nopt_rgb', '<f8'),
+                 ('nopt_agb', '<f8'), ('ir_trgb', '<f8'),
+                 ('ir_trgb_err', '<f8'), ('nir_rgb', '<f8'),
                  ('nir_agb', '<f8')]
         data = np.genfromtxt(table_name, dtype=dtype)
         self.data = data.view(np.recarray)
@@ -159,6 +208,8 @@ class StarFormationHistories(object):
         If they are both zero, well, just returns attr.
         '''
         #assert attr in ['sfr', 'mh'], 'Only set up for sfr and mh'
+        if attr == 'mh':
+            print 'Warning: this method was designed for sfr, not [M/H]'
         val_arr = self.data.__getattribute__(attr)
         errm_arr = self.data.__getattribute__('%s_errm' % attr)
         errp_arr = self.data.__getattribute__('%s_errp' % attr)
@@ -283,8 +334,7 @@ class StarFormationHistories(object):
         val_arrs = [np.genfromtxt(s, usecols=(col))[1::4]
                     for s in self.sfr_files]
         if attr_str == 'mh':
-            val_arrs = np.array([10**(val_arr/.2)
-                                 for val_arr in val_arrs])
+            val_arrs = np.array([10**(val_arr/.2) for val_arr in val_arrs])
         if attr_str == 'feh':
             val_arrs = np.array([convertz.convertz(feh=feh)[1]
                                  for feh in val_arrs])
@@ -433,8 +483,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         rsp.fileIO.ensure_dir(self.outfile_loc)
 
         if table_file is 'default':
-            table_file = os.path.join(table_src,
-                                      'ancients_galaxies_2_1.5_mag_below.dat')
+            table_file = os.path.join(table_src, 'ancients_galaxies.dat')
         # hmm better way?
         self.offsets = [2, 1.5]
         # else:
@@ -534,16 +583,16 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         Formatting is a repeat of first line is histogram, next line is bins[1:]
         '''
         # load mags, set here in case incase I want to pass this in the future.
-        opt_mag = self.sgal.ast_mag2
-        ir_mag = self.sgal.ast_mag4
+        opt_mag = self.sgal.data.get_col('%s_cor' % self.ast_objs[0].filter2)
+        ir_mag = self.sgal.data.get_col('%s_cor' % self.ast_objs[1].filter2)
 
         # hist it up!
         opt_hist, opt_bins = galaxy_tests.hist_it_up(opt_mag, threash=5)
         ir_hist, ir_bins = galaxy_tests.hist_it_up(ir_mag, threash=5)
 
         # scale the simulated LF to match the data LF
-        opt_hist *= opt_norm
-        ir_hist *= ir_norm
+        opt_hist = np.array(opt_hist, dtype=float) * opt_norm
+        ir_hist = np.array(ir_hist, dtype=float) * ir_norm
 
         np.savetxt(opt_file, (opt_hist, opt_bins[1:]), fmt='%g')
         np.savetxt(ir_file, (ir_hist, ir_bins[1:]), fmt='%g')
@@ -610,11 +659,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
                                 self.ir_mass_met_file.name)
 
     def load_data_for_normalization(self):
-        '''
-        load the numbers of data rgb and agb stars. The file was already read
-        '''
-        # need to get normalization...
-        # for ancients, this is just a mag cut, no color cut.
+        '''load the numbers of data rgb and agb stars from self.ags'''
         self.nopt_rgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
                                                  self.target, 'nopt_rgb')
         self.nir_rgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
@@ -623,6 +668,10 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
                                                 self.target, 'opt_trgb')
         self.ir_trgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
                                                 self.target, 'ir_trgb')
+        self.opt_trgb_err = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                                self.target, 'opt_trgb_err')
+        self.ir_trgb_err = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                                self.target, 'ir_trgb_err')
         return self.nopt_rgb, self.nir_rgb
 
     def load_asts(self):
@@ -654,20 +703,20 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
                 'need sgal loaded or pass trilegal catalog file name'
             self.read_trilegal_catalog(trilegal_output, filter1=filter1)
 
-        mag2 = self.sgal.ast_mag2
-        mag4 = self.sgal.ast_mag4
+        opt_mag = self.sgal.data.get_col('%s_cor' % self.ast_objs[0].filter2)
+        ir_mag = self.sgal.data.get_col('%s_cor' % self.ast_objs[1].filter2)
 
         # Recovered stars in simulated RGB region.
-        sopt_rgb = self.sgal.stars_in_region(mag2,
+        sopt_rgb = self.sgal.stars_in_region(opt_mag,
                                              self.opt_trgb + self.offsets[0],
-                                             self.opt_trgb)
-        sir_rgb = self.sgal.stars_in_region(mag4,
+                                             self.opt_trgb + self.opt_trgb_err * 2)
+        sir_rgb = self.sgal.stars_in_region(ir_mag,
                                             self.ir_trgb + self.offsets[1],
-                                            self.ir_trgb)
+                                            self.ir_trgb + self.ir_trgb_err * 2)
 
         # Recovered stars in simulated AGB region.
-        sopt_agb = self.sgal.stars_in_region(mag2, self.opt_trgb, 10.)
-        sir_agb = self.sgal.stars_in_region(mag4, self.ir_trgb, 10.)
+        sopt_agb = self.sgal.stars_in_region(opt_mag, self.opt_trgb - self.opt_trgb_err * 2, 10.)
+        sir_agb = self.sgal.stars_in_region(ir_mag, self.ir_trgb - self.ir_trgb_err * 2, 10.)
 
         # normalization
         opt_norm = self.nopt_rgb / float(len(sopt_rgb))
@@ -676,8 +725,9 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         #print opt_norm, ir_norm
 
         # random sample the data distribution
-        rands = np.random.random(len(self.sgal.ast_mag2))
+        rands = np.random.random(len(opt_mag))
         opt_ind, = np.nonzero(rands < opt_norm)
+        rands = np.random.random(len(ir_mag))
         ir_ind, = np.nonzero(rands < ir_norm)
 
         # scaled rgb: ast + norm + in rgb
@@ -692,12 +742,13 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         ir_agb = list(set(ir_ind) & set(sir_agb) & set(self.sgal.ir_rec))
 
         #save LF in both filters
-        if mc:
+        if mc is True:
             # only need to save the LF and the ratios.
             self.write_mass_met_file()
             self.write_LF(opt_norm, ir_norm, self.opt_lf_file, self.ir_lf_file)
             self.write_ratio(opt_rgb, opt_agb, ir_rgb, ir_agb,
                              self.narratio_file)
+        return opt_norm, ir_norm, opt_ind, ir_ind
 
     def vary_the_SFH(self, cmd_input_file, make_many_kw=None, dry_run=False,
                      mc=True, diag_plots=False):
@@ -850,6 +901,18 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         plt.hist(ratio['ir_ar_ratio'])
         pass
 
+    def remove_files(self):
+        print 'backing up everything in %s first' % self.outfile_loc
+        files = rsp.fileIO.get_files(self.outfile_loc, '*.*')
+        bkdir = os.path.join(self.outfile_loc, 'bkup/')
+        if os.path.isdir(bkdir):
+            old_files = os.listdir(bkdir)
+            if len(old_files) > 0:
+                print 'overwriting a previous back up.'
+        else:
+            rsp.fileIO.ensure_dir(bkdir)
+        [os.system('mv %s %s' % (f, bkdir)) for f in files]
+
 
 def convert_match_to_trilegal_sfh(sfr_dir, fileorigin='match',
                                   search_str='*.sfh',
@@ -936,6 +999,9 @@ def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, mk_tri_sfh_kw=None,
     # initialize VarySFHs object, loads ASTs, obs data
     vSFH = VarySFHs(galaxy_input_file, match_sfh_file, match_fileorigin,
                     target=galaxy_name.lower())
+
+    # don't keep appending to old files.
+    vSFH.remove_files()
 
     # vary the SFH
     vSFH.vary_the_SFH(cmd_input_file, **vary_sfh_kw)
