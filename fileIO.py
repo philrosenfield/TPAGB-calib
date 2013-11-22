@@ -234,8 +234,12 @@ def get_numeric_data(filename):
     data are passed as zeros.
     '''
     f = open(filename, 'r')
-    line = f.readline()
+    lines = f.readlines()
     f.close()
+    line = lines[0]
+    if len(lines) == 1:
+        print 'only one line in %s' % filename
+        return -1
     col_keys = line.replace('#', '').replace('lg', '').replace('*', 'star')
     col_keys = col_keys.strip().split()
     try:
@@ -244,28 +248,6 @@ def get_numeric_data(filename):
     except ValueError:
         print 'problem with', filename
         data = np.zeros(len(col_keys))
-    return AGBTracks(data, col_keys, filename)
-
-
-def get_numeric_data_not_yet_working(filename):
-    f = open(filename, 'r')
-    lines = f.readlines()
-    f.close()
-    col_keys = lines[0].replace('#', '').replace('lg', '').replace('*', 'star').replace('/','')
-    col_keys = col_keys.strip().split()
-    ncols = len(col_keys)
-    nrows = len(lines) - 1
-    dtype = [(c, '<f8') for c in col_keys]
-    data = np.ndarray((nrows,), dtype=dtype)
-    for i in range(len(lines)-1):
-        if lines[i].startswith('#'):
-            continue
-        try:
-            data[i] = np.array(map(float,lines[i].strip().split()))
-        except ValueError:
-            err = sys.exc_info()[1]
-            tb = sys.exc_info()[-1]
-            print ("%s %s"%(tb.tb_frame.f_code.co_filename, err))
     return AGBTracks(data, col_keys, filename)
 
 
@@ -292,7 +274,8 @@ def make_iso_file(track, isofile):
 
     # cull agb track to quiescent, write out.
     rows = [q for q in track.Qs]  # cutting the final point for the file.
-    rows[0] += 1
+    # I don't know why this is here.
+    #rows[0] += 1
 
     keys = track.key_dict.keys()
     vals = track.key_dict.values()
@@ -320,7 +303,7 @@ def make_iso_file(track, isofile):
             try:
                 slope = 1. / track.slopes[list(rows).index(r)]
             except:
-                print 'fucked',track.firstname
+                print 'fucked', track.firstname
                 graphics.hrd_slopes(track)
         try:
             isofile.write(fmt % (row['ageyr'], row['L_star'], row['T_star'],
@@ -330,7 +313,7 @@ def make_iso_file(track, isofile):
         except IndexError:
             print list(rows).index(r)
             print len(rows), len(track.slopes)
-            print 1. / slopes[list(rows).index(r)]
+            print 1. / slope[list(rows).index(r)]
     return
 
 
@@ -356,7 +339,7 @@ class input_file(object):
         [self.__setattr__(k, v) for k, v in udict.items()]
 
 
-def input_defaults(profile=None):
+def agb_input_defaults(profile=None):
     '''
     the input file should be formatted in this way (comments are optional):
     # Paola's tracks are here:

@@ -12,43 +12,55 @@ def get_age(filename):
 
 def trilegal_diag_table(image_location):
     """
-    python GoogleSitesTable.py just run this in the directory with Marco's plots. 
+    python GoogleSitesTable.py just run this in the directory with Marco's
+    plots. 
     
-    The printing at the bottom is for phil, so comment it out, change it, or ignore it.
+    The printing at the bottom is for phil, so comment it out, change it, or
+    ignore it.
     
     -- will make html for CMD and LF page with 5x5 image table (of 16 images)
     -- will make two tar.gz files with cmd*png and lf*png
-    -- to change the tar commands, look at the os.system commands at line 53 (works like perl)
+    -- to change the tar commands, look at the os.system commands at line 53
+    (works like perl)
     """
-    image_base,header,footer,titlefmt,cellfmt,line = defaults()
+    image_base, header, footer, titlefmt, cellfmt, line = defaults()
     endrow = '</tr>\n'
     startrow = '<tr>'
     cell = '<td>%s</td>'
-    image_garbage = '<div style="display: block; margin-right: auto; margin-left: auto; text-align: center; "><a imageanchor="1" href="%s%s"><img src="%s%s" border="0" width="400" height="300"></a></div>'
+    image_garbage = '<div style="display: block; margin-right: auto; '
+    image_garbage += 'margin-left: auto; text-align: center; ">'
+    image_garbage += '<a imageanchor="1" href="%s%s"><img src="%s%s" border="0"'
+    image_garbage += 'width="400" height="300"></a></div>'
     thismix = os.path.split(image_location)[1]
-    web_image_loc = '/'.join((image_base,'%s/'%thismix))
+    web_image_loc = '/'.join((image_base, '%s/' % thismix))
     
-    plt_types = ['cmd','lf']
+    plt_types = ['cmd', 'lf']
     for plt_type in plt_types:
-        outfile = os.path.join(image_location,plt_type+'.html')
-        imgs = fileIO.get_files(image_location,'%s*png'%plt_type)
+        outfile = os.path.join(image_location, plt_type+'.html')
+        imgs = fileIO.get_files(image_location,'%s*png' % plt_type)
         zs = np.unique([get_z(z) for z in imgs])
         ages = np.unique([get_age(a) for a in imgs])
-        
-        line = startrow+'<th width=60px>&nbsp;</th>'+"".join(['<th>Z = %g </th>'%z for z in zs])+endrow
+
+        content = "".join(['<th>Z = %g </th>' % z for z in zs])
+        line = '%s<th width=60px>&nbsp;</th>%s%s' % (startrow, content, endrow)
+
         for age in ages:
-            line+= startrow+'<th>%g Gyr</th>'%age
+            line += '%s<th>%g Gyr</th>' % (startrow, age)
             for z in zs:
-                img = '_'.join((plt_type,'Z%.2e'%z,'A%.2e.png'%age))
-                line+= cell%(image_garbage%(web_image_loc,img,web_image_loc,img))
+                img = '_'.join((plt_type,'Z%.2e' % z, 'A%.2e.png' % age))
+                line += cell % (image_garbage % (web_image_loc, img,
+                                                 web_image_loc, img))
             line += endrow
         
-        quick_write(outfile,header,line,footer)
+        quick_write(outfile, header, line, footer)
         
-        fmt = os.path.join(image_location,plt_type)
-        os.system('tar -cvf %ss.tar %s*png'%(fmt,fmt))
-        os.system('gzip %ss.tar'%fmt)
-                
+        here = os.getcwd()
+        os.chdir(image_location)
+
+        os.system('tar -cvf %ss.tar %s*png' % (plt_type, plt_type))
+        os.system('gzip %ss.tar' % plt_type)
+        os.chdir(here)
+        
     if 'philrose' in image_location:
         print 'scp %s*.gz philrose@portal.astro.washington.edu:/www/astro/users/philrose/html/Research/tpagbcalib/.'%fmt
         print 'ssh philrose@portal.astro.washington.edu'
@@ -67,7 +79,7 @@ def defaults():
     titlefmt = '<tr><td style=\'text-align: center;\'><h3>%s</h3></td></tr>\n'
     cellfmt = '<tr><td><div style=\'display:block;text-align:center;margin-right:auto\'><a href=\'%s\'><img height=\'%i\' src=\'%s\' width=\'%i\'></a><br></div></td></tr>\n'
     line = ''
-    return image_base,header,footer,titlefmt,cellfmt,line
+    return image_base, header, footer, titlefmt, cellfmt, line
     
 def w_h_frompng(img):
     '''

@@ -3,3 +3,7 @@ result_tab.dat
 *png
 *dat
 .*
+*.log
+*.tex
+*.gz
+*.pdf

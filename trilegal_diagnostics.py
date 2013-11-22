@@ -1,5 +1,4 @@
-import matplotlib
-matplotlib.use('Agg')
+import ResolvedStellarPops as rsp
 import matplotlib.pyplot as plt
 import fileIO
 import matplotlib.transforms as mtransforms
@@ -10,7 +9,6 @@ except:
 import os
 from optparse import OptionParser
 import itertools
-from subprocess import Popen, PIPE
 import numpy as np
 import shutil
 
@@ -40,120 +38,66 @@ def write_sfh(age, z, ofile):
     oo.close()
 
 
-def write_tri_par(sfh, ofile):
-    o = ['photosys           2mass           ',
-         'mag_num            3               ',
-         'mag_lim            -3.0            ',
-         'mag_res            0.1             ',
-         'dust               1               ',
-         'dustM              dpmod60alox40   ',
-         'dustC              AMCSIC15        ',
-         'binary_kind        0               ',
-         'binary_frac        0.3             ',
-         'binary_mrinf       0.7             ',
-         'binary_mrsup       1.0             ',
-         'extinction_kind    2               ',
-         'thindisk_kind      0               ',
-         'thickdisk_kind     0               ',
-         'halo_kind          0               ',
-         'bulge_kind         0               ',
-         'object_kind        1               ',
-         'object_mass        1.0e7           ',
-         'object_dist        10.0            ',
-         'object_avkind      1               ',
-         'object_av          0.000           ',
-         'object_cutoffmass  0.8             ',
-         'object_sfr         %s' % os.path.abspath(sfh),
-         'object_sfr_A       1e9             ',
-         'object_sfr_B       0.0             ']
-
-    with open(ofile, 'w') as oo:
-        [oo.write(line + '\n') for line in o]
-    return
-
-
-def xrun_trilegal(track, parfile, inp, out):
-    track_file = 'cmd_input_%s.dat' % track
-    # Phil changed this for his computer!!
-    cmd = '/Users/phil/research/PyTRILEGAL/run_trilegal.py -e code/main'
-    cmd += ' %s' % parfile
-    cmd += ' -a'
-    cmd += ' -l'
-    # Phil made these abs paths!
-    cmd += ' -i %s' % os.path.abspath(inp)
-    cmd += ' -o %s' % os.path.abspath(out)
-    cmd += ' -f ../cmd_inputfiles/%s' % track_file
-
-    print cmd
-    #print out
-    p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
-    stdout, stderr = (p.stdout, p.stderr)
-
-    p.wait()
-    ff = open(out, 'a')
-    for l in stdout.readlines():
-        ff.write('# %s' % l)
-    ff.close()
-
-
 def make_galaxy_input(galaxy_input, sfh_file):
-    import ResolvedStellarPops as rsp
-    inp = rsp.fileIO.input_parameters(default_dict=rsp.TrilegalUtils.galaxy_input_dict())
-    kwargs = {'object_mass': 1e7,
-              'object_sfr_file': sfh_file,
-              'file_mag': 'tab_mag_odfnew/tab_mag_2mass.dat',
-              'mag_limit_val': -3.0,
-              'mag_num': 3,
-              'object_sfr_mult_factorA': 1e9}
-    inp.add_params(kwargs)
-    inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
-    return
 
+    gal_dict_inp = {'photsys': '2mass',
+                    'filter1': 'Ks',
+                    'object_mass': 1e7,
+                    'object_sfr_file': sfh_file}
 
-def run_trilegal(cmd_input, galaxy_input, output):
-    '''
-    runs trilegal with os.system. might be better with subprocess? Also
-    changes directory to trilegal root, if that's not in a .cshrc need to
-    somehow tell it where to go.
+    gal_dict = rsp.TrilegalUtils.galaxy_input_dict(**gal_dict_inp)
 
-    to do:
-    add -a or any other flag options
-    possibly add the stream output to the end of the output file.
-    '''
-    here = os.getcwd()
-    os.chdir(os.environ['TRILEGAL_ROOT'])
+    gal_inp = rsp.fileIO.input_parameters(default_dict=gal_dict)
 
-    logger.info('running trilegal...')
-    cmd = 'code/main -f %s -l %s %s > %s.msg\n' % (cmd_input, galaxy_input,
-                                                   output, output)
-    print cmd
-    logger.debug(cmd)
-    t = os.system(cmd)
-    logger.info('done.')
+    galinp_kw = {'mag_limit_val': -3,
+                 'object_sfr_mult_factorA': 1e9,
+                 'mag_num': 3}
 
-    if t != 0:
-        for l in open('%s.msg' % output).readlines():
-            logger.debug(l.strip())
-    else:
-        os.remove('%s.msg' % output)
+    gal_inp.add_params(galinp_kw)
 
-    os.chdir(here)
+    gal_inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
     return
 
 
 def plot_em(ifile, lf_file, cmd_file, age, z, track):
     print 'Plotting', ifile
 
-    logL, mbol, j, k, mcore, co = np.loadtxt(ifile,
-                                             usecols=(4, 10, 11, 13, 14, 15),
+    logL, logTe, mbol, j, k, mcore, co, dmdt = np.loadtxt(ifile,
+                                             usecols=(4, 5, 10, 11, 13, 14, 15, 18),
                                              unpack=True)
 
     nAGB = (mcore == 0)
-    cAGB = ((mcore > 0) & (co >= 1))
-    oAGB = ((mcore > 0) & (co < 1))
+    cAGB = ((co >= 1) & (dmdt <= -5))
+    oAGB = ((co <= 1) & (logL >= 3.3) & (dmdt < -5))
 
     jk = j - k
     bins = np.arange(-10, 20, 0.1)
+
+    ###### HRD
+    fig = plt.figure()
+    ax = fig.add_axes([.1, .1, .8, .8])
+    ax.plot(logTe[nAGB], logL[nAGB], '.k')
+    ax.plot(logTe[cAGB], logL[cAGB], 'o', mfc='None', ms=5, mew=1, mec=colorC,
+            alpha=0.3)
+    ax.plot(logTe[oAGB], logL[oAGB], 'o', mfc='None', ms=5, mew=1, mec=colorO,
+            alpha=0.3)
+
+    ax.annotate('Age=%.2e' % age, (.7, .1), va='center',
+                xycoords='axes fraction')
+    ax.annotate('Z=%.2e' % z, (.7, .15), va='center',
+                xycoords='axes fraction')
+    ax.annotate('[M/H]=%.2f' % ztomh(z), (.7, .2), va='center',
+                xycoords='axes fraction')
+
+    ax.annotate(r'$%s$' % track.replace('_', '\ '), (.1, .9), va='center',
+                xycoords='axes fraction')
+
+    ax.set_xlim(ax.get_xlim()[::-1])
+    #ax.set_ylim(-3.1, -9.5)
+    ax.set_xlabel(r'$\log\ T_{\\eff}$')
+    ax.set_ylabel(r'$\log L$')
+    plt.savefig(cmd_file.replace('cmd', 'hrd'))
+
 
     ###### CMD
     fig = plt.figure()
@@ -179,7 +123,7 @@ def plot_em(ifile, lf_file, cmd_file, age, z, track):
     ax.set_xlabel(r'$J-K$')
     ax.set_ylabel(r'$K$')
     plt.savefig(cmd_file)
-
+    plt.close()
     ###### LF
     fig = plt.figure()
 
@@ -200,7 +144,7 @@ def plot_em(ifile, lf_file, cmd_file, age, z, track):
     if sum(oAGB):
         pdf, bins, patches = ax2.hist(mbol[oAGB], bins, histtype='stepfilled',
                                       color=colorO)
-        ax2.set_ylim(0.01, pdf.max()*1.1)
+        ax2.set_ylim(0.01, pdf.max() * 1.1)
 
     ax1.annotate('Age=%.2e' % age, (.7, .1), va='center',
                  xycoords='axes fraction')
@@ -235,11 +179,10 @@ def plot_em(ifile, lf_file, cmd_file, age, z, track):
     fig.subplots_adjust(left=.1, bottom=None, right=0.98, top=None,
                         wspace=0, hspace=0)
     plt.savefig(lf_file)
-
+    plt.close()
 
 def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
     sfh_file = '%s/sfh_Z%.2e_A%.2e.dat' % (sfh_dir, z, age)
-    #par_file = '%s/trilegal_pars_Z%.2e_A%.2e.dat' % (tri_dir, z, age)
     inp_file = '%s/trilegal_input_Z%.2e_A%.2e.dat' % (tri_dir, z, age)
     out_file = '%s/trilegal_output_Z%.2e_A%.2e.dat' % (tri_dir, z, age)
 
@@ -254,20 +197,15 @@ def run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
     f_cmd.close()
 
     write_sfh(age, z, sfh_file)
-    #write_tri_par(sfh_file, par_file)
     make_galaxy_input(inp_file, sfh_file)
-    #if not os.path.isfile(out_file) or over_write is True:
     track_file = '../cmd_inputfiles/cmd_input_%s.dat' % track_set
-    run_trilegal(track_file, inp_file, out_file)
-    #check = check_trilegal_run(out_file)
-    check = 1
-    if check == 1:
-        plot_em(out_file, lf_file, cmd_file, age, z, track_set)
-    else:
-        print check
+    rsp.TrilegalUtils.run_trilegal(track_file, inp_file, out_file,
+                                   rmfiles=False)
+    plot_em(out_file, lf_file, cmd_file, age, z, track_set)
 
 
-def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
+def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False,
+         multi=True):
 
     if os.path.isdir(plt_dir):
         shutil.rmtree(plt_dir)
@@ -277,38 +215,23 @@ def main(track_set, sfh_dir, tri_dir, plt_dir, over_write=False):
         if not os.path.isdir(d):
             os.makedirs(d)
             print 'made directories', d
+    if multi is False:        
+        for age, z in itertools.product(sim_age, sim_z):
+            run_all(age, z, track_set, sfh_dir, tri_dir, plt_dir)
+            plt.close('all')
+    else:
+        pool = multiprocessing.Pool()
+        res = []
 
-    pool = multiprocessing.Pool()
-    res = []
+        for age, z in itertools.product(sim_age, sim_z):    
+            res.append(pool.apply_async(run_all,
+                                        (age, z, track_set, sfh_dir, tri_dir, plt_dir),
+                                        ))
 
-    for age, z in itertools.product(sim_age, sim_z):
-
-        res.append(pool.apply_async(run_all,
-                                    (age, z, track_set, sfh_dir, tri_dir, plt_dir),
-                                    ))
-
-    for r in res:
-        r.get()
+        for r in res:
+            r.get()
 
     return
-
-
-def check_trilegal_run(out_file):
-    with open(out_file, 'r') as f:
-        lines = f.readlines()
-
-    comments = filter(lambda x: x.startswith('#'), lines)
-    if 'TRILEGAL normally terminated' not in comments:
-        print 'TRILEGAL NOT normally terminated, no plots for %s' % out_file
-    try:
-        mcore_ind = comments[0].split().index('Mcore')
-        data = filter(lambda x: not x.startswith('#'), lines)
-        mcore = [float(d.split()[mcore_ind]) for d in data]
-        if np.sum(mcore) == 0.:
-            return 'No AGB stars in %s' % out_file
-    except:
-        pass
-    return 0
 
 
 if __name__ == '__main__':
@@ -337,12 +260,13 @@ if __name__ == '__main__':
         sfh_dir = os.path.join(tri_dir, 'sfh')
         plt_dir = os.path.join(diagnostic_dir, agb_mix, set_name, track_set)
         main(track_set, sfh_dir, tri_dir, plt_dir,
-             over_write=infile.over_write)
+             over_write=infile.over_write, multi=False)
     else:
+        cwd = os.getcwd()
         track_set = args[0]
-        sfh_dir = 'SFH'
-        tri_dir = 'TRILEGAL_FILES'
-        plt_dir = 'PLOTS/%s' % track_set
+        sfh_dir = os.path.join(cwd, 'SFH')
+        tri_dir = os.path.join(cwd, 'TRILEGAL_FILES')
+        plt_dir = os.path.join(cwd, 'PLOTS/%s' % track_set)
         main(track_set, sfh_dir, tri_dir, plt_dir)
 
     if not options.nr:
