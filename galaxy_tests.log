@@ -71718,3 +71718,755 @@ INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
 INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_001.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_002.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_003.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:start of run
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_004.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_005.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_006.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_007.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_008.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_009.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_010.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_011.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_012.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_013.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_014.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_015.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_016.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_017.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_018.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_019.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_020.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_021.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_022.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_023.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_024.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_025.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_026.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_027.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_028.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_029.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_030.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_031.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_032.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_033.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_034.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_035.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_036.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_037.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_038.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_039.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_040.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_041.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_042.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_043.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_044.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_045.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_046.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_047.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_048.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_049.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_001.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_002.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_003.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_004.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_005.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_006.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_007.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_008.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_009.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_010.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_011.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_012.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_013.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_014.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_015.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_016.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_017.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_018.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_019.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_020.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_021.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_022.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_023.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_024.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_025.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_026.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_027.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_028.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_029.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_030.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_031.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_032.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_033.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_034.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_035.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_036.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_037.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_038.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_039.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_040.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_041.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_042.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_043.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_044.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_045.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_046.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_047.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_048.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_049.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_001.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_002.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_003.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_004.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_005.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_006.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_007.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_008.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_009.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_010.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_011.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_012.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_013.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_014.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_015.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_016.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_017.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_018.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_019.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_020.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_021.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_022.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_023.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_024.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_025.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_026.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_027.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_028.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_029.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_030.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_031.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_032.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_033.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_034.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_035.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_036.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_037.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_038.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_039.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_040.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_041.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_042.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_043.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_044.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_045.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_046.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_047.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_048.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_049.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_OCT13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/input_DDO71_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_oct13/mc/output_ddo71_caf09_s_oct13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/input_DDO71_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/output_ddo71_caf09_s_nov13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/input_DDO71_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/output_ddo71_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/input_DDO71_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/output_ddo71_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/input_DDO71_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/output_ddo71_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/input_DDO71_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/output_ddo71_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/input_DDO71_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/output_ddo71_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/input_DDO78_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/input_KKH37_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/hs117/caf09_s_nov13/mc/input_HS117_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/hs117/caf09_s_nov13/mc/output_hs117_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kdg73/caf09_s_nov13/mc/input_KDG73_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/kdg73/caf09_s_nov13/mc/output_kdg73_caf09_s_nov13.dat
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ngc404/caf09_s_nov13/mc/input_NGC404-DEEP_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ngc404/caf09_s_nov13/mc/output_ngc404_caf09_s_nov13.dat
+INFO:root:done.
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:running trilegal...
+DEBUG:root:code_2.3/main -f cmd_input_CAF09_S_NOV13.dat -a -l /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ngc2976-deep/caf09_s_nov13/mc/input_NGC2976-DEEP_000.dat /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/ngc2976-deep/caf09_s_nov13/mc/output_ngc2976-deep_caf09_s_nov13.dat
+INFO:root:done.
