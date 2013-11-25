@@ -25,7 +25,7 @@ def gi10_overlap():
 
 def ancients():
     #['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'KDG73', 'NGC404-DEEP', 'SCL-DE1'][::-1]
-    return ['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'KDG73',
+    return ['DDO71', 'HS117', 'KKH37', 'DDO78', 'KDG73',
             'NGC404-DEEP']
 
 
@@ -1501,7 +1501,7 @@ def model_ratio_once(target, model, ast_file_loc, rgb_verts, ndata_rgb, agb_vert
     model_title = translate_model_name(model)
     plot_LF_kw['model_title'] = model_title
     logger.info('%s: %s plotting IR' % (target, model))
-    fig, axs, _ = ir_gal.plot_LF(ir_data_pts[:,0], ir_data_pts[:,1],
+    fig, axs, _ = ir_gal._plot_LF(ir_data_pts[:,0], ir_data_pts[:,1],
                  norm_sim_pts_ir[:, 0], norm_sim_pts_ir[:, 1],
                  ir_gal.filter1, ir_gal.filter2,
                  gal_hist=gal_ir_hist, bins=gal_ir_bins,
@@ -2235,7 +2235,7 @@ def ir_rgb_agb_ratio(renormalize=False, filt1=None, filt2=None, band=None,
 
             if make_plot is True:
                 plot_LF_kw['model_title'] = translate_model_name(model_title)
-                smg.make_LF(gal.filter1, gal.filter2, plot_LF_kw=plot_LF_kw,
+                smg._make_LF(gal.filter1, gal.filter2, plot_LF_kw=plot_LF_kw,
                             comp50=True, add_boxes=add_boxes,
                             color_hist=color_hist, plot_tpagb=plot_tpagb)
             
