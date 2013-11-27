@@ -4,13 +4,64 @@ import galaxy_tests
 import os
 import fileIO
 import matplotlib.pyplot as plt
-from TPAGBparams import research_path
+from TPAGBparams import research_path, snap_src
+from astroML.stats import binned_statistic_2d
+import matplotlib.gridspec as gridspec
 
 '''
 This is a work in progress, which sorts of intro figures should I have for the paper??
 
 '''
 
+def plot_cum_sum_sfr(target):
+    pass
+
+def plot_cmd_lf(target, band):
+    target = target.upper()
+    if band == 'opt':
+        fits_src = snap_src + '/data/angst_no_trim'
+        cmd_errors_kw = {}
+    else:
+        fits_src = 'default'
+        cmd_errors_kw = {'errclr': -.5}
+    fig = plt.figure(figsize=(8, 8))
+    gs = gridspec.GridSpec(1, 2, width_ratios=[3, 1])
+    ax1 = plt.subplot(gs[0])
+    ax2 = plt.subplot(gs[1])
+    gal = galaxy_tests.load_galaxy(target, band=band, fits_src=fits_src)
+    #N, xedges, yedges = binned_statistic_2d(gal.color, gal.mag2, gal.mag1, 'count', bins=75)
+    #ax1.imshow(np.log10(N.T), origin='lower',
+    #           extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]],
+    #           aspect='auto', interpolation='nearest', cmap=plt.cm.gray)
+    gal.plot_cmd(gal.color, gal.mag2, ax=ax1, scatter_off=True)
+    #hist, bins = np.histogram(gal.mag2, bins=np.sqrt(len(gal.color)))
+    hist, bins = rsp.math_utils.hist_it_up(gal.mag2, threash=7)
+    ymax = bins[0]
+    ax1.set_ylim(ax1.get_ylim()[0], ymax)
+    if band == 'opt':
+        xmin = -2
+    if band == 'ir':
+        xmin = -1
+    ax1.set_xlim(xmin, ax1.get_xlim()[1])
+    gal.decorate_cmd(ax=ax1, trgb=True, cmd_errors_kw=cmd_errors_kw)
+    err = np.sqrt(hist)
+    ax2.set_xscale('log')
+    ax2.errorbar(hist, bins[:-1], xerr=err, color='black', drawstyle='steps-mid')
+    ax2.plot(hist, bins[:-1], linestyle='mid-steps', color='black', lw=3)
+    ax2.set_ylim(ax1.get_ylim())
+    gal.put_a_line_on_it(ax2, gal.trgb)
+    plt.subplots_adjust(wspace=0)
+    ax2.tick_params(labelleft=False, labelright=True)
+    ax2.set_xlim(min(hist), ax2.get_xlim()[1])
+    ax2.set_xlabel('$\#$', fontsize=20)
+    ax1.set_ylabel('$%s$' % gal.filter2, fontsize=20)
+    ax1.set_xlabel('$%s-%s$' % (gal.filter1, gal.filter2), fontsize=20)
+    plt.tick_params(labelsize=16)
+    outfname = '%s_%s_cmd.png' % (target, band)
+    outfile = os.path.join(snap_src, 'plots', outfname)
+    fig.savefig(outfile, dpi=300)
+
+# below here was thesis spaz
 
 def compare_mass_loss(mass=1.0, z=0.002, sets=['S_APR13', 'S_APR13VW93', 'S_MAR13'],
                       xcol='ageyr', ycol='dMdt'):
