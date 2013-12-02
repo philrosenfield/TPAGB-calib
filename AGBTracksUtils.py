@@ -190,8 +190,8 @@ def do_everything(infile):
             if track.bad_track is True:
                 continue
 
-            if not track.mass in infile.masses:
-                continue
+            #if not track.mass in infile.masses:
+            #    continue
 
             assert metallicity == track.metallicity, \
                 'directory and track metallicity do not match'

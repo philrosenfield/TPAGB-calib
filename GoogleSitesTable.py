@@ -159,7 +159,7 @@ def quick_write(outfile,header,line,footer):
     print 'wrote %s'%outfile
     return
     
-def one_col(local_dir,image_dir,outfile,extra='',zip_it=False):
+def one_col(image_location, local_dir='.', outfile='pngs.list', extra='', zip_it=True):
     '''
     one column separated by titles
     input
@@ -170,25 +170,26 @@ def one_col(local_dir,image_dir,outfile,extra='',zip_it=False):
     zip_it: make a tar.gz ball.    
     '''
     
-    image_base,header,footer,titlefmt,cellfmt,line = defaults()
+    image_base, header, footer, titlefmt, cellfmt, line = defaults()
     
-    abs_image_dir = '/'.join((image_base,image_dir))
-    imgs = fileIO.get_files(local_dir,'*%s*png'%extra)
+    abs_image_dir = '/'.join((image_base, image_location))
+    imgs = fileIO.get_files(local_dir, '*%s*png' % extra)
     
     for img in imgs:
         imgtitle = os.path.split(img)[1].split('_')[0]
         img_loc = '/'.join((abs_image_dir, os.path.split(img)[1]))
         w,h = w_h_frompng(img)
         line += titlefmt % imgtitle
-        line += cellfmt % (img_loc,h,img_loc,w)
+        line += cellfmt % (img_loc, h, img_loc, w)
     
-    quick_write(outfile,header,line,footer)
-    if zip_it==True: zip_em(local_dir,image_dir)
+    quick_write(outfile, header, line, footer)
+    if zip_it is True:
+        zip_em(local_dir, image_location)
     return
     
 
 if __name__ == "__main__":
-    image_location = sys.argv[1]
-    main(image_location)    
+    image_location = sys.argv[1:]
+    one_col(*image_location)
     
         

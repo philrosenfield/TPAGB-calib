@@ -25,7 +25,7 @@ def gi10_overlap():
 
 def ancients():
     #['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'KDG73', 'NGC404-DEEP', 'SCL-DE1'][::-1]
-    return ['DDO71', 'HS117', 'KKH37', 'DDO78', 'KDG73',
+    return ['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'KDG73',
             'NGC404-DEEP']
 
 

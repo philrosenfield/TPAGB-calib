@@ -1,22 +1,48 @@
 import ResolvedStellarPops as rsp
 import numpy as np
 import galaxy_tests
+import sfh_tests
 import os
 import fileIO
 import matplotlib.pyplot as plt
 from TPAGBparams import research_path, snap_src
 from astroML.stats import binned_statistic_2d
 import matplotlib.gridspec as gridspec
-
+import brewer2mpl
 '''
 This is a work in progress, which sorts of intro figures should I have for the paper??
 
 '''
 
-def plot_cum_sum_sfr(target):
-    pass
+def plot_cum_sum_sfr(targets, file_origin='match-grid'):
+    '''cumulative sfr plot from match, no errors.'''
+    match_sfh_src = snap_src + '/data/sfh_parsec/match_files/'
+
+    fig, ax = plt.subplots()
+    ngals = len(targets)
+    bmap = brewer2mpl.get_map('Spectral', 'Diverging', ngals)
+    cols = bmap.mpl_colors
+    cols = ['#8ca8ba', '#0a6277', '#6a0c0c', '#bc741e', '#448833', '#88994b',
+            '#89360f', '#b85121', '#aa4400']
+
+    for i, target in enumerate(targets):
+        match_sfh_file, = rsp.fileIO.get_files(match_sfh_src, '%s*sfh' % target.lower())
+        sfh = sfh_tests.StarFormationHistories(match_sfh_file, file_origin=file_origin)
+        age = 10**((sfh.data.lagef + sfh.data.lagei)/2. - 9)
+        csfh = np.append(sfh.data.csfr, 0)
+        ax.plot(age, csfh[1:], color=cols[i], lw=3,
+                label='$%s$' % target.upper().replace('-','\!-\!'))
+
+    #ax.set_xscale('log')
+    ax.set_xlim(13.33, 0)
+    ax.set_xlabel('$\\rm{Time\ (Gyr)$', fontsize=20)
+    ax.set_ylabel('$\\rm{Culmulative\ SF}$', fontsize=20)
+    plt.legend(loc=0, frameon=False)
+    plt.tick_params(labelsize=16)
+    plt.savefig('csfr_ancients.png', dpi=300)
 
 def plot_cmd_lf(target, band):
+    '''simple figure with the data and LF'''
     target = target.upper()
     if band == 'opt':
         fits_src = snap_src + '/data/angst_no_trim'
