@@ -9,14 +9,69 @@ from TPAGBparams import research_path, snap_src
 from astroML.stats import binned_statistic_2d
 import matplotlib.gridspec as gridspec
 import brewer2mpl
+from matplotlib.colors import LogNorm
+
 '''
 This is a work in progress, which sorts of intro figures should I have for the paper??
 
 '''
 
-def plot_cum_sum_sfr(targets, file_origin='match-grid'):
+
+def plot_opt_hess(targets=None, fits_src='default', filter1='F606W'):
+    band = 'opt'
+    ylim = (0.5, -7)
+    if filter1 == 'F110W':
+        band = 'ir'
+        fits_src = 'default'
+        ylim = (-2, -8)
+    targets = galaxy_tests.load_targets(targets)
+    galss = rsp.Galaxies.galaxies([galaxy_tests.load_galaxy(t, band=band,
+                                                           fits_src=fits_src)
+                                  for t in targets])
+
+    gals = rsp.Galaxies.galaxies(galss.select_on_key('filter1', filter1))
+
+    gals.squish('Color', 'Mag2', 'Trgb')
+
+    mean_trgb = np.mean(gals.Trgbs)
+    offset = gals.Trgbs - np.mean(gals.Trgbs)
+    gals.Mag2o = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(gals.galaxies)])
+    gals.Colorso = gals.Colors + gals.Mag2s - gals.Mag2o
+    galshess =  rsp.astronomy_utils.hess(gals.Colorso, gals.Mag2o, 0.1, cbinsize=0.05)
+
+    #N, xedges, yedges = binned_statistic_2d(gals.Colors, gals.Mag2s, gals.Mag2s, 'count', bins=2000)
+    fig, ax = plt.subplots()
+    #im = ax.imshow(np.log10(N.T), origin='lower',
+    ##                           extent=[xedges[0], xedges[-1], yedges[0],
+    #                                   yedges[-1]],
+    #                           aspect='auto', interpolation='nearest',
+    #                           cmap=plt.cm.RdBu)
+
+    extent = [galshess[0][0], galshess[0][-1], galshess[1][-1], galshess[1][0]]
+    imshow_kw={'norm': LogNorm(vmin=None, vmax=galshess[2].max()),
+               'cmap': plt.cm.gray_r, 'interpolation': 'nearest',
+               'aspect': 'equal', 'extent': extent}
+
+    ax.plot(gals.Colorso, gals.Mag2o, ',', color='black')
+    ax.autoscale(False)
+    ax.set_xlim(-1, 3)
+    ax.set_ylim(ylim)
+    #ax.imshow(galshess[2], **imshow_kw)
+    ax.set_aspect(1./2.)
+
+    ax.set_xlabel('$%s-%s$' % (filter1, gals.galaxies[0].filter2), fontsize=20)
+    ax.set_ylabel('$%s$' % gals.galaxies[0].filter2, fontsize=20)
+    ax.hlines(mean_trgb, *ax.get_xlim(), lw=2, color='red', zorder=100)
+    #ax.hlines(mean_trgb+1.5, *ax.get_xlim(), lw=2, color='red', zorder=100)
+    #for k, v in poly_dict.items():
+    #    ax.plot(v[:,0], v[:,1])
+    #plt.colorbar(cs)
+    #plt.savefig('opt_cmd_f606w.png', dpi=150)
+    return fig, ax, gals
+
+def plot_cum_sum_sfr(targets, file_origin='match-hmc'):
     '''cumulative sfr plot from match, no errors.'''
-    match_sfh_src = snap_src + '/data/sfh_parsec/match_files/'
+    match_sfh_src = snap_src + '/data/sfh_parsec/'
 
     fig, ax = plt.subplots()
     ngals = len(targets)
@@ -26,7 +81,7 @@ def plot_cum_sum_sfr(targets, file_origin='match-grid'):
             '#89360f', '#b85121', '#aa4400']
 
     for i, target in enumerate(targets):
-        match_sfh_file, = rsp.fileIO.get_files(match_sfh_src, '%s*sfh' % target.lower())
+        match_sfh_file, = rsp.fileIO.get_files(match_sfh_src, '%s*sfh' % target.lower().replace('-deep', ''))
         sfh = sfh_tests.StarFormationHistories(match_sfh_file, file_origin=file_origin)
         age = 10**((sfh.data.lagef + sfh.data.lagei)/2. - 9)
         csfh = np.append(sfh.data.csfr, 0)
@@ -39,7 +94,7 @@ def plot_cum_sum_sfr(targets, file_origin='match-grid'):
     ax.set_ylabel('$\\rm{Culmulative\ SF}$', fontsize=20)
     plt.legend(loc=0, frameon=False)
     plt.tick_params(labelsize=16)
-    plt.savefig('csfr_ancients.png', dpi=300)
+    plt.savefig('csfr_ancients.png', dpi=150)
 
 def plot_cmd_lf(target, band):
     '''simple figure with the data and LF'''
@@ -50,7 +105,7 @@ def plot_cmd_lf(target, band):
     else:
         fits_src = 'default'
         cmd_errors_kw = {'errclr': -.5}
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(6,6))
     gs = gridspec.GridSpec(1, 2, width_ratios=[3, 1])
     ax1 = plt.subplot(gs[0])
     ax2 = plt.subplot(gs[1])
@@ -85,7 +140,13 @@ def plot_cmd_lf(target, band):
     plt.tick_params(labelsize=16)
     outfname = '%s_%s_cmd.png' % (target, band)
     outfile = os.path.join(snap_src, 'plots', outfname)
-    fig.savefig(outfile, dpi=300)
+    fig.savefig(outfile, dpi=150)
+
+if __name__ == '__main__':
+    targets = galaxy_tests.load_targets('ancients')
+    plot_cum_sum_sfr(targets)
+    [[plot_cmd_lf(target, band) for target in targets] for band in ['opt', 'ir']]
+
 
 # below here was thesis spaz
 
@@ -125,7 +186,7 @@ def compare_mass_loss(mass=1.0, z=0.002, sets=['S_APR13', 'S_APR13VW93', 'S_MAR1
     ax.set_ylabel('$\dot{M}$', fontsize=20)
     ax.text(.95, .90, '$M=%.2fM_\odot$' % mass, fontsize=16, transform=ax.transAxes, ha='right')
     ax.tick_params(labelsize=16)
-    plt.savefig('compare_%s_loss_m%.2f.png' % (ycol, mass), dpi=300)
+    plt.savefig('compare_%s_loss_m%.2f.png' % (ycol, mass), dpi=150)
     return ax
     
     
@@ -316,7 +377,7 @@ def two_panel():
     fig, axs = plt.subplots(nrows=2)
     bolometric_correction_plot(tp_mass=1., logg_val=logg_val, ax=axs[0])
     color_teff_plot(tracks_base=tracks_base, prefix=prefix, ax=axs[1], logg_val=logg_val)
-    plt.savefig('bc_plot.png', dpi=300)
+    plt.savefig('bc_plot.png', dpi=150)
 
 
 def make_table(targets=None, deluxe=True):

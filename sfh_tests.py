@@ -122,11 +122,13 @@ def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
     if gal is None:
         target = galaxy_information.get('target')
         mag2 = galaxy_information.get('mag2')
+        mag1 = galaxy_information.get('mag1')
         filter2 = galaxy_information.get('filter2')
         filter1 = galaxy_information.get('filter1')
     else:
         target = gal.target
         mag2 = gal.mag2
+        mag1 = gal.mag1
         filter2 = gal.filter2
         filter1 = gal.filter1
 
@@ -156,11 +158,12 @@ def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
     else:
         offset = mag_below_trgb
     # rgb will go from mag_below_trgb to trgb + exclude_region
-    nrgb = len(rsp.math_utils.between(mag2, offset,
+    color_cut, = np.nonzero((mag1-mag2) > 0.3)
+    nrgb = len(rsp.math_utils.between(mag2[color_cut], offset,
                                       trgb + exclude_region))
 
     # agb will go from trgb - exclude_region to very bright
-    nagb = len(rsp.math_utils.between(mag2, trgb - exclude_region, -99.))
+    nagb = len(rsp.math_utils.between(mag2[color_cut], trgb - exclude_region, -99.))
 
     # add trgb_err to galaxy instance, could also add factor...
     if gal is not None:
@@ -178,6 +181,7 @@ class PHATFields(object):
     def write_trgb_table(self, brick=21, field=6, mag_below_trgb=[2, 1.5],
                          exclude_region='default', comp_table='default'):
         pass
+
 
 class AncientGalaxies(object):
     '''
@@ -563,7 +567,7 @@ class StarFormationHistories(object):
         ax.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=20)
         ax.set_xlim(8, 10.5)
         if outfile is not None:
-            plt.savefig(outfile, dpi=300)
+            plt.savefig(outfile, dpi=150)
         return ax
 
     def make_many_trilegal_sfhs(self, nsfhs=100, mk_tri_sfh_kw=None):
@@ -638,7 +642,7 @@ class StarFormationHistories(object):
         ax2.legend(loc=0, frameon=False)
         ax2.set_xlim(8, 10.5)
         if outfig is not None:
-            fig.savefig(outfig, dpi=300)
+            fig.savefig(outfig, dpi=150)
 
 
 class VarySFHs(StarFormationHistories, AncientGalaxies):
@@ -787,18 +791,19 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         inds = inds or np.arange(len(self.sgal.mag2))
 
         # load mags, set here in case incase I want to pass this in the future.
-        opt_mag, ir_mag = self.load_trilegal_data()
+        if not hasattr(self, 'opt_mag'):
+            self.load_trilegal_data()
 
         if hist_it_up is True:
             # hist it up!
-            opt_hist, opt_bins = galaxy_tests.hist_it_up(opt_mag, threash=5)
-            ir_hist, ir_bins = galaxy_tests.hist_it_up(ir_mag, threash=5)
+            opt_hist, opt_bins = galaxy_tests.hist_it_up(self.opt_mag, threash=5)
+            ir_hist, ir_bins = galaxy_tests.hist_it_up(self.ir_mag, threash=5)
         else:
             #nbins = (np.max(opt_mag) - np.min(opt_mag)) / 0.1
-            opt_hist, opt_bins = np.histogram(opt_mag, bins=self.opt_bins)
+            opt_hist, opt_bins = np.histogram(self.opt_mag, bins=self.opt_bins)
 
             #nbins = (np.max(ir_mag) - np.min(ir_mag)) / 0.1
-            ir_hist, ir_bins = np.histogram(ir_mag, bins=self.ir_bins)
+            ir_hist, ir_bins = np.histogram(self.ir_mag, bins=self.ir_bins)
 
         # scale the simulated LF to match the data LF
         opt_hist = np.array(opt_hist, dtype=float) * opt_norm
@@ -948,20 +953,32 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         
         self.sgal = sgal
 
-    def shift_mags(self, by_stage=True):
+    def shift_mags(self, by_stage=True, opt_inds=None, ir_inds=None):
         '''shift mags to they agree with opt trgb'''
-
         opt_mag = self.sgal.data.get_col('F814W')
-        opt_mag1 = self.sgal.data.get_col(self.filter1)
-        opt_color = opt_mag1 - opt_mag
-        
         ir_mag = self.sgal.data.get_col('F160W')
+        if opt_inds is None:
+            opt_inds = np.arange(len(opt_mag))
+        if ir_inds is None:
+            ir_inds = np.arange(len(ir_mag))
+
 
         if by_stage is True:
-            # align brightest rgb star in the model to trgb of the data
+            # Threshold is set at 100 rgb stars in a bin.
+            rgb_thresh = 50
+
             self.sgal.all_stages('RGB')
-            brightest_rgb = np.argmin(opt_mag[self.sgal.irgb])
-            ind = self.sgal.irgb[brightest_rgb]
+            rgb_inds = np.intersect1d(self.sgal.irgb, opt_inds)
+            rgb_bins = np.arange(10, 30, 0.1)
+            rgb_hist, _ = np.histogram(opt_mag[rgb_inds], bins=rgb_bins)
+            rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
+            opt_offset = rgb_bins[rgb_bin_edge] - self.opt_trgb
+
+            rgb_inds = np.intersect1d(self.sgal.irgb, ir_inds)
+            rgb_hist, _ = np.histogram(ir_mag[rgb_inds], bins=rgb_bins)
+            rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
+            ir_offset = rgb_bins[rgb_bin_edge] - self.ir_trgb
+
         else:
             # closest star in the trilegal catalog to star on the trgb
             trgb_color = angst_data.get_item(self.target, 'mean_color',
@@ -970,11 +987,16 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
             ind, dist = rsp.math_utils.min_dist2d(trgb_color, self.opt_trgb,
                                                   opt_color, opt_mag)
 
-        # correction for mag
-        ir_offset = self.ir_trgb - ir_mag[ind]
-        opt_offset = self.opt_trgb - opt_mag[ind]
+            # correction for mag
+            ir_offset = self.ir_trgb - ir_mag[ind]
+            opt_offset = self.opt_trgb - opt_mag[ind]
+        logger.debug('IR OFFSET: %f' % ir_offset)
+        logger.debug('OPT OFFSET: %f' % opt_offset)
 
-        return opt_offset, ir_offset
+        self.opt_mag = opt_mag[opt_inds] - opt_offset
+        self.ir_mag = ir_mag[ir_inds] - ir_offset
+
+        return
 
     def mass_cut_inds(self):
         if not hasattr(self, 'mass_cut'):
@@ -1003,24 +1025,25 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         #print extra, 'extra'
         opt_mag = self.sgal.data.get_col('%s%s' % ('F814W', extra))
         ir_mag = self.sgal.data.get_col('%s%s' % ('F160W', extra))
-        opt_offset, ir_offset = self.shift_mags()
-        logger.debug('IR OFFSET: %f' % ir_offset)
-        logger.debug('OPT OFFSET: %f' % opt_offset)
-        ir_mag += ir_offset
-        opt_mag += opt_offset
+        opt_mag1 = self.sgal.mag1
+        ir_mag1 = self.sgal.data.get_col('%s%s' % ('F110W', extra))
 
-        inds = self.mass_cut_inds()
+        opt_color_cut, = np.nonzero((opt_mag1 - opt_mag) > 0.3)
+        ir_color_cut, = np.nonzero((ir_mag1 - ir_mag) > 0.3)
+        self.opt_color_cut = opt_color_cut
+        self.ir_color_cut = ir_color_cut
+        self.shift_mags(opt_inds=opt_color_cut, ir_inds=ir_color_cut)
 
-        ir_mag = ir_mag[inds]
-        opt_mag = opt_mag[inds]
+        #inds = self.mass_cut_inds()
+
         # it's a matter of memory to not keep all the non-recovered stars
         # the hard coded limits just help not having to set ylims in LF plots.
-        if self.ast is True:
-            opt_mag = opt_mag[np.isfinite(opt_mag)]
-            opt_mag = opt_mag[opt_mag < 29]
-            ir_mag = ir_mag[np.isfinite(ir_mag)]
-            ir_mag = ir_mag[ir_mag < 26]
-        return opt_mag, ir_mag
+        #if self.ast is True:
+        #    opt_mag = opt_mag[np.isfinite(opt_mag)]
+        #    opt_mag = opt_mag[opt_mag < 29]
+        #    ir_mag = ir_mag[np.isfinite(ir_mag)]
+        #    ir_mag = ir_mag[ir_mag < 26]
+        return
 
     def do_normalization(self, filter1=None, trilegal_output=None,
                          hist_it_up=True, dry_run=False):
@@ -1031,24 +1054,26 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         if self.mc is True or not hasattr(self, 'sgal'):
             self.read_trilegal_catalog(trilegal_output, filter1=filter1)
 
-        opt_mag, ir_mag = self.load_trilegal_data()
+        if not hasattr(self, 'opt_mag'):
+            self.load_trilegal_data()
 
         # Recovered stars in simulated RGB region.
-        sopt_rgb = self.sgal.stars_in_region(opt_mag,
+
+        sopt_rgb = self.sgal.stars_in_region(self.opt_mag,
                                              self.opt_offset,
                                              self.opt_trgb + \
                                              self.opt_trgb_err * \
                                              self.ags.factor[0])
-        sir_rgb = self.sgal.stars_in_region(ir_mag,
+        sir_rgb = self.sgal.stars_in_region(self.ir_mag,
                                             self.ir_offset,
                                             self.ir_trgb + \
                                             self.ir_trgb_err * self.ags.factor[1])
 
         # Recovered stars in simulated AGB region.
-        sopt_agb = self.sgal.stars_in_region(opt_mag, self.opt_trgb - \
+        sopt_agb = self.sgal.stars_in_region(self.opt_mag, self.opt_trgb - \
                                              self.opt_trgb_err * \
                                              self.ags.factor[0], 10.)
-        sir_agb = self.sgal.stars_in_region(ir_mag, self.ir_trgb - \
+        sir_agb = self.sgal.stars_in_region(self.ir_mag, self.ir_trgb - \
                                             self.ir_trgb_err  * \
                                             self.ags.factor[1], 10.)
 
@@ -1063,9 +1088,9 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         non_tpagb = list(set(np.arange(len(self.sgal.mag2))) - set(itpagb))
 
         # random sample the data distribution
-        rands = np.random.random(len(opt_mag))
+        rands = np.random.random(len(self.opt_mag))
         opt_ind, = np.nonzero(rands < opt_norm)
-        rands = np.random.random(len(ir_mag))
+        rands = np.random.random(len(self.ir_mag))
         ir_ind, = np.nonzero(rands < ir_norm)
 
         # scaled rgb: ast + norm + in rgb
@@ -1206,7 +1231,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
                        'color': 'black',
                        'alpha': 0.2}.items() + plt_kw.items())
         if axs is None:
-            fig, (axs) = plt.subplots(ncols=2, figsize=(12, 6))
+            fig, (axs) = plt.subplots(ncols=2, figsize=(12,6))
             plt.subplots_adjust(right=0.95, left=0.05, wspace=0.1)
 
         for i, (lf_file, limit) in enumerate(zip([opt_lf_file, ir_lf_file],
@@ -1305,13 +1330,15 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
             else:
                 cmap = brewer2mpl.get_map('Paired', 'Qualitative', nstages)
                 cols = cmap.mpl_colors
-
-            sopt_mag, sir_mag = self.load_trilegal_data()
-            stage_inds = self.mass_cut_inds()
-            for ax, mag, norm in zip([ax1, ax2], [sopt_mag, sir_mag],
-                                     [self.opt_norm, self.ir_norm]):
+            if not hasattr(self, 'opt_mag'):
+                self.load_trilegal_data()
+            #stage_inds = self.mass_cut_inds()
+            for ax, mag, norm, sinds in zip([ax1, ax2],
+                                            [self.opt_mag, self.ir_mag],
+                                            [self.opt_norm, self.ir_norm],
+                                            [self.opt_color_cut, self.ir_color_cut]):
                 self.sgal.make_lf(mag, stages=add_stage_lfs,
-                                  hist_it_up=hist_it_up, stage_inds=stage_inds)
+                                  hist_it_up=hist_it_up, stage_inds=sinds)
                 for i in range(nstages):
                     try:
                         hist = self.sgal.__getattribute__('i%s_lfhist' % add_stage_lfs[i].lower())
@@ -1322,9 +1349,9 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
                     stage_lf_kw['label'] = '$%s$' % add_stage_lfs[i]
                     ax.plot(bins[:-1], hist*norm, **stage_lf_kw)
 
-            sopt_hist, sopt_bins = self.sgal.make_lf(sopt_mag, bins=self.opt_bins,
+            sopt_hist, sopt_bins = self.sgal.make_lf(self.opt_mag, bins=self.opt_bins,
                                                      hist_it_up=hist_it_up)
-            sir_hist, sir_bins = self.sgal.make_lf(sir_mag, bins=self.ir_bins,
+            sir_hist, sir_bins = self.sgal.make_lf(self.ir_mag, bins=self.ir_bins,
                                                    hist_it_up=hist_it_up)
 
             sopt_hist = sopt_hist * self.opt_norm
@@ -1436,13 +1463,13 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         ax1.set_ylabel('$\#$', fontsize=20)
         plt.tick_params(labelsize=16)
         outfile = os.path.join(self.outfile_loc, '%s_lfs%s.png' % (self.target, extra_str))
-        plt.savefig(outfile, dpi=300)
+        plt.savefig(outfile, dpi=150)
         logger.info('wrote %s' % outfile)
         return ax1, ax2
 
     def plot_mass_met_table(self, opt_mass_met_file, ir_mass_met_file,
                             extra_str=''):
-        fig = plt.figure(figsize=(9, 9))
+        fig = plt.figure(figsize=(8, 8))
         grid = ImageGrid(fig, 111,
                          nrows_ncols=(2, 2),
                          axes_pad=.5,
@@ -1490,7 +1517,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         grid.axes_all[3].set_xlabel('$F160W$', fontsize=20)
         fig.suptitle('$%s$' % self.target, fontsize=20)
         plt.savefig(os.path.join(self.outfile_loc,
-                                '%s_mass_met%s.png' % (self.target, extra_str)), dpi=300)
+                                '%s_mass_met%s.png' % (self.target, extra_str)), dpi=150)
         return grid
 
     def remove_files(self):
@@ -1965,12 +1992,18 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                                     galaxy_input_file=galaxy_input_file,
                                     match_sfh_file=match_sfh_file)
 
+    #data_table(targets)
+    #narratio_table(targets, cmd_inputs, table_file=galaxy_table)
+    #chi2_table(targets)
 
 if __name__ == '__main__':
     #paolas_tests()
-    targets = ['ddo78', 'hs117', 'kkh37', 'ngc2976-deep', 'ngc404-deep']
-    mk_tri_sfh_kw = {'random_sfr': True, 'random_z': True}
+    ags = AncientGalaxies()
+    galaxy_table = ags.write_trgb_table(exclude_region=[0.1, 0.2],
+                                        mag_below_trgb='comp_frac')
+    targets = ['ddo78', 'ddo71', 'hs117', 'kkh37', 'ngc2976-deep', 'ngc404-deep']
+    mk_tri_sfh_kw = {'random_sfr': True, 'random_z': False}
     simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat',
-                                        'cmd_input_CAF09_S_NOV13eta0.dat'
+                                        'cmd_input_CAF09_S_NOV13eta0.dat',
                                         'cmd_input_CAF09_S_OCT13.dat'],
-                              50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=True)
+                              50, mk_tri_sfh_kw=mk_tri_sfh_kw)

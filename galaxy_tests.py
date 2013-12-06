@@ -429,11 +429,13 @@ def sort_angst_data_table(table, targets):
     return table[snap_tab_sort]
 
 
-def plot_opt_hess():
-    targets = targets_paper1()
-    gals = rsp.Galaxies.galaxies([load_galaxy(t, band='opt') for t in targets])
+def plot_opt_hess(targets=None, fits_src='default', filter1='F606W'):
+    if targets is None:
+        targets = targets_paper1()
+    gals = rsp.Galaxies.galaxies([load_galaxy(t, band='opt', fits_src=fits_src)
+                                  for t in targets])
 
-    g606 = gals.select_on_key('filter1','F606W')
+    g606 = gals.select_on_key('filter1',filter1)
     '''
     poly_dict = {'DDO82': np.array([[ 0.6232878 , -2.96601422],
                                  [ 0.74828178, -3.41942444],
@@ -462,8 +464,8 @@ def plot_opt_hess():
     mean_trgb = np.mean(g606s.Trgbs)
     offset = g606s.Trgbs - np.mean(g606s.Trgbs)
     g606s.Mag2o = np.concatenate([g.Mag2 - offset[i] for i, g in enumerate(g606s.galaxies)])
-
-    g606hess =  rsp.astronomy_utils.hess(g606s.Colors, g606s.Mag2o, 0.1, cbinsize=0.05)
+    g606s.Colorso = g606s.Colors + g606s.Mag2s - g606s.Mag2o
+    g606hess =  rsp.astronomy_utils.hess(g606s.Colors, g606s.Mag2s, 0.1, cbinsize=0.05)
 
 
     extent = [g606hess[0][0], g606hess[0][-1], g606hess[1][-1], g606hess[1][0]]
@@ -477,15 +479,15 @@ def plot_opt_hess():
     ax.set_ylim(0.5, -7)
     ax.imshow(g606hess[2], **imshow_kw)
     ax.set_aspect(1./2.)
-    ax.set_xlabel('$F606W-F814W$', fontsize=20)
+    ax.set_xlabel('$%s-F814W$' % filter1, fontsize=20)
     ax.set_ylabel('$F814W$', fontsize=20)
     ax.hlines(mean_trgb, *ax.get_xlim(), lw=2, color='red', zorder=100)
     #ax.hlines(mean_trgb+1.5, *ax.get_xlim(), lw=2, color='red', zorder=100)
     #for k, v in poly_dict.items():
     #    ax.plot(v[:,0], v[:,1])
     #plt.colorbar(cs)
-    plt.savefig('opt_cmd_f606w.png', dpi=300)
-
+    #plt.savefig('opt_cmd_f606w.png', dpi=300)
+    return fig, ax
 
 def multi_galaxy_hess(targets=None, split_by_color=False, ax=None, imshow_kw={},
                       make_hess=False, band='ir', fits_src='default'):
@@ -541,7 +543,7 @@ def multi_galaxy_hess(targets=None, split_by_color=False, ax=None, imshow_kw={},
                                                 threshold=75, levels=5,
                                                 hist_bin_res=.1)
             #fig.colorbar(gals.galaxies[0].cs)
-        verts = agb_rheb_separation()
+        verts = agb_rheb_separation(targets=targets)
         ax.plot(verts[:, 0], verts[:, 1], lw=2, color='navy')
         ax.hlines(mean_trgb, *ax.get_xlim(), lw=2, color='red', zorder=100)
         ax.set_xlim(cmin, cmax)
