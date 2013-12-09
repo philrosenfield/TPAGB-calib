@@ -90,7 +90,7 @@ def plot_cum_sum_sfr(targets, file_origin='match-hmc'):
 
     #ax.set_xscale('log')
     ax.set_xlim(13.33, 0)
-    ax.set_xlabel('$\\rm{Time\ (Gyr)$', fontsize=20)
+    ax.set_xlabel('$\\rm{Time\ (Gyr)}$', fontsize=20)
     ax.set_ylabel('$\\rm{Culmulative\ SF}$', fontsize=20)
     plt.legend(loc=0, frameon=False)
     plt.tick_params(labelsize=16)
