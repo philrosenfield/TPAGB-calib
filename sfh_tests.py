@@ -1074,40 +1074,40 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         #    ir_mag = ir_mag[ir_mag < 26]
         return
 
-def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb):
-    regions = ['MS', 'RGB','RHEB', 'EAGB', 'TPAGB']
-    self.sgal.all_stages()
-    indss = [self.sgal.__getattribute__('i%s' % r.lower()) for r in regions]
-    line = '%s ' % self.target
-    print '#',' '.join(regions)
+    def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb):
+        regions = ['MS', 'RGB','RHEB', 'EAGB', 'TPAGB']
+        self.sgal.all_stages()
+        indss = [self.sgal.__getattribute__('i%s' % r.lower()) for r in regions]
+        line = '%s ' % self.target
+        print '#',' '.join(regions)
     
-    for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb], [sopt_agb, sir_agb],
-                                     [self.opt_color_cut, self.ir_color_cut])):
-        #fig, (ax1, ax2) = plt.subplots(ncols=2)
-        filter1 = self.filter1
-        band = 'opt'
-        if i == 1:
-            filter1 = 'F160W'
-            band = 'ir'
-        ncontam_rgb = [np.intersect1d(inds[s], rgb) for s in indss]
-        ncontam_agb = [np.intersect1d(inds[s], agb) for s in indss]
-        
-        #ax1.plot(color, sgal.data.get_col(filter2), '.')
-        #ax2.plot(color, sgal.data.get_col(filter2), '.')
-        #[ax1.plot(color[n], sgal.data.get_col(filter2)[n], '.',
-        #         label=regions[j]) for j, n in enumerate(ncontam_rgb)]
-        #[ax2.plot(color[n], mag2[n], '.') for n in ncontam_agb]       
-        nrgb = np.max([1., len(ncontam_rgb[1])])
-        line_rgb = 'rgb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
-                                                      for n in ncontam_rgb])
-        nagb = np.max([1., len(ncontam_agb[-1])])
-        
-        line_agb = 'agb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
-                                                      for n in ncontam_agb])
-        print line_rgb
-        print line_agb
-        #ax1.legend()
-    print line
+        for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb], [sopt_agb, sir_agb],
+                                         [self.opt_color_cut, self.ir_color_cut])):
+            #fig, (ax1, ax2) = plt.subplots(ncols=2)
+            filter1 = self.filter1
+            band = 'opt'
+            if i == 1:
+                filter1 = 'F160W'
+                band = 'ir'
+            ncontam_rgb = [np.intersect1d(inds[s], rgb) for s in indss]
+            ncontam_agb = [np.intersect1d(inds[s], agb) for s in indss]
+            
+            #ax1.plot(color, sgal.data.get_col(filter2), '.')
+            #ax2.plot(color, sgal.data.get_col(filter2), '.')
+            #[ax1.plot(color[n], sgal.data.get_col(filter2)[n], '.',
+            #         label=regions[j]) for j, n in enumerate(ncontam_rgb)]
+            #[ax2.plot(color[n], mag2[n], '.') for n in ncontam_agb]       
+            nrgb = np.max([1., len(ncontam_rgb[1])])
+            line_rgb = 'rgb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
+                                                          for n in ncontam_rgb])
+            nagb = np.max([1., len(ncontam_agb[-1])])
+            
+            line_agb = 'agb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
+                                                          for n in ncontam_agb])
+            print line_rgb
+            print line_agb
+            #ax1.legend()
+        print line
 
     def do_normalization(self, filter1=None, trilegal_output=None,
                          hist_it_up=True, dry_run=False):
