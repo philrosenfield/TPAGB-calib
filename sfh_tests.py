@@ -2072,4 +2072,4 @@ if __name__ == '__main__':
     simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat',
                                         'cmd_input_CAF09_S_NOV13eta0.dat',
                                         'cmd_input_CAF09_S_OCT13.dat'],
-                              50, mk_tri_sfh_kw=mk_tri_sfh_kw)
+                              50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=True)
