@@ -18,6 +18,32 @@ import galaxy_tests
 
 angst_data = rsp.angst_tables.AngstTables()
 
+
+def find_contamination_by_phases(output_files=None):
+    if output_files is None:
+        output_files = ['/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/output_ddo71_caf09_s_nov13.dat',
+                        #'/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat',
+                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/hs117/caf09_s_nov13/mc/output_hs117_caf09_s_nov13.dat',
+                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/kdg73/caf09_s_nov13/mc/output_kdg73_caf09_s_nov13.dat',
+                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat',
+                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ngc2976-deep/caf09_s_nov13/mc/output_ngc2976-deep_caf09_s_nov13.dat',
+                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ngc404/caf09_s_nov13/mc/output_ngc404_caf09_s_nov13.dat']
+    comp_tab = read_completeness_table()
+    for output_file in output_files:
+        target = output_file.split('output_')[1].split('_')[0]
+        sgal = rsp.Galaxies.simgalaxy(output_file, filter1=get_filter1(target), filter2='F814W')
+        sgal.target = target
+        opt_trgb = angst_data.get_item(target.upper(), 'mTRGB', extra_key=['%s,F814W' % get_filter1(target)])
+        ir_trgb = angst_data.snap_tab3['target' == target.upper()]['mTRGB_F160W']
+        comp90s = [comp_tab['target' == sgal.target.upper()]['opt_filter2'],
+                   comp_tab['target' == sgal.target.upper()]['ir_filter2']]
+        bright_limit = [opt_trgb-0.1, ir_trgb-0.25]
+        contamination_by_phases(sgal, dim_limit=comp90s, bright_limit=bright_limit)
+        #exclude_low = [opt_trgb+.1, ir_trgb+.25]
+        #contamination_by_phases(sgal, dim_limit=exclude_low, bright_limit=bright_limit)
+    return sgal
+
+
 def default_output_location(target, extra_directory=None, mc=False):
     if extra_directory is None:
         outfile_loc = os.path.join(snap_src, 'models', 'varysfh', target)
@@ -84,7 +110,8 @@ def read_completeness_table(table='default'):
 
 
 def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
-                    galaxy_information=None, factor=2., comp_frac=False):
+                    galaxy_information=None, factor=2., comp_frac=False,
+                    indices=False):
     '''
     Count the number of rgb and agb stars (in F814W or F160W)
 
@@ -159,21 +186,23 @@ def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
         offset = mag_below_trgb
     # rgb will go from mag_below_trgb to trgb + exclude_region
     color_cut, = np.nonzero((mag1-mag2) > 0.3)
-    nrgb = len(rsp.math_utils.between(mag2[color_cut], offset,
-                                      trgb + exclude_region))
+    nrgb = rsp.math_utils.between(mag2[color_cut], offset,
+                                      trgb + exclude_region)
 
     # agb will go from trgb - exclude_region to very bright
-    nagb = len(rsp.math_utils.between(mag2[color_cut], trgb - exclude_region, -99.))
+    nagb = rsp.math_utils.between(mag2[color_cut], trgb - exclude_region, -99.)
 
     # add trgb_err to galaxy instance, could also add factor...
     if gal is not None:
         gal.trgb_err = trgb_err
 
     exclude_dict = {'trgb': trgb, 'trgb_err': trgb_err, 'factor': factor}
-
+    if indices is False:
+        nrgb = len(nrgb)
+        nagb = len(nagb)
+        
     return nrgb, nagb, exclude_dict
-
-
+    
 class PHATFields(object):
     def __init__(self):
         pass
@@ -1044,6 +1073,41 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         #    ir_mag = ir_mag[np.isfinite(ir_mag)]
         #    ir_mag = ir_mag[ir_mag < 26]
         return
+
+def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb):
+    regions = ['MS', 'RGB','RHEB', 'EAGB', 'TPAGB']
+    self.sgal.all_stages()
+    indss = [self.sgal.__getattribute__('i%s' % r.lower()) for r in regions]
+    line = '%s ' % self.target
+    print '#',' '.join(regions)
+    
+    for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb], [sopt_agb, sir_agb],
+                                     [self.opt_color_cut, self.ir_color_cut])):
+        #fig, (ax1, ax2) = plt.subplots(ncols=2)
+        filter1 = self.filter1
+        band = 'opt'
+        if i == 1:
+            filter1 = 'F160W'
+            band = 'ir'
+        ncontam_rgb = [np.intersect1d(inds[s], rgb) for s in indss]
+        ncontam_agb = [np.intersect1d(inds[s], agb) for s in indss]
+        
+        #ax1.plot(color, sgal.data.get_col(filter2), '.')
+        #ax2.plot(color, sgal.data.get_col(filter2), '.')
+        #[ax1.plot(color[n], sgal.data.get_col(filter2)[n], '.',
+        #         label=regions[j]) for j, n in enumerate(ncontam_rgb)]
+        #[ax2.plot(color[n], mag2[n], '.') for n in ncontam_agb]       
+        nrgb = np.max([1., len(ncontam_rgb[1])])
+        line_rgb = 'rgb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
+                                                      for n in ncontam_rgb])
+        nagb = np.max([1., len(ncontam_agb[-1])])
+        
+        line_agb = 'agb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
+                                                      for n in ncontam_agb])
+        print line_rgb
+        print line_agb
+        #ax1.legend()
+    print line
 
     def do_normalization(self, filter1=None, trilegal_output=None,
                          hist_it_up=True, dry_run=False):
@@ -2001,7 +2065,9 @@ if __name__ == '__main__':
     ags = AncientGalaxies()
     galaxy_table = ags.write_trgb_table(exclude_region=[0.1, 0.2],
                                         mag_below_trgb='comp_frac')
-    targets = ['ddo78', 'ddo71', 'hs117', 'kkh37', 'ngc2976-deep', 'ngc404-deep']
+    #targets = ['ddo78', 'ddo71', 'hs117', 'kkh37', 'ngc2976-deep', 'ngc404-deep']
+    targets = ['ngc2976-deep', 'ngc404-deep']
+    
     mk_tri_sfh_kw = {'random_sfr': True, 'random_z': False}
     simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat',
                                         'cmd_input_CAF09_S_NOV13eta0.dat',

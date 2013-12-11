@@ -96,6 +96,15 @@ def plot_cum_sum_sfr(targets, file_origin='match-hmc'):
     plt.tick_params(labelsize=16)
     plt.savefig('csfr_ancients.png', dpi=150)
 
+
+def plot_chi2_tests():
+    gs =  gridspec.GridSpec(8, 1, width_ratios=[1, 3])
+    for ax in gs:
+        ax.set_xlabel('%s' % gal.target.upper().replace('-','\!-\!'))
+        nmodels = len()
+        ax.plot(1, )
+
+
 def plot_cmd_lf(target, band):
     '''simple figure with the data and LF'''
     target = target.upper()
@@ -105,18 +114,14 @@ def plot_cmd_lf(target, band):
     else:
         fits_src = 'default'
         cmd_errors_kw = {'errclr': -.5}
-    fig = plt.figure(figsize=(6,6))
+    fig = plt.figure(figsize=(6, 6))
     gs = gridspec.GridSpec(1, 2, width_ratios=[3, 1])
     ax1 = plt.subplot(gs[0])
     ax2 = plt.subplot(gs[1])
     gal = galaxy_tests.load_galaxy(target, band=band, fits_src=fits_src)
-    #N, xedges, yedges = binned_statistic_2d(gal.color, gal.mag2, gal.mag1, 'count', bins=75)
-    #ax1.imshow(np.log10(N.T), origin='lower',
-    #           extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]],
-    #           aspect='auto', interpolation='nearest', cmap=plt.cm.gray)
+
     gal.plot_cmd(gal.color, gal.mag2, ax=ax1, scatter_off=True)
-    #hist, bins = np.histogram(gal.mag2, bins=np.sqrt(len(gal.color)))
-    hist, bins = rsp.math_utils.hist_it_up(gal.mag2, threash=7)
+
     ymax = bins[0]
     ax1.set_ylim(ax1.get_ylim()[0], ymax)
     if band == 'opt':
