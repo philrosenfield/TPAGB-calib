@@ -987,6 +987,63 @@ class FileIO(object):
         logger.info('wrote %s, %s' % (self.opt_mass_met_file.name,
                                       self.ir_mass_met_file.name))
 
+    def prepare_outfiles(self, outfile_loc='default', extra_directory=None,
+                         clean_first=False, extra_str='', dry_run=False):
+        '''
+        prepare outfiles for vary_the_sfh.
+        opt_lf, ir_lf
+        opt_lf_noagb, ir_lf_noagb
+        opt_mass_met, ir_mass_met
+        narratio
+
+        NOTE: all attrs saved are file objects.
+        '''
+        if dry_run is True:
+            read_str = 'r'
+        else:
+            read_str = 'a'
+        if outfile_loc == 'default':
+            outfile_loc = default_output_location(self.target,
+                                                  extra_directory=extra_directory,
+                                                  mc=self.mc)
+        self.outfile_loc = outfile_loc
+        rsp.fileIO.ensure_dir(self.outfile_loc)
+        logger.debug('outfile_loc set: %s' % self.outfile_loc)
+
+        if clean_first is True:
+            self.remove_files()
+
+        # N agb/rgb ratio file
+        hfmt =  '%(target)s %(nopt_rgb)i %(nopt_agb)i %(nir_rgb)i '
+        hfmt += '%(nir_agb)i %(opt_ar_ratio).3f %(ir_ar_ratio).3f '
+        hfmt += '%(opt_ar_ratio_err).3f  %(ir_ar_ratio_err).3f \n'
+
+        header = '# target nopt_rgb nopt_agb nir_rgb nir_agb opt_ar_ratio '
+        header += 'ir_ar_ratio opt_ar_ratio_err ir_ar_ratio_err \n'
+
+        fnames = ['opt_lf', 'ir_lf', 'opt_lf_noagb', 'ir_lf_noagb', 'narratio',
+                  'opt_mass_met', 'ir_mass_met']
+
+        for fname in fnames:
+            if extra_directory is None:
+                name_fmt = '%s_%s%s.dat' % (self.target, fname, extra_str)
+            else:
+                name_fmt = '%s_%s_%s%s.dat' % (extra_directory, self.target, fname,
+                                               extra_str)
+            name =  os.path.join(self.outfile_loc, name_fmt)
+            exists = os.path.isfile(name)
+            self.__setattr__('%s_file' % fname, open(name, read_str))
+            # it's ugly to keep writing the header.
+            self.narratio_fmt = hfmt
+            if exists is False and fname == 'narratio' and dry_run is False:
+                self.narratio_file.write(header)
+        
+        # how to name the trilegal sfr files
+        new_fmt = self.target + '_tri_%003i.sfr'
+        self.sfr_outfilefmt = os.path.join(self.outfile_loc, new_fmt)
+        return
+
+
 
 class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
     '''
@@ -1060,58 +1117,6 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
                     f.write(''.join(lines))
                 logger.info('wrote %s' % new_out)
             self.galaxy_inputs.append(new_out)
-
-    def prepare_outfiles(self, outfile_loc='default', extra_directory=None,
-                         clean_first=False, extra_str='', dry_run=False):
-        '''
-        prepare outfiles for vary_the_sfh.
-        opt_lf, ir_lf
-        opt_lf_noagb, ir_lf_noagb
-        opt_mass_met, ir_mass_met
-        narratio
-
-        NOTE: all attrs saved are file objects.
-        '''
-        if dry_run is True:
-            read_str = 'r'
-        else:
-            read_str = 'a'
-        if outfile_loc == 'default':
-            self.outfile_loc = default_output_location(self.target,
-                                                       extra_directory=extra_directory,
-                                                       mc=self.mc)
-        rsp.fileIO.ensure_dir(self.outfile_loc)
-        logger.debug('outfile_loc set: %s' % self.outfile_loc)
-
-        if clean_first is True:
-            self.remove_files()
-
-        # N agb/rgb ratio file
-        hfmt =  '%(target)s %(nopt_rgb)i %(nopt_agb)i %(nir_rgb)i '
-        hfmt += '%(nir_agb)i %(opt_ar_ratio).3f %(ir_ar_ratio).3f '
-        hfmt += '%(opt_ar_ratio_err).3f  %(ir_ar_ratio_err).3f \n'
-
-        header = '# target nopt_rgb nopt_agb nir_rgb nir_agb opt_ar_ratio '
-        header += 'ir_ar_ratio opt_ar_ratio_err ir_ar_ratio_err \n'
-
-        fnames = ['opt_lf', 'ir_lf', 'opt_lf_noagb', 'ir_lf_noagb', 'narratio',
-                  'opt_mass_met', 'ir_mass_met']
-
-        for fname in fnames:
-            name_fmt = '%s_%s_%s%s.dat' % (extra_directory, self.target, fname,
-                                           extra_str)
-            name =  os.path.join(self.outfile_loc, name_fmt)
-            exists = os.path.isfile(name)
-            self.__setattr__('%s_file' % fname, open(name, read_str))
-            # it's ugly to keep writing the header.
-            self.narratio_fmt = hfmt
-            if exists is False and fname == 'narratio' and dry_run is False:
-                self.narratio_file.write(header)
-        
-        # how to name the trilegal sfr files
-        new_fmt = self.name + '_tri_%003i.sfr'
-        self.sfr_outfilefmt = os.path.join(self.outfile_loc, new_fmt)
-        return
 
     def count_stars_from_hist(self, opt_hist, opt_bins, ir_hist, ir_bins):
         ratio_data = {}
@@ -1268,7 +1273,6 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
             self.do_normalization(trilegal_output=trilegal_output,
                                   filter1=filter1, hist_it_up=hist_it_up,
                                   dry_run=dry_run)
-
 
 
 class Diagnostics(VarySFHs):
@@ -1611,41 +1615,15 @@ class Plotting(object):
             rsp.fileIO.ensure_dir(bkdir)
         [os.system('mv %s %s' % (f, bkdir)) for f in files]
 
-    def poission_chi2(self, hist_it_up=False, lf_file_directory=None):
-        if not hasattr(self, 'ir_bins'):
-            self.load_data_for_normalization()
-        if not hasattr(self, 'opt_lf_file'):
-            self.mc = True
-            self.prepare_outfiles(extra_directory=lf_file_directory)
-            self.close_files()
-
-        opt_gal, ir_gal = self.load_galaxies(hist_it_up=hist_it_up)
-
-        # cut LF at 90% completeness
-        obins, = np.nonzero(opt_gal.bins <= self.opt_offset)
-        ibins, = np.nonzero(ir_gal.bins <= self.ir_offset)
-
-        opt_model_hists, opt_models_binss = self.load_lf_file(self.opt_lf_file.name)
-        ir_model_hists, ir_models_binss = self.load_lf_file(self.ir_lf_file.name)
-        opt_chi2 = np.array([])
-        ir_chi2 = np.array([])
-        for i in range(len(ir_model_hists)):
-            chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(opt_gal.hist[obins[1:]],
-                                                           opt_model_hists[i][obins[1:]])
-            opt_chi2 = np.append(opt_chi2, chi2)
-            chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(ir_gal.hist[ibins[1:]],
-                                                           ir_model_hists[i][ibins[1:]])
-            ir_chi2 = np.append(ir_chi2, chi2)
-        return opt_chi2, ir_chi2
-
 
 def plot_run():
     pl = Plotting()
     outfile_loc='/home/phil/Dropbox/research/varysfh/'
     cmd_inputs = ['CAF09_S_NOV13'.lower(),
-                  'CAF09_S_NOV13eta0'.lower(),
+                  #'CAF09_S_NOV13eta0'.lower(),
                   'CAF09_S_OCT13'.lower()]
-    targets = ['ddo78', 'ddo71', 'hs117', 'kkh37']
+    #targets = ['ddo78', 'ddo71', 'hs117', 'kkh37']
+    targets = ['ngc2976-deep']
     for target in targets:
         for cmd_input in cmd_inputs:
             narratio_file_name = os.path.join(outfile_loc,
@@ -1663,6 +1641,8 @@ def plot_run():
                                          narratio_file_name=narratio_file_name,
                                          extra_str=cmd_input.split('_')[-1]+'_')
             ax1.set_title(cmd_input.replace('_', '\ '))
+
+
 def get_filter1(target, fits_src=None):
     '''get optical filter1'''
     fits_src = fits_src or snap_src + '/data/angst_no_trim'
@@ -1773,36 +1753,58 @@ def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, mk_tri_sfh_kw=None,
 
 
 class StatisticalComparisons(object):
-    def __init__(self, cmd_input_file):
+    def __init__(self, cmd_input_file, outfile_loc='default'):
         self.agb_mod = default_agb_filepath(cmd_input_file)
+        self.outfile_loc = outfile_loc
+        self.files = FileIO()
 
-    def SCRapppppp():
-        if dry_run is True:
-            self.read_trilegal_catalog(trilegal_output, filter1=filter1)
+    def poission_chi2(self, hist_it_up=False, target=None, extra_directory=None,
+                      table_file='default'):
+        if not hasattr(self.files, 'ir_bins'):
+            ags = None
+            if not hasattr(self.files, 'ags'):
+                self.files.ags = load_default_ancient_galaxies(table_file=table_file)
+            self.files.load_data_for_normalization(target=target, ags=ags)
+        if not hasattr(self, 'opt_lf_file'):
+            if self.outfile_loc == 'default':
+                self.files.mc = True
+            self.files.prepare_outfiles(outfile_loc=self.outfile_loc,
+                                        extra_directory=extra_directory,
+                                        dry_run=True)
 
-        self.close_files()
-        opt_chi2, ir_chi2 = self.poission_chi2(hist_it_up=hist_it_up)
-        chi2_file = os.path.join(self.outfile_loc, '%s_chi2.dat' % self.target)
-        with open(chi2_file, 'w') as c2:
-            c2.write('# sfr opt_chi2 ir_chi2 \n')
-            for i in range(len(opt_chi2)):
-                c2.write('%s %.3f %.3f \n' % (self.sfr_files[i], opt_chi2[i], ir_chi2[i]))
-        logger.info('wrote %s' % chi2_file)
-        if diag_plots is True:
-            outfile_fmt = os.path.join(self.outfile_loc, '%s_random%s' % (self.target, extra_str))
-            outfile_fmt += '_%s.png'
-            if make_many_kw['mk_tri_sfh_kw']['random_sfr'] is True:
-                [self.plot_random_arrays(attr_str, from_files=True,
-                                         outfile=outfile_fmt % attr_str)
-                 for attr_str in ['sfr', 'mh']]
+        opt_gal, ir_gal = self.files.load_galaxies(hist_it_up=hist_it_up)
 
-            self.compare_to_gal(hist_it_up=hist_it_up, add_stage_lfs=add_stage_lfs,
-                                extra_str=extra_str)
-            if self.mc is True:
-                self.plot_mass_met_table(self.opt_mass_met_file.name,
-                                         self.ir_mass_met_file.name)
+        # cut LF at 90% completeness
+        obins, = np.nonzero(opt_gal.bins <= self.files.opt_offset)
+        ibins, = np.nonzero(ir_gal.bins <= self.files.ir_offset)
 
-    def chi2tests(self, targets):
+        opt_model_hists, opt_models_binss = self.files.load_lf_file(self.files.opt_lf_file.name)
+        ir_model_hists, ir_models_binss = self.files.load_lf_file(self.files.ir_lf_file.name)
+        opt_chi2 = np.array([])
+        ir_chi2 = np.array([])
+        for i in range(len(ir_model_hists)):
+            chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(opt_gal.hist[obins[1:]],
+                                                           opt_model_hists[i][obins[1:]])
+            opt_chi2 = np.append(opt_chi2, chi2)
+            chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(ir_gal.hist[ibins[1:]],
+                                                           ir_model_hists[i][ibins[1:]])
+            ir_chi2 = np.append(ir_chi2, chi2)
+        return opt_chi2, ir_chi2
+
+
+    def write_chi2_table(self, targets, table_file='default', extra_directory=None):
+        for target in targets:
+            opt_chi2, ir_chi2 = self.poission_chi2(target=target, extra_directory=extra_directory,
+                                                   table_file=table_file)
+            chi2_file = os.path.join(self.outfile_loc, '%s_chi2.dat' % target)
+            with open(chi2_file, 'w') as c2:
+                c2.write('# sfr opt_chi2 ir_chi2 \n')
+                for i in range(len(opt_chi2)):
+                    c2.write('%i %.3f %.3f \n' % (i, opt_chi2[i], ir_chi2[i]))
+            #logger.info('wrote %s' % chi2_file)
+            print 'wrote %s' % chi2_file
+
+    def chi2dict(self, targets):
         targets = galaxy_tests.load_targets(targets)
         chi_dict = {}
         for target in targets:
@@ -1813,7 +1815,7 @@ class StatisticalComparisons(object):
                 field = '%s_chi2' % band
                 chi_dict['%s_%s_mean' % (target, band)] = np.mean(data[field])
                 chi_dict['%s_%s_std' % (target, band)] = np.std(data[field])
-                print '%s %s $%.2f\pm%.2f$' % (target.upper(), band, np.mean(data[field]), np.std(data[field]))
+                #print '%s %s $%.2f\pm%.2f$' % (target.upper(), band, np.mean(data[field]), np.std(data[field]))
             opt_total = [v for k,v in chi_dict.items() if 'opt' in k and 'mean' in k]
             ir_total = [v for k,v in chi_dict.items() if 'ir' in k and 'mean' in k]
             chi_dict['%s_opt_mean' % self.agb_mod] = np.mean(opt_total)
@@ -1826,9 +1828,10 @@ class StatisticalComparisons(object):
         return chi_dict
 
     def load_chi2files(self, target, filefmt='%s_chi2.dat'):
-        self.outfile_loc = default_output_location(target,
-                                                   extra_directory=self.agb_mod,
-                                                   mc=True)
+        if self.outfile_loc == 'default':
+            self.outfile_loc = default_output_location(target,
+                                                       extra_directory=self.agb_mod,
+                                                       mc=True)
         dtype = [('sfr_file', '|S130'), ('opt_chi2', '<f8'), ('ir_chi2', '<f8')]
         fname = os.path.join(self.outfile_loc, filefmt % target)
         if not os.path.isfile(fname):
@@ -1847,22 +1850,23 @@ class StatisticalComparisons(object):
             for band in ['opt', 'ir']:
                 ratio = data['n%s_agb' % band]/data['n%s_rgb' % band]
                 narr_dict['%s_%s_mean_ratio' % (target, band)] = np.mean(ratio)
-                narr_dict['%s_%s_std' % (target, band)] = np.std(ratio)
-                print '%s %s $%.2f\pm%.2f$' % (target.upper(), band,
-                                               np.mean(ratio), np.std(ratio))
+                narr_dict['%s_%s_std' % (target, band)] = np.abs(np.std(ratio))
+                #print '%s %s $%.2f\pm%.2f$' % (target.upper(), band,
+                                               #np.mean(ratio), np.std(ratio))
             opt_total = [v for k,v in narr_dict.items() if 'opt' in k and 'mean' in k]
             ir_total = [v for k,v in narr_dict.items() if 'ir' in k and 'mean' in k]
             narr_dict['%s_opt_mean' % self.agb_mod] = np.mean(opt_total)
             narr_dict['%s_ir_mean' % self.agb_mod] = np.mean(ir_total)
-            print '%s opt $%.2f\pm%.2f$' % (self.agb_mod, np.mean(opt_total), np.std(opt_total))
-            print '%s ir $%.2f\pm%.2f$' % (self.agb_mod, np.mean(ir_total), np.std(ir_total))
+            #print '%s opt $%.2f\pm%.2f$' % (self.agb_mod, np.mean(opt_total), np.std(opt_total))
+            #print '%s ir $%.2f\pm%.2f$' % (self.agb_mod, np.mean(ir_total), np.std(ir_total))
 
         return narr_dict
 
     def load_narratio_file(self, target):
-        self.outfile_loc = default_output_location(target.lower(),
-                                                   extra_directory=self.agb_mod,
-                                                   mc=True)
+        if self.outfile_loc == 'default':
+            self.outfile_loc = default_output_location(target.lower(),
+                                                       extra_directory=self.agb_mod,
+                                                       mc=True)
         filefmt = '%s_%s_narratio.dat' % (self.agb_mod, target.lower())
         fname = os.path.join(self.outfile_loc, filefmt)
         if not os.path.isfile(fname):
@@ -1889,9 +1893,10 @@ def get_data(table_file='default'):
     return data_dict
 
 
-def narratio_table(targets, cmd_input_files, table_file='default'):
+def narratio_table(targets, cmd_input_files, table_file='default',
+                   model_loc='default'):
 
-    scs = [StatisticalComparisons(c) for c in cmd_input_files]
+    scs = [StatisticalComparisons(c, outfile_loc=model_loc) for c in cmd_input_files]
     data_dict = get_data(table_file=table_file)
     model_dicts = [scs[i].narratio(targets) for i in range(len(cmd_input_files))]
     fmt = '$%.3f\\pm%.3f$ & '
@@ -1914,47 +1919,54 @@ def narratio_table(targets, cmd_input_files, table_file='default'):
             dstr = fmt % (dnarr, derr)
             line += dstr
             for model_dict in model_dicts:
-                mnarr = model_dict['%s_%s_mean_ratio' % (target.upper(), band)]
-                mnerr = model_dict['%s_%s_std' % (target.upper(), band)]
+                mnarr = model_dict['%s_%s_mean_ratio' % (target, band)]
+                mnerr = model_dict['%s_%s_std' % (target, band)]
                 mstr = fmt % (mnarr, mnerr)
                 line += mstr
                 pct_diff = (mnarr - dnarr) / dnarr
-                pct_diff_err = pct_diff * (mnerr/mnarr + derr/dnarr)
+                pct_diff_err = np.abs(pct_diff * (mnerr/mnarr + derr/dnarr))
                 pdstr = fmt % (pct_diff, pct_diff_err)
                 line += pdstr
             line = line[:-2] + '\\\\ \n'
             print line
 
 
-def chi2_table(targets, cmd_input_files, table_file='default'):
-    scs = [StatisticalComparisons(c) for c in cmd_input_files]
-    model_dicts = [scs[i].chi2tests(targets) for i in range(len(cmd_input_files))]
-    fmt = '$%.3f\\pm%.3f$ & '
+def chi2_table(targets, cmd_input_files, table_file='default', model_loc='default'):
     targets = galaxy_tests.load_targets(targets)
+    fmt = '$%.3f\\pm%.3f$ & '
     bands = ['opt', 'ir']
-    header = 'Target & '
-    for cmd_input_file in cmd_input_files:
+    model_dicts = []
+    for i in range(len(cmd_input_files)):
+        scs = StatisticalComparisons(cmd_input_files[i], outfile_loc=model_loc)
+        agb_mod = cmd_input_files[i].replace('cmd_input_', '').replace('.dat', '').lower()
+
+        scs.write_chi2_table(targets, table_file='default', extra_directory=agb_mod)
+
+        model_dict = scs.chi2dict(targets)
+        
+        header = 'Target & '
         for band in bands:
-            agb_mod = default_agb_filepath(cmd_input_file).replace('caf09_s_', '')
-            header += '\\chi^2 %s %s & ' % (agb_mod, band)
-    header = header[:-2] + '\\\\ \n'
-    print header
-    for target in targets:
-        line = '%s &' % target.upper()
-        if '404' in target:
-            continue
-        for model_dict in model_dicts:
+            agb_mod_short = agb_mod.split('_')[-1]
+            header += '\\chi^2 %s %s & ' % (agb_mod_short, band)
+        header = header[:-2] + '\\\\ \n'
+        print header
+        for target in targets:
+            line = '%s &' % target.upper()
+            if '404' in target:
+                continue
             for band in bands:
-                line += fmt % (model_dict['%s_%s_mean' % (target.upper(), band)],
-                               model_dict['%s_%s_std' % (target.upper(), band)])
-        print line
+                line += fmt % (model_dict['%s_%s_mean' % (target, band)],
+                               model_dict['%s_%s_std' % (target, band)])
+            print line
+        model_dicts.append(model_dict)
+        
     line = 'Mean $\\chi^2$ & '
     for i, model_dict in enumerate(model_dicts):
         agb_mod = default_agb_filepath(cmd_input_files[i])
         for band in bands:
             line += fmt % (model_dict['%s_%s_mean' % (agb_mod, band)],
                            model_dict['%s_%s_std' % (agb_mod, band)])
-    print line
+        print line
 
 
 def add_file_logger(logdir):
