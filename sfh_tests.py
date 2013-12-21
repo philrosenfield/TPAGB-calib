@@ -29,6 +29,7 @@ def find_contamination_by_phases(output_files=None):
                         '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ngc2976-deep/caf09_s_nov13/mc/output_ngc2976-deep_caf09_s_nov13.dat',
                         '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ngc404/caf09_s_nov13/mc/output_ngc404_caf09_s_nov13.dat']
     comp_tab = read_completeness_table()
+    ds = Diagnostics()
     for output_file in output_files:
         target = output_file.split('output_')[1].split('_')[0]
         sgal = rsp.Galaxies.simgalaxy(output_file, filter1=get_filter1(target), filter2='F814W')
@@ -38,8 +39,8 @@ def find_contamination_by_phases(output_files=None):
         comp90s = [comp_tab['target' == sgal.target.upper()]['opt_filter2'],
                    comp_tab['target' == sgal.target.upper()]['ir_filter2']]
         bright_limit = [opt_trgb-0.1, ir_trgb-0.25]
-        contamination_by_phases(sgal, dim_limit=comp90s, bright_limit=bright_limit)
-        #exclude_low = [opt_trgb+.1, ir_trgb+.25]
+        ds.contamination_by_phases(sgal, dim_limit=comp90s, bright_limit=bright_limit)
+        #xclude_low = [opt_trgb+.1, ir_trgb+.25]
         #contamination_by_phases(sgal, dim_limit=exclude_low, bright_limit=bright_limit)
     return sgal
 
@@ -246,6 +247,18 @@ def parse_sfh_data(filename, file_origin, frac=0.2):
     return data
 
 
+def load_default_ancient_galaxies(table_file='default'):
+    if table_file is 'default':
+        table_file = os.path.join(table_src, 'ancients_0.1_0.2_galaxies.dat')
+    else:
+        logger.info('reading from table %s' % table_file)
+    # Reads in the data as well as the mag offsets and factor in the
+    # exclude region.
+    ags = AncientGalaxies()
+    ags.read_trgb_table(table_file)
+    return ags
+
+
 class PHATFields(object):
     def __init__(self):
         pass
@@ -381,17 +394,6 @@ class AncientGalaxies(object):
             nir_off = float(mline.strip().split('=')[-1])
             self.offsets = [opt_off, nir_off]
 
-
-def load_default_ancient_galaxies(table_file='default'):
-    if table_file is 'default':
-        table_file = os.path.join(table_src, 'ancients_0.1_0.2_galaxies.dat')
-    else:
-        logger.info('reading from table %s' % table_file)
-    # Reads in the data as well as the mag offsets and factor in the
-    # exclude region.
-    ags = AncientGalaxies()
-    ags.read_trgb_table(table_file)
-    return ags
 
 class StarFormationHistories(object):
     '''Make TRILEGAL star formation history files from MATCH'''
@@ -692,7 +694,8 @@ class FileIO(object):
     
     def check_target(self, target):
         if target is None:
-            assert hasattr(self, 'target'), 'need to pass target or have attribute'
+            assert hasattr(self, 'target'), \
+                'need to pass target or have attribute'
         else:
             self.target = target
         return
@@ -748,13 +751,13 @@ class FileIO(object):
         '''read the trilegal cat and does ast corrections.'''
         sgal = rsp.Galaxies.simgalaxy(trilegal_output, filter1=filter1,
                                       filter2='F814W')
-        if self.ast is True and not hasattr(self, 'ast_objs'):
-            # should be loaded outside this method if mc is running.
-            self.load_asts()
+        #if self.ast is True and not hasattr(self, 'ast_objs'):
+        #    # should be loaded outside this method if mc is running.
+        #    self.load_asts()
 
-            # ast correction
-            rsp.Galaxies.ast_correct_trilegal_sim(sgal, asts_obj=self.ast_objs)
-            sgal.load_ast_corrections()
+        #    # ast correction
+        #    rsp.Galaxies.ast_correct_trilegal_sim(sgal, asts_obj=self.ast_objs)
+        #    sgal.load_ast_corrections()
         
         self.sgal = sgal
 
@@ -785,22 +788,25 @@ class FileIO(object):
             ir_offset = rgb_bins[rgb_bin_edge] - self.ir_trgb
 
         else:
+            pass
             # closest star in the trilegal catalog to star on the trgb
-            trgb_color = angst_data.get_item(self.target, 'mean_color',
-                                             extra_key=['%s,%s' % (self.filter1,
-                                                                   'F814W')])
-            ind, dist = rsp.math_utils.min_dist2d(trgb_color, self.opt_trgb,
-                                                  opt_color, opt_mag)
+            #trgb_color = angst_data.get_item(self.target, 'mean_color',
+            #                                 extra_key=['%s,%s' % (self.filter1,
+            #                                                       'F814W')])
+            #ind, dist = rsp.math_utils.min_dist2d(trgb_color, self.opt_trgb,
+            #                                      opt_color, opt_mag)
 
             # correction for mag
-            ir_offset = self.ir_trgb - ir_mag[ind]
-            opt_offset = self.opt_trgb - opt_mag[ind]
+            #ir_offset = self.ir_trgb - ir_mag[ind]
+            #opt_offset = self.opt_trgb - opt_mag[ind]
         logger.debug('IR OFFSET: %f' % ir_offset)
         logger.debug('OPT OFFSET: %f' % opt_offset)
-
+        self.ir_moffset = ir_offset
+        self.opt_moffset = opt_offset
+        print ir_offset
+        print opt_offset
         self.opt_mag = opt_mag[opt_inds] - opt_offset
         self.ir_mag = ir_mag[ir_inds] - ir_offset
-
         return
 
     def mass_cut_inds(self):
@@ -1043,7 +1049,17 @@ class FileIO(object):
         self.sfr_outfilefmt = os.path.join(self.outfile_loc, new_fmt)
         return
 
-
+    def remove_files(self):
+        logger.info('backing up everything in %s first' % self.outfile_loc)
+        files = rsp.fileIO.get_files(self.outfile_loc, '*.*')
+        bkdir = os.path.join(self.outfile_loc, 'bkup/')
+        if os.path.isdir(bkdir):
+            old_files = os.listdir(bkdir)
+            if len(old_files) > 0:
+                logger.info('overwriting a previous back up.')
+        else:
+            rsp.fileIO.ensure_dir(bkdir)
+        [os.system('mv %s %s' % (f, bkdir)) for f in files]
 
 class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
     '''
@@ -1145,10 +1161,11 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
         if not hasattr(self, 'sgal'):
             assert trilegal_output is not None, \
                 'need sgal loaded or pass trilegal catalog file name'
-        if self.mc is True or not hasattr(self, 'sgal'):
             self.read_trilegal_catalog(trilegal_output, filter1=filter1)
-
-        if not hasattr(self, 'opt_mag'):
+            self.load_trilegal_data()
+            
+        if self.mc is True:
+            self.read_trilegal_catalog(trilegal_output, filter1=filter1)
             self.load_trilegal_data()
 
         # Recovered stars in simulated RGB region.
@@ -1289,10 +1306,10 @@ class Diagnostics(VarySFHs):
         for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb], [sopt_agb, sir_agb],
                                          [self.opt_color_cut, self.ir_color_cut])):
             #fig, (ax1, ax2) = plt.subplots(ncols=2)
-            filter1 = self.filter1
+            #filter1 = self.filter1
             band = 'opt'
             if i == 1:
-                filter1 = 'F160W'
+                #filter1 = 'F160W'
                 band = 'ir'
             ncontam_rgb = [np.intersect1d(inds[s], rgb) for s in indss]
             ncontam_agb = [np.intersect1d(inds[s], agb) for s in indss]
@@ -1302,10 +1319,10 @@ class Diagnostics(VarySFHs):
             #[ax1.plot(color[n], sgal.data.get_col(filter2)[n], '.',
             #         label=regions[j]) for j, n in enumerate(ncontam_rgb)]
             #[ax2.plot(color[n], mag2[n], '.') for n in ncontam_agb]       
-            nrgb = np.max([1., len(ncontam_rgb[1])])
+            #nrgb = np.max([1., len(ncontam_rgb[1])])
             line_rgb = 'rgb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
                                                           for n in ncontam_rgb])
-            nagb = np.max([1., len(ncontam_agb[-1])])
+            #nagb = np.max([1., len(ncontam_agb[-1])])
             
             line_agb = 'agb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
                                                           for n in ncontam_agb])
@@ -1332,6 +1349,68 @@ class Diagnostics(VarySFHs):
                     (tpagb_opt_contamination, tpagb_ir_contamination))
 
         return tpagb_opt_contamination, tpagb_ir_contamination
+
+    def paolas_tests():
+        '''tests paola requested'''
+        targets = ['ddo78', 'ddo71']
+        cmd_inputs = ['cmd_input_CAF09_S_NOV13.dat']
+        nsfhs = 1
+        mk_tri_sfh_kw = {'random_sfr': False}
+        match_sfh_file = 'grid'
+    
+        common_dict = {'match_sfh_file': match_sfh_file,
+                       'mk_tri_sfh_kw': mk_tri_sfh_kw}
+        #1 No Dust
+        print '\n No Dust \n '
+        galaxy_input_filefmt = snap_src + '/input/tests/input_%s_nodust.dat'
+        extra_str = '_nodust'
+        simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
+                                  galaxy_input_filefmt=galaxy_input_filefmt,
+                                  **common_dict)
+        #2 C Dust
+        print '\n C Dust \n '
+        galaxy_input_filefmt = snap_src + '/input/tests/input_%s_cdust.dat'
+        extra_str = '_cdust'
+        simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
+                                  galaxy_input_filefmt=galaxy_input_filefmt,
+                                  **common_dict)
+        
+        #2 M Dust
+        print '\n M Dust \n '
+        galaxy_input_filefmt = snap_src + '/input/tests/input_%s_mdust.dat'
+        extra_str = '_mdust'
+        simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
+                                  galaxy_input_filefmt=galaxy_input_filefmt,
+                                  **common_dict)
+        #2 Aringer Dust
+        print '\n Aringer Dust \n '
+        galaxy_input_filefmt = snap_src + '/input/tests/input_%s_aringer.dat'
+        extra_str = '_aringer'
+        simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
+                                  galaxy_input_filefmt=galaxy_input_filefmt,
+                                  **common_dict)
+        #3 Big Exclude
+        print '\n Big Exclude \n '
+        ags = AncientGalaxies()
+        galaxy_table = ags.write_trgb_table(exclude_region=[0.2, 0.4],
+                                            mag_below_trgb='comp_frac')
+        extra_str = '_bigexclude'
+        simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
+                                  galaxy_table=galaxy_table,
+                                  **common_dict)
+    
+        # 4 Mass Cut
+        print '\n Mass Cut \n '
+        mass_cut = '(%f<1.) | (%f>1.2)'
+        extra_str = '_masscut'
+        simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
+                                  mass_cut=mass_cut,
+                                  **common_dict)
+    
+        # Normal
+        print '\n Default \n '
+        simulation_from_beginning(targets, cmd_inputs, nsfhs,
+                                  **common_dict)
 
 
 class Plotting(object):
@@ -1365,10 +1444,11 @@ class Plotting(object):
                     axs[i].plot(bins, hist, **plt_kw)
         return axs
 
-    def compare_to_gal(self, target, opt_lf_file, ir_lf_file,
+    def compare_to_gal(self, target, opt_lf_file=None, ir_lf_file=None,
                        hist_it_up=True, narratio=True, no_agb=False,
-                       add_stage_lfs=None, extra_str='', mc=True,
-                       narratio_file_name=None, outfile_loc=os.getcwd()):
+                       add_stage_lfs=None, extra_str='', trilegal_output=None,
+                       narratio_file_name=None, outfile_loc=os.getcwd(),
+                       plot_data=True, cols=None, stage_lf_kw=None):
         '''
         Plot the LFs and galaxy LF.
 
@@ -1382,80 +1462,124 @@ class Plotting(object):
         ax1, ax2: axes instances created for the plot.
 
         '''        
-        if narratio is True:
-            # load ast_table
-            ast_table = read_completeness_table()
+        # load ast_table for annotations
+        ast_table = read_completeness_table()
+        
         # load galaxy data
-        opt_gal, ir_gal = self.files.load_galaxies(hist_it_up=hist_it_up, target=target,
+        opt_gal, ir_gal = self.files.load_galaxies(hist_it_up=hist_it_up,
+                                                   target=target,
                                                    ags=self.ags)
 
-        if mc is True:
+        if opt_lf_file is not None:
             # plot lfs from simulations (and initialize figure)
             ax1, ax2 = self.plot_lf_file(opt_lf_file, ir_lf_file,
                                          opt_limit=opt_gal.comp50mag2,
                                          ir_limit=ir_gal.comp50mag2)
         else:
-            fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6), sharey=False)
+            fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6),
+                                           sharey=False)
             plt.subplots_adjust(right=0.95, left=0.1, wspace=0.1)
 
-        if add_stage_lfs is not None and mc is False:
+        if add_stage_lfs is not None and opt_lf_file is None:
             if add_stage_lfs == 'all':
-                add_stage_lfs = ['PMS', 'MS', 'SUBGIANT', 'RGB', 'HEB', 'RHEB',
-                                 'BHEB', 'EAGB', 'TPAGB', 'POSTAGB', 'WD']
+                add_stage_lfs = ['RGB', 'HEB', 'RHEB',
+                                 'BHEB', 'EAGB', 'TPAGB']
             if add_stage_lfs == 'default':
                 add_stage_lfs = ['RGB', 'EAGB', 'TPAGB']
 
             nstages = len(add_stage_lfs)
-            stage_lf_kw = {'linestyle': 'steps', 'lw': 2}
-            if nstages < 3:
-                cmap = brewer2mpl.get_map('Paired', 'Qualitative', 3)
-                cols = cmap.mpl_colors[0::2]
-            else:
-                cmap = brewer2mpl.get_map('Paired', 'Qualitative', nstages)
-                cols = cmap.mpl_colors
-            if not hasattr(self, 'opt_mag'):
-                print 'can not plot sgal yet, need to load trilegal sim'
-            #stage_inds = self.mass_cut_inds()
-            for ax, mag, norm, sinds in zip([ax1, ax2],
-                                            [self.opt_mag, self.ir_mag],
-                                            [self.opt_norm, self.ir_norm],
-                                            [self.opt_color_cut, self.ir_color_cut]):
-                self.sgal.make_lf(mag, stages=add_stage_lfs,
-                                  hist_it_up=hist_it_up, stage_inds=sinds)
+            stage_lf_kw = stage_lf_kw or {}
+            stage_lf_kw = dict({'linestyle': 'steps', 'lw': 2}.items() +
+                                stage_lf_kw.items())
+            if cols is None:
+                if nstages < 3:
+                    cmap = brewer2mpl.get_map('Paired', 'Qualitative', 3)
+                    cols = cmap.mpl_colors[0::2]
+                else:
+                    cmap = brewer2mpl.get_map('Paired', 'Qualitative', nstages)
+                    cols = cmap.mpl_colors
+                 
+            # load the trilegal catalog if it is given, if it is given,
+            # no LF scaling... need to save this info better. Currently only
+            # in log files.
+            if trilegal_output is not None:
+                self.files.read_trilegal_catalog(trilegal_output,
+                                                 filter1=opt_gal.filter1)
+                self.files.load_trilegal_data()
+                self.opt_norm = 1.
+                self.ir_norm = 1.
+
+            self.files.load_data_for_normalization(target=target, ags=self.ags)
+            assert hasattr(self.files, 'opt_mag'), 'Need opt_mag or trilegal_output'
+           
+            for ax, mag, norm, sinds, bins in \
+                zip([ax1, ax2],
+                    [self.files.sgal.data.get_col('F814W')-self.files.opt_moffset,
+                     self.files.sgal.data.get_col('F160W')-self.files.ir_moffset],
+                    [self.opt_norm, self.ir_norm],
+                    [self.files.opt_color_cut, self.files.ir_color_cut],
+                    [self.files.opt_bins, self.files.ir_bins]):
+
+                self.files.sgal.make_lf(mag, stages=add_stage_lfs, bins=bins,
+                                        inds=sinds, hist_it_up=hist_it_up)
                 for i in range(nstages):
+                    istage = add_stage_lfs[i].lower()
                     try:
-                        hist = self.sgal.__getattribute__('i%s_lfhist' % add_stage_lfs[i].lower())
+                        hist = self.files.sgal.__getattribute__('i%s_lfhist' %
+                                                                istage)
                     except AttributeError:
                         continue
-                    bins = self.sgal.__getattribute__('i%s_lfbins' % add_stage_lfs[i].lower())
+                    # combine all HeB stages into one for a cleaner plot.
+                    if add_stage_lfs[i].lower() == 'heb':
+                        hist = \
+                        np.sum([self.files.sgal.__getattribute__('i%s_lfhist' %
+                                                                 istage)
+                                for j in range(nstages)
+                                if 'heb' in istage], axis=0)
+                    elif 'heb' in istage:
+                        continue
+                    
+                    bins = \
+                    self.files.sgal.__getattribute__('i%s_lfbins' %
+                                                     istage)
                     stage_lf_kw['color'] = cols[i]
-                    stage_lf_kw['label'] = '$%s$' % add_stage_lfs[i]
+                    stage_lf_kw['label'] = '$%s$' % istage.upper()
                     ax.plot(bins[:-1], hist*norm, **stage_lf_kw)
 
-            sopt_hist, sopt_bins = self.sgal.make_lf(self.opt_mag, bins=self.opt_bins,
+            sopt_hist, sopt_bins = self.files.sgal.make_lf(self.files.opt_mag,
+                                                     bins=self.files.opt_bins,
                                                      hist_it_up=hist_it_up)
-            sir_hist, sir_bins = self.sgal.make_lf(self.ir_mag, bins=self.ir_bins,
+            sir_hist, sir_bins = self.files.sgal.make_lf(self.files.ir_mag,
+                                                   bins=self.files.ir_bins,
                                                    hist_it_up=hist_it_up)
 
             sopt_hist = sopt_hist * self.opt_norm
             sir_hist = sir_hist * self.ir_norm
-            stage_lf_kw['color'] = 'grey'
-            lab = self.agb_mod or ''
+            if opt_lf_file is None:
+                stage_lf_kw['color'] = 'black'
+            else:
+                stage_lf_kw['color'] = 'grey'
+
+            lab = '_Total'
+            if hasattr(self, 'agb_mod'):
+                lab = self.agb_mod
             if lab != '':
                 lab = '$%s$' % '\ '.join(lab.split('_')[1:])
             stage_lf_kw['label'] = lab
             ax1.plot(sopt_bins[:-1], sopt_hist, **stage_lf_kw)
             ax2.plot(sir_bins[:-1], sir_hist, **stage_lf_kw)
+        
         # plot galaxy data
-        dplot_kw = {'linestyle': 'steps', 'color': 'darkred', 'lw': 2,
-                    'label': '$%s$' % target.upper()}
-        ax2.plot(ir_gal.bins[:-1], ir_gal.hist, **dplot_kw)
-        ax1.plot(opt_gal.bins[:-1], opt_gal.hist, **dplot_kw)
+        if plot_data is True:
+            dplot_kw = {'linestyle': 'steps', 'color': 'darkred', 'lw': 2,
+                        'label': '$%s$' % target.upper()}
+            ax2.plot(ir_gal.bins[:-1], ir_gal.hist, **dplot_kw)
+            ax1.plot(opt_gal.bins[:-1], opt_gal.hist, **dplot_kw)
 
         # initialize add numbers to the plot
         if narratio is True:
-            if add_stage_lfs is None or mc is True:
-                # count stars from the saved file (which counts random asts)
+            if add_stage_lfs is None or opt_lf_file is not None:
+                # count stars from the saved file
                 ratio_data = rsp.fileIO.readfile(narratio_file_name)
             else:
                 # count stars from the loaded histograms
@@ -1464,7 +1588,6 @@ class Plotting(object):
             stext_kw = {'color': 'black', 'fontsize': 14, 'ha': 'center'}
             dtext_kw = {'color': dplot_kw['color'], 'fontsize': 14,
                         'ha': 'center'}
-        self.files.load_data_for_normalization(target=target, ags=self.ags)
         for i, (ax, gal, offset, trgb_err, band) in enumerate(zip([ax1, ax2],
                                                    [opt_gal, ir_gal],
                                                    [self.files.opt_offset,
@@ -1496,7 +1619,7 @@ class Plotting(object):
                                                 '%s_filter2' % band)
             ax.fill_betweenx(yarr, ast_frac, ax.get_xlim()[1],
                              color='black', alpha=0.2)
-            ax.legend(loc=4, frameon=False)
+            ax.legend(loc=0, frameon=False)
             ax.set_xlabel('$%s$' % gal.filter2, fontsize=20)
 
             if narratio is True:
@@ -1545,7 +1668,11 @@ class Plotting(object):
 
         ax1.set_ylabel('$\#$', fontsize=20)
         plt.tick_params(labelsize=16)
-        outfile = os.path.join(outfile_loc, '%s%s_lfs.png' % (extra_str, target))
+        if opt_lf_file is not None:
+            figtitle = '%s%s_lfs.png' % (extra_str, target)
+        else:
+            figtitle = '%s%s_lf.png' % (extra_str, target)
+        outfile = os.path.join(outfile_loc, figtitle)
         plt.savefig(outfile, dpi=150)
         logger.info('wrote %s' % outfile)
         return ax1, ax2
@@ -1603,44 +1730,6 @@ class Plotting(object):
                                 '%s_mass_met%s.png' % (self.target, extra_str)), dpi=150)
         return grid
 
-    def remove_files(self):
-        logger.info('backing up everything in %s first' % self.outfile_loc)
-        files = rsp.fileIO.get_files(self.outfile_loc, '*.*')
-        bkdir = os.path.join(self.outfile_loc, 'bkup/')
-        if os.path.isdir(bkdir):
-            old_files = os.listdir(bkdir)
-            if len(old_files) > 0:
-                logger.info('overwriting a previous back up.')
-        else:
-            rsp.fileIO.ensure_dir(bkdir)
-        [os.system('mv %s %s' % (f, bkdir)) for f in files]
-
-
-def plot_run():
-    pl = Plotting()
-    outfile_loc='/home/phil/Dropbox/research/varysfh/'
-    cmd_inputs = ['CAF09_S_NOV13'.lower(),
-                  #'CAF09_S_NOV13eta0'.lower(),
-                  'CAF09_S_OCT13'.lower()]
-    #targets = ['ddo78', 'ddo71', 'hs117', 'kkh37']
-    targets = ['ngc2976-deep']
-    for target in targets:
-        for cmd_input in cmd_inputs:
-            narratio_file_name = os.path.join(outfile_loc,
-                                              '%s_%s_narratio.dat' %
-                                              (cmd_input, target.lower()))
-            opt_lf_file = os.path.join(outfile_loc,
-                                       '%s_%s_opt_lf.dat' %
-                                       (cmd_input, target.lower()))
-            ir_lf_file =  os.path.join(outfile_loc,
-                                       '%s_%s_ir_lf.dat' %
-                                       (cmd_input, target.lower()))
-        
-            ax1, ax2 = pl.compare_to_gal(target, opt_lf_file, ir_lf_file,
-                                         hist_it_up=False, outfile_loc=outfile_loc,
-                                         narratio_file_name=narratio_file_name,
-                                         extra_str=cmd_input.split('_')[-1]+'_')
-            ax1.set_title(cmd_input.replace('_', '\ '))
 
 
 def get_filter1(target, fits_src=None):
@@ -2023,68 +2112,6 @@ def data_table(targets):
         row += '$%.3f\\pm%.3f$ \\\\' % (sub_dict['%s_ir' % target.lower()], sub_dict['%s_ir_err' % target.lower()])
         print row
 
-
-def paolas_tests():
-    '''tests paola requested'''
-    targets = ['ddo78', 'ddo71']
-    cmd_inputs = ['cmd_input_CAF09_S_NOV13.dat']
-    nsfhs = 1
-    mk_tri_sfh_kw = {'random_sfr': False}
-    match_sfh_file = 'grid'
-
-    common_dict = {'match_sfh_file': match_sfh_file,
-                   'mk_tri_sfh_kw': mk_tri_sfh_kw}
-    ##1 No Dust
-    #print '\n No Dust \n '
-    #galaxy_input_filefmt = snap_src + '/input/tests/input_%s_nodust.dat'
-    #extra_str = '_nodust'
-    #simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
-    #                          galaxy_input_filefmt=galaxy_input_filefmt,
-    #                          **common_dict)
-    ##2 C Dust
-    #print '\n C Dust \n '
-    #galaxy_input_filefmt = snap_src + '/input/tests/input_%s_cdust.dat'
-    #extra_str = '_cdust'
-    #simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
-    #                          galaxy_input_filefmt=galaxy_input_filefmt,
-    #                          **common_dict)
-    #
-    ##2 M Dust
-    #print '\n M Dust \n '
-    #galaxy_input_filefmt = snap_src + '/input/tests/input_%s_mdust.dat'
-    #extra_str = '_mdust'
-    #simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
-    #                          galaxy_input_filefmt=galaxy_input_filefmt,
-    #                          **common_dict)
-    #2 Aringer Dust
-    print '\n Aringer Dust \n '
-    galaxy_input_filefmt = snap_src + '/input/tests/input_%s_aringer.dat'
-    extra_str = '_aringer'
-    simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
-                              galaxy_input_filefmt=galaxy_input_filefmt,
-                              **common_dict)
-    #3 Big Exclude
-    #print '\n Big Exclude \n '
-    #ags = AncientGalaxies()
-    #galaxy_table = ags.write_trgb_table(exclude_region=[0.2, 0.4],
-    #                                    mag_below_trgb='comp_frac')
-    #extra_str = '_bigexclude'
-    #simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
-    #                          galaxy_table=galaxy_table,
-    #                          **common_dict)
-
-    # 4 Mass Cut
-    #print '\n Mass Cut \n '
-    #mass_cut = '(%f<1.) | (%f>1.2)'
-    #extra_str = '_masscut'
-    #simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
-    #                          mass_cut=mass_cut,
-    #                          **common_dict)
-
-    # Normal
-    #print '\n Default \n '
-    #simulation_from_beginning(targets, cmd_inputs, nsfhs,
-    #                          **common_dict)
 
 def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                               dry_run=False, galaxy_input_filefmt=None,
