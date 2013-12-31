@@ -107,13 +107,20 @@ def plot_chi2_tests():
 
 def plot_cmd_lf(target, band):
     '''simple figure with the data and LF'''
+    import model_plots
+    lims = model_plots.load_plot_limits()
+    row = lims[lims['target'] == target.lower()]
     target = target.upper()
+
+    print row
     if band == 'opt':
         fits_src = snap_src + '/data/angst_no_trim'
         cmd_errors_kw = {}
+        ymin, ymax = row['opt_xmin'], row['opt_xmax']
     else:
         fits_src = 'default'
         cmd_errors_kw = {'errclr': -.5}
+        ymin, ymax = row['ir_xmin'], row['ir_xmax']
     fig = plt.figure(figsize=(6, 6))
     gs = gridspec.GridSpec(1, 2, width_ratios=[3, 1])
     ax1 = plt.subplot(gs[0])
@@ -121,13 +128,16 @@ def plot_cmd_lf(target, band):
     gal = galaxy_tests.load_galaxy(target, band=band, fits_src=fits_src)
 
     gal.plot_cmd(gal.color, gal.mag2, ax=ax1, scatter_off=True)
-
-    ymax = bins[0]
-    ax1.set_ylim(ax1.get_ylim()[0], ymax)
+    hist, bins = rsp.math_utils.hist_it_up(gal.mag2)
+    ax1.set_ylim(ymax, ymin)
     if band == 'opt':
         xmin = -2
     if band == 'ir':
         xmin = -1
+
+    ax1.set_ylim()
+    ax2.set_ylim()
+
     ax1.set_xlim(xmin, ax1.get_xlim()[1])
     gal.decorate_cmd(ax=ax1, trgb=True, cmd_errors_kw=cmd_errors_kw)
     err = np.sqrt(hist)
@@ -149,7 +159,7 @@ def plot_cmd_lf(target, band):
 
 if __name__ == '__main__':
     targets = galaxy_tests.load_targets('ancients')
-    plot_cum_sum_sfr(targets)
+    #plot_cum_sum_sfr(targets)
     [[plot_cmd_lf(target, band) for target in targets] for band in ['opt', 'ir']]
 
 

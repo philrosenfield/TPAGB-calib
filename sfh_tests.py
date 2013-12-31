@@ -28,21 +28,26 @@ def find_contamination_by_phases(output_files=None):
                         '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat',
                         '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ngc2976-deep/caf09_s_nov13/mc/output_ngc2976-deep_caf09_s_nov13.dat',
                         '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ngc404/caf09_s_nov13/mc/output_ngc404_caf09_s_nov13.dat']
-    comp_tab = read_completeness_table()
-    ds = Diagnostics()
+
     for output_file in output_files:
         target = output_file.split('output_')[1].split('_')[0]
-        sgal = rsp.Galaxies.simgalaxy(output_file, filter1=get_filter1(target), filter2='F814W')
+        print target
+        filter1 = get_filter1(target)
+
+        ds = Diagnostics(VarySFH_kw={'target': target})
+        ds.mc = False
+
+        sgal = rsp.Galaxies.simgalaxy(output_file, filter1=filter1,
+                                      filter2='F814W')
         sgal.target = target
-        opt_trgb = angst_data.get_item(target.upper(), 'mTRGB', extra_key=['%s,F814W' % get_filter1(target)])
-        ir_trgb = angst_data.snap_tab3['target' == target.upper()]['mTRGB_F160W']
-        comp90s = [comp_tab['target' == sgal.target.upper()]['opt_filter2'],
-                   comp_tab['target' == sgal.target.upper()]['ir_filter2']]
-        bright_limit = [opt_trgb-0.1, ir_trgb-0.25]
-        ds.contamination_by_phases(sgal, dim_limit=comp90s, bright_limit=bright_limit)
-        #xclude_low = [opt_trgb+.1, ir_trgb+.25]
-        #contamination_by_phases(sgal, dim_limit=exclude_low, bright_limit=bright_limit)
-    return sgal
+
+        sopt_rgb, sopt_agb, sir_rgb, sir_agb = \
+            ds.do_normalization(filter1=filter1, trilegal_output=output_file,
+                                hist_it_up=False, dry_run=True)
+
+        ds.contamination_by_phases(sopt_rgb, sopt_agb, sir_rgb, sir_agb)
+
+    return 
 
 
 def default_output_location(target, extra_directory=None, mc=False):
@@ -70,7 +75,9 @@ def default_agb_filepath(cmd_input_file, extra_directory='default'):
 
 
 def completeness_table(targets, comp_val, ast_kw=None, outfile='default'):
-
+    '''
+    ex: completeness_table('ancients', 0.9)
+    '''
     targets = galaxy_tests.load_targets(targets)
     if outfile == 'default':
         outfile = os.path.join(snap_src + '/tables/', 'completeness_%.2f.dat' % comp_val)
@@ -80,6 +87,7 @@ def completeness_table(targets, comp_val, ast_kw=None, outfile='default'):
         out.write('# completeness fraction: %.2f \n' % comp_val)
         out.write('# ' + fmt.replace('%(','').replace(')s','').replace('\'',''))
         for target in targets:
+            print target
             ast_dict = find_completeness(target, comp_val)
             ast_dict['target'] = target
             out.write(fmt % ast_dict)
@@ -907,7 +915,7 @@ class FileIO(object):
         binss = [np.array(l.split(), dtype=float) for l in lines[1::2]]
         return hists, binss
 
-    def load_galaxies(self, hist_it_up=True, target=None, ags=None):
+    def load_galaxies(self, hist_it_up=True, target=None, ags=None, color_cut=None):
         self.check_target(target)
         if not hasattr(self, 'opt_bins'):
             self.load_data_for_normalization(ags=ags)
@@ -917,16 +925,24 @@ class FileIO(object):
         opt_gal = galaxy_tests.load_galaxy(self.target, band='opt',
                                            fits_src=fits_src)
         # make galaxy histograms
+        if color_cut is not None:
+            opt_color_inds = np.nonzero(opt_gal.color > color_cut)
+            ir_color_inds = np.nonzero(ir_gal.color > color_cut)
+            opt_gal.color_cut = opt_color_inds
+            ir_gal.color_cut = ir_color_inds
         if hist_it_up is True:
             opt_gal.hist, opt_gal.bins = galaxy_tests.hist_it_up(opt_gal.mag2,
                                                         threash=5)
             ir_gal.hist, ir_gal.bins = galaxy_tests.hist_it_up(ir_gal.mag2, threash=5)
         else:
             #nbins = (np.max(opt_gal.mag2) - np.min(opt_gal.mag2)) / 0.1
-            opt_gal.hist, opt_gal.bins = np.histogram(opt_gal.mag2, bins=self.opt_bins)
-
+            if color_cut is None:
+                opt_gal.hist, opt_gal.bins = np.histogram(opt_gal.mag2, bins=self.opt_bins)
+                ir_gal.hist, ir_gal.bins = np.histogram(ir_gal.mag2, bins=self.ir_bins)
+            else:
+                opt_gal.hist, opt_gal.bins = np.histogram(opt_gal.mag2[opt_color_inds], bins=self.opt_bins)
+                ir_gal.hist, ir_gal.bins = np.histogram(ir_gal.mag2[ir_color_inds], bins=self.ir_bins)
             #nbins = (np.max(ir_gal.mag2) - np.min(ir_gal.mag2)) / 0.1
-            ir_gal.hist, ir_gal.bins = np.histogram(ir_gal.mag2, bins=self.ir_bins)
 
         return opt_gal, ir_gal
     
@@ -1061,6 +1077,7 @@ class FileIO(object):
             rsp.fileIO.ensure_dir(bkdir)
         [os.system('mv %s %s' % (f, bkdir)) for f in files]
 
+
 class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
     '''
     run several variations of the age sfr z from MATCH SFH to produce
@@ -1079,9 +1096,10 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
     LFs and ratios.
     '''
     def __init__(self, galaxy_input, sfh_file, file_origin, target=None,
-                 table_file='default', ast=False):
-        StarFormationHistories.__init__(self, sfh_file, file_origin)
-        self.galaxy_input = galaxy_input
+                 table_file='default', ast=False, just_once=False):
+        if just_once is False:
+            StarFormationHistories.__init__(self, sfh_file, file_origin)
+            self.galaxy_input = galaxy_input
 
         if target is None:
             gname = os.path.split(self.galaxy_input)[1]
@@ -1133,27 +1151,6 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
                     f.write(''.join(lines))
                 logger.info('wrote %s' % new_out)
             self.galaxy_inputs.append(new_out)
-
-    def count_stars_from_hist(self, opt_hist, opt_bins, ir_hist, ir_bins):
-        ratio_data = {}
-        for i, (hist, bins, band) in enumerate(zip([opt_hist, ir_hist],
-                                                 [opt_bins, ir_bins],
-                                                 ['opt', 'ir'])):
-            trgb = self.__getattribute__('%s_trgb' % band)
-            trgb_err = self.__getattribute__('%s_trgb_err' % band)
-            norm = self.__getattribute__('%s_offset' % band)
-            irgb = rsp.math_utils.between(bins, norm,
-                                          trgb + trgb_err * self.ags.factor[i])
-            iagb = rsp.math_utils.between(bins,
-                                          trgb - trgb_err  * self.ags.factor[i], 10.)
-
-            nrgb = np.sum(hist[irgb])
-            nagb = np.sum(hist[iagb])
-            ratio_data['%s_ar_ratio' % band] = nagb / nrgb
-            ratio_data['%s_ar_ratio_err' % band] = galaxy_tests.count_uncert_ratio(nagb, nrgb)
-            ratio_data['n%s_rgb' % band] = nrgb
-            ratio_data['n%s_agb'% band] = nagb
-        return ratio_data
 
     def do_normalization(self, filter1=None, trilegal_output=None,
                          hist_it_up=True, dry_run=False):
@@ -1232,7 +1229,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
             self.write_ratio(opt_rgb, opt_agb, ir_rgb, ir_agb,
                              self.narratio_file)
 
-        return opt_norm, ir_norm, opt_ind, ir_ind
+        return sopt_rgb, sopt_agb, sir_rgb, sir_agb
 
     def vary_the_SFH(self, cmd_input_file, make_many_kw=None, dry_run=False,
                      diag_plots=False, hist_it_up=True, outfile_loc='default',
@@ -1293,32 +1290,39 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
 
 
 class Diagnostics(VarySFHs):
-    def __init__(self):
-        pass
+    def __init__(self, VarySFH_kw=None):
+        VarySFH_kw = VarySFH_kw or {}
+        VarySFH_kw = dict({'just_once': True}.items() + VarySFH_kw.items())
+        VarySFHs.__init__(self, '', '', '', **VarySFH_kw)
 
     def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb):
-        regions = ['MS', 'RGB','RHEB', 'EAGB', 'TPAGB']
+        regions = ['MS', 'RGB', 'HEB', 'BHEB', 'RHEB', 'EAGB', 'TPAGB']
         self.sgal.all_stages()
         indss = [self.sgal.__getattribute__('i%s' % r.lower()) for r in regions]
         line = '%s ' % self.target
         print '#',' '.join(regions)
-    
-        for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb], [sopt_agb, sir_agb],
-                                         [self.opt_color_cut, self.ir_color_cut])):
-            #fig, (ax1, ax2) = plt.subplots(ncols=2)
-            #filter1 = self.filter1
-            band = 'opt'
+
+        fig, (axs) = plt.subplots(ncols=2)
+        for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb],
+                                                 [sopt_agb, sir_agb],
+                                                 [self.opt_color_cut,
+                                                  self.ir_color_cut])):
             if i == 1:
                 #filter1 = 'F160W'
                 band = 'ir'
-            ncontam_rgb = [np.intersect1d(inds[s], rgb) for s in indss]
-            ncontam_agb = [np.intersect1d(inds[s], agb) for s in indss]
-            
-            #ax1.plot(color, sgal.data.get_col(filter2), '.')
-            #ax2.plot(color, sgal.data.get_col(filter2), '.')
-            #[ax1.plot(color[n], sgal.data.get_col(filter2)[n], '.',
-            #         label=regions[j]) for j, n in enumerate(ncontam_rgb)]
-            #[ax2.plot(color[n], mag2[n], '.') for n in ncontam_agb]       
+                mag = self.sgal.data.get_col('F160W')[inds]
+                color = self.sgal.data.get_col('F110W')[inds] - mag
+            else:
+                band = 'opt'
+                mag = self.sgal.data.get_col('F814W')[inds]
+                color = self.sgal.data.get_col(self.sgal.filter1)[inds] - mag
+
+            ncontam_rgb = [list(set(s) & set(inds) & set(rgb)) for s in indss]
+            ncontam_agb = [list(set(s) & set(inds) & set(agb)) for s in indss]
+
+            axs[i].plot(color, mag, '.')
+            [axs[i].plot(color[n], mag[n], '.',
+                         label=regions[j]) for j, n in enumerate(ncontam_rgb)]
             #nrgb = np.max([1., len(ncontam_rgb[1])])
             line_rgb = 'rgb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
                                                           for n in ncontam_rgb])
@@ -1328,7 +1332,8 @@ class Diagnostics(VarySFHs):
                                                           for n in ncontam_agb])
             print line_rgb
             print line_agb
-            #ax1.legend()
+            axs[0].legend()
+            [ax.set_ylim(ax.get_ylim()[::-1]) for ax in axs]
         print line
 
     def binary_contamination(self, sopt_agb, sir_agb):
@@ -1421,6 +1426,7 @@ class Plotting(object):
     def plot_lf_file(self, opt_lf_file, ir_lf_file, axs=None, plt_kw=None,
                      opt_limit=None, ir_limit=None):
         '''needs work, but: plot the lf files.'''
+        # set up the plot
         plt_kw = plt_kw or {}
         plt_kw = dict({'linestyle': 'steps',
                        'color': 'black',
@@ -1428,27 +1434,62 @@ class Plotting(object):
         if axs is None:
             fig, (axs) = plt.subplots(ncols=2, figsize=(12,6))
             plt.subplots_adjust(right=0.95, left=0.05, wspace=0.1)
+        
+        # these have like 50 histograms each
+        opt_hists, opt_binss = self.files.load_lf_file(opt_lf_file)
+        ir_hists, ir_binss = self.files.load_lf_file(ir_lf_file)
 
-        for i, (lf_file, limit) in enumerate(zip([opt_lf_file, ir_lf_file],
-                                                 [opt_limit, ir_limit])):
-
-            hists, binss = self.files.load_lf_file(lf_file)
+        for i, (hists, binss, limit) in enumerate(zip([opt_hists, ir_hists],
+                                                      [opt_binss, ir_binss],
+                                                      [opt_limit, ir_limit])):
 
             for hist, bins in zip(hists, binss):
                 if len(hist) != len(bins):
+                    # sometimes this was run while files were open for writing.
                     continue
                 if limit is not None:
                     inds, = np.nonzero(bins <= limit)
                     axs[i].plot(bins[inds], hist[inds], **plt_kw)
                 else:
                     axs[i].plot(bins, hist, **plt_kw)
-        return axs
+        # get the number ratios for the annotations, could be another function
+        ratio_datas = [self.count_stars_from_hist(opt_hists[i], opt_binss[i],
+                                                  ir_hists[i], ir_binss[i])
+                       for i in range(len(opt_hists))]
+        mean_ratio = {}
+        for key in ratio_datas[0].keys():
+            mean_ratio[key] = np.mean([ratio_datas[i][key]
+                                       for i in range(len(ratio_datas))])
+        return axs, mean_ratio
+
+
+    def count_stars_from_hist(self, opt_hist, opt_bins, ir_hist, ir_bins):
+        ratio_data = {}
+        for i, (hist, bins, band) in enumerate(zip([opt_hist, ir_hist],
+                                                 [opt_bins, ir_bins],
+                                                 ['opt', 'ir'])):
+            trgb = self.files.__getattribute__('%s_trgb' % band)
+            trgb_err = self.files.__getattribute__('%s_trgb_err' % band)
+            norm = self.files.__getattribute__('%s_offset' % band)
+            irgb = rsp.math_utils.between(bins, norm,
+                                          trgb + trgb_err * self.ags.factor[i])
+            iagb = rsp.math_utils.between(bins,
+                                          trgb - trgb_err  * self.ags.factor[i], 10.)
+
+            nrgb = np.sum(hist[irgb])
+            nagb = np.sum(hist[iagb])
+            ratio_data['%s_ar_ratio' % band] = nagb / nrgb
+            ratio_data['%s_ar_ratio_err' % band] = galaxy_tests.count_uncert_ratio(nagb, nrgb)
+            ratio_data['n%s_rgb' % band] = nrgb
+            ratio_data['n%s_agb'% band] = nagb
+        return ratio_data
 
     def compare_to_gal(self, target, opt_lf_file=None, ir_lf_file=None,
                        hist_it_up=True, narratio=True, no_agb=False,
                        add_stage_lfs=None, extra_str='', trilegal_output=None,
                        narratio_file_name=None, outfile_loc=os.getcwd(),
-                       plot_data=True, cols=None, stage_lf_kw=None):
+                       plot_data=True, cols=None, stage_lf_kw=None, axs=None,
+                       plt_kw=None):
         '''
         Plot the LFs and galaxy LF.
 
@@ -1468,13 +1509,16 @@ class Plotting(object):
         # load galaxy data
         opt_gal, ir_gal = self.files.load_galaxies(hist_it_up=hist_it_up,
                                                    target=target,
-                                                   ags=self.ags)
+                                                   ags=self.ags,
+                                                   color_cut=0.3)
 
         if opt_lf_file is not None:
             # plot lfs from simulations (and initialize figure)
-            ax1, ax2 = self.plot_lf_file(opt_lf_file, ir_lf_file,
+            plt_kw = plt_kw or {}
+            (ax1, ax2), ratio_data = self.plot_lf_file(opt_lf_file, ir_lf_file,
                                          opt_limit=opt_gal.comp50mag2,
-                                         ir_limit=ir_gal.comp50mag2)
+                                         ir_limit=ir_gal.comp50mag2, axs=axs,
+                                         plt_kw=plt_kw)
         else:
             fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6),
                                            sharey=False)
@@ -1565,16 +1609,24 @@ class Plotting(object):
                 lab = self.agb_mod
             if lab != '':
                 lab = '$%s$' % '\ '.join(lab.split('_')[1:])
-            stage_lf_kw['label'] = lab
+            if narratio is False:
+                stage_lf_kw['label'] = lab
             ax1.plot(sopt_bins[:-1], sopt_hist, **stage_lf_kw)
             ax2.plot(sir_bins[:-1], sir_hist, **stage_lf_kw)
         
         # plot galaxy data
         if plot_data is True:
-            dplot_kw = {'linestyle': 'steps', 'color': 'darkred', 'lw': 2,
-                        'label': '$%s$' % target.upper()}
+            dplot_kw = {'linestyle': 'mid-steps', 'color': 'darkred', 'lw': 2,
+                        'label': '$%s$' % target.upper().replace('-DEEP', '')}
             ax2.plot(ir_gal.bins[:-1], ir_gal.hist, **dplot_kw)
             ax1.plot(opt_gal.bins[:-1], opt_gal.hist, **dplot_kw)
+            opt_err = np.sqrt(opt_gal.hist)
+            ir_err = np.sqrt(ir_gal.hist)
+            ax1.errorbar(opt_gal.bins[:-1], opt_gal.hist, yerr=opt_err,
+                         color='darkred', drawstyle='steps-mid', lw=2)
+            ax2.errorbar(ir_gal.bins[:-1], ir_gal.hist, yerr=ir_err,
+                         color='darkred', drawstyle='steps-mid', lw=2)
+
 
         # initialize add numbers to the plot
         if narratio is True:
@@ -1588,10 +1640,8 @@ class Plotting(object):
             stext_kw = {'color': 'black', 'fontsize': 14, 'ha': 'center'}
             dtext_kw = {'color': dplot_kw['color'], 'fontsize': 14,
                         'ha': 'center'}
-        for i, (ax, gal, offset, trgb_err, band) in enumerate(zip([ax1, ax2],
+        for i, (ax, gal, trgb_err, band) in enumerate(zip([ax1, ax2],
                                                    [opt_gal, ir_gal],
-                                                   [self.files.opt_offset,
-                                                    self.files.ir_offset],
                                                    [self.files.opt_trgb_err,
                                                    self.files.ir_trgb_err],
                                                    ['opt', 'ir'])):
@@ -1609,17 +1659,21 @@ class Plotting(object):
 
             ax.vlines(gal.trgb, *ax.get_ylim(), color='black',
                       linestyle='--')
-            # line at dim limit for rgb normalization
-            ax.vlines(offset, *ax.get_ylim(), linestyle='--',
-                      color='black')
             
             # % completeness limit
             ast_frac = rsp.fileIO.item_from_row(ast_table, 'target',
                                                 target.upper(),
                                                 '%s_filter2' % band)
+            # line at dim limit for rgb normalization
+            ax.vlines(ast_frac, *ax.get_ylim(), linestyle='--',
+                      color='black')
+            
             ax.fill_betweenx(yarr, ast_frac, ax.get_xlim()[1],
                              color='black', alpha=0.2)
-            ax.legend(loc=0, frameon=False)
+            loc = 4
+            if narratio is False:
+                loc = 0
+            ax.legend(loc=4, frameon=False)
             ax.set_xlabel('$%s$' % gal.filter2, fontsize=20)
 
             if narratio is True:
@@ -1725,11 +1779,10 @@ class Plotting(object):
         grid.axes_all[2].set_ylabel('${\\rm Mass}\ (M_\odot)$', fontsize=20)
         grid.axes_all[2].set_xlabel('$F814W$', fontsize=20)
         grid.axes_all[3].set_xlabel('$F160W$', fontsize=20)
-        fig.suptitle('$%s$' % self.target, fontsize=20)
-        plt.savefig(os.path.join(self.outfile_loc,
-                                '%s_mass_met%s.png' % (self.target, extra_str)), dpi=150)
+        target = '_'.join(os.path.split(opt_mass_met_file)[1].split('_')[0:4])
+        fig.suptitle('$%s$' % target.replace('_', '\ '), fontsize=20)
+        plt.savefig('%s_mass_met%s.png' % (target, extra_str), dpi=150)
         return grid
-
 
 
 def get_filter1(target, fits_src=None):
@@ -1849,80 +1902,104 @@ class StatisticalComparisons(object):
 
     def poission_chi2(self, hist_it_up=False, target=None, extra_directory=None,
                       table_file='default'):
-        if not hasattr(self.files, 'ir_bins'):
-            ags = None
-            if not hasattr(self.files, 'ags'):
-                self.files.ags = load_default_ancient_galaxies(table_file=table_file)
-            self.files.load_data_for_normalization(target=target, ags=ags)
-        if not hasattr(self, 'opt_lf_file'):
-            if self.outfile_loc == 'default':
-                self.files.mc = True
-            self.files.prepare_outfiles(outfile_loc=self.outfile_loc,
-                                        extra_directory=extra_directory,
-                                        dry_run=True)
-
+        self.files.ags = load_default_ancient_galaxies(table_file=table_file)
+        self.files.load_data_for_normalization(target=target, ags=self.files.ags)
+        
+        if self.outfile_loc == 'default':
+            self.files.mc = True
+        self.files.prepare_outfiles(outfile_loc=self.outfile_loc,
+                                    extra_directory=extra_directory,
+                                    dry_run=True)
         opt_gal, ir_gal = self.files.load_galaxies(hist_it_up=hist_it_up)
 
         # cut LF at 90% completeness
         obins, = np.nonzero(opt_gal.bins <= self.files.opt_offset)
         ibins, = np.nonzero(ir_gal.bins <= self.files.ir_offset)
-
+        
+        agb_obins, = np.nonzero(opt_gal.bins <= self.files.opt_trgb - \
+                                                self.files.opt_trgb_err * \
+                                                self.files.ags.factor[0]) 
+        agb_ibins, = np.nonzero(ir_gal.bins <= self.files.ir_trgb - \
+                                                self.files.ir_trgb_err * \
+                                                self.files.ags.factor[1])
         opt_model_hists, opt_models_binss = self.files.load_lf_file(self.files.opt_lf_file.name)
         ir_model_hists, ir_models_binss = self.files.load_lf_file(self.files.ir_lf_file.name)
         opt_chi2 = np.array([])
         ir_chi2 = np.array([])
+
+        opt_chi2_agb = np.array([])
+        ir_chi2_agb = np.array([])
         for i in range(len(ir_model_hists)):
             chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(opt_gal.hist[obins[1:]],
                                                            opt_model_hists[i][obins[1:]])
             opt_chi2 = np.append(opt_chi2, chi2)
+            #print 'opt', chi2, np.mean(sig)
             chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(ir_gal.hist[ibins[1:]],
                                                            ir_model_hists[i][ibins[1:]])
             ir_chi2 = np.append(ir_chi2, chi2)
-        return opt_chi2, ir_chi2
-
+            #print 'ir ', chi2, np.mean(sig)
+            
+            chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(opt_gal.hist[agb_obins[1:]],
+                                                           opt_model_hists[i][agb_obins[1:]])
+            opt_chi2_agb = np.append(opt_chi2_agb, chi2)
+            #print 'opt', chi2, np.mean(sig)
+            chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(ir_gal.hist[agb_ibins[1:]],
+                                                           ir_model_hists[i][agb_ibins[1:]])
+            ir_chi2_agb = np.append(ir_chi2_agb, chi2)
+            #print 'ir ', chi2, np.mean(sig)
+        return opt_chi2, ir_chi2, opt_chi2_agb, ir_chi2_agb
 
     def write_chi2_table(self, targets, table_file='default', extra_directory=None):
         for target in targets:
-            opt_chi2, ir_chi2 = self.poission_chi2(target=target, extra_directory=extra_directory,
-                                                   table_file=table_file)
-            chi2_file = os.path.join(self.outfile_loc, '%s_chi2.dat' % target)
+            opt_chi2, ir_chi2, opt_chi2_agb, ir_chi2_agb = \
+                self.poission_chi2(target=target,
+                                   extra_directory=extra_directory,
+                                   table_file=table_file)
+
+            chi2_file = os.path.join(self.outfile_loc, '%s_%s_chi2.dat' % (extra_directory,
+                                                                           target))
             with open(chi2_file, 'w') as c2:
-                c2.write('# sfr opt_chi2 ir_chi2 \n')
+                c2.write('# sfr opt_chi2 ir_chi2 opt_agb_chi2 ir_agb_chi2\n')
                 for i in range(len(opt_chi2)):
-                    c2.write('%i %.3f %.3f \n' % (i, opt_chi2[i], ir_chi2[i]))
+                    c2.write('%i %.3f %.3f %.3f %.3f \n' % (i, opt_chi2[i], ir_chi2[i],
+                                                            opt_chi2_agb[i], ir_chi2_agb[i]))
             #logger.info('wrote %s' % chi2_file)
-            print 'wrote %s' % chi2_file
+            #print 'wrote %s' % chi2_file
 
     def chi2dict(self, targets):
         targets = galaxy_tests.load_targets(targets)
         chi_dict = {}
+        extras = ['', '_agb']
+        bands = ['opt', 'ir']
         for target in targets:
             data = self.load_chi2files(target.lower())
             if len(data) == 0:
                 continue
-            for band in ['opt', 'ir']:
-                field = '%s_chi2' % band
-                chi_dict['%s_%s_mean' % (target, band)] = np.mean(data[field])
-                chi_dict['%s_%s_std' % (target, band)] = np.std(data[field])
-                #print '%s %s $%.2f\pm%.2f$' % (target.upper(), band, np.mean(data[field]), np.std(data[field]))
-            opt_total = [v for k,v in chi_dict.items() if 'opt' in k and 'mean' in k]
-            ir_total = [v for k,v in chi_dict.items() if 'ir' in k and 'mean' in k]
-            chi_dict['%s_opt_mean' % self.agb_mod] = np.mean(opt_total)
-            chi_dict['%s_ir_mean' % self.agb_mod] = np.mean(ir_total)
-            chi_dict['%s_opt_std' % self.agb_mod] = np.std(opt_total)
-            chi_dict['%s_ir_std' % self.agb_mod] = np.std(ir_total)
-
-            print '%s opt $%.2f\pm%.2f$' % (self.agb_mod, np.mean(opt_total), np.std(opt_total))
-            print '%s ir $%.2f\pm%.2f$' % (self.agb_mod, np.mean(ir_total), np.std(ir_total))
+            for extra in extras:
+                for band in bands:
+                    band += extra
+                    field = '%s_chi2' % band
+                    chi_dict['%s_%s_mean' % (target, band)] = np.mean(data[field])
+                    chi_dict['%s_%s_std' % (target, band)] = np.std(data[field])
+                    #print '%s %s $%.2f\pm%.2f$' % (target.upper(), band, np.mean(data[field]), np.std(data[field]))
+        for extra in extras:
+            for band in bands:
+                band += extra        
+                total = [v for k,v in chi_dict.items() if '%s_mean' % band in k]
+                chi_dict['%s_%s_mean' % (self.agb_mod, band)] = np.mean(total)
+                chi_dict['%s_%s_std' % (self.agb_mod, band)] = np.std(total)
+            #print '%s opt $%.2f\pm%.2f$' % (self.agb_mod, np.mean(opt_total), np.std(opt_total))
+            #print '%s ir $%.2f\pm%.2f$' % (self.agb_mod, np.mean(ir_total), np.std(ir_total))
         return chi_dict
 
-    def load_chi2files(self, target, filefmt='%s_chi2.dat'):
+    def load_chi2files(self, target, filefmt='%s_%s_chi2.dat'):
         if self.outfile_loc == 'default':
             self.outfile_loc = default_output_location(target,
                                                        extra_directory=self.agb_mod,
                                                        mc=True)
-        dtype = [('sfr_file', '|S130'), ('opt_chi2', '<f8'), ('ir_chi2', '<f8')]
-        fname = os.path.join(self.outfile_loc, filefmt % target)
+        dtype = [('sfr_file', '|S130'), ('opt_chi2', '<f8'), ('ir_chi2', '<f8'),
+                 ('opt_agb_chi2', '<f8'), ('ir_agb_chi2', '<f8')]
+        fname = os.path.join(self.outfile_loc, filefmt % (self.agb_mod, target))
         if not os.path.isfile(fname):
             print '%s not found' % fname
             return np.array([])
@@ -1984,7 +2061,14 @@ def get_data(table_file='default'):
 
 def narratio_table(targets, cmd_input_files, table_file='default',
                    model_loc='default'):
-
+    '''
+    ex:
+    narratio_table(['ddo71', 'kkh37', 'hs117', 'ngc2976-deep', 'ngc404-deep', 'ddo78'],
+                   ['cmd_input_caf09_s_oct13.dat',
+                    'cmd_input_caf09_s_nov13eta0.dat',
+                    'cmd_input_caf09_s_nov13.dat'],
+                    model_loc='/home/phil/Dropbox/research/varysfh/')
+    '''
     scs = [StatisticalComparisons(c, outfile_loc=model_loc) for c in cmd_input_files]
     data_dict = get_data(table_file=table_file)
     model_dicts = [scs[i].narratio(targets) for i in range(len(cmd_input_files))]
@@ -1992,7 +2076,7 @@ def narratio_table(targets, cmd_input_files, table_file='default',
     targets = galaxy_tests.load_targets(targets)
     for band in ['opt', 'ir']:
         print band
-        header = 'Target & $\\frac{N_{\\rmTP-AGB}}{N_{\\rm RGB}}$ Data & '
+        header = 'Target & $\\frac{N_{\\rm TP-AGB}}{N_{\\rm RGB}}$ Data & '
         for i in range(len(cmd_input_files)):
             header += '$\\frac{N_{\\rm TP-AGB}}{N_{\\rm RGB}}$ %s & ' % \
                 default_agb_filepath(cmd_input_files[i]).replace('caf09_s_', '')
@@ -2001,8 +2085,6 @@ def narratio_table(targets, cmd_input_files, table_file='default',
         print header
         for target in targets:
             line = '%s &' % target.upper()
-            if '404' in target:
-                continue
             dnarr = data_dict['%s_%s' % (target.lower(), band)]
             derr = data_dict['%s_%s_err' % (target.lower(), band)]
             dstr = fmt % (dnarr, derr)
@@ -2024,7 +2106,9 @@ def chi2_table(targets, cmd_input_files, table_file='default', model_loc='defaul
     targets = galaxy_tests.load_targets(targets)
     fmt = '$%.3f\\pm%.3f$ & '
     bands = ['opt', 'ir']
+    extras = ['', '_agb']
     model_dicts = []
+
     for i in range(len(cmd_input_files)):
         scs = StatisticalComparisons(cmd_input_files[i], outfile_loc=model_loc)
         agb_mod = cmd_input_files[i].replace('cmd_input_', '').replace('.dat', '').lower()
@@ -2032,30 +2116,100 @@ def chi2_table(targets, cmd_input_files, table_file='default', model_loc='defaul
         scs.write_chi2_table(targets, table_file='default', extra_directory=agb_mod)
 
         model_dict = scs.chi2dict(targets)
-        
+
         header = 'Target & '
-        for band in bands:
-            agb_mod_short = agb_mod.split('_')[-1]
-            header += '\\chi^2 %s %s & ' % (agb_mod_short, band)
-        header = header[:-2] + '\\\\ \n'
+        for extra in extras:
+            for band in bands:
+                band += extra
+                agb_mod_short = agb_mod.split('_')[-1]
+                header += '\\chi^2 %s %s & ' % (agb_mod_short, band)
+        header = header[:-2] + '\\\\'
         print header
         for target in targets:
-            line = '%s &' % target.upper()
-            if '404' in target:
-                continue
-            for band in bands:
-                line += fmt % (model_dict['%s_%s_mean' % (target, band)],
-                               model_dict['%s_%s_std' % (target, band)])
+            line = '%s & ' % target.upper()
+            for extra in extras:                
+                for band in bands:
+                    band += extra
+                    line += fmt % (model_dict['%s_%s_mean' % (target, band)],
+                                   model_dict['%s_%s_std' % (target, band)])
             print line
         model_dicts.append(model_dict)
-        
-    line = 'Mean $\\chi^2$ & '
-    for i, model_dict in enumerate(model_dicts):
-        agb_mod = default_agb_filepath(cmd_input_files[i])
-        for band in bands:
-            line += fmt % (model_dict['%s_%s_mean' % (agb_mod, band)],
-                           model_dict['%s_%s_std' % (agb_mod, band)])
+    
+        line = 'Mean $\\chi^2$ & '
+        for extra in extras:
+            for band in bands:
+                band += extra
+                line += fmt % (model_dict['%s_%s_mean' % (agb_mod, band)],
+                               model_dict['%s_%s_std' % (agb_mod, band)])
         print line
+    return model_dicts
+
+
+def chi2plot(model_dicts):
+    targets = ['ddo71', 'kkh37', 'hs117', 'ngc2976-deep', 'ngc404', 'ddo78']
+    bands = ['opt', 'ir']
+    filters = ['$F814W$', '$F160W$']
+    extras = ['', '_agb']
+    syms = ['o', '*', 'o', '*']
+    alphas = [0.5, 0.5, 1, 1]
+    offset = [-0.5, -0.5, 0.5, 0.5]
+    cols = ['black', 'navy', 'darkred', 'darkgreen', 'purple', 'orange']
+    
+    from mpl_toolkits.axes_grid.axislines import Subplot
+    fig = plt.figure()
+
+    for i in range(len(model_dicts)):
+        ax = Subplot(fig, 1, len(model_dicts), i+1)
+        fig.add_subplot(ax)
+        if i == 0:
+            ax.annotate('$\chi^2$', (.05, .5), fontsize=20, rotation='vertical',
+                        xycoords='figure fraction')
+            plt.tick_params(labelsize=20)
+        for j, target in enumerate(targets):
+            l = 0
+            for k in range(len(bands)):
+                if j == 0:
+                    ax.annotate(filters[k], (offset[l], 40), ha='center',
+                                va='top', fontsize=16)
+                for extra in extras:
+                    band = bands[k] + extra
+                    ax.plot(offset[l],
+                            model_dicts[i]['%s_%s_mean' % (target, band)],
+                            syms[l], color=cols[j], ms=20, alpha=0.6)
+                    l += 1
+
+            agb_mod = [a for a in model_dicts[i].keys() if a.startswith('caf')][0].split('_')[2]
+        ax.annotate('$%s$' % agb_mod.upper(), (0, 0), ha='center', va='bottom', fontsize=20)
+                    #ax.annotate(target, xy=(float(i)/2., model_dicts[i]['%s_%s_mean' % (target, band)]),  xycoords='data',
+                    #    xytext=((-1)**(j+1)*20, 20), textcoords='offset points',
+                    #    color=cols[j],
+                    #    arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+        ax.axis['bottom'].set_visible(False)
+        ax.axis['top'].set_visible(False)
+        ax.axis['right'].set_visible(False)
+        if i !=0:
+            ax.axis['left'].set_visible(False)
+        ax.set_xlim(-1, 1)
+        ax.set_ylim(0, 40)
+    
+    ax.plot(-99, -99, '*', ms=12, alpha=0.6, color='black', label='$AGB\ Only$')
+    [ax.plot(-99, 99, 'o', ms=12, alpha=0.6, color=cols[j],
+         label='$%s$' % targets[j].upper().replace('-DEEP', ''))
+     for j in range(len(targets))]
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(0, 40)
+    ax.legend(loc='upper right', numpoints=1, bbox_to_anchor=(1.3, .95),
+              frameon=False)
+    #ax = Subplot(fig, 1, len(model_dicts)+1, i+2)
+    #fig.add_subplot(ax)
+
+    fig.subplots_adjust(wspace=0.01)
+    #'nov13', (0., 0), ha='center', fontsize=20)
+    #ax.annotate('nov13eta0', (0.5, 0), ha='center', fontsize=20)
+    #ax.annotate('oct13', (1., 0), ha='center', fontsize=20)
+    #ax.xaxis.set_visible(False)
+    plt.savefig('chi2_plot.png', dpi=150)
+    return ax
 
 
 def add_file_logger(logdir):
@@ -2086,6 +2240,18 @@ def data_table(targets):
     ags.read_trgb_table(table_file)
     data_dict = get_data(table_file=table_file)
     comp_data = read_completeness_table()
+    row = ''
+    row2 = ''
+    opt_agb_tot = np.sum(ags.data.nopt_agb)
+    opt_rgb_tot = np.sum(ags.data.nopt_rgb)
+    ir_agb_tot = np.sum(ags.data.nir_agb)
+    ir_rgb_tot = np.sum(ags.data.nir_rgb)
+
+    totfmt = 'Total & %i & %i & $%.3f\\pm%.3f$ &  %i & %i & $%.3f\\pm%.3f$ \\\\'
+    total = totfmt % (opt_agb_tot, opt_rgb_tot, opt_agb_tot/opt_rgb_tot,
+                      galaxy_tests.count_uncert_ratio(opt_agb_tot, opt_rgb_tot),
+                      ir_agb_tot, ir_rgb_tot, ir_agb_tot/ir_rgb_tot,
+                      galaxy_tests.count_uncert_ratio(ir_agb_tot, ir_rgb_tot))
 
     for target in targets:
         if target == 'NGC2976-DEEP':
@@ -2096,21 +2262,36 @@ def data_table(targets):
         comp_row = rsp.fileIO.get_row(comp_data, 'target', target)
         nstars_row = rsp.fileIO.get_row(ags.data, 'target', target)
         sub_dict  = {}
+        opt_err_pct = []
+        ir_err_pct = []
         for (k,v) in data_dict.items():
             if '404' in target:
                 target = target.lower().replace('-deep', '')
             if target in k or target.lower() in k:
                 sub_dict[k] = v
+        opt_err_pct.append(sub_dict['%s_opt_err' % target.lower()] /
+                           sub_dict['%s_opt' % target.lower()])
+        ir_err_pct.append(sub_dict['%s_ir_err' % target.lower()] /
+                          sub_dict['%s_ir' % target.lower()])
 
-        row = '%s & %.2f & %.2f & ' % (target, Av, dmod)
+        row += '%s & %.2f & %.2f & ' % (target, Av, dmod)
         row += '%(opt_filter2).2f & ' % comp_row
-        row += '%(opt_trgb).2f & %(nopt_agb)i & %(nopt_rgb)i & ' % nstars_row
-        row += '$%.3f\\pm%.3f$ & ' % (sub_dict['%s_opt' % target.lower()], sub_dict['%s_opt_err' % target.lower()])
-
+        row += '%(opt_trgb).2f & ' % nstars_row
         row += '%(ir_filter2).2f & ' % comp_row
-        row += '%(ir_trgb).2f & %(nir_agb)i & %(nir_rgb)i & ' % nstars_row
-        row += '$%.3f\\pm%.3f$ \\\\' % (sub_dict['%s_ir' % target.lower()], sub_dict['%s_ir_err' % target.lower()])
-        print row
+        row += '%(ir_trgb).2f \\\\ \n' % nstars_row
+
+        row2 += '%s & ' % target
+        row2 += '%(nopt_agb)i & %(nopt_rgb)i & ' % nstars_row
+        row2 += '$%.3f\\pm%.3f$ & ' % (sub_dict['%s_opt' % target.lower()], sub_dict['%s_opt_err' % target.lower()])
+        row2 += '%(nir_agb)i & %(nir_rgb)i & ' % nstars_row
+        row2 += '$%.3f\\pm%.3f$ \\\\ \n' % (sub_dict['%s_ir' % target.lower()], sub_dict['%s_ir_err' % target.lower()])
+        
+    print row
+    print
+    print row2
+    print total
+    
+    print np.max(opt_err_pct), np.max(ir_err_pct)
 
 
 def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
