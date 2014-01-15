@@ -175,7 +175,7 @@ def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
     else:
         offset = mag_below_trgb
     # rgb will go from mag_below_trgb to trgb + exclude_region
-    color_cut, = np.nonzero((mag1-mag2) > 0.3)
+    color_cut, = np.nonzero((mag1-mag2) > get_color_cut(filter1))
     nrgb = rsp.math_utils.between(mag2[color_cut], offset,
                                       trgb + exclude_region)
 
@@ -846,18 +846,17 @@ class FileIO(object):
         '''load trilegal F814W and F160W mags'''
         if not hasattr(self, 'ast'):
             self.ast = False
-
-        extra = ''
-        if self.ast is True:
-            extra = '_cor'
-        #print extra, 'extra'
-        opt_mag = self.sgal.data.get_col('%s%s' % ('F814W', extra))
-        ir_mag = self.sgal.data.get_col('%s%s' % ('F160W', extra))
+        if hasattr(self, 'target'):
+            filter1 = get_filter1(self.target)
+        else:
+            print 'help, I need filter1!!'
+        opt_mag = self.sgal.data.get_col('F814W')
+        ir_mag = self.sgal.data.get_col('F160W')
         opt_mag1 = self.sgal.mag1
-        ir_mag1 = self.sgal.data.get_col('%s%s' % ('F110W', extra))
+        ir_mag1 = self.sgal.data.get_col('F110W')
 
-        opt_color_cut, = np.nonzero((opt_mag1 - opt_mag) > 0.3)
-        ir_color_cut, = np.nonzero((ir_mag1 - ir_mag) > 0.3)
+        opt_color_cut, = np.nonzero((opt_mag1 - opt_mag) > get_color_cut(filter1))
+        ir_color_cut, = np.nonzero((ir_mag1 - ir_mag) > get_color_cut('F110W'))
         self.opt_color_cut = opt_color_cut
         self.ir_color_cut = ir_color_cut
         self.shift_mags(opt_inds=opt_color_cut, ir_inds=ir_color_cut)
@@ -924,7 +923,8 @@ class FileIO(object):
         binss = [np.array(l.split(), dtype=float) for l in lines[1::2]]
         return hists, binss
 
-    def load_galaxies(self, hist_it_up=True, target=None, ags=None, color_cut=None):
+    def load_galaxies(self, hist_it_up=True, target=None, ags=None,
+                      color_cut=False):
         self.check_target(target)
         if not hasattr(self, 'opt_bins'):
             self.load_data_for_normalization(ags=ags)
@@ -935,8 +935,9 @@ class FileIO(object):
                                            fits_src=fits_src)
         # make galaxy histograms
         if color_cut is not None:
-            opt_color_inds = np.nonzero(opt_gal.color > color_cut)
-            ir_color_inds = np.nonzero(ir_gal.color > color_cut)
+            filter1 = get_filter1(target)
+            opt_color_inds = np.nonzero(opt_gal.color > get_color_cut(fliter1))
+            ir_color_inds = np.nonzero(ir_gal.color > get_color_cut('F110W'))
             opt_gal.color_cut = opt_color_inds
             ir_gal.color_cut = ir_color_inds
         if hist_it_up is True:
@@ -1543,7 +1544,7 @@ class Plotting(object):
         opt_gal, ir_gal = self.files.load_galaxies(hist_it_up=hist_it_up,
                                                    target=target,
                                                    ags=self.ags,
-                                                   color_cut=0.3)
+                                                   color_cut=True)
 
         if opt_lf_file is not None:
             # plot lfs from simulations (and initialize figure)
@@ -2399,10 +2400,10 @@ if __name__ == '__main__':
     galaxy_table = ags.write_trgb_table(exclude_region=[0.1, 0.2],
                                         mag_below_trgb='comp_frac')
     #targets = ['ddo78', 'ddo71', 'hs117', 'kkh37', 'ngc2976-deep', 'ngc404-deep']
-    targets = ['ngc2976-deep', 'ngc404-deep']
-    
+    #targets = ['ngc2976-deep', 'ngc404-deep']
+    targets = ['ddo71']
     mk_tri_sfh_kw = {'random_sfr': True, 'random_z': False}
-    simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat',
-                                        'cmd_input_CAF09_S_NOV13eta0.dat',
-                                        'cmd_input_CAF09_S_OCT13.dat'],
+    simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat'],
+                                        #'cmd_input_CAF09_S_NOV13eta0.dat',
+                                        #'cmd_input_CAF09_S_OCT13.dat'],
                               50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False)

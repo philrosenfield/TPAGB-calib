@@ -69,6 +69,7 @@ def plot_opt_hess(targets=None, fits_src='default', filter1='F606W'):
     #plt.savefig('opt_cmd_f606w.png', dpi=150)
     return fig, ax, gals
 
+
 def plot_cum_sum_sfr(targets, file_origin='match-hmc'):
     '''cumulative sfr plot from match, no errors.'''
     match_sfh_src = snap_src + '/data/sfh_parsec/'
@@ -166,6 +167,11 @@ def add_color_cuts(filter1, ax=None, vline_kw=None):
     ax.vlines(color_cut, *ax.get_ylim(), **vline_kw)
     return ax
 
+def add_completeness(target, ax=None, vline_kw=None):
+    comp90 = sfh_tests.read_completeness_table()
+    ind, = np.nonzero(comp90['target'] == target.upper())
+    
+    
 if __name__ == '__main__':
     targets = galaxy_tests.load_targets('ancients')
     #plot_cum_sum_sfr(targets)
