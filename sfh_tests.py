@@ -19,37 +19,6 @@ import galaxy_tests
 angst_data = rsp.angst_tables.AngstTables()
 
 
-def find_contamination_by_phases(output_files=None):
-    if output_files is None:
-        output_files = ['/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ddo71/caf09_s_nov13/mc/output_ddo71_caf09_s_nov13.dat',
-                        #'/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ddo78/caf09_s_nov13/mc/output_ddo78_caf09_s_nov13.dat',
-                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/hs117/caf09_s_nov13/mc/output_hs117_caf09_s_nov13.dat',
-                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/kdg73/caf09_s_nov13/mc/output_kdg73_caf09_s_nov13.dat',
-                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/kkh37/caf09_s_nov13/mc/output_kkh37_caf09_s_nov13.dat',
-                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ngc2976-deep/caf09_s_nov13/mc/output_ngc2976-deep_caf09_s_nov13.dat',
-                        '/home/phil/research/TP-AGBcalib/SNAP/models/varysfh/ngc404/caf09_s_nov13/mc/output_ngc404_caf09_s_nov13.dat']
-
-    for output_file in output_files:
-        target = output_file.split('output_')[1].split('_')[0]
-        print target
-        filter1 = get_filter1(target)
-
-        ds = Diagnostics(VarySFH_kw={'target': target})
-        ds.mc = False
-
-        sgal = rsp.Galaxies.simgalaxy(output_file, filter1=filter1,
-                                      filter2='F814W')
-        sgal.target = target
-
-        sopt_rgb, sopt_agb, sir_rgb, sir_agb = \
-            ds.do_normalization(filter1=filter1, trilegal_output=output_file,
-                                hist_it_up=False, dry_run=True)
-
-        ds.contamination_by_phases(sopt_rgb, sopt_agb, sir_rgb, sir_agb)
-
-    return 
-
-
 def default_output_location(target, extra_directory=None, mc=False):
     if extra_directory is None:
         outfile_loc = os.path.join(snap_src, 'models', 'varysfh', target)
@@ -109,11 +78,23 @@ def find_completeness(target, comp_val, ast_kw=None):
     return ast_dict
 
 
-def read_completeness_table(table='default'):
+def read_completeness_table(table='default', absmag=False, uncertainties=False):
     if table == 'default':
         table = snap_src + '/tables/completeness_0.90.dat'
-    dtype = [('target', '|S16'), ('opt_filter1', '<f8'), ('opt_filter2', '<f8'),
-             ('ir_filter1', '<f8'), ('ir_filter2', '<f8')]
+    
+    if absmag is True:
+        table = table.replace('.dat', '_absmag.dat')
+    
+    if uncertainties is True:
+        table = table.replace('.dat', '_uncertainties.dat')
+        dtype = [('target', '|S16'), ('opt_filter1', '<f8'),
+                 ('opt_filter2', '<f8'), ('opt_color', '<f8'),
+                 ('ir_filter1', '<f8'), ('ir_filter2', '<f8'),
+                 ('ir_color', '<f8'), ]
+    else:
+        dtype = [('target', '|S16'), ('opt_filter1', '<f8'), ('opt_filter2', '<f8'),
+                 ('ir_filter1', '<f8'), ('ir_filter2', '<f8')]
+    
     data = np.genfromtxt(table, dtype=dtype)
     return data
 
@@ -582,19 +563,20 @@ class StarFormationHistories(object):
             
         return val_arrs
 
-    def plot_random_arrays(self, attr_str, val_arrs=None, ax=None, outfile=None,
-                           from_files=False):
+    def plot_sfh(self, attr_str, ax=None, outfile=None, yscale='linear',
+                 plot_random_arrays_kw=None, errorbar_kw=None):
         '''
-        val_arrs are random, attr_str is used to find the best fit values listed
-        in the data table.
-        after making a bunch of arrays that sample the sfr or mh uncertainties
-        plot up where they are.
+        plot the data from the sfh file. 
         '''
-        if from_files is True:
-            val_arrs = self.load_random_arrays(attr_str)
-
-        assert val_arrs is not None, 'either specify val_arrs or set from_files'
-
+        plot_random_arrays_kw = plot_random_arrays_kw or {}
+        
+        # set up errorbar plot
+        errorbar_kw = errorbar_kw or {}
+        errorbar_default = {'linestyle': 'steps-mid', 'lw': 2, 'color': 'r'}
+        errorbar_kw = dict(errorbar_default.items() + errorbar_kw.items())
+        
+        # load the plotting values and their errors, this could be generalized
+        # and passed ...
         val_arr = self.data.__getattribute__(attr_str)
         errm_arr = self.data.__getattribute__('%s_errm' % attr_str)
         errp_arr = self.data.__getattribute__('%s_errp' % attr_str)
@@ -609,16 +591,43 @@ class StarFormationHistories(object):
         if ax is None:
             fig, ax = plt.subplots(figsize=(12,12))
 
-        [ax.errorbar(self.data.lagei, val_arrs[i], linestyle='steps-mid',
-                     color='k', alpha=0.3) for i in range(len(val_arrs))]
         if not 'm' in attr_str:
             ax.errorbar(self.data.lagei, val_arr, [errm_arr, errp_arr],
-                        linestyle='steps-mid', lw=2, color='r')
+                        **errorbar_kw)
+        
+        if len(plot_random_arrays_kw) > 0:
+            # if loading the random arrays from files, need to give the
+            # attribute to load.
+            if plot_random_arrays_kw['from_files'] is True:
+                plot_random_arrays_kw['attr_str'] = attr_str
+            self.plot_random_arrays(ax=ax, **plot_random_arrays_kw)
         ax.set_ylabel(ylab, fontsize=20)
         ax.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=20)
         ax.set_xlim(8, 10.5)
+        ax.set_yscale(yscale)
+        
         if outfile is not None:
             plt.savefig(outfile, dpi=150)
+        
+        return ax
+    
+    def plot_random_arrays(self, ax=None, val_arrs=None, from_files=False,
+                           attr_str=None):
+        '''
+        val_arrs are random
+        after making a bunch of arrays that sample the sfr or mh uncertainties
+        plot up where they are.
+        '''
+        if from_files is True:
+            val_arrs = self.load_random_arrays(attr_str)
+
+        assert val_arrs is not None, 'either specify val_arrs or set from_files'
+
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(12,12))
+
+        [ax.errorbar(self.data.lagei, val_arrs[i], linestyle='steps-mid',
+                     color='k', alpha=0.3) for i in range(len(val_arrs))]
         return ax
 
     def make_many_trilegal_sfhs(self, nsfhs=100, mk_tri_sfh_kw=None):
@@ -781,7 +790,7 @@ class FileIO(object):
 
         if by_stage is True:
             # Threshold is set at 100 rgb stars in a bin.
-            rgb_thresh = 50
+            rgb_thresh = 20
 
             self.sgal.all_stages('RGB')
             rgb_inds = np.intersect1d(self.sgal.irgb, opt_inds)
@@ -1300,7 +1309,7 @@ class Diagnostics(VarySFHs):
         self.sgal.all_stages()
         indss = [self.sgal.__getattribute__('i%s' % r.lower()) for r in regions]
         line = '%s ' % self.target
-        print '#',' '.join(regions)
+        print '#',' '.join(regions),'Total'
 
         fig, (axs) = plt.subplots(ncols=2)
         for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb],
@@ -1319,22 +1328,46 @@ class Diagnostics(VarySFHs):
 
             ncontam_rgb = [list(set(s) & set(inds) & set(rgb)) for s in indss]
             ncontam_agb = [list(set(s) & set(inds) & set(agb)) for s in indss]
+            rheb_eagb_contam = len(ncontam_rgb[4]) + len(ncontam_rgb[5])
+            frac_rheb_eagb = float(rheb_eagb_contam) / float(np.sum([len(n) for n in ncontam_rgb]))
+            heb_rgb_contam = len(ncontam_rgb[2])
+            frac_heb_rgb_contam = float(heb_rgb_contam) / float(np.sum([len(n) for n in ncontam_rgb]))
+            #axs[i].plot(color, mag, '.', color='black', alpha=0.2)
+            #[axs[i].plot(color[n], mag[n], 'o', alpha=0.5,
+            #             label=regions[j]) for j, n in enumerate(ncontam_rgb)]
+            #axs[i].hist(color, mag, '.', color='black', alpha=0.2)
+            mags = [mag[n] if len(n) > 0 else np.zeros(10) for n in ncontam_rgb]
 
-            axs[i].plot(color, mag, '.')
-            [axs[i].plot(color[n], mag[n], '.',
-                         label=regions[j]) for j, n in enumerate(ncontam_rgb)]
+            mms = np.concatenate(mags)
+            ms, = np.nonzero(mms > 0)
+            bins = np.linspace(np.min(mms[ms]), np.max(mms[ms]), 10)
+            [axs[i].hist(mags, bins=bins, alpha=0.5, stacked=True, label=regions)]
             #nrgb = np.max([1., len(ncontam_rgb[1])])
-            line_rgb = 'rgb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
+            line_rgb = 'rgb ' + band + ' ' + ' '.join(['%i' % (len(n))
                                                           for n in ncontam_rgb])
+            line_rgb += ' %i' % np.sum([len(n) for n in ncontam_rgb])
             #nagb = np.max([1., len(ncontam_agb[-1])])
             
-            line_agb = 'agb ' + band + ' ' + ' '.join(['%.3f' % (len(n))
+            line_agb = 'agb ' + band + ' ' + ' '.join(['%i' % (len(n))
                                                           for n in ncontam_agb])
+            line_agb += ' %i' % np.sum([len(n) for n in ncontam_agb])
+
             print line_rgb
             print line_agb
-            axs[0].legend()
-            [ax.set_ylim(ax.get_ylim()[::-1]) for ax in axs]
+            print 'rgb eagb contamination: %i frac of total in rgb region: %.3f' % (rheb_eagb_contam, frac_rheb_eagb)
+            print 'rc contamination: %i frac of total in rgb region: %.3f' % (heb_rgb_contam, frac_heb_rgb_contam)
+
+            #[axs[i].hist(mag[n], alpha=0.5, histtype='step',
+            #             label=regions[j]) for j, n in enumerate(ncontam_rgb)
+            # if len(n) > 0]
+        axs[0].legend(numpoints=1, loc=0)
+        axs[0].set_title(self.target)
+        #[ax.set_ylim(ax.get_ylim()[::-1]) for ax in axs]
+        #[ax.set_ylim(26.5, ax.get_ylim()[0]) for ax in axs]
         print line
+    
+        plt.savefig('contamination_%s.png' % self.target, dpi=150)
+
 
     def binary_contamination(self, sopt_agb, sir_agb):
         '''fraction of binaries in trgb'''
@@ -1428,7 +1461,7 @@ class Plotting(object):
         '''needs work, but: plot the lf files.'''
         # set up the plot
         plt_kw = plt_kw or {}
-        plt_kw = dict({'linestyle': 'steps',
+        plt_kw = dict({#'linestyle': 'steps-mid',
                        'color': 'black',
                        'alpha': 0.2}.items() + plt_kw.items())
         if axs is None:
@@ -1616,16 +1649,16 @@ class Plotting(object):
         
         # plot galaxy data
         if plot_data is True:
-            dplot_kw = {'linestyle': 'mid-steps', 'color': 'darkred', 'lw': 2,
+            dplot_kw = {'linestyle': 'steps-left', 'color': 'darkred', 'lw': 2,
                         'label': '$%s$' % target.upper().replace('-DEEP', '')}
-            ax2.plot(ir_gal.bins[:-1], ir_gal.hist, **dplot_kw)
-            ax1.plot(opt_gal.bins[:-1], opt_gal.hist, **dplot_kw)
+            ax2.plot(ir_gal.bins[1:], ir_gal.hist, **dplot_kw)
+            ax1.plot(opt_gal.bins[1:], opt_gal.hist, **dplot_kw)
             opt_err = np.sqrt(opt_gal.hist)
             ir_err = np.sqrt(ir_gal.hist)
-            ax1.errorbar(opt_gal.bins[:-1], opt_gal.hist, yerr=opt_err,
-                         color='darkred', drawstyle='steps-mid', lw=2)
-            ax2.errorbar(ir_gal.bins[:-1], ir_gal.hist, yerr=ir_err,
-                         color='darkred', drawstyle='steps-mid', lw=2)
+            ax1.errorbar(opt_gal.bins[1:], opt_gal.hist, yerr=opt_err,
+                         color='darkred', drawstyle='steps-left', lw=2)
+            ax2.errorbar(ir_gal.bins[1:], ir_gal.hist, yerr=ir_err,
+                         color='darkred', drawstyle='steps-left', lw=2)
 
 
         # initialize add numbers to the plot
@@ -1784,6 +1817,20 @@ class Plotting(object):
         plt.savefig('%s_mass_met%s.png' % (target, extra_str), dpi=150)
         return grid
 
+def get_color_cut(filter1):
+    '''
+    see snap_src + tables/color_cuts.dat
+    '''
+    if filter1 == 'F606W':
+        color_cut = 0.2
+    elif filter1 == 'F475W':
+        color_cut = 0.3
+    elif filter1 == 'F110W':
+        color_cut = 0.1
+    else:
+        color_cut = np.nan
+        print 'warning, filter not found, no color cut'
+    return color_cut
 
 def get_filter1(target, fits_src=None):
     '''get optical filter1'''

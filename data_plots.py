@@ -116,11 +116,11 @@ def plot_cmd_lf(target, band):
     if band == 'opt':
         fits_src = snap_src + '/data/angst_no_trim'
         cmd_errors_kw = {}
-        ymin, ymax = row['opt_xmin'], row['opt_xmax']
+        ymin, ymax = row['opt_cmdmin'], row['opt_cmdmax']
     else:
         fits_src = 'default'
         cmd_errors_kw = {'errclr': -.5}
-        ymin, ymax = row['ir_xmin'], row['ir_xmax']
+        ymin, ymax = row['ir_cmdmin'], row['ir_cmdmax']
     fig = plt.figure(figsize=(6, 6))
     gs = gridspec.GridSpec(1, 2, width_ratios=[3, 1])
     ax1 = plt.subplot(gs[0])
@@ -135,8 +135,8 @@ def plot_cmd_lf(target, band):
     if band == 'ir':
         xmin = -1
 
-    ax1.set_ylim()
-    ax2.set_ylim()
+    #ax1.set_ylim()
+    #ax2.set_ylim()
 
     ax1.set_xlim(xmin, ax1.get_xlim()[1])
     gal.decorate_cmd(ax=ax1, trgb=True, cmd_errors_kw=cmd_errors_kw)
@@ -152,10 +152,19 @@ def plot_cmd_lf(target, band):
     ax2.set_xlabel('$\#$', fontsize=20)
     ax1.set_ylabel('$%s$' % gal.filter2, fontsize=20)
     ax1.set_xlabel('$%s-%s$' % (gal.filter1, gal.filter2), fontsize=20)
+    add_color_cuts(gal.filter1, ax=ax1, vline_kw={'ls': '--', 'lw': 2})
     plt.tick_params(labelsize=16)
     outfname = '%s_%s_cmd.png' % (target, band)
     outfile = os.path.join(snap_src, 'plots', outfname)
     fig.savefig(outfile, dpi=150)
+
+def add_color_cuts(filter1, ax=None, vline_kw=None):
+    vline_kw = vline_kw or {}
+    if ax is None:
+        fig, ax = plt.subplots()
+    color_cut = sfh_tests.get_color_cut(filter1)
+    ax.vlines(color_cut, *ax.get_ylim(), **vline_kw)
+    return ax
 
 if __name__ == '__main__':
     targets = galaxy_tests.load_targets('ancients')

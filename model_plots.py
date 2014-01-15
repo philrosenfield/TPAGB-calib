@@ -8,14 +8,14 @@ def load_plot_limits(filename='default'):
     if filename == 'default':
         filename = '/home/phil/research/TP-AGBcalib/SNAP/tables/cmd_plot_limits.dat'
     dtype = [('target', '|S16'),
-             ('opt_xmin', '<f8'),
-             ('opt_xmax', '<f8'),
-             ('opt_ymin', '<f8'),
-             ('opt_ymax', '<f8'),
-             ('ir_xmin', '<f8'),
-             ('ir_xmax', '<f8'),
-             ('ir_ymin', '<f8'),
-             ('ir_ymax', '<f8'),
+             ('opt_cmdmin', '<f8'),
+             ('opt_cmdmax', '<f8'),
+             ('opt_lfmin', '<f8'),
+             ('opt_lfmax', '<f8'),
+             ('ir_cmdmin', '<f8'),
+             ('ir_cmdmax', '<f8'),
+             ('ir_lfmin', '<f8'),
+             ('ir_lfmax', '<f8'),
              ('opt_offset', '<f8'),
              ('ir_offset', '<f8')]
     lims = np.genfromtxt(filename, dtype=dtype)
@@ -42,6 +42,7 @@ def plot_lf_with_stages(target, trilegal_output):
     ax2.set_ylim(lims['target'==target]['ir_ymin'], lims['target'==target]['ir_ymax'])
     
     return ax1, ax2
+
 
 def plot_lfs():
     pl = sfh_tests.Plotting()
