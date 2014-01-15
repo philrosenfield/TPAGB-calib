@@ -202,7 +202,8 @@ def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
         nagb = len(nagb)
         
     return nrgb, nagb, exclude_dict
-    
+
+
 class PHATFields(object):
     def __init__(self):
         pass
@@ -429,6 +430,7 @@ class StarFormationHistories(object):
             errm_arr = self.__getattribute__('%s_errm' % attr)
             errp_arr = self.__getattribute__('%s_errp' % attr)
         rand_arr = np.array([])
+
         # don't want negative sfr values. If not sfr, don't care.
         if attr == 'sfr':
             lowlim = 0
@@ -993,7 +995,6 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
 
 
         if by_stage is True:
-            # Threshold is set at 100 rgb stars in a bin.
             rgb_thresh = 50
 
             self.sgal.all_stages('RGB')
@@ -1019,6 +1020,10 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
             # correction for mag
             ir_offset = self.ir_trgb - ir_mag[ind]
             opt_offset = self.opt_trgb - opt_mag[ind]
+        
+        # HACK HACK HACK HACK
+        ir_offset = 0.
+        opt_offset = 0.
         logger.debug('IR OFFSET: %f' % ir_offset)
         logger.debug('OPT OFFSET: %f' % opt_offset)
 
@@ -1115,10 +1120,11 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         if not hasattr(self, 'sgal'):
             assert trilegal_output is not None, \
                 'need sgal loaded or pass trilegal catalog file name'
-        if self.mc is True or not hasattr(self, 'sgal'):
             self.read_trilegal_catalog(trilegal_output, filter1=filter1)
+            self.load_trilegal_data()
 
-        if not hasattr(self, 'opt_mag'):
+        if self.mc is True:
+            self.read_trilegal_catalog(trilegal_output, filter1=filter1)
             self.load_trilegal_data()
 
         # Recovered stars in simulated RGB region.
@@ -1238,7 +1244,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
 
         # what's up to the logger
         add_file_logger(self.outfile_loc)
-        logger.debug(pprint.pformat(locals))
+        logger.debug(pprint.pformat(locals()))
 
         self.prepare_trilegal_sfr(make_many_kw=make_many_kw)
 
@@ -1253,7 +1259,6 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
         else:
             filter1 = get_filter1(self.target)
             self.filter1 = filter1
-
         for galaxy_input in self.galaxy_inputs:
             rsp.TrilegalUtils.run_trilegal(cmd_input_file, galaxy_input,
                                            trilegal_output, rmfiles=False,
@@ -1262,9 +1267,10 @@ class VarySFHs(StarFormationHistories, AncientGalaxies):
             self.do_normalization(trilegal_output=trilegal_output,
                                   filter1=filter1, hist_it_up=hist_it_up,
                                   dry_run=dry_run)
+            os.system('rm %s' % (trilegal_output))
+
         if dry_run is True:
             self.read_trilegal_catalog(trilegal_output, filter1=filter1)
-
         self.close_files()
         opt_chi2, ir_chi2 = self.poission_chi2(hist_it_up=hist_it_up)
         chi2_file = os.path.join(self.outfile_loc, '%s_chi2.dat' % self.target)
@@ -1892,14 +1898,15 @@ def chi2_table(targets, cmd_input_files, table_file='default'):
     print line
 
 
-def add_file_logger(logdir):
+def add_file_logger(logdir, logfname=None):
     # setup logger
     logger = logging.getLogger()
 
     #logging.basicConfig(filename=logfile, level=logging.DEBUG)
     # file handler
     rsp.fileIO.ensure_dir(logdir)
-    logfname = time.strftime("log_%Y%m%d_%H%M%S.dat", time.localtime())
+    if logfname is None:
+        logfname = time.strftime("log_%Y%m%d_%H%M%S.dat", time.localtime())
     logfile = os.path.join(os.path.abspath(logdir), logfname)
     fh = logging.FileHandler(logfile)
     fh.setLevel(logging.DEBUG)
@@ -2017,9 +2024,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                               debug=False):
 
     # start the stream logger. The file logger is done target by target.
-    global logger
-    logger = logging.getLogger()
-    logger.info('start of run: %s' % time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()))
+    add_file_logger(os.getcwd(), 'sfh_tests.log')
     # create formatter and add it to the handlers
     formatter = '%(asctime)-15s %(levelname)s %(funcName)s %(lineno)d %(message)s'
     ch = logging.StreamHandler()
@@ -2044,6 +2049,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
         if '404' in target:
             target = 'ngc404'
         for cmd_input in cmd_inputs:
+            logger.info('%s with %s: %s' % (target, cmd_input, time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())))
             vary_sfhs_of_one_galaxy(target, cmd_input, clean_first=clean_first,
                                     mk_tri_sfh_kw=mk_tri_sfh_kw,
                                     make_many_kw={'nsfhs': nsfhs},
@@ -2063,13 +2069,25 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
 if __name__ == '__main__':
     #paolas_tests()
     ags = AncientGalaxies()
+    
     galaxy_table = ags.write_trgb_table(exclude_region=[0.1, 0.2],
                                         mag_below_trgb='comp_frac')
-    #targets = ['ddo78', 'ddo71', 'hs117', 'kkh37', 'ngc2976-deep', 'ngc404-deep']
-    targets = ['ngc2976-deep', 'ngc404-deep']
+    
+    targets = ['hs117', 'kkh37', 'ngc2976-deep', 'ngc404-deep',
+               'ddo78', 'ddo71']
+    #targets = ['ngc404-deep']
+    cmd_input_files = ['cmd_input_CAF09_S_NOV13.dat',
+                       'cmd_input_CAF09_S_NOV13eta0.dat',
+                       'cmd_input_CAF09_S_OCT13.dat']
     
     mk_tri_sfh_kw = {'random_sfr': True, 'random_z': False}
-    simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat',
-                                        'cmd_input_CAF09_S_NOV13eta0.dat',
-                                        'cmd_input_CAF09_S_OCT13.dat'],
-                              50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False)
+    nsfhs = 50
+
+    simulation_from_beginning(targets, cmd_input_files, nsfhs,
+                              mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False)
+    
+    #simulation_from_beginning([targets[0]], ['cmd_input_CAF09_S_NOV13.dat'],#,
+    #                                   # 'cmd_input_CAF09_S_NOV13eta0.dat',
+    #                                    #'cmd_input_CAF09_S_OCT13.dat'],
+    #                          2, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False)
+
