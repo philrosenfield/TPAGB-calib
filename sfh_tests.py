@@ -1922,8 +1922,7 @@ def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, mk_tri_sfh_kw=None,
     make_many_kw = dict({'nsfhs': 50, 'mk_tri_sfh_kw': mk_tri_sfh_kw}.items()
         + make_many_kw.items())
 
-    vary_sfh_kw = dict({'diag_plots': False, 'clean_first': clean_first,
-                        'outfile_loc': 'default',
+    vary_sfh_kw = dict({'clean_first': clean_first, 'outfile_loc': 'default',
                         'make_many_kw': make_many_kw}.items() + vary_sfh_kw.items())
     # load input files if not supplied
     if match_sfh_file == 'default':
