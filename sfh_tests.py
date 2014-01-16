@@ -2402,7 +2402,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                                                      'extra_str': extra_str},
                                          'add_stage_lfs': 'default',
                                          'table_file': galaxy_table,
-                                         'galaxy_input_file': galaxy_input_file,
+                                         'galaxy_input_file': galaxy_input_filefmt % target.upper(),
                                          'match_sfh_file': match_sfh_file}))
 
             for r in res:
@@ -2440,9 +2440,9 @@ if __name__ == '__main__':
                                         mag_below_trgb='comp_frac')
     targets = ['ddo78', 'ddo71', 'hs117', 'kkh37', 'ngc2976-deep', 'ngc404']
     #targets = ['ngc2976-deep', 'ngc404-deep']
-    targets = ['ddo71']
+    #targets = ['ddo71']
     mk_tri_sfh_kw = {'random_sfr': True, 'random_z': False}
-    simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat'],
-                                        #'cmd_input_CAF09_S_NOV13eta0.dat',
-                                        #'cmd_input_CAF09_S_OCT13.dat'],
-                              2, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False, dry_run=False)
+    simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat',
+                                        'cmd_input_CAF09_S_NOV13eta0.dat',
+                                        'cmd_input_CAF09_S_OCT13.dat'],
+                              50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False, dry_run=False)
