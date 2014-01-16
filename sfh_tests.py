@@ -2406,8 +2406,8 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                                          'galaxy_input_file': 'default',
                                          'match_sfh_file': match_sfh_file}))
 
-            for r in res:
-                r.get()
+        for r in res:
+            r.get()
 
     else:
         for target in targets:
