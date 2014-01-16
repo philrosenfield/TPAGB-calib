@@ -766,7 +766,7 @@ class FileIO(object):
 
     def read_trilegal_catalog(self, trilegal_output, filter1='F606W'):
         '''read the trilegal cat and does ast corrections.'''
-        sgal = rsp.Galaxies.simgalaxy(trilegal_output, filter1=filter1,
+        self.sgal = rsp.Galaxies.simgalaxy(trilegal_output, filter1=filter1,
                                       filter2='F814W')
         #if self.ast is True and not hasattr(self, 'ast_objs'):
         #    # should be loaded outside this method if mc is running.
@@ -776,7 +776,7 @@ class FileIO(object):
         #    rsp.Galaxies.ast_correct_trilegal_sim(sgal, asts_obj=self.ast_objs)
         #    sgal.load_ast_corrections()
         
-        self.sgal = sgal
+        #self.sgal = sgal
 
     def shift_mags(self, by_stage=True, opt_inds=None, ir_inds=None):
         '''shift mags to they agree with opt trgb'''
@@ -784,6 +784,7 @@ class FileIO(object):
         ir_mag = self.sgal.data.get_col('F160W')
         if opt_inds is None:
             opt_inds = np.arange(len(opt_mag))
+        
         if ir_inds is None:
             ir_inds = np.arange(len(ir_mag))
 
@@ -816,6 +817,8 @@ class FileIO(object):
             # correction for mag
             #ir_offset = self.ir_trgb - ir_mag[ind]
             #opt_offset = self.opt_trgb - opt_mag[ind]
+        #ir_offset = 0.
+        #opt_offset = 0.
         logger.debug('IR OFFSET: %f' % ir_offset)
         logger.debug('OPT OFFSET: %f' % opt_offset)
         self.ir_moffset = ir_offset
@@ -934,9 +937,9 @@ class FileIO(object):
         opt_gal = galaxy_tests.load_galaxy(self.target, band='opt',
                                            fits_src=fits_src)
         # make galaxy histograms
-        if color_cut is not None:
+        if color_cut is True:
             filter1 = get_filter1(target)
-            opt_color_inds = np.nonzero(opt_gal.color > get_color_cut(fliter1))
+            opt_color_inds = np.nonzero(opt_gal.color > get_color_cut(filter1))
             ir_color_inds = np.nonzero(ir_gal.color > get_color_cut('F110W'))
             opt_gal.color_cut = opt_color_inds
             ir_gal.color_cut = ir_color_inds
@@ -946,7 +949,7 @@ class FileIO(object):
             ir_gal.hist, ir_gal.bins = galaxy_tests.hist_it_up(ir_gal.mag2, threash=5)
         else:
             #nbins = (np.max(opt_gal.mag2) - np.min(opt_gal.mag2)) / 0.1
-            if color_cut is None:
+            if color_cut is False:
                 opt_gal.hist, opt_gal.bins = np.histogram(opt_gal.mag2, bins=self.opt_bins)
                 ir_gal.hist, ir_gal.bins = np.histogram(ir_gal.mag2, bins=self.ir_bins)
             else:
@@ -1271,7 +1274,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
 
         # what's up to the logger
         add_file_logger(self.outfile_loc)
-        logger.debug(pprint.pformat(locals))
+        logger.debug(pprint.pformat(locals()))
 
         self.prepare_trilegal_sfr(make_many_kw=make_many_kw)
 
@@ -2418,4 +2421,4 @@ if __name__ == '__main__':
     simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat'],
                                         #'cmd_input_CAF09_S_NOV13eta0.dat',
                                         #'cmd_input_CAF09_S_OCT13.dat'],
-                              50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False, dry_run=False)
+                              2, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False, dry_run=False)
