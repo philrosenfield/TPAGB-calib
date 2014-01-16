@@ -2403,7 +2403,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                                                      'extra_str': extra_str},
                                          'add_stage_lfs': 'default',
                                          'table_file': galaxy_table,
-                                         'galaxy_input_file': galaxy_input_filefmt % target.upper(),
+                                         'galaxy_input_file': 'default',
                                          'match_sfh_file': match_sfh_file}))
 
             for r in res:
