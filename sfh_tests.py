@@ -17,7 +17,8 @@ from TPAGBparams import table_src, snap_src
 import galaxy_tests
 
 angst_data = rsp.angst_tables.AngstTables()
-
+import multiprocessing
+import itertools
 
 def default_output_location(target, extra_directory=None, mc=False):
     if extra_directory is None:
@@ -777,6 +778,7 @@ class FileIO(object):
         #    sgal.load_ast_corrections()
         
         #self.sgal = sgal
+        return
 
     def shift_mags(self, by_stage=True, opt_inds=None, ir_inds=None):
         '''shift mags to they agree with opt trgb'''
@@ -2362,7 +2364,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                               galaxy_table='default', mass_cut=None,
                               extra_str='', clean_first=False,
                               mk_tri_sfh_kw=None, match_sfh_file='default',
-                              debug=False):
+                              debug=False, multithread=True):
 
     # start the stream logger. The file logger is done target by target.
     global logger
@@ -2384,37 +2386,59 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
     if debug is True:
         import pdb; pdb.set_trace()
 
-    for target in targets:
-        if galaxy_input_filefmt is None:
-            galaxy_input_file = 'default'
-        else:
-            galaxy_input_file = galaxy_input_filefmt % target.upper()
-        if '404' in target:
-            target = 'ngc404'
-        for cmd_input in cmd_inputs:
-            vary_sfhs_of_one_galaxy(target, cmd_input, clean_first=clean_first,
-                                    mk_tri_sfh_kw=mk_tri_sfh_kw,
-                                    make_many_kw={'nsfhs': nsfhs},
-                                    vary_sfh_kw={'dry_run': dry_run,
-                                                 'hist_it_up': hist_it_up,
-                                                 'mass_cut': mass_cut,
-                                                 'extra_str': extra_str},
-                                    add_stage_lfs='default',
-                                    table_file=galaxy_table,
-                                    galaxy_input_file=galaxy_input_file,
-                                    match_sfh_file=match_sfh_file)
+    if multithread is True:
+        pool = multiprocessing.Pool()
+        res = []
+        galaxy_input_file = 'default'
+        for target, cmd_input in itertools.product(targets, cmd_inputs):
+            res.append(pool.apply_async(vary_sfhs_of_one_galaxy,
+                                        (target, cmd_input),
+                                        {'clean_first': clean_first,
+                                         'mk_tri_sfh_kw': mk_tri_sfh_kw,
+                                         'make_many_kw': {'nsfhs': nsfhs},
+                                         'vary_sfh_kw': {'dry_run': dry_run,
+                                                     'hist_it_up': hist_it_up,
+                                                     'mass_cut': mass_cut,
+                                                     'extra_str': extra_str},
+                                         'add_stage_lfs': 'default',
+                                         'table_file': galaxy_table,
+                                         'galaxy_input_file': galaxy_input_file,
+                                         'match_sfh_file': match_sfh_file}))
 
+            for r in res:
+                r.get()
+
+    else:
+        for target in targets:
+            if galaxy_input_filefmt is None:
+                galaxy_input_file = 'default'
+            else:
+                galaxy_input_file = galaxy_input_filefmt % target.upper()
+            if '404' in target:
+                target = 'ngc404'
+            for cmd_input in cmd_inputs:
+                vary_sfhs_of_one_galaxy(target, cmd_input, clean_first=clean_first,
+                                        mk_tri_sfh_kw=mk_tri_sfh_kw,
+                                        make_many_kw={'nsfhs': nsfhs},
+                                        vary_sfh_kw={'dry_run': dry_run,
+                                                     'hist_it_up': hist_it_up,
+                                                     'mass_cut': mass_cut,
+                                                     'extra_str': extra_str},
+                                        add_stage_lfs='default',
+                                        table_file=galaxy_table,
+                                        galaxy_input_file=galaxy_input_file,
+                                        match_sfh_file=match_sfh_file)
+    
     #data_table(targets)
     #narratio_table(targets, cmd_inputs, table_file=galaxy_table)
-    #chi2_table(targets)
-
+    #chi2_table(targets)    '''
 
 if __name__ == '__main__':
     #paolas_tests()
     ags = AncientGalaxies()
     galaxy_table = ags.write_trgb_table(exclude_region=[0.1, 0.2],
                                         mag_below_trgb='comp_frac')
-    #targets = ['ddo78', 'ddo71', 'hs117', 'kkh37', 'ngc2976-deep', 'ngc404-deep']
+    targets = ['ddo78', 'ddo71', 'hs117', 'kkh37', 'ngc2976-deep', 'ngc404']
     #targets = ['ngc2976-deep', 'ngc404-deep']
     targets = ['ddo71']
     mk_tri_sfh_kw = {'random_sfr': True, 'random_z': False}
