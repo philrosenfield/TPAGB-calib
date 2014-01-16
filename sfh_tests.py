@@ -2418,11 +2418,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                                         mk_tri_sfh_kw=mk_tri_sfh_kw,
                                         make_many_kw={'nsfhs': nsfhs},
                                         vary_sfh_kw={'dry_run': dry_run,
-                                                     'hist_it_up': hist_it_up,
-                                                     'mass_cut': mass_cut,
                                                      'extra_str': extra_str},
-                                        add_stage_lfs='default',
-                                        table_file=galaxy_table,
                                         galaxy_input_file=galaxy_input_file,
                                         match_sfh_file=match_sfh_file)
     
