@@ -1886,7 +1886,7 @@ def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, mk_tri_sfh_kw=None,
                             match_sfh_file='default', vary_sfh_kw=None,
                             match_fileorigin='match-grid', make_many_kw=None,
                             galaxy_input_file='default', clean_first=False,
-                            ast=False, table_file='default'):
+                            table_file='default'):
     '''
     Run a number of SFH variations on a galaxy.
     If passed default to the args, will attempt to find the file based on the
@@ -1949,12 +1949,11 @@ def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, mk_tri_sfh_kw=None,
                'sfh_file': match_sfh_file,
                'file_origin': match_fileorigin,
                'target': galaxy_name.lower(),
-               'ast': ast,
+               'ast': False,
                'table_file': table_file}
     vSFH = Diagnostics(VarySFH_kw=vsfh_kw)
     # vary the SFH
-    vSFH.vary_the_SFH(cmd_input_file, outfile_loc=outfile_loc,
-                      **vary_sfh_kw)
+    vSFH.vary_the_SFH(cmd_input_file, **vary_sfh_kw)
 
     return vSFH
 
@@ -2400,7 +2399,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                                          'vary_sfh_kw': {'dry_run': dry_run,
                                                          'extra_str': extra_str},
                                          'match_sfh_file': match_sfh_file}))
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         for r in res:
             r.get()
 
