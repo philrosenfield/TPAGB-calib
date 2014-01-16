@@ -1225,8 +1225,6 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
         self.opt_norm = opt_norm
         self.ir_norm = ir_norm
 
-        self.binary_contamination(opt_agb, ir_agb)
-
         #save LF in both filters
         #if self.mc is True:
         # only need to save the LF and the ratios.
@@ -1294,25 +1292,29 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
                                            trilegal_output, rmfiles=False,
                                            dry_run=dry_run)
 
-            self.do_normalization(trilegal_output=trilegal_output,
-                                  filter1=filter1, hist_it_up=hist_it_up,
-                                  dry_run=dry_run)
-
+            norm_out = self.do_normalization(trilegal_output=trilegal_output,
+                                             filter1=filter1,
+                                             hist_it_up=hist_it_up,
+                                             dry_run=dry_run)
+            #self.binary_contamination(opt_agb, ir_agb)
+            self.contamination_by_phases(*norm_out)
 
 class Diagnostics(VarySFHs):
     def __init__(self, VarySFH_kw=None):
         VarySFH_kw = VarySFH_kw or {}
         VarySFH_kw = dict({'just_once': True}.items() + VarySFH_kw.items())
-        VarySFHs.__init__(self, '', '', '', **VarySFH_kw)
+        
+        VarySFHs.__init__(self, **VarySFH_kw)
 
-    def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb):
+    def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb,
+                                diag_plot=False):
         regions = ['MS', 'RGB', 'HEB', 'BHEB', 'RHEB', 'EAGB', 'TPAGB']
         self.sgal.all_stages()
         indss = [self.sgal.__getattribute__('i%s' % r.lower()) for r in regions]
         line = '%s ' % self.target
-        print '#',' '.join(regions),'Total'
-
-        fig, (axs) = plt.subplots(ncols=2)
+        logger.info('# %s %s' % (' '.join(regions),'Total'))
+        if diag_plot is True:
+            fig, (axs) = plt.subplots(ncols=2)
         for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb],
                                                  [sopt_agb, sir_agb],
                                                  [self.opt_color_cut,
@@ -1342,7 +1344,8 @@ class Diagnostics(VarySFHs):
             mms = np.concatenate(mags)
             ms, = np.nonzero(mms > 0)
             bins = np.linspace(np.min(mms[ms]), np.max(mms[ms]), 10)
-            [axs[i].hist(mags, bins=bins, alpha=0.5, stacked=True, label=regions)]
+            if diag_plot is True:
+                [axs[i].hist(mags, bins=bins, alpha=0.5, stacked=True, label=regions)]
             #nrgb = np.max([1., len(ncontam_rgb[1])])
             line_rgb = 'rgb ' + band + ' ' + ' '.join(['%i' % (len(n))
                                                           for n in ncontam_rgb])
@@ -1353,21 +1356,21 @@ class Diagnostics(VarySFHs):
                                                           for n in ncontam_agb])
             line_agb += ' %i' % np.sum([len(n) for n in ncontam_agb])
 
-            print line_rgb
-            print line_agb
-            print 'rgb eagb contamination: %i frac of total in rgb region: %.3f' % (rheb_eagb_contam, frac_rheb_eagb)
-            print 'rc contamination: %i frac of total in rgb region: %.3f' % (heb_rgb_contam, frac_heb_rgb_contam)
+            logger.info(line_rgb)
+            logger.info(line_agb)
+            logger.info('rgb eagb contamination: %i frac of total in rgb region: %.3f' % (rheb_eagb_contam, frac_rheb_eagb))
+            logger.info('rc contamination: %i frac of total in rgb region: %.3f' % (heb_rgb_contam, frac_heb_rgb_contam))
 
             #[axs[i].hist(mag[n], alpha=0.5, histtype='step',
             #             label=regions[j]) for j, n in enumerate(ncontam_rgb)
             # if len(n) > 0]
-        axs[0].legend(numpoints=1, loc=0)
-        axs[0].set_title(self.target)
+        if diag_plot is True:
+            axs[0].legend(numpoints=1, loc=0)
+            axs[0].set_title(self.target)
+            plt.savefig('contamination_%s.png' % self.target, dpi=150)
         #[ax.set_ylim(ax.get_ylim()[::-1]) for ax in axs]
         #[ax.set_ylim(26.5, ax.get_ylim()[0]) for ax in axs]
-        print line
-    
-        plt.savefig('contamination_%s.png' % self.target, dpi=150)
+        logger.info(line)
 
 
     def binary_contamination(self, sopt_agb, sir_agb):
@@ -1818,6 +1821,7 @@ class Plotting(object):
         plt.savefig('%s_mass_met%s.png' % (target, extra_str), dpi=150)
         return grid
 
+
 def get_color_cut(filter1):
     '''
     see snap_src + tables/color_cuts.dat
@@ -1832,6 +1836,7 @@ def get_color_cut(filter1):
         color_cut = np.nan
         print 'warning, filter not found, no color cut'
     return color_cut
+
 
 def get_filter1(target, fits_src=None):
     '''get optical filter1'''
@@ -1932,9 +1937,16 @@ def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, mk_tri_sfh_kw=None,
     logger.debug('match_sfh_file set: %s' % match_sfh_file)
 
     # initialize VarySFHs object, loads ASTs, obs data
-    vSFH = VarySFHs(galaxy_input_file, match_sfh_file, match_fileorigin,
-                    target=galaxy_name.lower(), ast=ast, table_file=table_file)
-
+    #vSFH = VarySFHs(galaxy_input_file, match_sfh_file, match_fileorigin,
+    #                target=galaxy_name.lower(), ast=ast, table_file=table_file)
+    vsfh_kw = {'just_once': False,
+               'galaxy_input': galaxy_input_file,
+               'sfh_file': match_sfh_file,
+               'file_origin': match_fileorigin,
+               'target': galaxy_name.lower(),
+               'ast': ast,
+               'table_file': table_file}
+    vSFH = Diagnostics(VarySFH_kw=vsfh_kw)
     # vary the SFH
     vSFH.vary_the_SFH(cmd_input_file, outfile_loc=outfile_loc,
                       add_stage_lfs=add_stage_lfs, **vary_sfh_kw)
@@ -2406,4 +2418,4 @@ if __name__ == '__main__':
     simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat'],
                                         #'cmd_input_CAF09_S_NOV13eta0.dat',
                                         #'cmd_input_CAF09_S_OCT13.dat'],
-                              50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False)
+                              50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False, dry_run=False)
