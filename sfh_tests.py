@@ -1293,16 +1293,18 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
             self.filter1 = filter1
 
         for galaxy_input in self.galaxy_inputs:
+            num = galaxy_input.split('_')[-1].replace('.dat', '')
             rsp.TrilegalUtils.run_trilegal(cmd_input_file, galaxy_input,
-                                           trilegal_output, rmfiles=False,
+                                           trilegal_output + '_%s' % num, rmfiles=False,
                                            dry_run=dry_run)
 
-            norm_out = self.do_normalization(trilegal_output=trilegal_output,
+            norm_out = self.do_normalization(trilegal_output=trilegal_output + '_%s' % num,
                                              filter1=filter1,
                                              hist_it_up=hist_it_up,
                                              dry_run=dry_run)
             #self.binary_contamination(opt_agb, ir_agb)
             self.contamination_by_phases(*norm_out)
+            os.remove(trilegal_output + '_%s' % num)
 
 class Diagnostics(VarySFHs):
     def __init__(self, VarySFH_kw=None):
