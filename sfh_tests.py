@@ -2391,6 +2391,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
         res = []
         galaxy_input_file = 'default'
         for target, cmd_input in itertools.product(targets, cmd_inputs):
+            print target, cmd_input
             res.append(pool.apply_async(vary_sfhs_of_one_galaxy,
                                         (target, cmd_input),
                                         {'clean_first': clean_first,
