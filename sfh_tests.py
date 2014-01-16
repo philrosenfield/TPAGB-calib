@@ -1245,9 +1245,9 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
         return sopt_rgb, sopt_agb, sir_rgb, sir_agb
 
     def vary_the_SFH(self, cmd_input_file, make_many_kw=None, dry_run=False,
-                     diag_plots=False, hist_it_up=True, outfile_loc='default',
+                     hist_it_up=False, outfile_loc='default',
                      extra_directory='default', clean_first=False,
-                     add_stage_lfs=None, filter1=None, mass_cut=None,
+                     filter1=None, mass_cut=None,
                      extra_str=''):
         '''
         make the sfhs, make the galaxy inputs, run trilegal. For no trilegal
@@ -1882,12 +1882,11 @@ def convert_match_to_trilegal_sfh(sfr_dir, fileorigin='match',
     return tri_sfhs
 
 
-def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, **kw):#mk_tri_sfh_kw=None,
-                            #match_sfh_file='default', vary_sfh_kw=None,
-                            #match_fileorigin='match-grid', make_many_kw=None,
-                            #galaxy_input_file='default', clean_first=False,
-                            #add_stage_lfs=None, ast=False, table_file='default',
-                            #outfile_loc='default'):
+def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, mk_tri_sfh_kw=None,
+                            match_sfh_file='default', vary_sfh_kw=None,
+                            match_fileorigin='match-grid', make_many_kw=None,
+                            galaxy_input_file='default', clean_first=False,
+                            ast=False, table_file='default'):
     '''
     Run a number of SFH variations on a galaxy.
     If passed default to the args, will attempt to find the file based on the
@@ -1924,6 +1923,7 @@ def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, **kw):#mk_tri_sfh_kw=No
         + make_many_kw.items())
 
     vary_sfh_kw = dict({'diag_plots': False, 'clean_first': clean_first,
+                        'outfile_loc': 'default',
                         'make_many_kw': make_many_kw}.items() + vary_sfh_kw.items())
     # load input files if not supplied
     if match_sfh_file == 'default':
@@ -1954,7 +1954,7 @@ def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, **kw):#mk_tri_sfh_kw=No
     vSFH = Diagnostics(VarySFH_kw=vsfh_kw)
     # vary the SFH
     vSFH.vary_the_SFH(cmd_input_file, outfile_loc=outfile_loc,
-                      add_stage_lfs=add_stage_lfs, **vary_sfh_kw)
+                      **vary_sfh_kw)
 
     return vSFH
 
@@ -2398,12 +2398,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                                          'mk_tri_sfh_kw': mk_tri_sfh_kw,
                                          'make_many_kw': {'nsfhs': nsfhs},
                                          'vary_sfh_kw': {'dry_run': dry_run,
-                                                     'hist_it_up': hist_it_up,
-                                                     'mass_cut': mass_cut,
-                                                     'extra_str': extra_str},
-                                         'add_stage_lfs': 'default',
-                                         'table_file': galaxy_table,
-                                         'galaxy_input_file': galaxy_input_file,
+                                                         'extra_str': extra_str},
                                          'match_sfh_file': match_sfh_file}))
         import pdb; pdb.set_trace()
         for r in res:
