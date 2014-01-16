@@ -2403,9 +2403,9 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                                                      'extra_str': extra_str},
                                          'add_stage_lfs': 'default',
                                          'table_file': galaxy_table,
-                                         'galaxy_input_file': 'default',
+                                         'galaxy_input_file': galaxy_input_file,
                                          'match_sfh_file': match_sfh_file}))
-
+        import pdb; pdb.set_trace()
         for r in res:
             r.get()
 
