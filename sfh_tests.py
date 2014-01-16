@@ -1882,12 +1882,12 @@ def convert_match_to_trilegal_sfh(sfr_dir, fileorigin='match',
     return tri_sfhs
 
 
-def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, mk_tri_sfh_kw=None,
-                            match_sfh_file='default', vary_sfh_kw=None,
-                            match_fileorigin='match-grid', make_many_kw=None,
-                            galaxy_input_file='default', clean_first=False,
-                            add_stage_lfs=None, ast=False, table_file='default',
-                            outfile_loc='default'):
+def vary_sfhs_of_one_galaxy(galaxy_name, cmd_input_file, **kw):#mk_tri_sfh_kw=None,
+                            #match_sfh_file='default', vary_sfh_kw=None,
+                            #match_fileorigin='match-grid', make_many_kw=None,
+                            #galaxy_input_file='default', clean_first=False,
+                            #add_stage_lfs=None, ast=False, table_file='default',
+                            #outfile_loc='default'):
     '''
     Run a number of SFH variations on a galaxy.
     If passed default to the args, will attempt to find the file based on the
