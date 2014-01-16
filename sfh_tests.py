@@ -1305,6 +1305,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
             #self.binary_contamination(opt_agb, ir_agb)
             self.contamination_by_phases(*norm_out)
             os.remove(trilegal_output + '_%s' % num)
+        FileIO.close_files()
 
 class Diagnostics(VarySFHs):
     def __init__(self, VarySFH_kw=None):
