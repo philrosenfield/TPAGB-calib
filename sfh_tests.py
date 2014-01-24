@@ -82,10 +82,10 @@ def find_completeness(target, comp_val, ast_kw=None):
 def read_completeness_table(table='default', absmag=False, uncertainties=False):
     if table == 'default':
         table = snap_src + '/tables/completeness_0.90.dat'
-    
+
     if absmag is True:
         table = table.replace('.dat', '_absmag.dat')
-    
+
     if uncertainties is True:
         table = table.replace('.dat', '_uncertainties.dat')
         dtype = [('target', '|S16'), ('opt_filter1', '<f8'),
@@ -95,7 +95,7 @@ def read_completeness_table(table='default', absmag=False, uncertainties=False):
     else:
         dtype = [('target', '|S16'), ('opt_filter1', '<f8'), ('opt_filter2', '<f8'),
                  ('ir_filter1', '<f8'), ('ir_filter2', '<f8')]
-    
+
     data = np.genfromtxt(table, dtype=dtype)
     return data
 
@@ -191,7 +191,7 @@ def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
     if indices is False:
         nrgb = len(nrgb)
         nagb = len(nagb)
-        
+
     return nrgb, nagb, exclude_dict
 
 
@@ -227,7 +227,7 @@ def parse_sfh_data(filename, file_origin, frac=0.2):
         data = rsp.match_utils.read_match_old(filename)
     else:
         logger.error('please add a new data reader')
-    
+
     if 'grid' in file_origin.lower():
         # at least have a uniform error that is 20% the smallest sfr.
         data.sfr_errp = np.min(data.sfr[data.sfr > 0]) * frac
@@ -465,14 +465,14 @@ class StarFormationHistories(object):
             new_arr = new_arr[new_arr > lowlim]
             rand_arr = np.append(rand_arr, random.choice(new_arr))
         return rand_arr
-    
+
     def interp_null_values(self):
         '''
         If there is no SF, there is still some +err in SF. However, M/H is
         not constrained so is set to 0. Here we fill in values of M/H by
         interpolating the entire M/H vs age, this should be used as mean value
         with vdisp to the be the sigma in the gaussian distribution.
-        
+
         I think it's reasonable since this is really just finding the -zinc
         law that MATCH assumes.
         '''
@@ -561,21 +561,21 @@ class StarFormationHistories(object):
         if attr_str == 'feh':
             val_arrs = np.array([convertz.convertz(feh=feh)[1]
                                  for feh in val_arrs])
-            
+
         return val_arrs
 
     def plot_sfh(self, attr_str, ax=None, outfile=None, yscale='linear',
                  plot_random_arrays_kw=None, errorbar_kw=None):
         '''
-        plot the data from the sfh file. 
+        plot the data from the sfh file.
         '''
         plot_random_arrays_kw = plot_random_arrays_kw or {}
-        
+
         # set up errorbar plot
         errorbar_kw = errorbar_kw or {}
         errorbar_default = {'linestyle': 'steps-mid', 'lw': 2, 'color': 'r'}
         errorbar_kw = dict(errorbar_default.items() + errorbar_kw.items())
-        
+
         # load the plotting values and their errors, this could be generalized
         # and passed ...
         val_arr = self.data.__getattribute__(attr_str)
@@ -595,7 +595,7 @@ class StarFormationHistories(object):
         if not 'm' in attr_str:
             ax.errorbar(self.data.lagei, val_arr, [errm_arr, errp_arr],
                         **errorbar_kw)
-        
+
         if len(plot_random_arrays_kw) > 0:
             # if loading the random arrays from files, need to give the
             # attribute to load.
@@ -606,12 +606,12 @@ class StarFormationHistories(object):
         ax.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=20)
         ax.set_xlim(8, 10.5)
         ax.set_yscale(yscale)
-        
+
         if outfile is not None:
             plt.savefig(outfile, dpi=150)
-        
+
         return ax
-    
+
     def plot_random_arrays(self, ax=None, val_arrs=None, from_files=False,
                            attr_str=None):
         '''
@@ -641,7 +641,7 @@ class StarFormationHistories(object):
             self.mc = True
 
         outfile_fmt = mk_tri_sfh_kw.get('outfile_fmt', None)
-        
+
         if outfile_fmt is None:
             new_dir = os.path.join(self.base, 'mc/')
             rsp.fileIO.ensure_dir(new_dir)
@@ -655,7 +655,7 @@ class StarFormationHistories(object):
         # update any passed kw to make_trilegal_sfh with defaults.
         mk_tri_sfh_kw = dict({'random_sfr': True, 'random_z': True}.items()
                              + mk_tri_sfh_kw.items())
-        
+
         outfiles = [self.make_trilegal_sfh(outfile=outfile_fmt % i,
                                            **mk_tri_sfh_kw)
                     for i in range(nsfhs)]
@@ -709,7 +709,7 @@ class StarFormationHistories(object):
 class FileIO(object):
     def __init__(self):
         pass
-    
+
     def check_target(self, target):
         if target is None:
             assert hasattr(self, 'target'), \
@@ -717,13 +717,13 @@ class FileIO(object):
         else:
             self.target = target
         return
-    
+
     def load_data_for_normalization(self, target=None, ags=None):
         self.check_target(target)
         '''load the numbers of data rgb and agb stars from self.ags'''
         if ags is None:
             ags = self.ags
-        
+
         if len(ags.offsets) == 0:
             self.comp_data = read_completeness_table()
 
@@ -776,7 +776,7 @@ class FileIO(object):
         #    # ast correction
         #    rsp.Galaxies.ast_correct_trilegal_sim(sgal, asts_obj=self.ast_objs)
         #    sgal.load_ast_corrections()
-        
+
         #self.sgal = sgal
         return
 
@@ -786,7 +786,7 @@ class FileIO(object):
         ir_mag = self.sgal.data.get_col('F160W')
         if opt_inds is None:
             opt_inds = np.arange(len(opt_mag))
-        
+
         if ir_inds is None:
             ir_inds = np.arange(len(ir_mag))
 
@@ -960,7 +960,7 @@ class FileIO(object):
             #nbins = (np.max(ir_gal.mag2) - np.min(ir_gal.mag2)) / 0.1
 
         return opt_gal, ir_gal
-    
+
     def write_ratio(self, opt_rgb, opt_agb, ir_rgb, ir_agb, out_file):
         '''
         write the numbers of stars, the ratio, and the poisson
@@ -1020,7 +1020,7 @@ class FileIO(object):
             mag = mag[inds]
             mh = self.sgal.data.get_col('[M/H]')[inds]
             np.savetxt(ofile, (mag, mass, mh), fmt='%g')
-            
+
         logger.info('wrote %s, %s' % (self.opt_mass_met_file.name,
                                       self.ir_mass_met_file.name))
 
@@ -1074,7 +1074,7 @@ class FileIO(object):
             self.narratio_fmt = hfmt
             if exists is False and fname == 'narratio' and dry_run is False:
                 self.narratio_file.write(header)
-        
+
         # how to name the trilegal sfr files
         new_fmt = self.target + '_tri_%003i.sfr'
         self.sfr_outfilefmt = os.path.join(self.outfile_loc, new_fmt)
@@ -1175,7 +1175,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
                 'need sgal loaded or pass trilegal catalog file name'
             self.read_trilegal_catalog(trilegal_output, filter1=filter1)
             self.load_trilegal_data()
-            
+
         if self.mc is True:
             self.read_trilegal_catalog(trilegal_output, filter1=filter1)
             self.load_trilegal_data()
@@ -1305,13 +1305,13 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
             #self.binary_contamination(opt_agb, ir_agb)
             self.contamination_by_phases(*norm_out)
             os.remove(trilegal_output + '_%s' % num)
-        FileIO.close_files()
+        self.close_files()
 
 class Diagnostics(VarySFHs):
     def __init__(self, VarySFH_kw=None):
         VarySFH_kw = VarySFH_kw or {}
         VarySFH_kw = dict({'just_once': True}.items() + VarySFH_kw.items())
-        
+
         VarySFHs.__init__(self, **VarySFH_kw)
 
     def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb,
@@ -1359,7 +1359,7 @@ class Diagnostics(VarySFHs):
                                                           for n in ncontam_rgb])
             line_rgb += ' %i' % np.sum([len(n) for n in ncontam_rgb])
             #nagb = np.max([1., len(ncontam_agb[-1])])
-            
+
             line_agb = 'agb ' + band + ' ' + ' '.join(['%i' % (len(n))
                                                           for n in ncontam_agb])
             line_agb += ' %i' % np.sum([len(n) for n in ncontam_agb])
@@ -1407,7 +1407,7 @@ class Diagnostics(VarySFHs):
         nsfhs = 1
         mk_tri_sfh_kw = {'random_sfr': False}
         match_sfh_file = 'grid'
-    
+
         common_dict = {'match_sfh_file': match_sfh_file,
                        'mk_tri_sfh_kw': mk_tri_sfh_kw}
         #1 No Dust
@@ -1424,7 +1424,7 @@ class Diagnostics(VarySFHs):
         simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
                                   galaxy_input_filefmt=galaxy_input_filefmt,
                                   **common_dict)
-        
+
         #2 M Dust
         print '\n M Dust \n '
         galaxy_input_filefmt = snap_src + '/input/tests/input_%s_mdust.dat'
@@ -1448,7 +1448,7 @@ class Diagnostics(VarySFHs):
         simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
                                   galaxy_table=galaxy_table,
                                   **common_dict)
-    
+
         # 4 Mass Cut
         print '\n Mass Cut \n '
         mass_cut = '(%f<1.) | (%f>1.2)'
@@ -1456,7 +1456,7 @@ class Diagnostics(VarySFHs):
         simulation_from_beginning(targets, cmd_inputs, nsfhs, extra_str=extra_str,
                                   mass_cut=mass_cut,
                                   **common_dict)
-    
+
         # Normal
         print '\n Default \n '
         simulation_from_beginning(targets, cmd_inputs, nsfhs,
@@ -1479,7 +1479,7 @@ class Plotting(object):
         if axs is None:
             fig, (axs) = plt.subplots(ncols=2, figsize=(12,6))
             plt.subplots_adjust(right=0.95, left=0.05, wspace=0.1)
-        
+
         # these have like 50 histograms each
         opt_hists, opt_binss = self.files.load_lf_file(opt_lf_file)
         ir_hists, ir_binss = self.files.load_lf_file(ir_lf_file)
@@ -1506,7 +1506,6 @@ class Plotting(object):
             mean_ratio[key] = np.mean([ratio_datas[i][key]
                                        for i in range(len(ratio_datas))])
         return axs, mean_ratio
-
 
     def count_stars_from_hist(self, opt_hist, opt_bins, ir_hist, ir_bins):
         ratio_data = {}
@@ -1547,10 +1546,10 @@ class Plotting(object):
         RETURNS:
         ax1, ax2: axes instances created for the plot.
 
-        '''        
+        '''
         # load ast_table for annotations
         ast_table = read_completeness_table()
-        
+
         # load galaxy data
         opt_gal, ir_gal = self.files.load_galaxies(hist_it_up=hist_it_up,
                                                    target=target,
@@ -1587,7 +1586,7 @@ class Plotting(object):
                 else:
                     cmap = brewer2mpl.get_map('Paired', 'Qualitative', nstages)
                     cols = cmap.mpl_colors
-                 
+
             # load the trilegal catalog if it is given, if it is given,
             # no LF scaling... need to save this info better. Currently only
             # in log files.
@@ -1600,7 +1599,7 @@ class Plotting(object):
 
             self.files.load_data_for_normalization(target=target, ags=self.ags)
             assert hasattr(self.files, 'opt_mag'), 'Need opt_mag or trilegal_output'
-           
+
             for ax, mag, norm, sinds, bins in \
                 zip([ax1, ax2],
                     [self.files.sgal.data.get_col('F814W')-self.files.opt_moffset,
@@ -1627,7 +1626,7 @@ class Plotting(object):
                                 if 'heb' in istage], axis=0)
                     elif 'heb' in istage:
                         continue
-                    
+
                     bins = \
                     self.files.sgal.__getattribute__('i%s_lfbins' %
                                                      istage)
@@ -1658,7 +1657,7 @@ class Plotting(object):
                 stage_lf_kw['label'] = lab
             ax1.plot(sopt_bins[:-1], sopt_hist, **stage_lf_kw)
             ax2.plot(sir_bins[:-1], sir_hist, **stage_lf_kw)
-        
+
         # plot galaxy data
         if plot_data is True:
             dplot_kw = {'linestyle': 'steps-left', 'color': 'darkred', 'lw': 2,
@@ -1704,7 +1703,7 @@ class Plotting(object):
 
             ax.vlines(gal.trgb, *ax.get_ylim(), color='black',
                       linestyle='--')
-            
+
             # % completeness limit
             ast_frac = rsp.fileIO.item_from_row(ast_table, 'target',
                                                 target.upper(),
@@ -1712,7 +1711,7 @@ class Plotting(object):
             # line at dim limit for rgb normalization
             ax.vlines(ast_frac, *ax.get_ylim(), linestyle='--',
                       color='black')
-            
+
             ax.fill_betweenx(yarr, ast_frac, ax.get_xlim()[1],
                              color='black', alpha=0.2)
             loc = 4
@@ -1790,7 +1789,7 @@ class Plotting(object):
                          cbar_pad="2%",
                          aspect=0)
         cmaps = [plt.cm.get_cmap('jet', 9), plt.cm.gray_r]
-        #cmap = 
+        #cmap =
         #cmap.set_bad('w', 1.)
         #fig, (axs) = plt.subplots(ncols=2, figsize=(8, 8), sharey=True)
         types = ['mean', 'count']
@@ -1798,18 +1797,18 @@ class Plotting(object):
         for j in range(len(types)):
             for i, mass_met in enumerate([opt_mass_met_file,
                                           ir_mass_met_file]):
-                k += 1            
+                k += 1
                 with open(mass_met, 'r') as mmf:
                     lines = [l.strip() for l in mmf.readlines()
                              if not l.startswith('#')]
-    
+
                 mag = np.concatenate([np.array(l.split(), dtype=float)
                                       for l in lines[0::3]])
                 mass = np.concatenate([np.array(l.split(), dtype=float)
                                        for l in lines[1::3]])
                 mh = np.concatenate([np.array(l.split(), dtype=float)
                                      for l in lines[2::3]])
-                
+
                 N, xedges, yedges = binned_statistic_2d(mag, mass, mh,
                                                         types[j], bins=50)
                 im = grid[k].imshow(N.T, origin='lower',
@@ -1970,7 +1969,7 @@ class StatisticalComparisons(object):
                       table_file='default'):
         self.files.ags = load_default_ancient_galaxies(table_file=table_file)
         self.files.load_data_for_normalization(target=target, ags=self.files.ags)
-        
+
         if self.outfile_loc == 'default':
             self.files.mc = True
         self.files.prepare_outfiles(outfile_loc=self.outfile_loc,
@@ -1981,10 +1980,10 @@ class StatisticalComparisons(object):
         # cut LF at 90% completeness
         obins, = np.nonzero(opt_gal.bins <= self.files.opt_offset)
         ibins, = np.nonzero(ir_gal.bins <= self.files.ir_offset)
-        
+
         agb_obins, = np.nonzero(opt_gal.bins <= self.files.opt_trgb - \
                                                 self.files.opt_trgb_err * \
-                                                self.files.ags.factor[0]) 
+                                                self.files.ags.factor[0])
         agb_ibins, = np.nonzero(ir_gal.bins <= self.files.ir_trgb - \
                                                 self.files.ir_trgb_err * \
                                                 self.files.ags.factor[1])
@@ -2004,7 +2003,7 @@ class StatisticalComparisons(object):
                                                            ir_model_hists[i][ibins[1:]])
             ir_chi2 = np.append(ir_chi2, chi2)
             #print 'ir ', chi2, np.mean(sig)
-            
+
             chi2, pct_dif, sig = rsp.Galaxies.stellar_prob(opt_gal.hist[agb_obins[1:]],
                                                            opt_model_hists[i][agb_obins[1:]])
             opt_chi2_agb = np.append(opt_chi2_agb, chi2)
@@ -2050,7 +2049,7 @@ class StatisticalComparisons(object):
                     #print '%s %s $%.2f\pm%.2f$' % (target.upper(), band, np.mean(data[field]), np.std(data[field]))
         for extra in extras:
             for band in bands:
-                band += extra        
+                band += extra
                 total = [v for k,v in chi_dict.items() if '%s_mean' % band in k]
                 chi_dict['%s_%s_mean' % (self.agb_mod, band)] = np.mean(total)
                 chi_dict['%s_%s_std' % (self.agb_mod, band)] = np.std(total)
@@ -2193,14 +2192,14 @@ def chi2_table(targets, cmd_input_files, table_file='default', model_loc='defaul
         print header
         for target in targets:
             line = '%s & ' % target.upper()
-            for extra in extras:                
+            for extra in extras:
                 for band in bands:
                     band += extra
                     line += fmt % (model_dict['%s_%s_mean' % (target, band)],
                                    model_dict['%s_%s_std' % (target, band)])
             print line
         model_dicts.append(model_dict)
-    
+
         line = 'Mean $\\chi^2$ & '
         for extra in extras:
             for band in bands:
@@ -2220,7 +2219,7 @@ def chi2plot(model_dicts):
     alphas = [0.5, 0.5, 1, 1]
     offset = [-0.5, -0.5, 0.5, 0.5]
     cols = ['black', 'navy', 'darkred', 'darkgreen', 'purple', 'orange']
-    
+
     from mpl_toolkits.axes_grid.axislines import Subplot
     fig = plt.figure()
 
@@ -2257,7 +2256,7 @@ def chi2plot(model_dicts):
             ax.axis['left'].set_visible(False)
         ax.set_xlim(-1, 1)
         ax.set_ylim(0, 40)
-    
+
     ax.plot(-99, -99, '*', ms=12, alpha=0.6, color='black', label='$AGB\ Only$')
     [ax.plot(-99, 99, 'o', ms=12, alpha=0.6, color=cols[j],
          label='$%s$' % targets[j].upper().replace('-DEEP', ''))
@@ -2351,12 +2350,12 @@ def data_table(targets):
         row2 += '$%.3f\\pm%.3f$ & ' % (sub_dict['%s_opt' % target.lower()], sub_dict['%s_opt_err' % target.lower()])
         row2 += '%(nir_agb)i & %(nir_rgb)i & ' % nstars_row
         row2 += '$%.3f\\pm%.3f$ \\\\ \n' % (sub_dict['%s_ir' % target.lower()], sub_dict['%s_ir_err' % target.lower()])
-        
+
     print row
     print
     print row2
     print total
-    
+
     print np.max(opt_err_pct), np.max(ir_err_pct)
 
 
@@ -2421,7 +2420,7 @@ def simulation_from_beginning(targets, cmd_inputs, nsfhs, hist_it_up=False,
                                                      'extra_str': extra_str},
                                         galaxy_input_file=galaxy_input_file,
                                         match_sfh_file=match_sfh_file)
-    
+
     #data_table(targets)
     #narratio_table(targets, cmd_inputs, table_file=galaxy_table)
     #chi2_table(targets)    '''
@@ -2438,4 +2437,4 @@ if __name__ == '__main__':
     simulation_from_beginning(targets, ['cmd_input_CAF09_S_NOV13.dat',
                                         'cmd_input_CAF09_S_NOV13eta0.dat',
                                         'cmd_input_CAF09_S_OCT13.dat'],
-                              50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False, dry_run=False)
+                              50, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False, dry_run=False, multithread=False)

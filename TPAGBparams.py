@@ -8,7 +8,7 @@ else:
     if 'Linux' in os.uname():
         # linux laptop
         research_path = '/home/phil/research/'
-        if os.uname()[1] == 'rosen':
+        if os.uname()[1] == 'andromeda':
             # unipd
             research_path = '/home/rosenfield/research/'
     else:
