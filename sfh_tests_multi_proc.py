@@ -818,7 +818,7 @@ class FileIO(object):
         #self.sgal = sgal
         return
 
-    def shift_mags(self, by_stage=True, opt_inds=None, ir_inds=None):
+    def shift_mags(self, opt_inds=None, ir_inds=None):
         '''shift mags to they agree with opt trgb'''
         opt_mag = self.sgal.data.get_col('F814W')
         ir_mag = self.sgal.data.get_col('F160W')
@@ -829,36 +829,25 @@ class FileIO(object):
             ir_inds = np.arange(len(ir_mag))
 
 
-        if by_stage is True:
-            # Threshold is set at 100 rgb stars in a bin.
+        # Threshold is set at 100 rgb stars in a bin.
             rgb_thresh = 20
 
-            self.sgal.all_stages('RGB')
-            rgb_inds = np.intersect1d(self.sgal.irgb, opt_inds)
-            rgb_bins = np.arange(10, 30, 0.1)
-            rgb_hist, _ = np.histogram(opt_mag[rgb_inds], bins=rgb_bins)
-            rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
-            opt_offset = rgb_bins[rgb_bin_edge] - self.opt_trgb
+        self.sgal.all_stages('RGB')
+        rgb_inds = np.intersect1d(self.sgal.irgb, opt_inds)
+        rgb_bins = np.arange(10, 30, 0.1)
+        rgb_hist, _ = np.histogram(opt_mag[rgb_inds], bins=rgb_bins)
+        rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
+        opt_offset = rgb_bins[rgb_bin_edge] - self.opt_trgb
 
-            rgb_inds = np.intersect1d(self.sgal.irgb, ir_inds)
-            rgb_hist, _ = np.histogram(ir_mag[rgb_inds], bins=rgb_bins)
-            rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
-            ir_offset = rgb_bins[rgb_bin_edge] - self.ir_trgb
+        rgb_inds = np.intersect1d(self.sgal.irgb, ir_inds)
+        rgb_hist, _ = np.histogram(ir_mag[rgb_inds], bins=rgb_bins)
+        rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
+        ir_offset = rgb_bins[rgb_bin_edge] - self.ir_trgb
 
-        else:
-            pass
-            # closest star in the trilegal catalog to star on the trgb
-            #trgb_color = angst_data.get_item(self.target, 'mean_color',
-            #                                 extra_key=['%s,%s' % (self.filter1,
-            #                                                       'F814W')])
-            #ind, dist = rsp.math_utils.min_dist2d(trgb_color, self.opt_trgb,
-            #                                      opt_color, opt_mag)
+        # HERE's A HACK FOR NO OFFSETS!!!
+        ir_offset = 0.
+        opt_offset = 0.
 
-            # correction for mag
-            #ir_offset = self.ir_trgb - ir_mag[ind]
-            #opt_offset = self.opt_trgb - opt_mag[ind]
-        #ir_offset = 0.
-        #opt_offset = 0.
         logger.debug('IR OFFSET: %f' % ir_offset)
         logger.debug('OPT OFFSET: %f' % opt_offset)
         self.ir_moffset = ir_offset
@@ -1463,8 +1452,8 @@ class Plotting(object):
             plt.subplots_adjust(right=0.95, left=0.05, wspace=0.1)
 
         # these have like 50 histograms each
-        opt_hists, opt_binss = self.files.load_lf_file(opt_lf_file)
-        ir_hists, ir_binss = self.files.load_lf_file(ir_lf_file)
+        opt_hists, opt_binss = self.files.load_lf_file(self.opt_lf_file)
+        ir_hists, ir_binss = self.files.load_lf_file(self.ir_lf_file)
 
         for i, (hists, binss, limit) in enumerate(zip([opt_hists, ir_hists],
                                                       [opt_binss, ir_binss],
@@ -1477,15 +1466,7 @@ class Plotting(object):
                 else:
                     axs[i].plot(bins, hist, **plt_kw)
 
-        # get the number ratios for the annotations
-        ratio_datas = [self.count_stars_from_hist(opt_hists[i], opt_binss[i],
-                                                  ir_hists[i], ir_binss[i])
-                       for i in range(len(opt_hists))]
-        mean_ratio = {}
-        for key in ratio_datas[0].keys():
-            mean_ratio[key] = np.mean([ratio_datas[i][key]
-                                       for i in range(len(ratio_datas))])
-        return axs, mean_ratio
+        return axs
 
     def count_stars_from_hist(self, opt_hist, opt_bins, ir_hist, ir_bins):
         ratio_data = {}
@@ -1509,6 +1490,51 @@ class Plotting(object):
             ratio_data['n%s_rgb' % band] = nrgb
             ratio_data['n%s_agb'% band] = nagb
         return ratio_data
+
+    def add_narratio_to_plot(self, ax, band, ratio_data):
+        stext_kw = {'color': 'black', 'fontsize': 14, 'ha': 'center'}
+        dtext_kw = {'color': 'darkred', 'fontsize': 14, 'ha': 'center'}
+        nrgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                        self.target, 'n%s_rgb' % band)
+        nagb = rsp.fileIO.item_from_row(self.ags.data, 'target',
+                                        self.target, 'n%s_agb' % band)
+        dratio = nagb / nrgb
+        dratio_err = galaxy_tests.count_uncert_ratio(nagb, nrgb)
+
+        #yval = 1.2  # text yloc found by eye, depends on fontsize
+        stext_kw['transform'] = ax.transAxes
+        dtext_kw['transform'] = ax.transAxes
+        yval = 0.95
+        xagb_val = 0.17
+        xrgb_val = 0.5
+        xratio_val = 0.83
+        xvals = [xagb_val, xrgb_val, xratio_val]
+
+        # simulated nrgb and nagb are the mean values
+        srgb_text = '$\langle N_{\\rm RGB}\\rangle =%i$' % \
+                    np.mean(ratio_data['n%s_rgb' % band])
+        sagb_text = '$\langle N_{\\rm TP-AGB}\\rangle=%i$' % \
+                    np.mean(ratio_data['n%s_agb' % band])
+
+        # one could argue taking the mean isn't the best idea for
+        # the ratio errors.
+        sratio_text = '$f=%.3f\pm%.3f$' % \
+                      (np.mean(ratio_data['%s_ar_ratio' % band]),
+                       np.mean(ratio_data['%s_ar_ratio_err' % band]))
+
+        drgb_text = '$N_{\\rm RGB}=%i$' % nrgb
+        dagb_text = '$N_{\\rm TP-AGB}=%i$' % nagb
+        dratio_text =  '$f = %.3f\pm%.3f$' % (dratio, dratio_err)
+
+        textss = [[sagb_text, srgb_text, sratio_text],
+                 [dagb_text, drgb_text, dratio_text]]
+        kws = [stext_kw, dtext_kw]
+
+        for kw, texts in zip(kws, textss):
+            for xval, text in zip(xvals, texts):
+                ax.text(xval, yval, text, **kw)
+            yval -= .05  # stack the text
+        return ax
 
     def compare_to_gal(self, hist_it_up=False, narratio=True, no_agb=False,
                        add_stage_lfs=None, extra_str='', trilegal_output=None,
@@ -1539,7 +1565,7 @@ class Plotting(object):
         if plot_models is True:
             # plot lfs from simulations (and initialize figure)
             plt_kw = plt_kw or {}
-            (ax1, ax2), ratio_data = \
+            (ax1, ax2) = \
                 self.plot_lf_file(self.opt_lf_file, self.ir_lf_file,
                                   opt_limit=opt_gal.comp50mag2,
                                   ir_limit=ir_gal.comp50mag2, axs=axs,
@@ -1654,19 +1680,19 @@ class Plotting(object):
                          color='darkred', drawstyle='steps-left', lw=2)
 
         # initialize add numbers to the plot
-        if narratio is True:
-            if add_stage_lfs is None or plot_models is True:
-                pass
-                # count stars from the saved file
-                ratio_data = rsp.fileIO.readfile(self.narratio_file,
-                                                 string_column=0)
-            #else:
-            #    # count stars from the loaded histograms
-            #    ratio_data = self.count_stars_from_hist(sopt_hist, sopt_bins,
-            #                                            sir_hist, sir_bins)
-            stext_kw = {'color': 'black', 'fontsize': 14, 'ha': 'center'}
-            dtext_kw = {'color': dplot_kw['color'], 'fontsize': 14,
-                        'ha': 'center'}
+        if narratio is True and plot_models is True:
+            # count stars from the saved file
+            ratio_data = rsp.fileIO.readfile(self.narratio_file,
+                                             string_column=0)
+            # get the number ratios for the annotations
+
+            mean_ratio = {}
+            for key in ratio_data.dtype.names:
+                if key == 'target':
+                    continue
+                mean_ratio[key] = np.mean([ratio_data[i][key]
+                                           for i in range(len(ratio_data))])
+
         for i, (ax, gal, trgb_err, band) in enumerate(zip([ax1, ax2],
                                                       [opt_gal, ir_gal],
                                                       [self.opt_trgb_err,
@@ -1706,46 +1732,7 @@ class Plotting(object):
             if narratio is True:
                 # need to load the data nrgb and nagb, calculate the ratio
                 # and error.
-                nrgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
-                                                self.target, 'n%s_rgb' % band)
-                nagb = rsp.fileIO.item_from_row(self.ags.data, 'target',
-                                                self.target, 'n%s_agb' % band)
-                dratio = nagb / nrgb
-                dratio_err = galaxy_tests.count_uncert_ratio(nagb, nrgb)
-
-                #yval = 1.2  # text yloc found by eye, depends on fontsize
-                stext_kw['transform'] = ax.transAxes
-                dtext_kw['transform'] = ax.transAxes
-                yval = 0.95
-                xagb_val = 0.17
-                xrgb_val = 0.5
-                xratio_val = 0.83
-                xvals = [xagb_val, xrgb_val, xratio_val]
-
-                # simulated nrgb and nagb are the mean values
-                srgb_text = '$\langle N_{\\rm RGB}\\rangle =%i$' % \
-                            np.mean(ratio_data['n%s_rgb' % band])
-                sagb_text = '$\langle N_{\\rm TP-AGB}\\rangle=%i$' % \
-                            np.mean(ratio_data['n%s_agb' % band])
-
-                # one could argue taking the mean isn't the best idea for
-                # the ratio errors.
-                sratio_text = '$f=%.3f\pm%.3f$' % \
-                              (np.mean(ratio_data['%s_ar_ratio' % band]),
-                               np.mean(ratio_data['%s_ar_ratio_err' % band]))
-
-                drgb_text = '$N_{\\rm RGB}=%i$' % nrgb
-                dagb_text = '$N_{\\rm TP-AGB}=%i$' % nagb
-                dratio_text =  '$f = %.3f\pm%.3f$' % (dratio, dratio_err)
-
-                textss = [[sagb_text, srgb_text, sratio_text],
-                         [dagb_text, drgb_text, dratio_text]]
-                kws = [stext_kw, dtext_kw]
-
-                for kw, texts in zip(kws, textss):
-                    for xval, text in zip(xvals, texts):
-                        ax.text(xval, yval, text, **kw)
-                    yval -= .05  # stack the text
+                self.add_narratio_to_plot(ax, band, mean_ratio)
 
         ax1.set_ylabel('$\#$', fontsize=20)
         plt.tick_params(labelsize=16)
