@@ -2,11 +2,11 @@ import sfh_tests
 import os
 import numpy as np
 import matplotlib.pylab as plt
-
+from TPAGBparams import snap_src
 
 def load_plot_limits(filename='default'):
     if filename == 'default':
-        filename = '/home/phil/research/TP-AGBcalib/SNAP/tables/cmd_plot_limits.dat'
+        filename = snap_src + '/tables/cmd_plot_limits.dat'
     dtype = [('target', '|S16'),
              ('opt_cmdmin', '<f8'),
              ('opt_cmdmax', '<f8'),
@@ -40,7 +40,7 @@ def plot_lf_with_stages(target, trilegal_output):
     ax2.set_xlim(lims['target'==target]['ir_xmin'], lims['target'==target]['ir_xmax'])
     ax1.set_ylim(lims['target'==target]['opt_ymin'], lims['target'==target]['opt_ymax'])
     ax2.set_ylim(lims['target'==target]['ir_ymin'], lims['target'==target]['ir_ymax'])
-    
+
     return ax1, ax2
 
 
@@ -77,7 +77,7 @@ def plot_lfs():
             ir_lf_file =  os.path.join(outfile_loc,
                                        '%s_%s_ir_lf.dat' %
                                        (cmd_input, target.lower()))
-        
+
             ax1, ax2 = pl.compare_to_gal(target, opt_lf_file=opt_lf_file,
                                          ir_lf_file=ir_lf_file,
                                          hist_it_up=False, outfile_loc=outfile_loc,
@@ -89,7 +89,7 @@ def plot_lfs():
             lab = cmd_input.split('_')[-1]
             [ax.plot([0,0], [0,0], lw=3, color=cols[i], label='$%s$' % lab) for ax in [ax1, ax2]]
             row = lims[lims['target'] == target]
-            
+
             ax1.set_xlim(row['opt_xmin'], row['opt_xmax'])
             ax2.set_xlim(row['ir_xmin'], row['ir_xmax'])
             ax1.set_ylim(row['opt_ymin'], row['opt_ymax'])
