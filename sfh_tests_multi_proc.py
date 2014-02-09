@@ -15,6 +15,7 @@ import ResolvedStellarPops as rsp
 import ResolvedStellarPops.convertz as convertz
 from TPAGBparams import table_src, snap_src
 import galaxy_tests
+import model_plots
 
 angst_data = rsp.angst_tables.AngstTables()
 import itertools
@@ -1397,7 +1398,7 @@ class Plotting(object):
         plt_kw = plt_kw or {}
         plt_kw = dict({'linestyle': 'steps-mid', 'color': 'black',
                        'alpha': 0.2}.items() + plt_kw.items())
-        label = '$%s$' % os.path.split(opt_lf_file)[1].split('_')[2].upper()
+        label = '%s' % model_plots.translate_model_name(os.path.split(opt_lf_file)[1].split('_')[2].upper())
         plt_kw_lab = dict(plt_kw.items() + {'label': label}.items())
         if axs is None:
             fig, (axs) = plt.subplots(ncols=2, figsize=(12, 6))
@@ -1655,8 +1656,7 @@ class Plotting(object):
             for key in ratio_data.dtype.names:
                 if key == 'target':
                     continue
-                mean_ratio[key] = np.mean([ratio_data[i][key]
-                                           for i in range(len(ratio_data))])
+                mean_ratio[key] = np.mean(ratio_data[:][key])
 
         for i, (ax, gal, trgb_err, band) in enumerate(zip([ax1, ax2],
                                                       [opt_gal, ir_gal],
@@ -1666,7 +1666,7 @@ class Plotting(object):
             ax.set_yscale('log')
             ax.set_ylim(3, ax.get_ylim()[1])
             # set the max to be the brightest of the data .. not great.
-            index = list(plims['target']).index(opt_gal.target)
+            index = list(plims['target']).index(opt_gal.target.replace('4-deep', '4'))
             xmax = plims[index]['%s_cmdmin' % band]
             ax.set_xlim(xmax, gal.comp50mag2)
 
@@ -1703,7 +1703,7 @@ class Plotting(object):
         ax1.set_ylabel('$\#$', fontsize=20)
         plt.tick_params(labelsize=16)
         outfile = '%s%s_lfs.png' % (self.opt_lf_file.split('opt_lf')[0][:-1],
-                                   extra_str)
+                                    extra_str)
         plt.savefig(outfile, dpi=150)
         logger.info('wrote %s' % outfile)
         return ax1, ax2

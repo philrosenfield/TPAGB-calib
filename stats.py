@@ -9,6 +9,71 @@ from TPAGBparams import snap_src
 import logging
 logger = logging.getLogger()
 angst_data = rsp.angst_tables.AngstTables()
+import re
+import model_plots
+
+def contamination_files(filenames):
+    opt_eagb_contam = np.array([])
+    opt_rheb_contam = np.array([])
+    ir_eagb_contam = np.array([])
+    ir_rheb_contam = np.array([])
+    opt_ms_contam = np.array([])
+    opt_bheb_contam = np.array([])
+    ir_ms_contam = np.array([])
+    ir_bheb_contam = np.array([])
+
+    if type(filenames) == str:
+        filenames = list(filenames)
+    for filename in filenames:
+        if 'ngc404' in filename:
+            continue
+
+        with open(filename, 'r') as fhandle:
+            lines = fhandle.readlines()
+        names = 'MS RGB HEB BHEB RHEB EAGB TPAGB Total '.split()
+        # rc contamination 12::13
+        rgb_opt = [l for l  in lines if l.startswith('rgb opt')]
+        rgb_data = zip(*[t.strip().split()[2:] for t in rgb_opt])
+        rgb_data = np.array(rgb_data, dtype=float)
+        eagb_in_rgb = rgb_data[5]/rgb_data[7]
+        rheb_in_rgb = rgb_data[4]/rgb_data[7]
+        opt_eagb_contam = np.append(opt_eagb_contam, np.max(eagb_in_rgb))
+        opt_rheb_contam = np.append(opt_rheb_contam, np.max(rheb_in_rgb))
+        #print filename, 'opt', np.max(eagb_in_rgb), np.max(rheb_in_rgb)
+
+        opt =  [l for l  in lines if l.startswith('rgb opt') or l.startswith('agb opt')]
+        data = zip(*[t.strip().split()[2:] for t in opt])
+        data = np.array(data, dtype=float)
+        ms_in_opt = data[0]/data[7]
+        bheb_in_opt = data[3]/data[7]
+        opt_bheb_contam = np.append(opt_bheb_contam, np.max(bheb_in_opt))
+        opt_ms_contam = np.append(opt_ms_contam, np.max(ms_in_opt))
+        print filename, 'opt', np.max(ms_in_opt), np.max(bheb_in_opt)
+
+        rgb_ir = [l for l  in lines if l.startswith('rgb ir')]
+        rgb_data = zip(*[t.strip().split()[2:] for t in rgb_ir])
+        rgb_data = np.array(rgb_data, dtype=float)
+        eagb_in_rgb = rgb_data[5]/rgb_data[7]
+        rheb_in_rgb = rgb_data[4]/rgb_data[7]
+        ir_eagb_contam = np.append(ir_eagb_contam, np.max(eagb_in_rgb))
+        ir_rheb_contam = np.append(ir_rheb_contam, np.max(rheb_in_rgb))
+        #print filename, 'ir', np.max(eagb_in_rgb), np.max(rheb_in_rgb)
+
+        ir =  [l for l  in lines if l.startswith('rgb ir') or l.startswith('agb ir')]
+        data = zip(*[t.strip().split()[2:] for t in ir])
+        data = np.array(data, dtype=float)
+        ms_in_ir = data[0]/data[7]
+        bheb_in_ir = data[3]/data[7]
+        #print filename, 'ir', np.max(eagb_in_rgb), np.max(rheb_in_rgb)
+
+        ir_bheb_contam = np.append(ir_bheb_contam, np.max(bheb_in_ir))
+        ir_ms_contam = np.append(ir_ms_contam, np.max(ms_in_ir))
+
+    print 'opt eagb, rheb', np.max(opt_eagb_contam), np.max(opt_rheb_contam)
+    print 'ir eagb, rheb', np.max(ir_eagb_contam), np.max(ir_rheb_contam)
+    print 'opt bheb, ms', np.max(opt_bheb_contam), np.max(opt_ms_contam)
+    print 'ir bheb, ms', np.max(ir_bheb_contam), np.max(ir_ms_contam)
+
 
 class StatisticalComparisons(object):
     def __init__(self, cmd_input_file, target, outfile_loc='default',
@@ -114,6 +179,7 @@ class StatisticalComparisons(object):
         chi2 = np.sum(chiw)/float(len(oinds)-1)#, len(oinds)
         pval = 1 - stats.chi2.cdf(chi2, len(oinds)-1)
         return chi2, pval
+
 
 def result2dict(result_files, search=None):
     res_dict = {}
@@ -259,7 +325,7 @@ def narratio_table(narratio_files, table_file='default'):
         row = targets.index(target)
         # column 0 is target, columns 1, 3, 5 have ratios
         column = (agb_mods.index(agb_mod) * 2) + 1
-        print row, column
+        #print row, column
         # target
         table[row, 0] = '%s &' % target.upper()
 
@@ -318,10 +384,10 @@ def narratio_table(narratio_files, table_file='default'):
             derr = data_total[j+1]
             pct_diff = (ratio / dratio)
             pct_diff_err = np.abs(pct_diff * (err/ratio + derr/dratio))
-            table[-1, column] = f % (pct_diff, pct_diff_err)
-            table[-1, 0] = 'Total & '
+            #table[-1, column] = f % (pct_diff, pct_diff_err)
+            #table[-1, 0] = 'Total & '
     # mean
-    '''
+
     for i, agb_mod in enumerate(agb_mods):
         for table in [ir_table, opt_table]:
             f = fmt
@@ -339,7 +405,7 @@ def narratio_table(narratio_files, table_file='default'):
                     for l in table[:, column][:-1]], dtype=float), axis=0)
             table[-1, column] = f % (val, err)
             table[-1, 0] = 'Mean & '
-    '''
+
     # write the file
     ratio_str = '$\\frac{N_{\\rm TP-AGB}}{N_{\\rm RGB}}$'
     header = 'Target & '
@@ -544,7 +610,7 @@ def chi2plot2(model_dict, outfile_loc=None):
     sym = ['o', 'o', '*']
     mfc = [cols[0], 'None', 'None']
     [axs[0, 0].plot(-99, 99, sym[j], mfc=mfc[j], ms=12, alpha=0.6, color=cols[j],
-             label='$%s$' % agb_mods[j].split('_')[-1])
+             label='$%s$' % model_plots.translate_model_name(agb_mods[j].split('_')[-1]))
      for j in range(len(agb_mods))]
     axs[0, 0].legend(frameon=False, loc=0, numpoints=1)
     [ax.annotate(r'$\rm{TP\!-\!AGB\ Only}$', (0.01, 0.01), fontsize=12, xycoords='axes fraction')
