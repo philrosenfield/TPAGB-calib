@@ -1,7 +1,7 @@
 from IPython import parallel
 import sfh_tests_multi_proc
-import itertools
 import time
+import numpy as np
 
 def caller(vSFH, vsfh_kws):
     return vSFH.vary_the_SFH(**vsfh_kws)
