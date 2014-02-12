@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import sfh_tests_multi_proc
 import ResolvedStellarPops as rsp
 import stats
