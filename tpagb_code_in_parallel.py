@@ -12,8 +12,8 @@ clients.block = False
 clients[:].execute('cd ~/research/TP-AGBcalib/code/TPAGB-calib/')
 clients[:].execute('import sfh_tests_multi_proc')
 
-reload(sfh_tests_multi_proc) 
-clients[:].execute('reload(sfh_tests_multi_proc)')
+#reload(sfh_tests_multi_proc) 
+#clients[:].execute('reload(sfh_tests_multi_proc)')
 
 #targets = ['scl-de1', 'ddo71', 'hs117', 'kkh37', 'ngc2976-deep', 'ddo78']
 #targets = ['ngc404']
