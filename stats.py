@@ -9,7 +9,6 @@ from TPAGBparams import snap_src
 import logging
 logger = logging.getLogger()
 angst_data = rsp.angst_tables.AngstTables()
-import re
 import model_plots
 
 def contamination_files(filenames):
@@ -497,71 +496,6 @@ def chi2plot(model_dict, outfile_loc=None):
     agb_mods = list(np.unique(['_'.join(k.split('_')[1:4])
                                for k in model_dict.keys()]))
 
-    opt_filter = '$F814W$'
-    ir_filter = '$F160W$'
-    agb_sym = 's'
-    tot_sym = 'o'
-    opt_offset = -0.5
-    ir_offset = 0.5
-    cols = ['black', 'navy', 'darkred', 'darkgreen', 'purple', 'orange']
-
-    fig, axs = plt.subplots(ncols=3)
-    ymaxs = np.zeros(len(axs)) - 1.
-
-    for key, val in model_dict.items():
-        # color = target
-        # symbol = agb or total
-        if 'std' in key:
-            continue
-        target = key.split('_')[0]
-        agb_mod = '_'.join(key.split('_')[1:4])
-        ax_num = agb_mods.index(agb_mod)
-        ax = axs[ax_num]
-        col = cols[targets.index(target)]
-        sym = tot_sym
-        if '_agb' in key:
-            sym = agb_sym
-        offset = opt_offset
-        if 'ir' in key:
-            offset = ir_offset
-        ax.plot(offset, val, sym, color=col, ms=20, alpha=0.6)
-        ymaxs[ax_num] = np.max([val, ymaxs[ax_num]])
-
-    axs[0].annotate('$\chi^2$', (.05, .5), fontsize=20, rotation='vertical',
-                    xycoords='figure fraction')
-
-    for i, ax in enumerate(axs):
-        ax.set_ylim(0, ymaxs[i])
-        ann_kw = {'ha': 'center', 'va': 'bottom', 'fontsize': 16}
-        ax.annotate(opt_filter, (opt_offset, ymaxs[i]), **ann_kw)
-        ax.annotate(ir_filter, (ir_offset, ymaxs[i]), **ann_kw)
-        ax.set_xlabel('$%s$' % agb_mods[i].split('_')[-1].upper(),
-                      fontsize=20)
-        ax.set_xlim(-1, 1)
-        ax.tick_params(labelsize=20, bottom='off', top='off', right='off',
-                       labelbottom='off')
-
-    # fake the legend
-    ax.plot(-99, -99, agb_sym, ms=12, alpha=0.6, color='black',
-            label='$TP\!-\!AGB\ Only$')
-    [ax.plot(-99, 99, tot_sym, ms=12, alpha=0.6, color=cols[j],
-             label='$%s$' % targets[j].upper().replace('-DEEP', ''))
-     for j in range(len(targets))]
-    axs[-1].legend(loc='upper right', numpoints=1, bbox_to_anchor=(1.3, .95),
-                   frameon=False)
-
-    if outfile_loc is None:
-        outfile_loc = os.getcwd()
-    outfile = os.path.join(outfile_loc, 'chi2_plot.png')
-    plt.savefig(outfile, dpi=150)
-    return axs
-
-
-def chi2plot2(model_dict, outfile_loc=None):
-    targets = list(np.unique([k.split('_')[0] for k in model_dict.keys()]))
-    agb_mods = list(np.unique(['_'.join(k.split('_')[1:4])
-                               for k in model_dict.keys()]))
-
     cols = ['darkgreen', 'navy', 'darkred']
 
     fig, axs = plt.subplots(ncols=2, nrows=2, sharex=True, sharey=False,
@@ -577,7 +511,7 @@ def chi2plot2(model_dict, outfile_loc=None):
         col = cols[agb_mods.index(agb_mod)]
         sym = 'o'
         if not agb_mod.endswith('nov13'):
-            mfc='None'
+            mfc='white'
         else:
             mfc = col
         if not 'nov13' in agb_mod:
@@ -590,8 +524,8 @@ def chi2plot2(model_dict, outfile_loc=None):
             ax_col = 1
         ax = axs[ax_row][ax_col]
 
-        ax.errorbar(offsets[ioff], val, yerr=errval, marker=sym, color=col,
-                    mfc=mfc, ecolor='black')
+        ax.errorbar(offsets[ioff], val, yerr=errval, marker=sym, color=col, ms=12,
+                    mfc=mfc, ecolor='black', mew=1.5, elinewidth=2)
         ax.set_ylabel('$\chi^2$', fontsize=20)
 
         ax.xaxis.set_ticks(offsets)
@@ -609,58 +543,33 @@ def chi2plot2(model_dict, outfile_loc=None):
     ax.set_xlim(xlims[0]-off/2, xlims[1]+off/2)
     sym = ['o', 'o', '*']
     mfc = [cols[0], 'None', 'None']
-    [axs[0, 0].plot(-99, 99, sym[j], mfc=mfc[j], ms=12, alpha=0.6, color=cols[j],
-             label='$%s$' % model_plots.translate_model_name(agb_mods[j].split('_')[-1]))
+    [axs[0, 0].plot(-99, 99, sym[j], mfc=mfc[j], ms=12, mew=1.5, color=cols[j],
+     label='$%s$' % model_plots.translate_model_name(agb_mods[j].split('_')[-1]))
      for j in range(len(agb_mods))]
-    axs[0, 0].legend(frameon=False, loc=0, numpoints=1)
-    [ax.annotate(r'$\rm{TP\!-\!AGB\ Only}$', (0.01, 0.01), fontsize=12, xycoords='axes fraction')
-     for ax in axs[0, :]]
+    axs[0, 0].legend(loc=0, numpoints=1)
+    [ax.annotate(r'$\rm{TP\!-\!AGB\ Only}$', (0.02, 0.02), fontsize=16,
+                 xycoords='axes fraction') for ax in axs[0, :]]
     if outfile_loc is None:
         outfile_loc = os.getcwd()
     outfile = os.path.join(outfile_loc, 'chi2_plot.png')
+    plt.tick_params(labelsize=16)
     plt.savefig(outfile, dpi=150)
+
     return axs
 
 
-'''
-I like the plot more.
-def chi2_table(targets, cmd_input_files, table_file='default', outfile_loc='default'):
+def run_match_stats(targets='ancients'):
     targets = galaxy_tests.load_targets(targets)
-    fmt = '$%.3f\\pm%.3f$ & '
-    bands = ['opt', 'ir']
-    extras = ['', '_agb']
-    model_dicts = []
-    agb_mod = []
-    for i in range(len(cmd_input_files)):
-        write_chi2_table(targets, cmd_input_files, table_file='default', outfile_loc=outfile_loc)
-
-        model_dict = result2dict(targets)
-
-        header = 'Target & '
-        for extra in extras:
-            for band in bands:
-                band += extra
-                agb_mod_short = agb_mod.split('_')[-1]
-                header += '\\chi^2 %s %s & ' % (agb_mod_short, band)
-        header = header[:-2] + '\\\\'
-        print header
-        for target in targets:
-            line = '%s & ' % target.upper()
-            for extra in extras:
-                for band in bands:
-                    band += extra
-                    line += fmt % (model_dict['%s_%s_mean' % (target, band)],
-                                   model_dict['%s_%s_std' % (target, band)])
-            print line
-        model_dicts.append(model_dict)
-
-        line = 'Mean $\\chi^2$ & '
-        for extra in extras:
-            for band in bands:
-                band += extra
-                line += fmt % (model_dict['%s_%s_mean' % (agb_mod, band)],
-                               model_dict['%s_%s_std' % (agb_mod, band)])
-        print line
-    return model_dicts
-
-'''
+    hmc_file_loc = os.path.join(snap_src, 'data', 'sfh_parsec')
+    cmd_file_loc = os.path.join(hmc_file_loc, 'cmd_files')
+    for target in targets:
+        target = target.lower()
+        try:
+            target = target.replace('-deep', '')
+            hmc_file, = rsp.fileIO.get_files(hmc_file_loc, '%s*sfh' % target)
+            cmd_file, = rsp.fileIO.get_files(cmd_file_loc, '%s*cmd' % target)
+        except:
+            print target, 'cmd file not found.'
+            continue
+        rsp.match_utils.match_stats(hmc_file, cmd_file)
+    return

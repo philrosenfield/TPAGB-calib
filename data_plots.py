@@ -1,12 +1,10 @@
 import ResolvedStellarPops as rsp
 import numpy as np
 import galaxy_tests
-import sfh_tests
+import sfh_tests_multi_proc
 import os
-import fileIO
 import matplotlib.pyplot as plt
 from TPAGBparams import research_path, snap_src
-from astroML.stats import binned_statistic_2d
 import matplotlib.gridspec as gridspec
 import brewer2mpl
 from matplotlib.colors import LogNorm
@@ -108,33 +106,24 @@ def plot_cum_sum_sfr(targets, file_origin='match-hmc'):
     fig, ax = plt.subplots()
     ngals = len(targets)
     bmap = brewer2mpl.get_map('Spectral', 'Diverging', ngals)
-    cols = bmap.mpl_colors
-    cols = ['#8ca8ba', '#0a6277', '#6a0c0c', '#bc741e', '#448833', '#88994b',
-            '#89360f', '#b85121', '#aa4400']
-
+    cols = ['#d73027', '#fc8d59', '#fee090', '#e0f3f8', '#91bfdb', '#4575b4']
     for i, target in enumerate(targets):
         match_sfh_file, = rsp.fileIO.get_files(match_sfh_src, '%s*sfh' % target.lower().replace('-deep', ''))
-        sfh = sfh_tests.StarFormationHistories(match_sfh_file, file_origin=file_origin)
+        sfh = sfh_tests_multi_proc.StarFormationHistories(match_sfh_file, file_origin=file_origin)
         age = 10**((sfh.data.lagef + sfh.data.lagei)/2. - 9)
         csfh = np.append(sfh.data.csfr, 0)
+        ax.plot(age, csfh[1:], color='k', lw=4)
         ax.plot(age, csfh[1:], color=cols[i], lw=3,
-                label='$%s$' % target.upper().replace('-','\!-\!'))
+                label='$%s$' % target.upper().replace('-DEEP', '').replace('-','\!-\!'))
 
     #ax.set_xscale('log')
-    ax.set_xlim(13.33, 0)
+    ax.set_xlim(13.4, -0.01)
+    ax.set_ylim(-0.01, 1.01)
     ax.set_xlabel('$\\rm{Time\ (Gyr)}$', fontsize=20)
     ax.set_ylabel('$\\rm{Culmulative\ SF}$', fontsize=20)
     plt.legend(loc=0, frameon=False)
     plt.tick_params(labelsize=16)
     plt.savefig('csfr_ancients.png', dpi=150)
-
-
-def plot_chi2_tests():
-    gs =  gridspec.GridSpec(8, 1, width_ratios=[1, 3])
-    for ax in gs:
-        ax.set_xlabel('%s' % gal.target.upper().replace('-','\!-\!'))
-        nmodels = len()
-        ax.plot(1, )
 
 
 def plot_cmd_lf(target, band):
@@ -171,7 +160,7 @@ def plot_cmd_lf(target, band):
     #ax2.set_ylim()
 
     ax1.set_xlim(xmin, ax1.get_xlim()[1])
-    gal.decorate_cmd(ax=ax1, trgb=True, cmd_errors_kw=cmd_errors_kw)
+    gal.decorate_cmd(ax=ax1, trgb=True, cmd_errors_kw=cmd_errors_kw, text_kw={'distance_av': False})
     err = np.sqrt(hist)
     ax2.set_xscale('log')
     ax2.errorbar(hist, bins[:-1], xerr=err, color='black', drawstyle='steps-mid')
@@ -190,22 +179,19 @@ def plot_cmd_lf(target, band):
     outfile = os.path.join(snap_src, 'plots', outfname)
     fig.savefig(outfile, dpi=150)
 
+
 def add_color_cuts(filter1, ax=None, vline_kw=None):
     vline_kw = vline_kw or {}
     if ax is None:
         fig, ax = plt.subplots()
-    color_cut = sfh_tests.get_color_cut(filter1)
+    color_cut = sfh_tests_multi_proc.get_color_cut(filter1)
     ax.vlines(color_cut, *ax.get_ylim(), **vline_kw)
     return ax
-
-def add_completeness(target, ax=None, vline_kw=None):
-    comp90 = sfh_tests.read_completeness_table()
-    ind, = np.nonzero(comp90['target'] == target.upper())
 
 
 if __name__ == '__main__':
     targets = galaxy_tests.load_targets('ancients')
-    #plot_cum_sum_sfr(targets)
+    plot_cum_sum_sfr(targets)
     [[plot_cmd_lf(target, band) for target in targets] for band in ['opt', 'ir']]
 
 
@@ -274,6 +260,7 @@ def bolometric_correction_plot(filter1=None, filter2=None, tp_mass=1., logg_val=
     ax.set_ylabel('$BC$', fontsize=20)
     #ax.set_xscale('log')
     return ax
+
 
 def color_teff_plot(ax=None, filter_combos=None, logg_val=2, tracks_base=None,
                     prefix=None, photsys='wfc3snap', color_em=False):

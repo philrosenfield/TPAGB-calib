@@ -21,7 +21,6 @@ angst_data = rsp.angst_tables.AngstTables()
 import itertools
 import tables
 
-from model_plots import load_plot_limits
 
 def add_file_logger(logdir):
     # setup logger
@@ -113,8 +112,10 @@ def setup_files(cmd_input_file, target, outfile_loc='default', extra_str='',
 
 
 def load_default_ancient_galaxies(table_file='default'):
-    if table_file is 'default':
+    if table_file == 'default':
         table_file = os.path.join(table_src, 'ancients_0.1_0.2_galaxies.dat')
+    elif table_file == 'comp_corr':
+        table_file = os.path.join(table_src, 'ancients_0.1_0.2_comp_corr_galaxies.dat')
     else:
         logger.info('reading from table %s' % table_file)
     # Reads in the data as well as the mag offsets and factor in the
@@ -219,7 +220,7 @@ def prepare_vsfh_run(targets, cmd_input_files, nsfhs, mk_tri_sfh_kw=None,
                         + vary_sfh_kw.items())
 
     vsfh_kw = vsfh_kw or {}
-    vsfh_kw = dict({'file_origin': 'match-grid', 'table_file': table_file,
+    vsfh_kw = dict({'file_origin': 'match-hmc', 'table_file': table_file,
                     'outfile_loc': 'default', 'nsfhs': nsfhs}.items() \
                    + vsfh_kw.items())
 
@@ -236,7 +237,7 @@ def prepare_vsfh_run(targets, cmd_input_files, nsfhs, mk_tri_sfh_kw=None,
 
 def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
                     galaxy_information=None, factor=2., comp_frac=False,
-                    indices=False):
+                    indices=False, completeness_correction=False):
     '''
     Count the number of rgb and agb stars (in F814W or F160W)
 
@@ -289,12 +290,14 @@ def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
         trgb = angst_data.get_item(target, 'mTRGB', extra_key)
         trgb_err = angst_data.get_item(target, 'mTRGB_err',
                                        extra_key=extra_key)
+        band = 'opt'
     if gal.filter2 == 'F160W':
         trgb = rsp.fileIO.item_from_row(angst_data.snap_tab3, 'target',
                                         target.upper(), 'mTRGB_F160W')
         trgb_err = rsp.fileIO.item_from_row(angst_data.snap_tab3,
                                             'target', target.upper(),
                                             'mTRGB_F160W_err')
+        band = 'ir'
 
     if exclude_region == 'default':
         exclude_region = trgb_err * factor
@@ -311,25 +314,49 @@ def number_of_stars(gal=None, exclude_region='default', mag_below_trgb=2.,
         offset = mag_below_trgb
     # rgb will go from mag_below_trgb to trgb + exclude_region
     color_cut, = np.nonzero((mag1-mag2) > get_color_cut(filter1))
+
     nrgb = rsp.math_utils.between(mag2[color_cut], offset,
-                                      trgb + exclude_region)
+                                  trgb + exclude_region)
 
     # agb will go from trgb - exclude_region to very bright
     nagb = rsp.math_utils.between(mag2[color_cut], trgb - exclude_region, -99.)
+    if completeness_correction is True:
+        ast_dict = tables.read_completeness_corrections(filename='high_res_completeness_corrections.dat')
+        key = '%s_bins' % band
+
+        rgb_low = offset
+        rgb_high = trgb + exclude_region
+        irgb_low = np.argmin(abs(ast_dict[target][key] - rgb_low))
+        irgb_high = np.argmin(abs(ast_dict[target][key] - rgb_high))
+
+        agb_low = trgb - exclude_region
+        iagb_low = np.argmin(abs(ast_dict[target][key] - agb_low))
+        iagb_high = 0
+
+        hist, bins = np.histogram(gal.mag2, bins=ast_dict[target][key])
+        check = np.sum(hist[irgb_high:irgb_low])
+        if check != len(nrgb):
+            print 'hist method is off for %s rgb by %i' % (target, check-len(nrgb))
+        check = np.sum(hist[iagb_high:iagb_low])
+        if check != len(nagb):
+            print 'hist method is off for %s agb by %i' % (target, check-len(nagb))
+        corr_hist = hist * 1./ast_dict[target]['%s_correction' % band][:-1]
+        nrgb = np.round(np.sum(corr_hist[irgb_high:irgb_low]))
+        nagb = np.round(np.sum(corr_hist[iagb_high:iagb_low]))
 
     # add trgb_err to galaxy instance, could also add factor..
     if gal is not None:
         gal.trgb_err = trgb_err
 
     exclude_dict = {'trgb': trgb, 'trgb_err': trgb_err, 'factor': factor}
-    if indices is False:
+    if indices is False and completeness_correction is False:
         nrgb = len(nrgb)
         nagb = len(nagb)
 
     return nrgb, nagb, exclude_dict
 
 
-def convert_match_to_trilegal_sfh(sfr_dir, fileorigin='match',
+def convert_match_to_trilegal_sfh(sfr_dir, fileorigin='match-hmc',
                                   search_str='*.sfh',
                                   make_trilegal_sfh_kw=None):
     '''
@@ -338,7 +365,7 @@ def convert_match_to_trilegal_sfh(sfr_dir, fileorigin='match',
 
     ARGS:
     sfr_dir     base location of match sfr files
-    fileorigin  'match' sfr fileorigin, match or match-grid
+    fileorigin  'match' sfr fileorigin, match, match-grid, match-hmc
     search_str  '*.sfh' extenstion of match sfh file
     make_trilegal_sfh_kw    {'random_sfr': False, 'random_z': False} kwargs to
                             send to make_trilegal_sfh
@@ -372,7 +399,8 @@ class AncientGalaxies(object):
         pass
 
     def write_trgb_table(self, targets='ancients', mag_below_trgb=[2, 1.5],
-                         exclude_region='default', comp_table='default'):
+                         exclude_region='default', comp_table='default',
+                         completeness_correction=False):
         '''
         write the trgb, trgb_err, and the number of stars (opt, ir) rgb and agb
         '''
@@ -381,6 +409,8 @@ class AncientGalaxies(object):
                 ex_str = '_'.join((str(f) for f in exclude_region))
             else:
                 ex_str = str(exclude_region)
+            if completeness_correction is True:
+                ex_str += '_comp_corr'
             tstring = '%s_%s' % (targets, ex_str)
             targets = galaxy_tests.ancients()
         else:
@@ -417,7 +447,9 @@ class AncientGalaxies(object):
 
                 nrgb, nagb, ex_dict = number_of_stars(gal, comp_frac=comp_frac,
                                                       mag_below_trgb=mag_below_trgb,
-                                                      exclude_region=exreg)
+                                                      exclude_region=exreg,
+                                                      completeness_correction=completeness_correction)
+
                 mag_max = gal.mag2.max()
                 mag_min = gal.mag2.min()
                 nbins = np.sqrt(len(gal.mag2))
@@ -674,7 +706,8 @@ class StarFormationHistories(object):
         return val_arrs
 
     def plot_sfh(self, attr_str, ax=None, outfile=None, yscale='linear',
-                 plot_random_arrays_kw=None, errorbar_kw=None):
+                 plot_random_arrays_kw=None, errorbar_kw=None,
+                 twoplots=False):
         '''
         plot the data from the sfh file.
         '''
@@ -702,13 +735,20 @@ class StarFormationHistories(object):
         elif 'fe' in attr_str:
             ylab = '${\\rm [Fe/H]}$'
 
-        if ax is None:
-            fig, axs = plt.subplots(figsize=(8, 8), nrows=2, sharex=True)
+        # mask 0 values so there is a vertical line on the plot
+        val_arr[val_arr==0] = 1e-15
+        errm_arr[errm_arr==0] = 1e-15
+        errp_arr[errp_arr==0] = 1e-15
 
+        if twoplots is True:
+            fig, axs = plt.subplots(figsize=(8, 8), nrows=2, sharex=True)
+        else:
+            fig, ax = plt.subplots(figsize=(8, 5))
+            axs = [ax]
         for ax in axs:
             if not 'm' in attr_str:
                 ax.errorbar(self.data.lagei, val_arr, [errm_arr, errp_arr],
-                            **errorbar_kw)
+                            zorder=100, **errorbar_kw)
 
             if len(plot_random_arrays_kw) > 0:
                 # if loading the random arrays from files, need to give the
@@ -717,15 +757,26 @@ class StarFormationHistories(object):
                     plot_random_arrays_kw['attr_str'] = attr_str
                 self.plot_random_arrays(ax=ax, **plot_random_arrays_kw)
             ax.set_ylabel(ylab, fontsize=20)
-            ax.set_xlim(8, 10.13)
+            ax.set_xlim(7.9, 10.13)
 
-        axs[1].set_xlabel('$\log {\\rm Age (yr)}$', fontsize=20)
-        axs[0].set_yscale('log')
-        axs[0].set_ylabel(ylab.replace('rm', 'rm\ \log\ '))
-        fig.subplots_adjust(hspace=0.07)
+        target = self.name.split('.')[0].upper().replace('-', '\!-\!')
+        if twoplots is True:
+            ax = axs[1]
+            # lower plot limit doesn't need to be 1e-15...
+            axs[0].set_ylim(1e-7, axs[0].get_ylim()[1])
+            axs[0].set_yscale('log')
+            fig.subplots_adjust(hspace=0.09)
+        else:
+            fig.subplots_adjust(bottom=0.15)
+
+        ax.annotate('$%s$' % target, (0.02, 0.97), va='top',
+                        xycoords='axes fraction', fontsize=16)
+        ax.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=20)
+
+        plt.tick_params(labelsize=16)
+
         if outfile is not None:
             plt.savefig(outfile, dpi=150)
-
         return ax
 
     def plot_random_arrays(self, ax=None, val_arrs=None, from_files=False,
@@ -759,10 +810,13 @@ class StarFormationHistories(object):
             self.mc = True
 
         outfile_fmt = mk_tri_sfh_kw.get('outfile_fmt', 'default')
-
+        if outfile_fmt == 'default':
+            outfile_fmt = self.name.replace('.sfh', '%03d.tri.dat')
         # need to iterate outside of dict.. see below.
-        del mk_tri_sfh_kw['outfile_fmt']
-
+        try:
+            del mk_tri_sfh_kw['outfile_fmt']
+        except:
+            pass
         # update any passed kw to make_trilegal_sfh with defaults.
         mk_tri_sfh_kw = dict({'random_sfr': True, 'random_z': False}.items()
                              + mk_tri_sfh_kw.items())
@@ -876,7 +930,7 @@ class FileIO(object):
         return hists, binss
 
     def load_galaxies(self, hist_it_up=True, target=None, ags=None,
-                      color_cut=False):
+                      color_cut=False, completeness_correction=False):
         self.check_target(target)
         if not hasattr(self, 'opt_bins'):
             self.load_data_for_normalization(ags=ags)
@@ -910,6 +964,13 @@ class FileIO(object):
                                  bins=self.opt_bins)
                 ir_gal.hist, ir_gal.bins = \
                     np.histogram(ir_gal.mag2[ir_color_inds], bins=self.ir_bins)
+
+        if completeness_correction is True:
+            ast_dict = tables.read_completeness_corrections()
+            opt_correction = ast_dict[target]['opt_correction'][:-1]
+            ir_correction = ast_dict[target]['ir_correction'][:-1]
+            opt_gal.hist *= 1. / opt_correction
+            ir_gal.hist *= 1. / ir_correction
 
         return opt_gal, ir_gal
 
@@ -1163,7 +1224,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
         return result_dict
 
     def do_normalization(self, filter1=None, trilegal_output=None,
-                         hist_it_up=False, dry_run=False, debug=False):
+                         hist_it_up=False, debug=False):
         '''Do the normalization and save small part of outputs.'''
         if not hasattr(self, 'sgal') or self.mc is True:
             assert trilegal_output is not None, \
@@ -1173,46 +1234,18 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
             self.read_trilegal_catalog(trilegal_output, filter1=filter1)
             self.load_trilegal_data()
 
-        # define regions
-        opt_low = self.opt_offset
-        opt_mid = self.opt_trgb + self.opt_trgb_err * self.ags.factor[0]
-        opt_high = 10.
-
-        ir_low = self.ir_offset
-        ir_mid = self.ir_trgb + self.ir_trgb_err * self.ags.factor[1]
-        ir_high = 10.
-
-        # Recovered stars in simulated RGB region.
-        sopt_rgb = self.sgal.stars_in_region(self.opt_mag, opt_low, opt_mid)
-        sir_rgb = self.sgal.stars_in_region(self.ir_mag, ir_low, ir_mid)
-
-        opt_mid = self.opt_trgb - self.opt_trgb_err * self.ags.factor[0]
-        ir_mid = self.ir_trgb - self.ir_trgb_err * self.ags.factor[1]
-
-        # Recovered stars in simulated AGB region.
-        sopt_agb = self.sgal.stars_in_region(self.opt_mag, opt_mid, opt_high)
-        sir_agb = self.sgal.stars_in_region(self.ir_mag, ir_mid, ir_high)
+        # select rgb and agb regions
+        sopt_rgb, sir_rgb, sopt_agb, sir_agb = \
+            rgb_agb_regions(self.sgal, self.opt_offset, self.opt_trgb,
+                            self.opt_trgb_err, self.ags, self.ir_offset,
+                            self.ir_trgb, self.ir_trgb_err, self.opt_mag,
+                            self.ir_mag)
 
         # normalization
-        self.opt_norm = self.nopt_rgb / float(len(sopt_rgb))
-        self.ir_norm = self.nir_rgb / float(len(sir_rgb))
-
-        logger.info('OPT Normalization: %f' % self.opt_norm)
-        logger.info('IR Normalization: %f' % self.ir_norm)
-
-        # random sample the data distribution
-        rands = np.random.random(len(self.opt_mag))
-        opt_ind, = np.nonzero(rands < self.opt_norm)
-        rands = np.random.random(len(self.ir_mag))
-        ir_ind, = np.nonzero(rands < self.ir_norm)
-
-        # scaled rgb: norm + in rgb
-        opt_rgb = list(set(opt_ind) & set(sopt_rgb))
-        ir_rgb = list(set(ir_ind) & set(sir_rgb))
-
-        # scaled agb
-        opt_agb = list(set(opt_ind) & set(sopt_agb))
-        ir_agb = list(set(ir_ind) & set(sir_agb))
+        self.opt_norm, self.ir_norm, opt_rgb, ir_rgb, opt_agb, ir_agb = \
+            normalize_simulation(self.opt_mag, self.ir_mag, self.nopt_rgb,
+                                 self.nir_rgb, sopt_rgb, sir_rgb, sopt_agb,
+                                 sir_agb)
 
         narratio_dict = {'opt_rgb': opt_rgb, 'opt_agb': opt_agb,
                         'ir_rgb': ir_rgb, 'ir_agb': ir_agb}
@@ -1233,12 +1266,11 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
             make_many_kw['mk_tri_sfh_kw'] = {}
 
         dry_run = make_many_kw['mk_tri_sfh_kw'].get('dry_run', False)
-        make_many_kw = dict({'nsfhs': self.nsfhs}.items() + \
-                            make_many_kw.items())
 
         new_fmt = self.target + '_tri_%003i.sfr'
         sfr_outfilefmt = os.path.join(self.outfile_loc, new_fmt)
-
+        make_many_kw = dict({'nsfhs': self.nsfhs}.items() + \
+                            make_many_kw.items())
         make_many_kw['mk_tri_sfh_kw'] = \
             dict({'outfile_fmt': sfr_outfilefmt}.items() + \
                  make_many_kw['mk_tri_sfh_kw'].items())
@@ -1267,8 +1299,7 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
             norm_out, result_dict = \
                 self.do_normalization(filter1=self.filter1,
                                       trilegal_output=trilegal_output,
-                                      hist_it_up=hist_it_up,
-                                      dry_run=dry_run)
+                                      hist_it_up=hist_it_up)
             #self.binary_contamination(opt_agb, ir_agb)
             result_dict['contam_line'] = self.contamination_by_phases(*norm_out)
             result_dicts.append(result_dict)
@@ -1379,6 +1410,55 @@ class VarySFHs(StarFormationHistories, AncientGalaxies, FileIO):
         return tpagb_opt_contamination, tpagb_ir_contamination
 
 
+def rgb_agb_regions(sgal, opt_offset, opt_trgb, opt_trgb_err, ags, ir_offset,
+                    ir_trgb, ir_trgb_err, opt_mag, ir_mag):
+    # define RGB regions
+    opt_low = opt_offset
+    opt_mid = opt_trgb + opt_trgb_err * ags.factor[0]
+
+    ir_low = ir_offset
+    ir_mid = ir_trgb + ir_trgb_err * ags.factor[1]
+
+    # Recovered stars in simulated RGB region.
+    sopt_rgb = sgal.stars_in_region(opt_mag, opt_low, opt_mid)
+    sir_rgb = sgal.stars_in_region(ir_mag, ir_low, ir_mid)
+
+    # define AGB regions
+    opt_mid = opt_trgb - opt_trgb_err * ags.factor[0]
+    opt_high = 10.
+    ir_mid = ir_trgb - ir_trgb_err * ags.factor[1]
+    ir_high = 10.
+
+    # Recovered stars in simulated AGB region.
+    sopt_agb = sgal.stars_in_region(opt_mag, opt_mid, opt_high)
+    sir_agb = sgal.stars_in_region(ir_mag, ir_mid, ir_high)
+    return sopt_rgb, sir_rgb, sopt_agb, sir_agb
+
+
+def normalize_simulation(opt_mag, ir_mag, nopt_rgb, nir_rgb, sopt_rgb, sir_rgb,
+                         sopt_agb, sir_agb):
+    opt_norm = nopt_rgb / float(len(sopt_rgb))
+    ir_norm = nir_rgb / float(len(sir_rgb))
+
+    logger.info('OPT Normalization: %f' % opt_norm)
+    logger.info('IR Normalization: %f' % ir_norm)
+
+    # random sample the data distribution
+    rands = np.random.random(len(opt_mag))
+    opt_ind, = np.nonzero(rands < opt_norm)
+    rands = np.random.random(len(ir_mag))
+    ir_ind, = np.nonzero(rands < ir_norm)
+
+    # scaled rgb: norm + in rgb
+    opt_rgb = list(set(opt_ind) & set(sopt_rgb))
+    ir_rgb = list(set(ir_ind) & set(sir_rgb))
+
+    # scaled agb
+    opt_agb = list(set(opt_ind) & set(sopt_agb))
+    ir_agb = list(set(ir_ind) & set(sir_agb))
+    return opt_norm, ir_norm, opt_rgb, ir_rgb, opt_agb, ir_agb
+
+
 class Plotting(object):
     def __init__(self, vSFH):
         self.files = FileIO()
@@ -1449,8 +1529,10 @@ class Plotting(object):
         return ratio_data
 
     def add_narratio_to_plot(self, ax, band, ratio_data):
-        stext_kw = {'color': 'black', 'fontsize': 14, 'ha': 'center'}
-        dtext_kw = {'color': 'darkred', 'fontsize': 14, 'ha': 'center'}
+        stext_kw = dict({'color': 'black', 'fontsize': 14, 'ha': 'center'}.items() +
+                        rsp.graphics.GraphicsUtils.ann_kwargs.items())
+        dtext_kw = dict(stext_kw.items() + {'color': 'darkred'}.items())
+
         nrgb = rsp.fileIO.item_from_row(self.ags.data, 'target',
                                         self.target, 'n%s_rgb' % band)
         nagb = rsp.fileIO.item_from_row(self.ags.data, 'target',
@@ -1588,7 +1670,8 @@ class Plotting(object):
     def compare_to_gal(self, hist_it_up=False, narratio=True, no_agb=False,
                        add_stage_lfs=None, extra_str='', trilegal_output=None,
                        plot_data=True, cols=None, stage_lf_kw=None, axs=None,
-                       plt_kw=None, plot_models=True):
+                       plt_kw=None, plot_models=True,
+                       completeness_correction=False):
         '''
         Plot the LFs and galaxy LF.
 
@@ -1603,7 +1686,7 @@ class Plotting(object):
 
         '''
         # load plot limits:
-        plims = load_plot_limits()
+        plims = model_plots.load_plot_limits()
         # load ast_table for annotations
         ast_table = tables.read_completeness_table()
 
@@ -1611,7 +1694,8 @@ class Plotting(object):
         opt_gal, ir_gal = self.files.load_galaxies(hist_it_up=hist_it_up,
                                                    target=self.target,
                                                    ags=self.ags,
-                                                   color_cut=True)
+                                                   color_cut=True,
+                                                   completeness_correction=completeness_correction)
 
         if plot_models is True:
             # plot lfs from simulations (and initialize figure)
@@ -1663,10 +1747,10 @@ class Plotting(object):
                                                       [self.opt_trgb_err,
                                                       self.ir_trgb_err],
                                                       ['opt', 'ir'])):
-            ax.set_yscale('log')
-            ax.set_ylim(3, ax.get_ylim()[1])
-            # set the max to be the brightest of the data .. not great.
             index = list(plims['target']).index(opt_gal.target.replace('4-deep', '4'))
+            ax.set_yscale('log')
+            ax.set_ylim(plims[index]['%s_lfmin' % band],
+                        plims[index]['%s_lfmax' % band])
             xmax = plims[index]['%s_cmdmin' % band]
             ax.set_xlim(xmax, gal.comp50mag2)
 
@@ -1674,7 +1758,7 @@ class Plotting(object):
             # vertical lines around the trgb exclude region
             ax.fill_betweenx(yarr, gal.trgb - trgb_err * self.ags.factor[i],
                              gal.trgb + trgb_err * self.ags.factor[i],
-                             color='black', alpha=0.2)
+                             color='black', alpha=0.1)
 
             ax.vlines(gal.trgb, *ax.get_ylim(), color='black',
                       linestyle='--')
@@ -1688,11 +1772,11 @@ class Plotting(object):
                       color='black')
 
             ax.fill_betweenx(yarr, ast_frac, ax.get_xlim()[1],
-                             color='black', alpha=0.2)
+                             color='black', alpha=0.1)
             loc = 4
             if narratio is False:
                 loc = 0
-            ax.legend(loc=loc, frameon=False)
+            ax.legend(loc=loc)
             ax.set_xlabel('$%s$' % gal.filter2, fontsize=20)
 
             if narratio is True:
@@ -1760,18 +1844,3 @@ class Plotting(object):
         fig.suptitle('$%s$' % target.replace('_', '\ '), fontsize=20)
         plt.savefig('%s_mass_met%s.png' % (target, extra_str), dpi=150)
         return grid
-
-
-if __name__ == '__main__':
-    #paolas_tests()
-    ags = AncientGalaxies()
-    galaxy_table = ags.write_trgb_table(exclude_region=[0.1, 0.2],
-                                        mag_below_trgb='comp_frac')
-    targets = ['ddo78', 'ddo71', 'hs117', 'kkh37', 'ngc2976', 'ngc404']
-    #targets = ['ngc2976-deep', 'ngc404-deep']
-    #targets = ['ddo71']
-    mk_tri_sfh_kw = {'random_sfr': True, 'random_z': False}
-    #call_vary_sfhs(targets, ['cmd_input_CAF09_S_NOV13.dat',
-    #                                    'cmd_input_CAF09_S_NOV13eta0.dat',
-    #                                    'cmd_input_CAF09_S_OCT13.dat'],
-    #                          2, mk_tri_sfh_kw=mk_tri_sfh_kw, debug=False, dry_run=False)

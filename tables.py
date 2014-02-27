@@ -5,7 +5,7 @@ from TPAGBparams import snap_src
 import numpy as np
 import logging
 logger = logging.getLogger()
-
+#from sfh_tests_multi_proc import load_default_ancient_galaxies
 
 def parse_sfh_data(filename, file_origin, frac=0.2):
     '''
@@ -41,6 +41,7 @@ def parse_sfh_data(filename, file_origin, frac=0.2):
         logger.error('please add a new data reader')
 
     if 'grid' in file_origin.lower():
+        print 'CONSTANT %f SFR ERROR' % frac
         # at least have a uniform error that is 20% the smallest sfr.
         data.sfr_errp = np.min(data.sfr[data.sfr > 0]) * frac
         # now take 10% as nominal error in each sfr bin.
@@ -85,6 +86,62 @@ def find_completeness(target, comp_val, ast_kw=None):
             asts.get_completeness_fraction(comp_val)
     return ast_dict
 
+def completeness_corrections(dmag=0.1):
+    '''
+    get the completeness fraction for a given list of magnitudes.
+    mag_bins can be either mag1 or mag2, will return both completeness
+    fractions.
+    '''
+    ags = load_default_ancient_galaxies()
+    ast_kw = {'combined_filters': True, 'interpolate': True}
+    ast_dict = {}
+
+    for i, target in enumerate(ags.data.target):
+        fake_files = galaxy_tests.get_fake_files(target)
+        ast_dict[target] = {}
+        for band, fake_file in zip(['opt', 'ir'], fake_files):
+            mag_bins = np.arange(ags.data['%s_min' % band][i],
+                                 ags.data['%s_max' % band][i], dmag)
+            asts = rsp.Galaxies.artificial_star_tests(fake_file)
+            asts.completeness(**ast_kw)
+            ast_c = asts.fcomp2(mag_bins)
+            ast_dict[target]['%s_correction' % band] = ast_c
+            ast_dict[target]['%s_bins' % band] = mag_bins
+
+    return ast_dict
+
+def write_completeness_corrections(outfile='default'):
+    '''
+    each line has target [band]_bins vals or target [band]_correction vals...
+    '''
+    if outfile == 'default':
+        outfile = snap_src + '/tables/completeness_corrections.dat'
+    ast_dict = completeness_corrections()
+    with open(outfile, 'w') as out:
+        for target, data_dict  in ast_dict.items():
+            for key, vals in data_dict.items():
+                out.write('%s %s ' % (target, key))
+                out.write('%s \n' % ' '.join(['%g' % v for v in vals]))
+    return
+
+def read_completeness_corrections(filename='default'):
+    '''
+    format is
+    target string floats
+    like
+    ddo71 opt_bin ....
+    '''
+    if filename == 'default':
+        filename = snap_src + '/tables/completeness_corrections.dat'
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+    ast_dict = {}
+    for line in lines:
+        lsplit = line.strip().split()
+        if not lsplit[0] in ast_dict.keys():
+            ast_dict[lsplit[0]] = {}
+        ast_dict[lsplit[0]][lsplit[1]] = np.array(lsplit[2:], dtype=float)
+    return ast_dict
 
 def read_completeness_table(table='default', absmag=False, uncertainties=False):
     if table == 'default':

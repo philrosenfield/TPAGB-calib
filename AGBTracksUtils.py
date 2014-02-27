@@ -251,7 +251,7 @@ def do_everything(infile):
                        header='# M_i M_f Z \n')
         graphics.plot_ifmr(ifmr_file)
 
-    if infile.diagnostic_dir0 is not None:
+    if infile.diagnostic_dir0 is not None and infile.diag_plots is True:
         lifetime_file = os.path.join(infile.diagnostic_dir0, infile.agb_mix,
                                      infile.set_name,
                                      '_'.join(('tau_cm', infile.name_conv)))
