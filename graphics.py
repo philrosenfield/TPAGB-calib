@@ -105,7 +105,7 @@ def diag_plots(track, infile):
     for i in range(len(ycols)):
         age_vs_plot(track, infile, ycol=ycols[i], ax=axs[i], annotate=annotate[i],
                     xlabels=xlabels[i], ylabels=True, save_plot=save_plot[i])
-    
+
 
 def age_vs_plot(track, infile, ycol='logl', ax=None, annotate=True, xlabels=True,
                 save_plot=True, ylabels=True):
@@ -134,7 +134,7 @@ def age_vs_plot(track, infile, ycol='logl', ax=None, annotate=True, xlabels=True
     age = track.get_col('ageyr')
     addpt = track.addpt
     Qs = list(track.Qs)
-    
+
     if ax is None:
         fig, ax = plt.subplots()
     ax.plot(age, ydata, color='black')
@@ -154,7 +154,7 @@ def age_vs_plot(track, infile, ycol='logl', ax=None, annotate=True, xlabels=True
                 transform=ax.transAxes)
         ax.text(0.06, 0.67, '$M=%.2f$' % track.mass,
                 transform=ax.transAxes)
-    if ylabels is True: 
+    if ylabels is True:
         ax.set_ylabel('$%s$' % ylab, fontsize=20)
     if xlabels is True:
         ax.set_xlabel('$\rm{Age (yr)}$', fontsize=20)
@@ -224,20 +224,33 @@ def hrd_slopes(track, ax=None):
 def check_output():
     pass
 
-def plot_ifmr(imfrfile):
+def plot_ifmr(imfrfile, ax=None, zs=None, data_mi=None, data_mf=None, data_mierr=None, data_mferr=None):
     mi, mf, z = np.loadtxt(imfrfile, unpack=True)
     zinds, unz = get_unique_inds(z)
-    cols = discrete_colors(len(zinds))
-    [plt.plot(mi[zinds[i]], mf[zinds[i]], color=cols[i], label=str(z[unz[i]]))
-        for i in range(len(unz))]
-    [plt.plot(mi[zinds[i]], mf[zinds[i]], 'o', ms=4, color=cols[i],
-              mec='white', alpha=0.5) for i in range(len(unz))]
-    plt.legend(loc=2, frameon=False)
-    plt.xlabel(r'$M_i/M_{\odot}$', fontsize=20)
-    plt.ylabel(r'$M_f/M_{\odot}$', fontsize=20)
+    if zs is None:
+        zs = np.unique(z)
+    cols = discrete_colors(len(zs))
+    cols = cols * len(zinds)
+    if ax is None:
+        fig, ax = plt.subplots()
+    [ax.plot(mi[zinds[i]], mf[zinds[i]], color=cols[i], label=str(z[unz[i]]))
+        for i in range(len(unz)) if z[unz[i]] in zs]
+    [ax.plot(mi[zinds[i]], mf[zinds[i]], 'o', ms=4, color=cols[i],
+              mec='white', alpha=0.5) for i in range(len(unz)) if z[unz[i]] in zs]
+    if data_mf is not None:
+        if data_mierr is not None:
+            from matplotlib.patches import Rectangle
+            bottom_left = (data_mi - data_mierr/2., data_mf - data_mferr/2.)
+            width = data_mierr
+            height = data_mferr
+            rect = Rectangle(bottom_left, width, height, color='black', alpha=.25)
+            ax.add_patch(rect)
+    ax.legend(loc=2, frameon=False)
+    ax.set_xlabel(r'$M_i/M_{\odot}$', fontsize=20)
+    ax.set_ylabel(r'$M_f/M_{\odot}$', fontsize=20)
     plt.savefig(imfrfile.replace('dat', 'png'))
-    plt.close()
-    return
+    #plt.close()
+    return ax
 
 
 def two_panel_plot_vert(fign=2):
@@ -254,7 +267,7 @@ def two_panel_plot_vert(fign=2):
     ax2.xaxis.set_major_formatter(nullfmt)
     return ax1, ax2
 
-    
+
 def plot_cluster_test(lifetimesfile, infile):
     agbtrack_dir = infile.agbtrack_dir
     cluster_data = os.path.join(agbtrack_dir, 'cluster_data.dat')
