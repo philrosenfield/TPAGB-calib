@@ -21,6 +21,8 @@ angst_data = rsp.angst_tables.AngstTables()
 import itertools
 import tables
 
+color_scheme = ['#d73027', '#fc8d59', '#fee090', '#669966', '#e0f3f8', '#4575b4']
+
 
 def add_file_logger(logdir):
     # setup logger
@@ -1580,7 +1582,7 @@ class Plotting(object):
                       narratio=True):
 
         if add_stage_lfs == 'all':
-            add_stage_lfs = ['RGB', 'HEB', 'RHEB',
+            add_stage_lfs = ['MS', 'RGB', 'HEB', 'RHEB',
                              'BHEB', 'EAGB', 'TPAGB']
         if add_stage_lfs == 'default':
             add_stage_lfs = ['RGB', 'EAGB', 'TPAGB']
@@ -1589,13 +1591,14 @@ class Plotting(object):
         stage_lf_kw = stage_lf_kw or {}
         stage_lf_kw = dict({'linestyle': 'steps', 'lw': 2}.items() +
                             stage_lf_kw.items())
+        if hasattr(stage_lf_kw, 'label'):
+            stage_lf_kw['olabel'] = stage_lf_kw['label']
         if cols is None:
             if nstages < 3:
                 cmap = brewer2mpl.get_map('Paired', 'Qualitative', 3)
                 cols = cmap.mpl_colors[0::2]
             else:
-                cmap = brewer2mpl.get_map('Paired', 'Qualitative', nstages)
-                cols = cmap.mpl_colors
+                cols = color_scheme
 
         # load the trilegal catalog if it is given, if it is given,
         # no LF scaling... need to save this info better. Currently only
@@ -1619,8 +1622,13 @@ class Plotting(object):
                 [self.files.opt_color_cut, self.files.ir_color_cut],
                 [self.files.opt_bins, self.files.ir_bins]):
 
+            #self.files.sgal.make_lf(mag, stages=add_stage_lfs, bins=bins,
+            #                        inds=sinds, hist_it_up=hist_it_up)
             self.files.sgal.make_lf(mag, stages=add_stage_lfs, bins=bins,
-                                    inds=sinds, hist_it_up=hist_it_up)
+                                    hist_it_up=hist_it_up)
+            #import pdb
+            #pdb.set_trace()
+            k = 0
             for i in range(nstages):
                 istage = add_stage_lfs[i].lower()
                 try:
@@ -1629,21 +1637,24 @@ class Plotting(object):
                 except AttributeError:
                     continue
                 # combine all HeB stages into one for a cleaner plot.
-                if add_stage_lfs[i].lower() == 'heb':
+                if istage == 'heb':
                     hist = \
                     np.sum([self.files.sgal.__getattribute__('i%s_lfhist' %
-                                                             istage)
-                            for j in range(nstages)
-                            if 'heb' in istage], axis=0)
+                                                             jstage.lower())
+                            for jstage in add_stage_lfs
+                            if 'heb' in jstage.lower()], axis=0)
                 elif 'heb' in istage:
                     continue
 
                 bins = \
                 self.files.sgal.__getattribute__('i%s_lfbins' %
                                                  istage)
-                stage_lf_kw['color'] = cols[i]
-                stage_lf_kw['label'] = '$%s$' % istage.upper()
-                ax.plot(bins[:-1], hist*norm, **stage_lf_kw)
+                stage_lf_kw['color'] = cols[k]
+                k += 1
+                stage_lf_kw['label'] = '$%s$' % istage.upper().replace('PA', 'P\!-\!A')
+                norm_hist = hist # * norm
+                norm_hist[norm_hist < 3] = 3
+                ax.plot(bins[:-1], norm_hist, **stage_lf_kw)
 
         sopt_hist, sopt_bins = self.files.sgal.make_lf(self.files.opt_mag,
                                                       bins=self.files.opt_bins,
@@ -1651,18 +1662,20 @@ class Plotting(object):
         sir_hist, sir_bins = self.files.sgal.make_lf(self.files.ir_mag,
                                                      bins=self.files.ir_bins,
                                                      hist_it_up=hist_it_up)
+        # 3 is the plot limit...
+        sopt_hist[sopt_hist < 3] = 3
+        sir_hist[sir_hist < 3] = 3
+        stage_lf_kw['color'] = 'black'
 
-        sopt_hist = sopt_hist * self.opt_norm
-        sir_hist = sir_hist * self.ir_norm
-        stage_lf_kw['color'] = 'grey'
-
-        lab = '_Total'
-        if hasattr(self, 'agb_mod'):
-            lab = self.agb_mod
-        if lab != '':
-            lab = '$%s$' % '\ '.join(lab.split('_')[1:])
         if narratio is False:
-            stage_lf_kw['label'] = lab
+            if not hasattr(stage_lf_kw, 'olabel'):
+                lab = '$Total$'
+                #if hasattr(self, 'agb_mod'):
+                #    model = self.agb_mod.split('_')[-1]
+                #    lab = model_plots.translate_model_name(model, small=True)
+                stage_lf_kw['label'] = lab
+            else:
+                stage_lf_kw['label'] = stage_lf_kw['olabel']
         ax1.plot(sopt_bins[:-1], sopt_hist, **stage_lf_kw)
         ax2.plot(sir_bins[:-1], sir_hist, **stage_lf_kw)
         return ax1, ax2
@@ -1711,7 +1724,8 @@ class Plotting(object):
             plt.subplots_adjust(right=0.95, left=0.1, wspace=0.1)
 
         if add_stage_lfs is not None and plot_models is False:
-            (ax1, ax2) = self.plot_by_stage(add_stage_lfs, narratio=narratio,
+            (ax1, ax2) = self.plot_by_stage(ax1, ax2, add_stage_lfs=add_stage_lfs,
+                                            narratio=narratio,
                                             stage_lf_kw=stage_lf_kw, cols=cols,
                                             trilegal_output=trilegal_output)
 
@@ -1784,7 +1798,7 @@ class Plotting(object):
                 # and error.
                 self.add_narratio_to_plot(ax, band, mean_ratio)
 
-        ax1.set_ylabel('$\#$', fontsize=20)
+        ax1.set_ylabel(r'${\rm Number\ of\ Stars}$', fontsize=20)
         plt.tick_params(labelsize=16)
         outfile = '%s%s_lfs.png' % (self.opt_lf_file.split('opt_lf')[0][:-1],
                                     extra_str)

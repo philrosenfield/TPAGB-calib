@@ -8,7 +8,11 @@ import ResolvedStellarPops as rsp
 import fileIO
 import galaxy_tests
 
-def translate_model_name(model):
+
+color_scheme = ['#d73027', '#fc8d59', '#fee090', '#669966', '#e0f3f8', '#4575b4']
+
+
+def translate_model_name(model, small=False):
     if 'oct' in model.lower():
         name = r'R75'
     if 'nov13eta' in model.lower():
@@ -17,7 +21,10 @@ def translate_model_name(model):
         name = r'mSC05'
     if 'feb' in model.lower():
 	name = 'FEB14'
-    new_model = r'$\dot{M}_{\rm pre\!-\!dust}=%s$' % name
+    if small is True:
+	new_model = r'$\dot M_{\rm pre\!-\!dust}^{\rm %s}$' % name
+    else:
+        new_model = r'$\dot{M}_{\rm pre\!-\!dust}=%s$' % name
     return new_model
 
 
@@ -115,6 +122,7 @@ def compare_agb_lifetimes(track_loc, search_formats, labels,
 
     return axs
 
+
 def agb_lifetimes(models, z=0.002):
     import glob
     tauss = []
@@ -209,26 +217,28 @@ def load_plot_limits(filename='default'):
 
 def plot_lf_with_stages(target, trilegal_output):
     outfile_dir = snap_src + '/models/varysfh/match-hmc/'
-    vSFH, vsfh_kws = sfh_tests.prepare_vsfh_run(target, ['cmd_input_CAF09_S_NOV13.dat'], 50,
+    vSFH, vsfh_kws = sfh_tests.prepare_vsfh_run([target], ['cmd_input_CAF09_S_NOV13.dat'], 50,
                                                  vsfh_kw={'outfile_loc': outfile_dir,
                                                           'extra_str': ''},
                                                           default_kw=None)
     pl = sfh_tests.Plotting(vSFH[0])
-    cols = ['navy', 'darkgreen', 'darkgreen', 'darkgreen', 'purple',
-            'darkred']
-    kw = {#'outfile_loc': os.getcwd(),
-          'trilegal_output': trilegal_output,
+    cols = color_scheme
+    cols.append('#9966cc')
+    del cols[2]
+    del cols[3]
+    kw = {'trilegal_output': trilegal_output,
           'narratio': False,
           'add_stage_lfs': 'all',
           'plot_data': False,
           'plot_models': False,
           'cols': cols,
-          'stage_lf_kw': {'lw': 3}}
+          'stage_lf_kw': {'lw': 3, 'label': translate_model_name('nov13')}}
     ax1, ax2 = pl.compare_to_gal(target, **kw)
-    lims = load_plot_limits()['target'==target]
+    lims = load_plot_limits()
+    row = lims[np.nonzero(lims['target'] == target)[0]]
     for ax, band in zip([ax1, ax2], ['opt', 'ir']):
-        ax.set_xlim(lims['%s_xmin' % band], lims['%s_xmax' % band])
-        ax.set_ylim(lims['%s_ymin' % band], lims['%s_ymax' % band])
+        ax.set_xlim(row['%s_cmdmin' % band], row['%s_cmdmax' % band])
+        ax.set_ylim(row['%s_lfmin' % band], row['%s_lfmax' % band])
 
 
     base_dir = snap_src + '/models/varysfh/match-hmc'
@@ -411,7 +421,7 @@ def compare_mass_loss(masses=1.0, z=0.001, sets=['NOV13', 'OCT13', 'NOV13eta0'],
     return axs
 
 
-def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=False,
+def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=True,
                          model='nov13', model_src='default'):
     '''
     plot a histogram of the scaled number of tpagb stars for the best fitting
@@ -437,15 +447,17 @@ def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=False,
                     for c in chi2files])
     norm = np.array(norm)
 
-    targets = [os.path.split(c)[1].split('_')[3] for c in chi2files]
+    ts = [os.path.split(c)[1].split('_')[3] for c in chi2files]
+    targets = galaxy_tests.ancients()
+    tinds = [ts.index(t.lower()) for t in targets]
+    targets = np.array(ts)[tinds]
     labels = ['$%s$' % t.upper().replace('-DEEP', '').replace('-', '\!-\!')
               for t in targets]
 
 
     # get the hist made nice and stacked, and then scale it down.
     hists, bins, pps = plt.hist(masses, stacked=True, align='left',
-                                histtype='step', bins=15, log=True,
-                                visible=False)
+                                histtype='step', bins=50, visible=False)
     plt.close()
 
     # scaled histograms
@@ -453,33 +465,35 @@ def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=False,
 
     # actual plot... norm scales the histogram.
     # set up plot
-    cols = ['#d73027', '#fc8d59', '#fee090', '#e0f3f8', '#91bfdb', '#4575b4']
+    cols = color_scheme
 
     fig, ax = plt.subplots()
 
     # mask 0 values so there is a vertical line on the plot
     for i in range(len(hists)):
         norm_hists[i][norm_hists[i]==0] = 1e-5
+	yplot = np.cumsum(norm_hists[i]) / np.sum(norm_hists[i])
+	#yplot = norm_hists[i]
+	ax.plot(bins[:-1], yplot, linestyle='steps-pre', color='grey', lw=4)
+	ax.plot(bins[:-1], yplot, linestyle='steps-pre', color=cols[i],
+		lw=2, label=labels[i], alpha=.9)
 
-    [ax.plot(bins[:-1], norm_hists[i], linestyle='steps-pre', color='grey',
-                 lw=4) for i in range(len(hists))]
-    [ax.plot(bins[:-1], norm_hists[i], linestyle='steps-pre', color=cols[i],
-                 lw=2, label=labels[i], alpha=.9) for i in range(len(hists))]
-
-    ax.plot(bins[:-1], np.sum(norm_hists, axis=0), linestyle='steps-pre',
-                 color='darkgrey', lw=3, label=r'$\rm{Total}$')
+    #ax.plot(bins[:-1], np.sum(norm_hists, axis=0), linestyle='steps-pre',
+    #             color='darkgrey', lw=3, label=r'$\rm{Total}$')
     ax.legend(loc=0, frameon=False)
 
-    ax.set_yscale('log')
-    ax.set_ylim(3, 10**3)
+    #ax.set_yscale('log')
+    #ax.set_ylim(3, 10**3)
+    ax.set_xlim(0.6, 3)
     ax.set_xlabel(r'$\rm{Mass\ M_\odot}$', fontsize=20)
-    ax.set_ylabel(r'$\rm{N_{TP\!-\!AGB}\ Stars}$', fontsize=20)
+    ax.set_ylabel(r'$\rm{Cumulative\ Fraction\ of\ {TP\!-\!AGB}\ Stars}$', fontsize=20)
     plt.tick_params(labelsize=16)
     plt.savefig('tpagb_mass_hist_%s_%s.png' % (band, model), dpi=150)
     return ax
 
 
-def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False):
+def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False,
+		 mass=True, old=False):
     '''
     using the chi2file run trilegal with the best fit sfh and return the
     normalization and tp-agb masses (scaled simulation)
@@ -548,8 +562,45 @@ def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False):
     itpagb = list(set(files.sgal.itpagb) & set(cut_inds))
 
     # grab TP-AGB masses
-    mass = files.sgal.data.get_col('m_ini')
-    return mass[itpagb], norm
+
+    if mass is True:
+        mass = files.sgal.data.get_col('m_ini')
+	ret_val = mass[itpagb]
+    else:
+        met = files.sgal.data.get_col('[M/H]')
+        if old is True:
+	    olds, = np.nonzero(files.sgal.data.get_col('logAge') > 8.5)
+	    itpagb = list(set(files.sgal.itpagb) & set(cut_inds) & set(olds))
+	ret_val = met[itpagb]
+    return ret_val, norm
+
+
+def trilegal_metals(chi2_location='draft_run', band='opt', dry_run=False,
+                    model='nov13', model_src='default', old=False, feh=False):
+    if chi2_location == 'draft_run':
+        chi2_location = snap_src + '/models/varysfh/match-hmc/'
+
+    chi2files = rsp.fileIO.get_files(chi2_location, '*%s_*chi2.dat' % model)
+    # I do gaussian chi2 too, not just poisson...
+    chi2files = [c for c in chi2files if not 'gauss' in c][::-1]
+
+    # get the tpagb masses
+    (mhs, norm) = zip(*[tpagb_masses(c, band=band, dry_run=dry_run,
+                                        model_src=model_src, mass=False,
+					old=old) for c in chi2files])
+    ts = [os.path.split(c)[1].split('_')[3] for c in chi2files]
+    targets = galaxy_tests.ancients()
+    tinds = [ts.index(t.lower()) for t in targets]
+    targets = np.array(ts)[tinds]
+    from ResolvedStellarPops.convertz import convertz
+    if feh is True:
+	ind = 4
+    else:
+	ind = 1
+    zs = np.array([convertz(mh=i)[ind] for i in mhs])
+    for i, target in enumerate(targets):
+	print '%.4f %.4f %.4f %s ' % (np.min(zs[i]), np.median(zs[i]),
+				      np.max(zs[i]), target)
 
 
 def plot_random_sfhs(targets='ancients'):
