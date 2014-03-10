@@ -1,7 +1,7 @@
 import ResolvedStellarPops as rsp
 import numpy as np
 import galaxy_tests
-import sfh_tests_multi_proc
+import sfh_tests_multi_proc as sfh_tests
 import os
 import matplotlib.pyplot as plt
 from TPAGBparams import research_path, snap_src
@@ -13,7 +13,7 @@ from matplotlib.colors import LogNorm
 This is a work in progress, which sorts of intro figures should I have for the paper??
 
 '''
-
+color_scheme = ['#d73027', '#fc8d59', '#fee090', '#669966', '#e0f3f8', '#4575b4']
 
 def plot_ifmr(imfrfile, ax=None, z=0.001, data_m4=True, label='',
               color='k'):
@@ -106,15 +106,19 @@ def plot_cum_sum_sfr(targets, file_origin='match-hmc'):
     fig, ax = plt.subplots()
     ngals = len(targets)
     bmap = brewer2mpl.get_map('Spectral', 'Diverging', ngals)
-    cols = ['#d73027', '#fc8d59', '#fee090', '#e0f3f8', '#91bfdb', '#4575b4']
+    #cols = ['#d73027', '#fc8d59', '#fee090', '#e0f3f8', '#91bfdb', '#4575b4']
+    cols = color_scheme
     for i, target in enumerate(targets):
-        match_sfh_file, = rsp.fileIO.get_files(match_sfh_src, '%s*sfh' % target.lower().replace('-deep', ''))
-        sfh = sfh_tests_multi_proc.StarFormationHistories(match_sfh_file, file_origin=file_origin)
+        search = target.lower().replace('-deep', '')
+        match_sfh_file, = rsp.fileIO.get_files(match_sfh_src,
+                                               '%s*sfh' % search)
+        sfh = sfh_tests.StarFormationHistories(match_sfh_file,
+                                               file_origin=file_origin)
         age = 10**((sfh.data.lagef + sfh.data.lagei)/2. - 9)
         csfh = np.append(sfh.data.csfr, 0)
         ax.plot(age, csfh[1:], color='k', lw=4)
         ax.plot(age, csfh[1:], color=cols[i], lw=3,
-                label='$%s$' % target.upper().replace('-DEEP', '').replace('-','\!-\!'))
+                label='$%s$' % search.upper().replace('-','\!-\!'))
 
     #ax.set_xscale('log')
     ax.set_xlim(13.4, -0.01)
@@ -184,7 +188,7 @@ def add_color_cuts(filter1, ax=None, vline_kw=None):
     vline_kw = vline_kw or {}
     if ax is None:
         fig, ax = plt.subplots()
-    color_cut = sfh_tests_multi_proc.get_color_cut(filter1)
+    color_cut = sfh_tests.get_color_cut(filter1)
     ax.vlines(color_cut, *ax.get_ylim(), **vline_kw)
     return ax
 

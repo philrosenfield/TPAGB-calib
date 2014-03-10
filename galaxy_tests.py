@@ -19,14 +19,52 @@ import multiprocessing
 angst_data = rsp.angst_tables.AngstTables()
 
 
-def gi10_overlap():
-    return ['DDO78', 'DDO71', 'SCL-DE1']
-
-
 def ancients():
     #['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'KDG73', 'NGC404-DEEP', 'SCL-DE1'][::-1]
     return ['DDO71', 'HS117', 'KKH37', 'NGC2976-DEEP', 'DDO78', 'SCL-DE1']
 
+def match_metals(sfh_loc=None, targets=ancients(), make_plot=False,
+                 file_origin='match-hmc', feh=False):
+    '''
+    print the sfh weighted metallicity from the match input file.
+    '''
+    from ResolvedStellarPops.convertz import convertz
+    import sfh_tests_multi_proc as sfh_tests
+    if sfh_loc is None:
+        match_sfh_src = snap_src + '/data/sfh_parsec/'
+
+    for i, target in enumerate(targets):
+        search = target.lower().replace('-deep', '')
+        match_sfh_file, = rsp.fileIO.get_files(match_sfh_src,
+                                               '%s*sfh' % search)
+        sfh = sfh_tests.StarFormationHistories(match_sfh_file,
+                                               file_origin=file_origin)
+        a = (sfh.data.lagei + sfh.data.lagef) / 2
+        s = sfh.data.sfr
+        if feh is False:
+            ind = 1
+        else:
+            ind = 4
+        z = np.array([convertz(mh=i)[ind] for i in sfh.data.mh])
+
+        o, = np.nonzero(a > 8.5)
+
+        #print '%.4f %.4f %.4f %s ' % (np.min(z),
+        #                              np.sum(z * s) / np.sum(s),
+        #                              np.max(z), target)
+        print '%.4f %.4f %.4f %s ' % (np.min(z[o]),
+                                      np.sum(z[o] * s[o]) / np.sum(s[o]),
+                                      np.max(z[o]), target)
+        if make_plot is True:
+            fig, ax = plt.subplots()
+            ax.plot(a, s)
+            ax.set_title(target)
+            fig.savefig(match_sfh_file.replace('.dat','_sfh.png'))
+
+""" BELOW THIS IS THESIS SPAZ """
+
+def gi10_overlap():
+    return ['DDO78', 'DDO71', 'SCL-DE1']
 
 def all_targets():
     return ['SCL-DE1',
@@ -2940,41 +2978,6 @@ def sfh_plots(sfh_loc=None, targets='paper1', make_plot=False,
     plt.tick_params(labelsize=16)
     ax.legend(loc=0, frameon=False)
     plt.savefig('cumsum_sfr.pdf', dpi=300)
-
-
-def match_metals(sfh_loc=None, targets=None, make_plot=False,
-                 ext='.dat', dan_fmt=False):
-    '''
-    print the sfh weighted metallicity from the match input file.
-    '''
-    if sfh_loc is None:
-        sfh_loc = snap_src + 'data/sfh/'
-    sfh_files = rsp.fileIO.get_files(sfh_loc, '*%s' % ext)
-    if targets is None:
-        targets = sfh_files
-    for sfh_file in sfh_files:
-        print sfh_file
-        if dan_fmt is False:
-            target = sfh_file.split('_')[2]
-        else:
-            target = os.path.split(sfh_file)[1].split('.')[0]
-        try:
-            a, s, z = np.loadtxt(sfh_file, unpack=True)
-        except ValueError:
-            to, tf, s, mh = np.genfromtxt(sfh_file, skip_header=6, skip_footer=2, usecols=[0,1,3,6], unpack=True)
-            a = (to + tf) / 2
-            from ResolvedStellarPops.convertz import convertz
-            z = np.array([convertz(mh=i)[1] for i in mh])
-
-        o, = np.nonzero(np.log10(a*1e9) < 8.5)
-
-        print '%.4f %.4f %.4f %s ' % (np.min(z), np.sum(z*s)/np.sum(s), np.max(z), target)
-        #print '%.4f %.4f %.4f %s ' % (np.min(z[o]), np.sum(z[o]*s[o])/np.sum(s[o]), np.max(z[o]), sfh_file.split('_')[2])
-        if make_plot is True:
-            fig, ax = plt.subplots()
-            ax.plot(a, s)
-            ax.set_title(target)
-            fig.savefig(target.replace('.dat','_sfh.png'))
 
 
 def agb_logl_age():
