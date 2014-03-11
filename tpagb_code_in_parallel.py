@@ -1,7 +1,11 @@
 from IPython import parallel
-import sfh_tests_multi_proc as sfh_tests
 import time
+import matplotlib.pyplot as plt
 import numpy as np
+import sfh_tests_multi_proc as sfh_tests
+import ResolvedStellarPops as rsp
+import stats
+import model_plots
 
 def caller(vSFH, vsfh_kws):
     return vSFH.vary_the_SFH(**vsfh_kws)
@@ -70,14 +74,74 @@ def main(targets, cmd_inputs, nsfhs, dry_run=False, comp_corr=False):
 
     print 'done.'
 
+def lf_figs(targets, cmd_inputs, nsfhs, outfile_dir='default', extra_str='',
+            default_kw=None, comp_corr=False):
+    if comp_corr is True:
+        table_file = 'comp_corr'
+    else:
+        table_file = 'default'
+    vSFHs, vsfh_kws = sfh_tests.prepare_vsfh_run(targets, cmd_inputs, nsfhs,
+                                                 vsfh_kw={'outfile_loc': outfile_dir,
+                                                          'extra_str': extra_str,
+                                                          'table_file': table_file},
+                                                 default_kw=default_kw)
+    pl = [sfh_tests.Plotting(v) for v in vSFHs]
+    if comp_corr is True:
+        extra_str += '_comp'
+    [pl[i].compare_to_gal(extra_str=extra_str,
+                          completeness_correction=comp_corr)
+         for i in range(len(pl))]
+    return
+
+def narratio_table(outfile_dir):
+    narratio_files = rsp.fileIO.get_files(outfile_dir, '*narratio*dat')
+    stats.narratio_table(narratio_files)
+    return
+
+def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+                                        outfile_loc=outfile_dir,
+                                        extra_str=extra_str)
+    chi2_dicts = stats.result2dict(chi2_files)
+    stats.chi2plot(chi2_dicts, outfile_loc=outfile_dir)
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+                                        outfile_loc=outfile_dir,
+                                        extra_str=extra_str,
+                                        just_gauss=True)
+    plt.close('all')
+    return
+
+def analysis(targets, cmd_inputs, nsfhs, outfile_dirs, extra_str='',
+             comp_corr=False, default_kw=None):
+    default_kw = default_kw or {}
+    # _mstar or _cstar:
+    if 'star' in extra_str:
+        from TPAGBparams import snap_src
+        default_kw = dict({'galaxy_input_src': snap_src + '/input/tests/',
+                           'galaxy_input_search_fmt': '*%s' + '%s.dat' % extra_str}.items()
+                          + default_kw.items())
+
+    for out_dir in outfile_dirs:
+        lf_figs(targets, cmd_inputs, nsfhs, outfile_dir=out_dir,
+                extra_str=extra_str, default_kw=default_kw,
+                comp_corr=comp_corr)
+        chi2_stats(targets, cmd_inputs, outfile_dir=out_dir,
+                   extra_str=extra_str)
+        narratio_table(out_dir)
+    model_plots.plot_random_sfhs(targets)
+
 if __name__ == '__main__':
     # could be an input file:
     targets = ['scl-de1', 'ddo71', 'kkh37', 'ddo78', 'hs117', 'ngc2976-deep']
+    #targets = ['scl-de1']
     cmd_inputs = ['cmd_input_CAF09_S_NOV13.dat',
                   'cmd_input_CAF09_S_NOV13eta0.dat',
                   'cmd_input_CAF09_S_OCT13.dat']
-    nsfhs = 50
+    #outfile_dirs = ['/home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/match-hmc/']
+    outfile_dirs = ['/home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr']
+    nsfhs = 5
     dry_run = False
     comp_corr = True
 
-    main(targets, cmd_inputs, nsfhs, dry_run=dry_run, comp_corr=comp_corr)
+    #main(targets, cmd_inputs, nsfhs, dry_run=dry_run, comp_corr=comp_corr)
+    analysis(targets, cmd_inputs, nsfhs, outfile_dirs, comp_corr=comp_corr)

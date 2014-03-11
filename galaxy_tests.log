@@ -28705,3 +28705,92 @@ INFO:root:start of run: Fri, 07 Mar 2014 16:18:58
 DEBUG:root:IR OFFSET: -0.250000
 DEBUG:root:OPT OFFSET: 0.110000
 INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/match-hmc/caf09_s_nov13_ddo71_lfs.png
+INFO:root:start of run
+INFO:root:start of run
+INFO:root:start of run: Mon, 10 Mar 2014 09:48:27
+INFO:root:start of run: Mon, 10 Mar 2014 09:48:27
+DEBUG:root:Importing canning map
+INFO:root:start of run
+INFO:root:start of run: Mon, 10 Mar 2014 14:32:17
+INFO:root:start of run: Mon, 10 Mar 2014 14:32:17
+DEBUG:root:Importing canning map
+INFO:root:start of run
+INFO:root:start of run: Tue, 11 Mar 2014 09:37:40
+INFO:root:start of run: Tue, 11 Mar 2014 09:37:40
+INFO:root:start of run: Tue, 11 Mar 2014 09:37:57
+INFO:root:start of run: Tue, 11 Mar 2014 09:37:57
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_scl-de1_lfs.png
+INFO:root:start of run: Tue, 11 Mar 2014 09:40:52
+INFO:root:start of run: Tue, 11 Mar 2014 09:40:52
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_scl-de1_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_scl-de1_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_scl-de1_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ddo71_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ddo71_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ddo71_lfs.png
+INFO:root:start of run: Tue, 11 Mar 2014 09:41:06
+INFO:root:start of run: Tue, 11 Mar 2014 09:41:06
+INFO:root:start of run: Tue, 11 Mar 2014 09:42:52
+INFO:root:start of run: Tue, 11 Mar 2014 09:42:52
+INFO:root:start of run: Tue, 11 Mar 2014 09:43:04
+INFO:root:start of run: Tue, 11 Mar 2014 09:43:04
+INFO:root:start of run: Tue, 11 Mar 2014 09:43:16
+INFO:root:start of run: Tue, 11 Mar 2014 09:43:16
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_scl-de1_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_scl-de1_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_scl-de1_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ddo71_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ddo71_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ddo71_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_kkh37_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_kkh37_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_kkh37_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ddo78_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ddo78_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ddo78_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_hs117_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_hs117_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_hs117_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ngc2976-deep_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ngc2976-deep_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ngc2976-deep_comp_lfs.png
+INFO:root:start of run: Tue, 11 Mar 2014 09:47:54
+INFO:root:start of run: Tue, 11 Mar 2014 09:47:54
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_scl-de1_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_scl-de1_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_scl-de1_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ddo71_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ddo71_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ddo71_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_kkh37_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_kkh37_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_kkh37_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ddo78_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ddo78_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ddo78_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_hs117_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_hs117_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_hs117_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ngc2976-deep_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ngc2976-deep_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ngc2976-deep_comp_lfs.png
+INFO:root:start of run: Tue, 11 Mar 2014 09:48:51
+INFO:root:start of run: Tue, 11 Mar 2014 09:48:51
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_scl-de1_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_scl-de1_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_scl-de1_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ddo71_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ddo71_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ddo71_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_kkh37_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_kkh37_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_kkh37_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ddo78_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ddo78_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ddo78_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_hs117_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_hs117_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_hs117_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13_ngc2976-deep_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_nov13eta0_ngc2976-deep_comp_lfs.png
+INFO:root:wrote /home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/caf09_s_oct13_ngc2976-deep_comp_lfs.png

@@ -422,9 +422,10 @@ def narratio_table(narratio_files, table_file='default'):
     return ir_table, opt_table
 
 
-def data_table(targets):
+def data_table(targets, table_file='default'):
     # target, av, dist, [opt: frac comp, trgb, nrgb, nagb ratio] [ir: ..]
-    table_file = snap_src + '/tables/ancients_0.1_0.2_galaxies.dat'
+    if table_file == 'default':
+        table_file = snap_src + '/tables/ancients_0.1_0.2_galaxies.dat'
     ags = sfh_tests_multi_proc.AncientGalaxies()
     ags.read_trgb_table(table_file)
     data_dict = get_data(table_file=table_file)
@@ -536,7 +537,7 @@ def chi2plot(model_dict, outfile_loc=None):
     axs[0][0].set_title(r'$\rm{Optical}$', fontsize=20)
     axs[0][1].set_title(r'$\rm{NIR}$', fontsize=20)
     [ax.set_ylim(0, 25) for ax in axs[:, 0]]
-    [ax.set_ylim(0, 9) for ax in axs[:, 1]]
+    [ax.set_ylim(0, 10) for ax in axs[:, 1]]
     fig.subplots_adjust(hspace=0.1)
     xlims = ax.get_xlim()
     off = np.diff(offsets)[0]

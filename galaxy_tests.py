@@ -857,7 +857,7 @@ def compare_metallicities():
 
 
 def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default',
-                   sfr_file=None, outfile_loc='default'):
+                   sfr_file=None, outfile_loc='default', file_imf=None):
     '''
     Sets up files for trilegal simulations (same files that will be overwritten
         in a loop).
@@ -887,6 +887,9 @@ def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default',
     '''
     if outfile_loc == 'default':
         outfile_loc = snap_src
+        galaxy_input = os.path.join(outfile_loc, 'input', 'input_%s.dat' % gal.target)
+    else:
+        galaxy_input = os.path.join(outfile_loc, 'input_%s.dat' % gal.target)
 
     agb_model = model.replace('cmd_input_', '').replace('.dat', '').lower()
 
@@ -924,8 +927,6 @@ def setup_trilegal(gal, model, object_mass=5e9, sfr_dir='default',
                  'binary_frac': 0.35}
 
     gal_inp.add_params(galinp_kw)
-
-    galaxy_input = os.path.join(outfile_loc, 'input', 'input_%s.dat' % gal.target)
     gal_inp.write_params(galaxy_input, rsp.TrilegalUtils.galaxy_input_fmt())
     trilegal_output = os.path.join(outfile_loc, 'output', 'output_%s_%s.dat' %
                                    (gal.target, agb_model))
