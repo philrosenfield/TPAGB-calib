@@ -14,11 +14,11 @@ color_scheme = ['#d73027', '#fc8d59', '#fee090', '#669966', '#e0f3f8', '#4575b4'
 
 def translate_model_name(model, small=False):
     if 'oct' in model.lower():
-        name = r'R75'
+        name = 'R75'
     if 'nov13eta' in model.lower():
-        name = r'0'
+        name = '\eta=0'
     if model.lower() == 'nov13':
-        name = r'mSC05'
+        name = 'mSC05'
     if 'feb' in model.lower():
 	name = 'FEB14'
     if small is True:
@@ -28,98 +28,80 @@ def translate_model_name(model, small=False):
     return new_model
 
 
-def compare_agb_lifetimes(track_loc, search_formats, labels,
-			  models):
+def compare_agb_lifetimes():
+    import glob
     track_loc = research_path + \
 	'TP-AGBcalib/AGBTracks/plots_for_paperI/agbz001_3dup/'
-    search_formats = ['*dL2*', '*dL0.0*', '*dL0.50*']
-    labels = [r'$2\lambda$', r'$\lambda$', r'$0.5\lambda$']
+    
+    models = ['NOV13', 'NOV13eta0', 'OCT13']
+    model_name = translate_model_name('nov13')
+    
+    # these two have to line up:
+    search_formats = ['*dL0.0*', '*dL0.50*', '*dL2*']
+    labels = [r'%s' % model_name,
+              r'%s: $0.5\lambda$' % model_name,
+              r'%s: $2\lambda$'  % model_name]
 
     track_sets = [rsp.fileIO.get_files(track_loc, sf) for sf in search_formats]
-    cnum = np.max([len(track_sets), 3])
-    #bmap = brewer2mpl.get_map('Spectral', 'Sequential', cnum + 1)
-    #cols = bmap.mpl_colors[1:]
-    cols = ['#d73027', '#fee090', '#91bfdb']
-    fig, axs = plt.subplots(ncols=2, nrows=3, figsize=(8,12))
+    cols1 =  ['k', '#d73027', '#fee090', '#e0f3f8', '#91bfdb', '#4575b4']
+    bmap = brewer2mpl.get_map('Blues', 'Sequential', 9)
+    cols2 = bmap.mpl_colors[3::2]
+
+    fig, axs = plt.subplots(ncols=2, figsize=(10, 5), sharex=True, sharey=True)
+
     for i, track_set in enumerate(track_sets):
 	tracks = np.array([fileIO.get_numeric_data(t) for t in track_set])
 	tracks = tracks[np.argsort([t.mass for t in tracks])]
 	masses = np.array([t.mass for t in tracks])
-	#logls = np.array([t.get_col('L_star') for t in tracks])
-	#brights = np.array([np.nonzero(logl > 3.4)[0] for logl in logls])
-	lmax = np.array([np.max(t.get_col('lambda')) for t in tracks])
-	dmdup = np.array([t.get_col('dmc_nodup')[-1] - \
-			    (t.get_col('M_c')[-1] - t.get_col('M_c')[0])
-			  for t in tracks])
 	taus = np.array([np.sum(t.data_array['dt']) for t in tracks])
-	plt_kw = {'lw': 3, 'label': labels[i], 'color': cols[i]}
-	axs[0, 1].plot(masses, taus/1e6, lw=4, color='k')
-	axs[0, 1].plot(masses, taus/1e6, **plt_kw)
-	axs[1, 1].plot(masses, dmdup, lw=4, color='k')
-	axs[1, 1].plot(masses, dmdup, **plt_kw)
-	axs[2, 1].plot(masses, lmax, lw=4, color='k')
-	axs[2, 1].plot(masses, lmax, **plt_kw)
+	plt_kw = {'lw': 3, 'label': labels[i], 'color': cols1[i]}
+        if i == 0: 
+            for ax in axs:
+                ax.plot(masses, taus/1e6, lw=4, color='k')
+                plt_kw['color'] = cols2[0]
+                ax.plot(masses, taus/1e6, **plt_kw)
+        else:
+            axs[1].plot(masses, taus/1e6, lw=4, color='k')
+            axs[1].plot(masses, taus/1e6, **plt_kw)
+    
+    for j in range(len(models)):
+        model_name = models[j].replace('.dat', '').split('_')[-1]
+        if models[j].lower() == 'nov13':
+            continue
 
-    import glob
-    for i in range(len(models)):
-        model_name = models[i].replace('.dat', '').split('_')[-1]
-        agb_track_loc = research_path + \
-	    'TP-AGBcalib/AGBTracks/CAF09/S_%s/' % model_name
         base = research_path + \
-	    'TP-AGBcalib/AGBTracks/CAF09/S_%s' % model_name
-
-        cnum = np.max([len(models), 3])
-        bmap = brewer2mpl.get_map('Blues', 'Sequential', cnum + 1)
-        cols = bmap.mpl_colors[1:]
+    	    'TP-AGBcalib/AGBTracks/CAF09/S_%s' % model_name
 
         agb_track_loc = os.path.join(base, glob.glob1(base, '*0.001*')[0])
 
-	if not os.path.isdir(agb_track_loc) is True:
-	    print model_name, 'no agb tracks found'
-	model_name = translate_model_name(model_name)
-	agb_track_names = [os.path.join(agb_track_loc, a)
-			   for a in os.listdir(agb_track_loc)
-			   if a.startswith('agb_')]
-	tracks = [fileIO.get_numeric_data(agb_track)
-		  for agb_track in agb_track_names]
+        track_names = [os.path.join(agb_track_loc, a)
+                       for a in os.listdir(agb_track_loc)
+                       if a.startswith('agb_') and not 'b_1.75' in a
+                       and not 'b_1.80' in a]
+	tracks = [fileIO.get_numeric_data(t) for t in track_names]
 	tracks = [t for t in tracks if not t == -1 and t.data_array.size > 1]
-	masses = np.array([t.mass for t in tracks])
-	sort = np.argsort(masses)
-	masses = masses[sort]
-	tracks = np.array(tracks)[sort]
-	#logls = np.array([t.get_col('L_star') for t in tracks])
-	#brights = np.array([np.nonzero(logl > 3.4)[0] for logl in logls])
-	#m_cs = np.array([t.get_col('M_c')[0] for t in tracks])
-	#ax2.plot(masses, m_cs, lw=2, color='black')
-	dmdup = np.array([t.get_col('dmc_nodup')[-1] - \
-			    (t.get_col('M_c')[-1] - t.get_col('M_c')[0])
-			  for t in tracks])
-	lmax = np.array([np.max(t.get_col('lambda')) for t in tracks])
+	tracks = np.array(tracks)[np.argsort([t.mass for t in tracks])]
+
+        masses = np.array([t.mass for t in tracks])
 	taus = np.array([np.sum(t.data_array['dt']) for t in tracks])
-	#btaus = np.array([np.sum(t.data_array['dt'][b])
-	#                  for t, b in zip(tracks, brights)])
-	#tauss.append(taus)
-	#btauss.append(btaus)
-	plt_kw = {'lw': 3, 'label': models[i], 'color': cols[i]}
-	axs[0, 0].plot(masses, taus/1e6, lw=4, color='k')
-	axs[0, 0].plot(masses, taus/1e6, **plt_kw)
-	axs[1, 0].plot(masses, dmdup, lw=4, color='k')
-	axs[1, 0].plot(masses, dmdup, **plt_kw)
-	axs[2, 0].plot(masses, lmax, lw=4, color='k')
-	axs[2, 0].plot(masses, lmax, **plt_kw)
+	
+        model_name = translate_model_name(model_name)
+        plt_kw = {'lw': 3, 'label': model_name, 'color': cols2[j]}
+	axs[0].plot(masses, taus/1e6, lw=4, color='k')
+	axs[0].plot(masses, taus/1e6, **plt_kw)
 
-
-        axs[2, 0].set_xlabel(r'${\rm Initial\ Mass\ (M_\odot)}$', fontsize=16)
-        axs[2, 1].set_xlabel(r'${\rm Initial\ Mass\ (M_\odot)}$', fontsize=16)
-	axs[0, 0].set_ylabel(r'${\rm Lifetime\ (Myr)}$', fontsize=16)
-	axs[1, 0].set_ylabel(r'$\Delta M_{\rm dup}$', fontsize=16)
-	axs[2, 0].set_ylabel(r'$\lambda_{\rm max}$', fontsize=16)
-
-        axs[0][0].legend(loc=0, frameon=False)
-        axs[0][1].legend(loc=0, frameon=False)
-        #ax.set_xlim(1, 3)
-        #ax.set_ylim(0, 3)
-
+    for ax in axs:
+        ax.legend(loc=0, frameon=False, fontsize=16)
+        ax.set_xlim(1, 2.95)
+        ax.set_ylim(.25, 3.7)
+        ax.set_xlabel(r'${\rm Initial\ Mass\ (M_\odot)}$', fontsize=16)
+        ax.tick_params(labelsize=16)
+    
+    fig.subplots_adjust(left=0.1, right=0.95, bottom=0.15, top=0.95,
+                        wspace=0.01)
+    axs[0].set_ylabel(r'${\rm Lifetime\ (Myr)}$', fontsize=16)
+    
+    plt.savefig('lambda_plot.png', dpi=150)
     return axs
 
 
@@ -127,30 +109,37 @@ def agb_lifetimes(models, z=0.002):
     import glob
     tauss = []
     btauss = []
-    fig, ax = plt.subplots()
-    fig2, ax2 = plt.subplots()
-    for i in range(len(models)):
-        model_name = models[i].replace('.dat', '').split('_')[-1]
+    for j in range(len(models)):
+        print models[j]
+        print
+        fig, ax = plt.subplots()
+        fig2, ax2 = plt.subplots()
+        model_name = models[j].replace('.dat', '').split('_')[-1]
         agb_track_loc = research_path + \
 	    'TP-AGBcalib/AGBTracks/CAF09/S_%s/' % model_name
         base = research_path + \
 	    'TP-AGBcalib/AGBTracks/CAF09/S_%s' % model_name
         if z == 'all':
-            zs = np.array([d.split('_')[1].replace('Z','') for d in glob.glob1(base, '*')], dtype=float)
+            zs = np.array([d.split('_')[1].replace('Z','')
+                           for d in glob.glob1(base, '*')], dtype=float)
         else:
             zs = [z]
         zs = np.array([i for i in zs if i <= 0.008])
         if len(zs) > 8.:
             zs = zs[::2]
+        print zs
         cnum = np.max([len(zs), 3])
         bmap = brewer2mpl.get_map('Blues', 'Sequential', cnum + 1)
         cols = bmap.mpl_colors[1:]
         for i, z in enumerate(np.sort(zs)):
-            agb_track_loc = os.path.join(base, glob.glob1(base, '*%g*' % z)[0])
-
+            try:
+                agb_track_loc = os.path.join(base, glob.glob1(base, '*%g*' % z)[0])
+            except IndexError:
+                print 'no Z=%g tracks in %s' % (z, base)
+                continue
             if not os.path.isdir(agb_track_loc) is True:
                 print model_name, 'no agb tracks found'
-            model_name = translate_model_name(model_name)
+            model_name = translate_model_name(models[j])
             agb_track_names = [os.path.join(agb_track_loc, a)
                                for a in os.listdir(agb_track_loc)
                                if a.startswith('agb_')]
@@ -177,12 +166,9 @@ def agb_lifetimes(models, z=0.002):
 
             ax.plot(masses, taus/1e6, **plt_kw)
             ax2.plot(masses, btaus/1e6, **plt_kw)
-            with open('tpagb_lifetimes_S_%s_Z%g.dat' % (model_name, z), 'w') as out:
+            with open('tpagb_lifetimes_S_%s_Z%g.dat' % (models[j], z), 'w') as out:
                 out.write('# mass tpagb_tau tpagb_tau_bright \n')
                 np.savetxt(out, np.array([masses, taus, btaus]).T, fmt='%.3f')
-
-        #ax.fill_between(masses, tauss[0]/1e6, tauss[2]/1e6, alpha=0.1, color='grey')
-        #ax2.fill_between(masses, btauss[0]/1e6, btauss[2]/1e6, alpha=0.1, color='grey')
 
 
         for ax in [ax, ax2]:
@@ -191,11 +177,15 @@ def agb_lifetimes(models, z=0.002):
             ax.legend(loc=0, frameon=False)
             ax.set_xlim(0, 5)
             ax.set_ylim(0, 5)
+            ax.annotate(model_name, (0.03, 0.97), xycoords='axes fraction',
+                        fontsize=20, va='top')
         ax2.set_ylabel(ax2.get_ylabel().replace('(Myr)', 'L>3.4L_\odot\ (Myr)'))
         #ax2.set_ylabel('${\\rm Pre\!-\!Flash\ Core\ Mass\ (M_\odot)}$', fontsize=20)
-        fig.savefig('tpagb_lifetime_Z%g.png' % z, dpi=150)
-        fig2.savefig('tpagb_lifetime_Z%g_bright.png' % z, dpi=150)
 
+        fig.savefig('tpagb_lifetime_%s.png' % (models[j]), dpi=150)
+        fig2.savefig('tpagb_lifetime_bright_%s.png' % (models[j]), dpi=150)
+
+    return 
 
 def load_plot_limits(filename='default'):
     if filename == 'default':
