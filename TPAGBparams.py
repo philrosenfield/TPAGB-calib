@@ -18,6 +18,8 @@ else:
 tpcalib_dir = research_path + 'TP-AGBcalib'
 
 snap_src = os.path.join(tpcalib_dir, 'SNAP')
+phat_src = os.path.join(tpcalib_dir, 'PHAT')
+
 
 table_src = os.path.join(snap_src, 'tables')
 plt_dir = os.path.join(snap_src, 'plots')
