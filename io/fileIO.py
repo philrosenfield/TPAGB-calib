@@ -1,5 +1,7 @@
 from .. import tables
 import numpy as np
+from .. import TPAGBparams
+
 class FileIO(object):
     def __init__(self):
         pass
@@ -64,9 +66,9 @@ class FileIO(object):
             self.load_data_for_normalization(ags=ags)
 
         ir_gal = galaxy_tests.load_galaxy(self.target, band='ir')
-        fits_src = snap_src + '/data/angst_no_trim'
+        fits_src = TPAGBparams.snap_src + '/data/angst_no_trim'
         opt_gal = galaxy_tests.load_galaxy(self.target, band='opt',
-                                           fits_src=fits_src)
+                                           fits_src=TPAGBparams.fits_src)
         # make galaxy histograms
         if color_cut is True:
             filter1 = get_filter1(target)
@@ -127,43 +129,4 @@ class FileIO(object):
         '''read the trilegal cat mag1 and mag2 are optical.'''
         self.sgal = rsp.Galaxies.simgalaxy(trilegal_output, filter1=filter1,
                                            filter2='F814W')
-        return
-
-    def shift_mags(self, opt_inds=None, ir_inds=None):
-        '''shift mags to they agree with opt trgb'''
-        opt_mag = self.sgal.data.get_col('F814W')
-        ir_mag = self.sgal.data.get_col('F160W')
-        if opt_inds is None:
-            opt_inds = np.arange(len(opt_mag))
-
-        if ir_inds is None:
-            ir_inds = np.arange(len(ir_mag))
-
-        # Threshold is set at 100 rgb stars in a bin.
-        rgb_thresh = 5.
-
-        self.sgal.all_stages('RGB')
-        rgb_inds = np.intersect1d(self.sgal.irgb, opt_inds)
-        rgb_bins = np.arange(10, 30, 0.01)
-        rgb_hist, _ = np.histogram(opt_mag[rgb_inds], bins=rgb_bins)
-        rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
-        opt_offset = rgb_bins[rgb_bin_edge] - self.opt_trgb
-
-        rgb_inds = np.intersect1d(self.sgal.irgb, ir_inds)
-        rgb_hist, _ = np.histogram(ir_mag[rgb_inds], bins=rgb_bins)
-        rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
-        ir_offset = rgb_bins[rgb_bin_edge] - self.ir_trgb
-
-        # HERE's A HACK FOR NO OFFSETS!!!
-        #ir_offset = 0.
-        #opt_offset = 0.
-
-        logger.debug('IR OFFSET: %f' % ir_offset)
-        logger.debug('OPT OFFSET: %f' % opt_offset)
-        self.ir_moffset = ir_offset
-        self.opt_moffset = opt_offset
-        print ir_offset
-        print opt_offset
-        self.opt_mag = opt_mag[opt_inds] - opt_offset
-        self.ir_mag = ir_mag[ir_inds] - ir_offset
         return
