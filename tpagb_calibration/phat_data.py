@@ -177,7 +177,7 @@ def prepare_vsfh_run(nsfhs):
         vsfh_kws.append(vsfh_kw)
     return vsfhs, vsfh_kws
 
-def phat_data(nsfhs=50, nprocs=6):
+def phat_data(nsfhs=50, nprocs=6, object_mass=None):
     vsfhs, vsfh_kws = prepare_vsfh_run(nsfhs)
     nruns = len(vsfhs) * nsfhs
     if nruns > 10:
@@ -189,7 +189,7 @@ def phat_data(nsfhs=50, nprocs=6):
     opt_files, ir_files = load_data_files()
     for i, vsfh in enumerate(vsfhs):
         if nruns < 10:
-            vsfh.vary_the_SFH()
+            vsfh.vary_the_SFH(object_mass=object_mass)
             vsfh.write_results()
         pl = Plotting(vsfh)
         opt_gal = rsp.galaxies.galaxy.Galaxy(opt_files[i],
@@ -202,3 +202,7 @@ def phat_data(nsfhs=50, nprocs=6):
                                          filter2='F160W')
 
         pl.compare_to_gal(opt_gal, ir_gal, 28, 28, narratio=False)
+
+
+if __name__ == '__main__':
+    phat_data(nsfhs=1, object_mass=5e8)

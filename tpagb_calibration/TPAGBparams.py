@@ -20,16 +20,6 @@ tpcalib_dir = research_path + 'TP-AGBcalib'
 snap_src = os.path.join(tpcalib_dir, 'SNAP')
 phat_src = os.path.join(tpcalib_dir, 'PHAT')
 
-
-table_src = os.path.join(snap_src, 'tables')
-plt_dir = os.path.join(snap_src, 'plots')
-model_src = os.path.join(snap_src, 'models')
-data_src = os.path.join(snap_src, 'data')
-
-output_src = os.path.join(model_src, 'ast')
-fits_src = os.path.join(data_src, 'galaxies')
-
-for directory in [research_path, tpcalib_dir, snap_src, table_src, plt_dir,
-                  model_src, model_src, data_src, output_src, fits_src]:
+for directory in [snap_src, phat_src]:
     if not os.path.isdir(directory):
         print 'Warning. Can not find %s.' % directory

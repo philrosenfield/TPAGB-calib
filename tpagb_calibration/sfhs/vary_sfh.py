@@ -103,7 +103,7 @@ class VarySFHs(StarFormationHistories):
         file.
         '''
         self.galaxy_inputs = []
-        ext = self.galaxy_input.split('.')[-1]
+        ext = '.' + self.galaxy_input.split('.')[-1]
         lines = open(self.galaxy_input).readlines()
         # line that links to sfr file.
         extra = ' '.join(lines[-3].split(' ')[1:])
@@ -114,10 +114,10 @@ class VarySFHs(StarFormationHistories):
         for i in range(len(self.sfr_files)):
             lines[-3] = ' '.join([self.sfr_files[i], extra])
             if object_mass is not None:
-                lines[-6] = ' '.join(['%.4e' % object_mass, extra2])
+                lines[-6] = ' '.join(['%.4e' % object_mass, extra2]) + '\n'
             new_name = \
                 os.path.split(self.galaxy_input)[1].replace(ext,
-                                                            '_%003i.' % i + ext )
+                                                            '_%003i' % i + ext )
             new_out = os.path.join(self.outfile_loc, new_name)
             if dry_run is False:
                 with open(new_out, 'w') as f:
@@ -342,18 +342,18 @@ class VarySFHs(StarFormationHistories):
         binss = [np.array(l.split(), dtype=float) for l in lines[1::2]]
         return hists, binss
 
-    def narratio_table(self):
-        narratio_files = rsp.fileIO.get_files(self.outfile_dir, '*narratio*dat')
-        stats.narratio_table(narratio_files)
+def narratio_table(self):
+    narratio_files = rsp.fileIO.get_files(self.outfile_dir, '*narratio*dat')
+    stats.narratio_table(narratio_files)
     return
 
-    def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
-        chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
                                             outfile_loc=outfile_dir,
                                             extra_str=extra_str)
-        chi2_dicts = stats.result2dict(chi2_files)
-        stats.chi2plot(chi2_dicts, outfile_loc=outfile_dir)
-        chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+    chi2_dicts = stats.result2dict(chi2_files)
+    stats.chi2plot(chi2_dicts, outfile_loc=outfile_dir)
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
                                             outfile_loc=outfile_dir,
                                             extra_str=extra_str,
                                             just_gauss=True)
