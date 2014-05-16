@@ -11,6 +11,10 @@ logger = logging.getLogger()
 angst_data = rsp.angst_tables.AngstTables()
 import model_plots
 
+fontlarge = 24
+fontmid = 20
+fontsmall = 16
+
 def contamination_files(filenames):
     opt_eagb_contam = np.array([])
     opt_rheb_contam = np.array([])
@@ -501,6 +505,7 @@ def chi2plot(model_dict, outfile_loc=None):
 
     fig, axs = plt.subplots(ncols=2, nrows=2, sharex=True, sharey=False,
                             figsize=(10,10))
+    plt.subplots_adjust(right=0.95, left=0.08, wspace=0.2, top=0.95, hspace=0.1)
     offsets = np.linspace(0, 1, len(targets))
     for key, val in model_dict.items():
         if 'std' in key:
@@ -527,18 +532,18 @@ def chi2plot(model_dict, outfile_loc=None):
 
         ax.errorbar(offsets[ioff], val, yerr=errval, marker=sym, color=col, ms=12,
                     mfc=mfc, ecolor='black', mew=1.5, elinewidth=2)
-        ax.set_ylabel('$\chi^2$', fontsize=20)
+        ax.set_ylabel('$\chi^2$', fontsize=fontlarge)
 
         ax.xaxis.set_ticks(offsets)
         ax.set_xticklabels(['$%s$' % t.replace('-deep', '').replace('-', '\!-\!').upper() for t in targets])
         [t.set_rotation(30) for t in ax.get_xticklabels()]
-
+        ax.tick_params(labelsize=fontmid)
         #ymaxs[ax_num] = np.max([val, ymaxs[ax_num]])
-    axs[0][0].set_title(r'$\rm{Optical}$', fontsize=20)
-    axs[0][1].set_title(r'$\rm{NIR}$', fontsize=20)
+    axs[0][0].set_title(r'$\rm{Optical}$', fontsize=fontlarge)
+    axs[0][1].set_title(r'$\rm{NIR}$', fontsize=fontlarge)
     [ax.set_ylim(0, 25) for ax in axs[:, 0]]
     [ax.set_ylim(0, 10) for ax in axs[:, 1]]
-    fig.subplots_adjust(hspace=0.1)
+    #fig.subplots_adjust(hspace=0.1)
     xlims = ax.get_xlim()
     off = np.diff(offsets)[0]
     ax.set_xlim(xlims[0]-off/2, xlims[1]+off/2)
@@ -547,13 +552,13 @@ def chi2plot(model_dict, outfile_loc=None):
     [axs[0, 0].plot(-99, 99, sym[j], mfc=mfc[j], ms=12, mew=1.5, color=cols[j],
      label='$%s$' % model_plots.translate_model_name(agb_mods[j].split('_')[-1]))
      for j in range(len(agb_mods))]
-    axs[0, 0].legend(loc=0, numpoints=1)
-    [ax.annotate(r'$\rm{TP\!-\!AGB\ Only}$', (0.02, 0.02), fontsize=16,
+    axs[0, 0].legend(loc=0, numpoints=1, fontsize=fontsmall)
+    [ax.annotate(r'$\rm{TP\!-\!AGB\ Only}$', (0.02, 0.02), fontsize=fontmid,
                  xycoords='axes fraction') for ax in axs[0, :]]
     if outfile_loc is None:
         outfile_loc = os.getcwd()
     outfile = os.path.join(outfile_loc, 'chi2_plot.png')
-    plt.tick_params(labelsize=16)
+
     plt.savefig(outfile, dpi=150)
 
     return axs

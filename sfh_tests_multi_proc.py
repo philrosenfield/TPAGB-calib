@@ -22,7 +22,9 @@ import itertools
 import tables
 
 color_scheme = ['#d73027', '#fc8d59', '#fee090', '#669966', '#e0f3f8', '#4575b4']
-
+fontlarge = 24
+fontmid = 20
+fontsmall = 18
 
 def add_file_logger(logdir):
     # setup logger
@@ -709,7 +711,7 @@ class StarFormationHistories(object):
 
     def plot_sfh(self, attr_str, ax=None, outfile=None, yscale='linear',
                  plot_random_arrays_kw=None, errorbar_kw=None,
-                 twoplots=False):
+                 twoplots=False, zoom=False):
         '''
         plot the data from the sfh file.
         '''
@@ -746,6 +748,7 @@ class StarFormationHistories(object):
             fig, axs = plt.subplots(figsize=(8, 8), nrows=2, sharex=True)
         else:
             fig, ax = plt.subplots(figsize=(8, 5))
+            fig.subplots_adjust(left=0.15, right=0.98, top=0.95,  bottom=0.15)
             axs = [ax]
         for ax in axs:
             if not 'm' in attr_str:
@@ -758,8 +761,29 @@ class StarFormationHistories(object):
                 if plot_random_arrays_kw['from_files'] is True:
                     plot_random_arrays_kw['attr_str'] = attr_str
                 self.plot_random_arrays(ax=ax, **plot_random_arrays_kw)
-            ax.set_ylabel(ylab, fontsize=20)
+            ax.set_ylabel(ylab, fontsize=fontlarge)
             ax.set_xlim(7.9, 10.13)
+            ax.tick_params(labelsize=fontmid)
+            if zoom is True:
+
+                # Inset magnified plot
+                axins = plt.axes([0.25, 0.4, 0.3, .4])
+                #axins.set_autoscale_on(False)
+                x1, x2, y1, y2 = 8., 8.5, 0, 0.5
+                axins.set_xlim(x1, x2)
+                axins.set_ylim(y1, y2)
+                #plt.xticks(visible=False)
+                #plt.yticks(visible=False)
+                #plt.setp(axins, xticks=[], yticks=[])
+                if not 'm' in attr_str:
+                    axins.errorbar(self.data.lagei, val_arr, [errm_arr, errp_arr],
+                                   zorder=100, **errorbar_kw)
+                if len(plot_random_arrays_kw) > 0:
+                    self.plot_random_arrays(ax=axins, **plot_random_arrays_kw)
+                #axins.set_aspect(0.05)
+                # draw a bbox of the region of the inset axes in the parent axes and
+                # connecting lines between the bbox and the inset axes area
+                #mark_inset(ax, axins, loc1=2, loc2=4, fc="none", ec="0.5")
 
         target = self.name.split('.')[0].upper().replace('-', '\!-\!')
         if twoplots is True:
@@ -768,14 +792,16 @@ class StarFormationHistories(object):
             axs[0].set_ylim(1e-7, axs[0].get_ylim()[1])
             axs[0].set_yscale('log')
             fig.subplots_adjust(hspace=0.09)
-        else:
-            fig.subplots_adjust(bottom=0.15)
-
+        #else:
+            #fig.subplots_adjust(bottom=0.15)
+        xann = 0.02
+        if zoom is True:
+            xann = 0.9
         ax.annotate('$%s$' % target, (0.02, 0.97), va='top',
-                        xycoords='axes fraction', fontsize=16)
-        ax.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=20)
+                        xycoords='axes fraction', fontsize=fontlarge)
+        ax.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=fontlarge)
 
-        plt.tick_params(labelsize=16)
+
 
         if outfile is not None:
             plt.savefig(outfile, dpi=150)
@@ -858,16 +884,16 @@ class StarFormationHistories(object):
                          self.mh[issfr] + self.mh_disp[issfr],
                          self.mh[issfr] - self.mh_disp[issfr],
                          lw=2, color='red', alpha=0.2)
-        ax1.set_ylabel('$[M/H]$', fontsize=20)
-        ax1.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=20)
+        ax1.set_ylabel('$[M/H]$', fontsize=fontlarge)
+        ax1.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=fontlarge)
         ax1.legend(loc=0, frameon=False)
 
         ax2.plot(bins[:-1], sfr/(np.sum(sfr)), linestyle='steps', color='navy',
                 lw=3, label='TRILEGAL')
         ax2.plot(self.lagei, self.sfr/np.sum(self.sfr),
                  linestyle='steps', lw=2, color='k', label='MATCH')
-        ax2.set_ylabel('$ {\propto \\rm SFR}$', fontsize=20)
-        ax2.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=20)
+        ax2.set_ylabel('$ {\propto \\rm SFR}$', fontsize=fontlarge)
+        ax2.set_xlabel('$\log {\\rm Age (yr)}$', fontsize=fontlarge)
         ax2.legend(loc=0, frameon=False)
         ax2.set_xlim(8, 10.5)
         if outfig is not None:
@@ -1484,7 +1510,7 @@ class Plotting(object):
         plt_kw_lab = dict(plt_kw.items() + {'label': label}.items())
         if axs is None:
             fig, (axs) = plt.subplots(ncols=2, figsize=(12, 6))
-            plt.subplots_adjust(right=0.95, left=0.05, wspace=0.1)
+            plt.subplots_adjust(right=0.98, left=0.08, wspace=0.1)
 
         # these have like 50 histograms each
         opt_hists, opt_binss = self.files.load_lf_file(self.opt_lf_file)
@@ -1531,7 +1557,7 @@ class Plotting(object):
         return ratio_data
 
     def add_narratio_to_plot(self, ax, band, ratio_data):
-        stext_kw = dict({'color': 'black', 'fontsize': 14, 'ha': 'center'}.items() +
+        stext_kw = dict({'color': 'black', 'fontsize': fontsmall, 'ha': 'center'}.items() +
                         rsp.graphics.GraphicsUtils.ann_kwargs.items())
         dtext_kw = dict(stext_kw.items() + {'color': 'darkred'}.items())
 
@@ -1721,7 +1747,7 @@ class Plotting(object):
         else:
             fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6),
                                            sharey=False)
-            plt.subplots_adjust(right=0.95, left=0.1, wspace=0.1)
+            plt.subplots_adjust(right=0.8, left=0.2, wspace=0.1)
 
         if add_stage_lfs is not None and plot_models is False:
             (ax1, ax2) = self.plot_by_stage(ax1, ax2, add_stage_lfs=add_stage_lfs,
@@ -1791,15 +1817,15 @@ class Plotting(object):
             if narratio is False:
                 loc = 0
             ax.legend(loc=loc)
-            ax.set_xlabel('$%s$' % gal.filter2, fontsize=20)
-
+            ax.set_xlabel('$%s$' % gal.filter2, fontsize=fontlarge)
+            ax.tick_params(labelsize=fontmid)
             if narratio is True:
                 # need to load the data nrgb and nagb, calculate the ratio
                 # and error.
                 self.add_narratio_to_plot(ax, band, mean_ratio)
 
-        ax1.set_ylabel(r'${\rm Number\ of\ Stars}$', fontsize=20)
-        plt.tick_params(labelsize=16)
+        ax1.set_ylabel(r'${\rm Number\ of\ Stars}$', fontsize=fontlarge)
+
         outfile = '%s%s_lfs.png' % (self.opt_lf_file.split('opt_lf')[0][:-1],
                                     extra_str)
         plt.savefig(outfile, dpi=150)
@@ -1850,11 +1876,11 @@ class Plotting(object):
                 grid[k].cax.colorbar(im)
                 #grid[i].cax.set_label('$[M/H]$')
 
-        grid.axes_all[0].set_ylabel('${\\rm Mass}\ (M_\odot)$', fontsize=20)
-        grid.axes_all[2].set_ylabel('${\\rm Mass}\ (M_\odot)$', fontsize=20)
-        grid.axes_all[2].set_xlabel('$F814W$', fontsize=20)
-        grid.axes_all[3].set_xlabel('$F160W$', fontsize=20)
+        grid.axes_all[0].set_ylabel('${\\rm Mass}\ (M_\odot)$', fontsize=fontlarge)
+        grid.axes_all[2].set_ylabel('${\\rm Mass}\ (M_\odot)$', fontsize=fontlarge)
+        grid.axes_all[2].set_xlabel('$F814W$', fontsize=fontlarge)
+        grid.axes_all[3].set_xlabel('$F160W$', fontsize=fontlarge)
         target = '_'.join(os.path.split(opt_mass_met_file)[1].split('_')[0:4])
-        fig.suptitle('$%s$' % target.replace('_', '\ '), fontsize=20)
+        fig.suptitle('$%s$' % target.replace('_', '\ '), fontsize=fontlarge)
         plt.savefig('%s_mass_met%s.png' % (target, extra_str), dpi=150)
         return grid

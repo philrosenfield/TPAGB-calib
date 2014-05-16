@@ -6,6 +6,7 @@ import sfh_tests_multi_proc as sfh_tests
 import ResolvedStellarPops as rsp
 import stats
 import model_plots
+from data_plots import plot_cum_sum_sfr, plot_cmd_lf
 
 def caller(vSFH, vsfh_kws):
     return vSFH.vary_the_SFH(**vsfh_kws)
@@ -91,6 +92,10 @@ def lf_figs(targets, cmd_inputs, nsfhs, outfile_dir='default', extra_str='',
     [pl[i].compare_to_gal(extra_str=extra_str,
                           completeness_correction=comp_corr)
          for i in range(len(pl))]
+    [pl[i].compare_to_gal(narratio=False, add_stage_lfs='all',
+                          extra_str='no_data', plot_data=False,
+                          completeness_correction=comp_corr)
+         for i in range(len(pl))]
     return
 
 def narratio_table(outfile_dir):
@@ -128,7 +133,11 @@ def analysis(targets, cmd_inputs, nsfhs, outfile_dirs, extra_str='',
         chi2_stats(targets, cmd_inputs, outfile_dir=out_dir,
                    extra_str=extra_str)
         narratio_table(out_dir)
-    model_plots.plot_random_sfhs(targets)
+    #model_plots.plot_random_sfhs(targets)
+
+def all_data_plots(targets):
+    plot_cum_sum_sfr(targets)
+    [[plot_cmd_lf(target, band) for target in targets] for band in ['opt', 'ir']]
 
 if __name__ == '__main__':
     # could be an input file:
@@ -137,11 +146,22 @@ if __name__ == '__main__':
     cmd_inputs = ['cmd_input_CAF09_S_NOV13.dat',
                   'cmd_input_CAF09_S_NOV13eta0.dat',
                   'cmd_input_CAF09_S_OCT13.dat']
+    models = [c.split('S_')[1].replace('.dat', '') for c in cmd_inputs]
     #outfile_dirs = ['/home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/match-hmc/']
     outfile_dirs = ['/home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr']
     nsfhs = 5
-    dry_run = False
+    dry_run = True
     comp_corr = True
 
     #main(targets, cmd_inputs, nsfhs, dry_run=dry_run, comp_corr=comp_corr)
-    analysis(targets, cmd_inputs, nsfhs, outfile_dirs, comp_corr=comp_corr)
+    #all_data_plots(targets)
+    #model_plots.agb_lifetimes(models, z='all')
+    #model_plots.compare_agb_lifetimes()
+    model_plots.plot_random_sfhs(targets)
+    #analysis(targets, cmd_inputs, nsfhs, outfile_dirs, comp_corr=comp_corr)
+    model_plots.tpagb_mass_histograms(chi2_location=outfile_dirs[0],
+                                       band='opt', dry_run=True, model='nov13',
+                                       model_src=outfile_dirs[0], force=True,
+                                       cumsum=False)
+    #[model_plots.compare_mass_loss(masses=m, z=0.001, paola=True)
+    # for m in [1., 2.]]
