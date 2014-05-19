@@ -1625,7 +1625,9 @@ class Plotting(object):
                 cols = cmap.mpl_colors[0::2]
             else:
                 cols = color_scheme
-
+                cols[2] = '#669966'
+                cols[3] = 'navy'
+                cols[4] = 'purple'
         # load the trilegal catalog if it is given, if it is given,
         # no LF scaling... need to save this info better. Currently only
         # in log files.
@@ -1747,7 +1749,7 @@ class Plotting(object):
         else:
             fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6),
                                            sharey=False)
-            plt.subplots_adjust(right=0.8, left=0.2, wspace=0.1)
+            plt.subplots_adjust(right=0.98, left=0.08, wspace=0.1)
 
         if add_stage_lfs is not None and plot_models is False:
             (ax1, ax2) = self.plot_by_stage(ax1, ax2, add_stage_lfs=add_stage_lfs,

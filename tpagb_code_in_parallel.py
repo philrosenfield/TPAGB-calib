@@ -76,7 +76,8 @@ def main(targets, cmd_inputs, nsfhs, dry_run=False, comp_corr=False):
     print 'done.'
 
 def lf_figs(targets, cmd_inputs, nsfhs, outfile_dir='default', extra_str='',
-            default_kw=None, comp_corr=False):
+            default_kw=None, comp_corr=False, example=True):
+    import os
     if comp_corr is True:
         table_file = 'comp_corr'
     else:
@@ -86,16 +87,29 @@ def lf_figs(targets, cmd_inputs, nsfhs, outfile_dir='default', extra_str='',
                                                           'extra_str': extra_str,
                                                           'table_file': table_file},
                                                  default_kw=default_kw)
-    pl = [sfh_tests.Plotting(v) for v in vSFHs]
+
     if comp_corr is True:
         extra_str += '_comp'
-    [pl[i].compare_to_gal(extra_str=extra_str,
+
+    for i in range(len(vSFHs)):
+        pl = sfh_tests.Plotting(vSFHs[i])
+        pl.compare_to_gal(extra_str=extra_str,
                           completeness_correction=comp_corr)
-         for i in range(len(pl))]
-    [pl[i].compare_to_gal(narratio=False, add_stage_lfs='all',
-                          extra_str='no_data', plot_data=False,
-                          completeness_correction=comp_corr)
-         for i in range(len(pl))]
+        # example LF from the model
+    if example is True:
+        for i in range(len(vSFHs)):
+            pl = sfh_tests.Plotting(vSFHs[i])
+            best = rsp.fileIO.get_files(os.path.join(outfile_dir, vSFHs[i].target,
+                                                      vSFHs[i].agb_mod, 'mc'),
+                                         '*best.dat')
+            if len(best) == 0:
+                continue
+            pl.compare_to_gal(narratio=False, add_stage_lfs='all',
+                              extra_str='no_data', plot_data=False,
+                              completeness_correction=comp_corr,
+                              plot_models=False,
+                              trilegal_output=best[0])
+
     return
 
 def narratio_table(outfile_dir):
@@ -116,6 +130,7 @@ def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
     plt.close('all')
     return
 
+
 def analysis(targets, cmd_inputs, nsfhs, outfile_dirs, extra_str='',
              comp_corr=False, default_kw=None):
     default_kw = default_kw or {}
@@ -130,9 +145,9 @@ def analysis(targets, cmd_inputs, nsfhs, outfile_dirs, extra_str='',
         lf_figs(targets, cmd_inputs, nsfhs, outfile_dir=out_dir,
                 extra_str=extra_str, default_kw=default_kw,
                 comp_corr=comp_corr)
-        chi2_stats(targets, cmd_inputs, outfile_dir=out_dir,
-                   extra_str=extra_str)
-        narratio_table(out_dir)
+        #chi2_stats(targets, cmd_inputs, outfile_dir=out_dir,
+        #           extra_str=extra_str)
+        #narratio_table(out_dir)
     #model_plots.plot_random_sfhs(targets)
 
 def all_data_plots(targets):
@@ -157,11 +172,10 @@ if __name__ == '__main__':
     #all_data_plots(targets)
     #model_plots.agb_lifetimes(models, z='all')
     #model_plots.compare_agb_lifetimes()
-    model_plots.plot_random_sfhs(targets)
-    #analysis(targets, cmd_inputs, nsfhs, outfile_dirs, comp_corr=comp_corr)
-    model_plots.tpagb_mass_histograms(chi2_location=outfile_dirs[0],
-                                       band='opt', dry_run=True, model='nov13',
-                                       model_src=outfile_dirs[0], force=True,
-                                       cumsum=False)
+    analysis(targets, cmd_inputs, nsfhs, outfile_dirs, comp_corr=comp_corr)
+    #model_plots.tpagb_mass_histograms(chi2_location=outfile_dirs[0],
+    #                                   band='opt', dry_run=True, model='nov13',
+    #                                   model_src=outfile_dirs[0], force=True,
+    #                                   cumsum=False)
     #[model_plots.compare_mass_loss(masses=m, z=0.001, paola=True)
     # for m in [1., 2.]]

@@ -491,15 +491,16 @@ def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=True,
         axs[0].set_xlim(0.6, 3)
         fname = 'tpagb_mass_hist_%s_%s.png' % (band, model)
     else:
-        [ax.set_xlim(0.6, 3) for ax in axs]
+        [ax.set_xlim(0.8, 3) for ax in axs]
         plt.annotate(r'$\rm{\#\ of\ {TP\!-\!AGB}\ Stars}$', (0.03, 0.5),
                      fontsize=fontlarge, va='center',
                xycoords='figure fraction', rotation='vertical')
         fname = 'tpagb_mass_hist_%s_%s_nocumsum.png' % (band, model)
-        [ax.locator_params(axis='y', nbins=2) for ax in axs]
-        fig.subplots_adjust(hspace=0.03)
+        [ax.locator_params(axis='y', nbins=3) for ax in axs]
+        fig.subplots_adjust(hspace=0.001)
     plt.savefig(fname, dpi=150)
     return axs
+
 
 
 def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False,
