@@ -1,14 +1,14 @@
-import sfh_tests_multi_proc
+#import sfh_tests_multi_proc
 import numpy as np
 import ResolvedStellarPops as rsp
-import galaxy_tests
+#import galaxy_tests
 import os
-import tables
+#import tables
 import matplotlib.pylab as plt
 from TPAGBparams import snap_src
 import logging
 logger = logging.getLogger()
-angst_data = rsp.angst_tables.AngstTables()
+angst_data = rsp.angst_tables.angst_tables.AngstTables()
 
 def contamination_files(filenames):
     opt_eagb_contam = np.array([])

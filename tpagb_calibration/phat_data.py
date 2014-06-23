@@ -1,44 +1,31 @@
 import itertools
-from TPAGBparams import phat_src
-import os
-import ResolvedStellarPops as rsp
 import numpy as np
-from sfhs.vary_sfh import VarySFHs
-from pop_synth.stellar_pops import rgb_agb_regions
-import calibrate
-from plotting import Plotting
+import os
+import sys
 import time
 
+import calibrate
+from plotting import Plotting
+from pop_synth.stellar_pops import rgb_agb_regions
+import ResolvedStellarPops as rsp
+from sfhs.vary_sfh import VarySFHs
 
-
-__all__ = ['prepare_data', 'prepare_vsfh_run']
-
-def load_data_files():
-    base = '/home/rosenfield/research/TP-AGBcalib/PHAT/data/matchphot'
-    opt_names = ['M31-B21_3x6-006.gst.match',
-                 'M31-B21_3x6-012.gst.match',
-                 'M31-B21_3x6-015.gst.match']
-    opt_files = [os.path.join(base, opt_name) for opt_name in opt_names]
-
-    ir_names = ['12055_M31-B21-F06-IR_F110W_F160W.gst.match',
-                '12055_M31-B21-F12-IR_F110W_F160W.gst.match',
-                '12055_M31-B21-F15-IR_F110W_F160W.gst.match']
-    ir_files = [os.path.join(base, ir_name) for ir_name in ir_names]
+def load_data_files(inputs):
+    opt_files = [os.path.join(inputs.data_src, o) for o in inputs.opt_data]
+    ir_files = [os.path.join(inputs.data_src, o) for o in inputs.ir_data]
     return opt_files, ir_files
 
-def prepare_data_table(offsets=[-2., -1.5], trgb_excludes=[.1, .2]):
-    opt_color_min = 1.5
-    ir_color_min = 0.6
-    Mtrgb = -4.05
-    dmod = 24.47
-    Av = 0.4
-    photsys = 'phat_agb'
-    ir_trgb = rsp.astronomy_utils.Mag2mag(Mtrgb, 'F160W', photsys,
-                                                  dmod=dmod, Av=Av)
-    opt_trgb = rsp.astronomy_utils.Mag2mag(Mtrgb, 'F814W', photsys,
-                                                  dmod=dmod, Av=Av)
-    offsets[0] = opt_trgb - offsets[0]
-    offsets[1] = ir_trgb - offsets[1]
+
+def prepare_data_table(inputs):
+    offsets = []
+    ir_trgb = rsp.astronomy_utils.Mag2mag(inputs.Mtrgb, inputs.ir_filter2,
+                                          inputs.photsys, dmod=inputs.dmod,
+                                          Av=inputs.Av)
+    opt_trgb = rsp.astronomy_utils.Mag2mag(inputs.Mtrgb, inputs.opt_filter2,
+                                           inputs.photsys, dmod=inputs.dmod,
+                                           Av=inputs.Av)
+    offsets[0] = opt_trgb - inputs.offsets[0]
+    offsets[1] = ir_trgb - inputs.offsets[1]
 
     fmt = '%s %i %i %i %i %.2f %.2f %.2f %.2f \n'
     header = '# opt: F814W ir: F160W Mtrgb: %.2f dmod: %.2f Av: %.1f \n'
@@ -48,37 +35,42 @@ def prepare_data_table(offsets=[-2., -1.5], trgb_excludes=[.1, .2]):
     header += ' opt_min ir_min \n'
 
     out = open('phat_b21_data.dat', 'w')
-    out.write(header % (Mtrgb, dmod, Av, opt_color_min, ir_color_min,  opt_trgb,
-                        ir_trgb, offsets[0], offsets[1], trgb_excludes[0],
-                        trgb_excludes[1]))
+    out.write(header % (inputs.Mtrgb, inputs.dmod, inputs.Av,
+                        inputs.opt_color_min, inputs.ir_color_min,
+                        inputs.opt_trgb, inputs.ir_trgb, offsets[0], offsets[1],
+                        inputs.trgb_excludes[0], inputs.trgb_excludes[1]))
 
-    opt_files, ir_files = load_data_files()
+    opt_files, ir_files = load_data_files(inputs)
     for i in range(len(opt_files)):
         opt_gal = rsp.galaxies.galaxy.Galaxy(opt_files[i],
-                                         filetype='match_phot', angst=False,
-                                         hla=False, filter1='F475W',
-                                         filter2='F814W')
+                                         filetype=inputs.data_ftype, angst=False,
+                                         hla=False, filter1=inputs.opt_filter1,
+                                         filter2=inputs.opt_filter2)
         ir_gal = rsp.galaxies.galaxy.Galaxy(ir_files[i],
-                                         filetype='match_phot', angst=False,
-                                         hla=False, filter1='F110W',
-                                         filter2='F160W')
-        opt_color_cut, = np.nonzero((opt_gal.color) > opt_color_min)
-        ir_color_cut, = np.nonzero((ir_gal.color) > ir_color_min)
+                                         filetype=inputs.data_ftype, angst=False,
+                                         hla=False, filter1=inputs.ir_filter1,
+                                         filter2=inputs.ir_filter2)
+        opt_color_cut, = np.nonzero((opt_gal.color) > inputs.opt_color_min)
+        ir_color_cut, = np.nonzero((ir_gal.color) > inputs.ir_color_min)
         ir_mag = ir_gal.mag2[ir_color_cut]
         opt_mag = opt_gal.mag2[opt_color_cut]
-        opt_rgb, ir_rgb, opt_agb, ir_agb = rgb_agb_regions(opt_gal, offsets,
-                                                          trgb_excludes,
-                                                          opt_trgb,
-                                                          ir_trgb,
-                                                          opt_mag,
-                                                          ir_mag)
+        opt_rgb, ir_rgb, opt_agb, ir_agb = \
+            rgb_agb_regions(opt_gal, inputs.offsets, inputs.trgb_excludes,
+                            opt_trgb, ir_trgb, opt_mag, ir_mag)
         out.write(fmt % (opt_files[i].split('.')[0], len(opt_rgb), len(opt_agb),
                          len(ir_rgb), len(ir_agb), opt_gal.mag2.max(),
                          ir_gal.mag2.max(), opt_gal.mag2.min(),
                          ir_gal.mag2.min()))
 
 
-def prepare_vsfh_run(nsfhs):
+def load_numbers_table(table_file):
+    dtype=[('target', '|S25'), ('nopt_rgb', '<f8'), ('nopt_agb', '<f8'),
+           ('nir_rgb', '<f8'), ('nir_agb', '<f8'), ('opt_max', '<f8'),
+           ('ir_max', '<f8'), ('opt_min', '<f8'), ('ir_min', '<f8')]
+    return np.genfromtxt(table_file, dtype=dtype)
+
+
+def prepare_vsfh_run(inputs, object_mass=None):
     '''
     Run a number of SFH variations on a galaxy.
     If passed default to the args, will attempt to find the file based on the
@@ -104,61 +96,45 @@ def prepare_vsfh_run(nsfhs):
     RETURNS:
     VarySFHs class
     '''
-    track_model = 'PARSEC'
-    base = phat_src
+    cmd_input_files = inputs.cmd_input_files
+    if type(cmd_input_files) is str:
+        cmd_input_files = [cmd_input_files]
 
-    # Data information
-    targets = ['M31-B21_3x6-006',
-               'M31-B21_3x6-012',
-               'M31-B21_3x6-015']
+    targets = inputs.targets
+    if type(targets) is str:
+        targets = [targets]
 
-    dmod = 24.47
-    Av = 0.
-    photsys = 'phat_agb'
-    opt_color_min = 1.5
-    ir_color_min = 0.6
+    orig_outfile_loc = inputs.outfile_loc
+    m31_data = load_numbers_table(os.path.join(inputs.base_dir, inputs.table_file))
 
-    # Match SFH files
-    sfh_src = os.path.join(base, 'match', 'B21_AGB_%s' % track_model)
-    sfh_ext = '.sfh.mcmc.zc'
-
-    # galaxy input file for trilegal
-    galaxy_input_scr = os.path.join(base, 'vary_sfh', 'input')
-    galaxy_input_ext = '.inp'  # could also be .aringer.inp
-
-    cmd_input_files = ['cmd_input_CAF09_S_NOV13.dat']
-
-    table_file = os.path.join(base, 'tables', 'phat_b21_data.dat')
-    dtype=[('target', '|S25'), ('nopt_rgb', '<f8'), ('nopt_agb', '<f8'),
-           ('nir_rgb', '<f8'), ('nir_agb', '<f8'), ('opt_max', '<f8'),
-           ('ir_max', '<f8'), ('opt_min', '<f8'), ('ir_min', '<f8')]
-    m31_data = np.genfromtxt(table_file, dtype=dtype)
-    dmag = 0.1
-
-    vsfh_kw = {'file_origin': 'match-hmc',
-               'nsfhs': nsfhs,
-               'filter1': 'F475W',
-               'photsys': photsys,
-               'opt_color_min': opt_color_min,
-               'ir_color_min': ir_color_min,
-               'dmod': dmod,
-               'Av': Av,
-               'Mtrgb': -4.05}
+    vsfh_kw = {'file_origin': inputs.sfh_file_origin,
+               'nsfhs': inputs.nsfhs,
+               'filter1': inputs.opt_filter1,
+               'photsys': inputs.photsys,
+               'opt_color_min': inputs.opt_color_min,
+               'ir_color_min': inputs.ir_color_min,
+               'dmod': inputs.dmod,
+               'Av': inputs.Av,
+               'Mtrgb': inputs.Mtrgb}
     vsfh_kws = []
     vsfhs = []
 
     for target, cmd_input in itertools.product(targets, cmd_input_files):
         agb_mod = cmd_input.replace('cmd_input_', '').lower().split('.')[0]
 
-        galaxy_input = os.path.join(galaxy_input_scr, target + galaxy_input_ext)
-        sfh_file = os.path.join(sfh_src, target + sfh_ext)
+        galaxy_input = os.path.join(inputs.base_dir, inputs.galaxy_inp_src,
+                                    target + inputs.galaxy_inp_ext)
+        sfh_file = os.path.join(inputs.base_dir, inputs.sfh_src,
+                                target + inputs.sfh_ext)
 
-        outfile_loc = os.path.join(base, 'vary_sfh', target, agb_mod)
-        rsp.fileIO.ensure_dir(outfile_loc)
+        if orig_outfile_loc == 'default':
+            outfile_loc = os.path.join(inputs.base_dir, 'vary_sfh', target, agb_mod)
+
+        rsp.fileio.ensure_dir(outfile_loc)
 
         data_line = m31_data['target'==target]
-        opt_bins = np.arange(data_line['opt_min'], data_line['opt_max'], dmag)
-        ir_bins = np.arange(data_line['ir_min'], data_line['ir_max'], dmag)
+        opt_bins = np.arange(data_line['opt_min'], data_line['opt_max'], inputs.binsize)
+        ir_bins = np.arange(data_line['ir_min'], data_line['ir_max'], inputs.binsize)
 
         #print target, cmd_input
         vsfh_kw.update({'target': target.lower(),
@@ -177,32 +153,36 @@ def prepare_vsfh_run(nsfhs):
         vsfh_kws.append(vsfh_kw)
     return vsfhs, vsfh_kws
 
-def phat_data(nsfhs=50, nprocs=6, object_mass=None):
-    vsfhs, vsfh_kws = prepare_vsfh_run(nsfhs)
-    nruns = len(vsfhs) * nsfhs
+
+def phat_data(inputs, object_mass=None):
+    vsfhs, vsfh_kws = prepare_vsfh_run(inputs)
+    nruns = len(vsfhs) * inputs.nsfhs
     if nruns > 10:
-        os.system('ipcluster start -n=%i' % nprocs)
+        os.system('ipcluster start -n=%i' % inputs.nprocs)
         time.wait(45)
         calibrate.main(vsfhs, vsfh_kws=vsfh_kws)
-    os.system('ipcluster stop')
-    #results = calibrate.main(vsfhs, vsfh_kws=vsfh_kws)
-    opt_files, ir_files = load_data_files()
+        os.system('ipcluster stop')
+
+    opt_files, ir_files = load_data_files(inputs)
     for i, vsfh in enumerate(vsfhs):
         if nruns < 10:
-            vsfh.vary_the_SFH(object_mass=object_mass)
+            vsfh.vary_the_SFH(object_mass=object_mass, dry_run=inputs.dry_run)
             vsfh.write_results()
         pl = Plotting(vsfh)
-        opt_gal = rsp.galaxies.galaxy.Galaxy(opt_files[i],
-                                         filetype='match_phot', angst=False,
-                                         hla=False, filter1='F475W',
-                                         filter2='F814W')
-        ir_gal = rsp.galaxies.galaxy.Galaxy(ir_files[i],
-                                         filetype='match_phot', angst=False,
-                                         hla=False, filter1='F110W',
-                                         filter2='F160W')
+        gal_kw = {'filetype': inputs.data_ftype, 'angst': False, 'hla': False}
+        opt_gal = rsp.Galaxy(opt_files[i], filter1='F475W', filter2='F814W',
+                             **gal_kw)
+        ir_gal = rsp.Galaxy(ir_files[i], filter1='F110W', filter2='F160W',
+                            **gal_kw)
 
         pl.compare_to_gal(opt_gal, ir_gal, 28, 28, narratio=False)
 
 
 if __name__ == '__main__':
-    phat_data(nsfhs=1, object_mass=5e8)
+    import pdb; pdb.set_trace()
+    inp_obj = rsp.fileio.InputFile(sys.argv[1])
+    if hasattr(inp_obj, 'object_mass'):
+        object_mass = inp_obj.object_mass
+    else:
+        object_mass = 5e8
+    phat_data(inp_obj, object_mass=1e6)

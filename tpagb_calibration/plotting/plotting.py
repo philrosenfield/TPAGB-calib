@@ -88,7 +88,7 @@ class Plotting(object):
             nagb = np.sum(hist[iagb])
             ratio_data['%s_ar_ratio' % band] = nagb / nrgb
             ratio_data['%s_ar_ratio_err' % band] = \
-                galaxy_tests.count_uncert_ratio(nagb, nrgb)
+                rsp.utils.count_uncert_ratio(nagb, nrgb)
             ratio_data['n%s_rgb' % band] = nrgb
             ratio_data['n%s_agb'% band] = nagb
         return ratio_data
@@ -98,8 +98,10 @@ class Plotting(object):
                         rsp.graphics.GraphicsUtils.ann_kwargs.items())
         dtext_kw = dict(stext_kw.items() + {'color': 'darkred'}.items())
 
+        nrgb = ratio_data['n%s_rgb' % band]
+        nagb = ratio_data['n%s_agb'% band]
         dratio = nagb / nrgb
-        dratio_err = rsp.math.utils.count_uncert_ratio(nagb, nrgb)
+        dratio_err = rsp.utils.count_uncert_ratio(nagb, nrgb)
 
         #yval = 1.2  # text yloc found by eye, depends on fontsize
         stext_kw['transform'] = ax.transAxes
@@ -153,11 +155,7 @@ class Plotting(object):
         if hasattr(stage_lf_kw, 'label'):
             stage_lf_kw['olabel'] = stage_lf_kw['label']
         if cols is None:
-            if nstages < 3:
-                cmap = brewer2mpl.get_map('Paired', 'Qualitative', 3)
-                cols = cmap.mpl_colors[0::2]
-            else:
-                cols = color_scheme
+            cols = color_scheme
 
         # load the trilegal catalog if it is given, if it is given,
         # no LF scaling... need to save this info better. Currently only
@@ -273,7 +271,6 @@ class Plotting(object):
         ax1, ax2: axes instances created for the plot.
 
         '''
-
         # plot lfs from simulations (and initialize figure)
         plt_kw = plt_kw or {}
         (ax1, ax2) = \
@@ -287,7 +284,7 @@ class Plotting(object):
         # initialize add numbers to the plot
         if narratio is True:
             # count stars from the saved file
-            ratio_data = rsp.fileIO.readfile(self.narratio_file,
+            ratio_data = rsp.fileio.readfile(self.narratio_file,
                                              string_column=0)
             # get the number ratios for the annotations
 
@@ -575,4 +572,3 @@ def trilegal_metals(chi2_location='draft_run', band='opt', dry_run=False,
     for i, target in enumerate(targets):
 	print '%.4f %.4f %.4f %s ' % (np.min(zs[i]), np.median(zs[i]),
 				      np.max(zs[i]), target)
-

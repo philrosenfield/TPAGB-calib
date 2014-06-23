@@ -4,6 +4,7 @@ from pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 import ResolvedStellarPops as rsp
 import numpy as np
 import matplotlib.pylab as plt
+from analysis import stats
 
 __all__ = ['setup_files', 'VarySFHs']
 
@@ -13,7 +14,7 @@ def setup_files(agb_mod, target, outfile_loc, extra_str=''):
              'contam']
     name_fmt = '%s_%s_%s%s.dat'
 
-    fnames = [os.path.join(outfile_loc,
+    fnames = [os.path.join(outfile_loc,\
                            name_fmt % (agb_mod, target, f, extra_str))
               for f in names]
 
@@ -65,7 +66,8 @@ class VarySFHs(StarFormationHistories):
         [self.__setattr__(k, v) for k, v in default_kwargs.items()]
 
         if self.just_once is False:
-            StarFormationHistories.__init__(self, self.sfh_file, self.file_origin)
+            StarFormationHistories.__init__(self, self.sfh_file,
+                                            self.file_origin)
 
         if self.agb_mod is None:
             self.agb_mod = \
@@ -208,9 +210,8 @@ class VarySFHs(StarFormationHistories):
 
     def load_trilegal_catalog(self, trilegal_output, shift_mags=False):
         '''read the trilegal cat mag1 and mag2 are optical.'''
-        self.sgal = rsp.galaxies.SimGalaxy(trilegal_output,
-                                           filter1=self.filter1,
-                                           filter2='F814W')
+        self.sgal = rsp.SimGalaxy(trilegal_output, filter1=self.filter1,
+                                  filter2='F814W')
 
         opt_mag = self.sgal.data.get_col('F814W')
         ir_mag = self.sgal.data.get_col('F160W')
@@ -269,7 +270,7 @@ class VarySFHs(StarFormationHistories):
                                  sir_agb)
 
         narratio_dict = {'opt_rgb': opt_rgb, 'opt_agb': opt_agb,
-                        'ir_rgb': ir_rgb, 'ir_agb': ir_agb}
+                         'ir_rgb': ir_rgb, 'ir_agb': ir_agb}
         result_dict = self.gather_results(narratio_dict=narratio_dict)
         if debug is True:
             return narratio_dict, (sopt_rgb, sopt_agb, sir_rgb, sir_agb), result_dict
@@ -342,23 +343,6 @@ class VarySFHs(StarFormationHistories):
         binss = [np.array(l.split(), dtype=float) for l in lines[1::2]]
         return hists, binss
 
-def narratio_table(self):
-    narratio_files = rsp.fileIO.get_files(self.outfile_dir, '*narratio*dat')
-    stats.narratio_table(narratio_files)
-    return
-
-def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
-    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
-                                            outfile_loc=outfile_dir,
-                                            extra_str=extra_str)
-    chi2_dicts = stats.result2dict(chi2_files)
-    stats.chi2plot(chi2_dicts, outfile_loc=outfile_dir)
-    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
-                                            outfile_loc=outfile_dir,
-                                            extra_str=extra_str,
-                                            just_gauss=True)
-    return
-
     def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb,
                                 diag_plot=False):
         self.sgal.all_stages()
@@ -423,3 +407,20 @@ def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
             plt.savefig('contamination_%s.png' % self.target, dpi=150)
 
         return line
+
+def narratio_table(self):
+    narratio_files = rsp.fileIO.get_files(self.outfile_dir, '*narratio*dat')
+    stats.narratio_table(narratio_files)
+    return
+
+def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+                                            outfile_loc=outfile_dir,
+                                            extra_str=extra_str)
+    chi2_dicts = stats.result2dict(chi2_files)
+    stats.chi2plot(chi2_dicts, outfile_loc=outfile_dir)
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+                                            outfile_loc=outfile_dir,
+                                            extra_str=extra_str,
+                                            just_gauss=True)
+    return
