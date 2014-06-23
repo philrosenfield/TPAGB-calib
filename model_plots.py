@@ -10,8 +10,9 @@ import galaxy_tests
 
 
 color_scheme = ['#d73027', '#fc8d59', '#fee090', '#669966', '#e0f3f8', '#4575b4']
-
-
+fontlarge = 24
+fontmid = 20
+fontsmall = 18
 def translate_model_name(model, small=False):
     if 'oct' in model.lower():
         name = 'R75'
@@ -20,9 +21,9 @@ def translate_model_name(model, small=False):
     if model.lower() == 'nov13':
         name = 'mSC05'
     if 'feb' in model.lower():
-	name = 'FEB14'
+        name = 'FEB14'
     if small is True:
-	new_model = r'$\dot M_{\rm pre\!-\!dust}^{\rm %s}$' % name
+        new_model = r'$\dot M_{\rm pre\!-\!dust}^{\rm %s}$' % name
     else:
         new_model = r'$\dot{M}_{\rm pre\!-\!dust}=%s$' % name
     return new_model
@@ -31,11 +32,11 @@ def translate_model_name(model, small=False):
 def compare_agb_lifetimes():
     import glob
     track_loc = research_path + \
-	'TP-AGBcalib/AGBTracks/plots_for_paperI/agbz001_3dup/'
-    
+    'TP-AGBcalib/AGBTracks/plots_for_paperI/agbz001_3dup/'
+
     models = ['NOV13', 'NOV13eta0', 'OCT13']
     model_name = translate_model_name('nov13')
-    
+
     # these two have to line up:
     search_formats = ['*dL0.0*', '*dL0.50*', '*dL2*']
     labels = [r'%s' % model_name,
@@ -50,12 +51,12 @@ def compare_agb_lifetimes():
     fig, axs = plt.subplots(ncols=2, figsize=(10, 5), sharex=True, sharey=True)
 
     for i, track_set in enumerate(track_sets):
-	tracks = np.array([fileIO.get_numeric_data(t) for t in track_set])
-	tracks = tracks[np.argsort([t.mass for t in tracks])]
-	masses = np.array([t.mass for t in tracks])
-	taus = np.array([np.sum(t.data_array['dt']) for t in tracks])
-	plt_kw = {'lw': 3, 'label': labels[i], 'color': cols1[i]}
-        if i == 0: 
+        tracks = np.array([fileIO.get_numeric_data(t) for t in track_set])
+        tracks = tracks[np.argsort([t.mass for t in tracks])]
+        masses = np.array([t.mass for t in tracks])
+        taus = np.array([np.sum(t.data_array['dt']) for t in tracks])
+        plt_kw = {'lw': 3, 'label': labels[i], 'color': cols1[i]}
+        if i == 0:
             for ax in axs:
                 ax.plot(masses, taus/1e6, lw=4, color='k')
                 plt_kw['color'] = cols2[0]
@@ -63,14 +64,14 @@ def compare_agb_lifetimes():
         else:
             axs[1].plot(masses, taus/1e6, lw=4, color='k')
             axs[1].plot(masses, taus/1e6, **plt_kw)
-    
+
     for j in range(len(models)):
         model_name = models[j].replace('.dat', '').split('_')[-1]
         if models[j].lower() == 'nov13':
             continue
 
         base = research_path + \
-    	    'TP-AGBcalib/AGBTracks/CAF09/S_%s' % model_name
+            'TP-AGBcalib/AGBTracks/CAF09/S_%s' % model_name
 
         agb_track_loc = os.path.join(base, glob.glob1(base, '*0.001*')[0])
 
@@ -78,29 +79,29 @@ def compare_agb_lifetimes():
                        for a in os.listdir(agb_track_loc)
                        if a.startswith('agb_') and not 'b_1.75' in a
                        and not 'b_1.80' in a]
-	tracks = [fileIO.get_numeric_data(t) for t in track_names]
-	tracks = [t for t in tracks if not t == -1 and t.data_array.size > 1]
-	tracks = np.array(tracks)[np.argsort([t.mass for t in tracks])]
+        tracks = [fileIO.get_numeric_data(t) for t in track_names]
+        tracks = [t for t in tracks if not t == -1 and t.data_array.size > 1]
+        tracks = np.array(tracks)[np.argsort([t.mass for t in tracks])]
 
         masses = np.array([t.mass for t in tracks])
-	taus = np.array([np.sum(t.data_array['dt']) for t in tracks])
-	
+        taus = np.array([np.sum(t.data_array['dt']) for t in tracks])
+
         model_name = translate_model_name(model_name)
         plt_kw = {'lw': 3, 'label': model_name, 'color': cols2[j]}
-	axs[0].plot(masses, taus/1e6, lw=4, color='k')
-	axs[0].plot(masses, taus/1e6, **plt_kw)
+    axs[0].plot(masses, taus/1e6, lw=4, color='k')
+    axs[0].plot(masses, taus/1e6, **plt_kw)
 
     for ax in axs:
-        ax.legend(loc=0, frameon=False, fontsize=16)
+        ax.legend(loc=0, frameon=False, fontsize=fontsmall)
         ax.set_xlim(1, 2.95)
         ax.set_ylim(.25, 3.7)
-        ax.set_xlabel(r'${\rm Initial\ Mass\ (M_\odot)}$', fontsize=16)
-        ax.tick_params(labelsize=16)
-    
-    fig.subplots_adjust(left=0.1, right=0.95, bottom=0.15, top=0.95,
+        ax.set_xlabel(r'${\rm Initial\ Mass\ (M_\odot)}$', fontsize=fontlarge)
+        ax.tick_params(labelsize=fontmid)
+
+    fig.subplots_adjust(left=0.08, right=0.98, bottom=0.15, top=0.95,
                         wspace=0.01)
-    axs[0].set_ylabel(r'${\rm Lifetime\ (Myr)}$', fontsize=16)
-    
+    axs[0].set_ylabel(r'${\rm Lifetime\ (Myr)}$', fontsize=fontlarge)
+
     plt.savefig('lambda_plot.png', dpi=150)
     return axs
 
@@ -116,9 +117,9 @@ def agb_lifetimes(models, z=0.002):
         fig2, ax2 = plt.subplots()
         model_name = models[j].replace('.dat', '').split('_')[-1]
         agb_track_loc = research_path + \
-	    'TP-AGBcalib/AGBTracks/CAF09/S_%s/' % model_name
+            'TP-AGBcalib/AGBTracks/CAF09/S_%s/' % model_name
         base = research_path + \
-	    'TP-AGBcalib/AGBTracks/CAF09/S_%s' % model_name
+            'TP-AGBcalib/AGBTracks/CAF09/S_%s' % model_name
         if z == 'all':
             zs = np.array([d.split('_')[1].replace('Z','')
                            for d in glob.glob1(base, '*')], dtype=float)
@@ -172,20 +173,21 @@ def agb_lifetimes(models, z=0.002):
 
 
         for ax in [ax, ax2]:
-            ax.set_xlabel('${\\rm Initial\ Mass\ (M_\odot)}$', fontsize=20)
-            ax.set_ylabel('${\\rm Lifetime\ (Myr)}$', fontsize=20)
+            ax.set_xlabel('${\\rm Initial\ Mass\ (M_\odot)}$', fontsize=fontlarge)
+            ax.set_ylabel('${\\rm Lifetime\ (Myr)}$', fontsize=fontlarge)
             ax.legend(loc=0, frameon=False)
             ax.set_xlim(0, 5)
             ax.set_ylim(0, 5)
-            ax.annotate(model_name, (0.03, 0.97), xycoords='axes fraction',
-                        fontsize=20, va='top')
-        ax2.set_ylabel(ax2.get_ylabel().replace('(Myr)', 'L>3.4L_\odot\ (Myr)'))
-        #ax2.set_ylabel('${\\rm Pre\!-\!Flash\ Core\ Mass\ (M_\odot)}$', fontsize=20)
+        ax2.annotate('$\log L/L_\odot > 3.4$', (0.03, 0.97), xycoords='axes fraction',
+                     fontsize=fontlarge, va='top')
+        ax2.set_ylabel(ax2.get_ylabel().replace('(Myr)', '(Myr)'))
+        #ax2.set_ylabel('${\\rm Pre\!-\!Flash\ Core\ Mass\ (M_\odot)}$', fontsize=24)
 
         fig.savefig('tpagb_lifetime_%s.png' % (models[j]), dpi=150)
         fig2.savefig('tpagb_lifetime_bright_%s.png' % (models[j]), dpi=150)
 
-    return 
+    return
+
 
 def load_plot_limits(filename='default'):
     if filename == 'default':
@@ -298,7 +300,7 @@ def plot_lfs():
 
 
 def compare_mass_loss(masses=1.0, z=0.001, sets=['NOV13', 'OCT13', 'NOV13eta0'],
-		      paola=False):
+              paola=False):
     '''
     made to plot a comparison between several mass prescriptions.
     Labels for the plot are set up stupidly, maybe in in_dict or labels arg...
@@ -308,31 +310,31 @@ def compare_mass_loss(masses=1.0, z=0.001, sets=['NOV13', 'OCT13', 'NOV13eta0'],
     teff_max = 3.5
     track_files = None
     if paola is True:
-	# hack to use specific tracks from paola
-	track_dir = research_path + '/TP-AGBcalib/AGBTracks/plots_for_paperI/'
-	file_end = '_Mc0.00_dMc0.00_Tbd6.40_L0.00_dL0.00_C0.00_Nr3.00_rates0_KOPv_KMOLv.dat'
-	if masses == 2.0:
-	    track_files = \
-	     [track_dir + 'agb_2.00_Z0.00100000_Mdot50_eta0.00' + file_end,
-	      track_dir + 'agb_2.00_Z0.00100000_Mdot49_eta0.40' + file_end,
-	      track_dir + 'agb_2.00_Z0.00100000_Mdot48_eta8.00' + file_end,
-	      track_dir + 'agb_2.00_Z0.00100000_Mdot50_eta0.40' + file_end]
-	    teff_max = 3.4
-	if masses == 1.0:
-	    track_files = \
-	     [track_dir + 'agb_1.00_Z0.00100000_Mdot50_eta0.00' + file_end,
-	      track_dir + 'agb_1.00_Z0.00100000_Mdot49_eta0.40' + file_end,
-	      track_dir + 'agb_1.00_Z0.00100000_Mdot48_eta8.00' + file_end,
-	      track_dir + 'agb_1.00_Z0.00100000_Mdot50_eta0.40' + file_end]
-	    teff_max = 3.4
+    # hack to use specific tracks from paola
+        track_dir = research_path + '/TP-AGBcalib/AGBTracks/plots_for_paperI/'
+        file_end = '_Mc0.00_dMc0.00_Tbd6.40_L0.00_dL0.00_C0.00_Nr3.00_rates0_KOPv_KMOLv.dat'
+        if masses == 2.0:
+            track_files = \
+             [track_dir + 'agb_2.00_Z0.00100000_Mdot50_eta0.00' + file_end,
+              track_dir + 'agb_2.00_Z0.00100000_Mdot49_eta0.40' + file_end,
+              track_dir + 'agb_2.00_Z0.00100000_Mdot48_eta8.00' + file_end,
+              track_dir + 'agb_2.00_Z0.00100000_Mdot50_eta0.40' + file_end]
+            teff_max = 3.4
+        if masses == 1.0:
+            track_files = \
+             [track_dir + 'agb_1.00_Z0.00100000_Mdot50_eta0.00' + file_end,
+              track_dir + 'agb_1.00_Z0.00100000_Mdot49_eta0.40' + file_end,
+              track_dir + 'agb_1.00_Z0.00100000_Mdot48_eta8.00' + file_end,
+              track_dir + 'agb_1.00_Z0.00100000_Mdot50_eta0.40' + file_end]
+            teff_max = 3.4
 
-	labels = ['$\\dot{M}_{\\rm{pre-dust}}=0.0$','$\\rm{R75}$',
-		  '$\\rm{SC05}$', '$\\rm{mSC05}$']
+    labels = ['$\\dot{M}_{\\rm{pre-dust}}=0.0$','$\\rm{R75}$',
+          '$\\rm{SC05}$', '$\\rm{mSC05}$']
 
     if track_files is not None:
-	nrows = len(track_files)
+        nrows = len(track_files)
     else:
-	nrows = len(sets)
+        nrows = len(sets)
     fig, axs = plt.subplots(nrows=nrows, ncols=2, figsize=(8, 8))
     anorm = 1e6
     xlab0 = '\\rm{Age}\ (10^6\ \\rm{yr})'
@@ -341,14 +343,13 @@ def compare_mass_loss(masses=1.0, z=0.001, sets=['NOV13', 'OCT13', 'NOV13eta0'],
     xlab1 = '\log\ T_{\\rm eff}\ (\\rm{K})'
 
     agb_tracks_dir = research_path + 'TP-AGBcalib/AGBTracks/CAF09'
-    cols = ['#d73027', '#4575b4', '#fc8d59', '#91bfdb', '#fee090', '#e0f3f8']
 
     if type(masses) is not list:
         masses = [masses]
-	cols = ['k']
+    cols = ['k']
 
     for j, mass in enumerate(masses):
-	if track_files is None:
+        if track_files is None:
             tnames = []
             labels = []
             for tset in sets:
@@ -360,8 +361,8 @@ def compare_mass_loss(masses=1.0, z=0.001, sets=['NOV13', 'OCT13', 'NOV13eta0'],
                 tnames.append(tname)
                 labels.append('$%s$' % label)
             tracks = [fileIO.get_numeric_data(t) for t in tnames]
-	else:
-	    tracks = [fileIO.get_numeric_data(t) for t in track_files]
+        else:
+            tracks = [fileIO.get_numeric_data(t) for t in track_files]
 
         for i in range(len(tracks)):
             axs[i][0].plot(tracks[i].data_array['ageyr']/anorm,
@@ -376,14 +377,14 @@ def compare_mass_loss(masses=1.0, z=0.001, sets=['NOV13', 'OCT13', 'NOV13eta0'],
             axs[i][1].plot(tracks[i].data_array['T_star'][tracks[i].cstar],
                            tracks[i].data_array['L_star'][tracks[i].cstar],
                            lw=1, color='darkred')
-            axs[i][0].annotate(labels[i], (0.03, 0.96), fontsize=16,
+            axs[i][0].annotate(labels[i], (0.03, 0.96), fontsize=fontlarge,
                                xycoords='axes fraction', va='top')
-    axs[-1, 0].set_xlabel('$%s$' % xlab0, fontsize=20)
-    axs[-1, 1].set_xlabel('$%s$' % xlab1, fontsize=20)
-    plt.annotate('$%s$' % ylab0, (0.05, 0.5), fontsize=20, va='center',
-		       xycoords='figure fraction', rotation='vertical')
-    plt.annotate('$%s$' % ylab1, (0.95, 0.5), fontsize=20, va='center',
-		       xycoords='figure fraction', rotation='vertical')
+    axs[-1, 0].set_xlabel('$%s$' % xlab0, fontsize=fontlarge)
+    axs[-1, 1].set_xlabel('$%s$' % xlab1, fontsize=fontlarge)
+    plt.annotate('$%s$' % ylab0, (0.03, 0.5), fontsize=fontlarge, va='center',
+               xycoords='figure fraction', rotation='vertical')
+    plt.annotate('$%s$' % ylab1, (0.95, 0.5), fontsize=fontlarge, va='center',
+               xycoords='figure fraction', rotation='vertical')
 
     [ax.yaxis.tick_right() for ax in axs.flatten()[1::2]]
     [ax.xaxis.set_major_formatter(NullFormatter())
@@ -403,8 +404,8 @@ def compare_mass_loss(masses=1.0, z=0.001, sets=['NOV13', 'OCT13', 'NOV13eta0'],
 
     # top left plot only
     if paola is False:
-        [ax.legend(loc=4, fontsize=16, frameon=False)
-	 for ax in [axs.flatten()[0]]]
+        [ax.legend(loc=4, fontsize=fontlarge, frameon=False)
+     for ax in [axs.flatten()[0]]]
 
     fig.subplots_adjust(wspace=0.02, hspace=0.02)
     plt.savefig('compare_massloss_M%g_Z%g.png' % (masses[0], z), dpi=150)
@@ -412,7 +413,8 @@ def compare_mass_loss(masses=1.0, z=0.001, sets=['NOV13', 'OCT13', 'NOV13eta0'],
 
 
 def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=True,
-                         model='nov13', model_src='default'):
+                          model='nov13', model_src='default', force=False,
+                          cumsum=True):
     '''
     plot a histogram of the scaled number of tpagb stars for the best fitting
     model in each model chi2 file in the chi2_location
@@ -433,7 +435,7 @@ def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=True,
 
     # get the tpagb masses
     (masses, norm) = zip(*[tpagb_masses(c, band=band, dry_run=dry_run,
-                                        model_src=model_src)
+                                        model_src=model_src, force=force)
                     for c in chi2files])
     norm = np.array(norm)
 
@@ -457,33 +459,52 @@ def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=True,
     # set up plot
     cols = color_scheme
 
-    fig, ax = plt.subplots()
-
+    if cumsum is True:
+        fig, ax = plt.subplots()
+        axs = [ax]
+    else:
+        fig, axs = plt.subplots(nrows=len(hists), sharex=True)
     # mask 0 values so there is a vertical line on the plot
+
     for i in range(len(hists)):
         norm_hists[i][norm_hists[i]==0] = 1e-5
-	yplot = np.cumsum(norm_hists[i]) / np.sum(norm_hists[i])
-	#yplot = norm_hists[i]
-	ax.plot(bins[:-1], yplot, linestyle='steps-pre', color='grey', lw=4)
-	ax.plot(bins[:-1], yplot, linestyle='steps-pre', color=cols[i],
-		lw=2, label=labels[i], alpha=.9)
+        if cumsum is True:
+            yplot = np.cumsum(norm_hists[i]) / np.sum(norm_hists[i])
+        else:
+            yplot = norm_hists[i]
+        axs[i].plot(bins[:-1], yplot, linestyle='steps-pre', color='grey', lw=4)
+        axs[i].plot(bins[:-1], yplot, linestyle='steps-pre', color=cols[i],
+                    lw=2, label=labels[i], alpha=.9)
 
-    #ax.plot(bins[:-1], np.sum(norm_hists, axis=0), linestyle='steps-pre',
-    #             color='darkgrey', lw=3, label=r'$\rm{Total}$')
-    ax.legend(loc=0, frameon=False)
+        #ax.plot(bins[:-1], np.sum(norm_hists, axis=0), linestyle='steps-pre',
+        #             color='darkgrey', lw=3, label=r'$\rm{Total}$')
+        axs[i].tick_params(labelsize=fontmid)
 
-    #ax.set_yscale('log')
-    #ax.set_ylim(3, 10**3)
-    ax.set_xlim(0.6, 3)
-    ax.set_xlabel(r'$\rm{Mass\ M_\odot}$', fontsize=20)
-    ax.set_ylabel(r'$\rm{Cumulative\ Fraction\ of\ {TP\!-\!AGB}\ Stars}$', fontsize=20)
-    plt.tick_params(labelsize=16)
-    plt.savefig('tpagb_mass_hist_%s_%s.png' % (band, model), dpi=150)
-    return ax
+
+        #ax.set_yscale('log')
+        #ax.set_ylim(3, 10**3)
+
+    axs[-1].set_xlabel(r'$\rm{Mass\ M_\odot}$', fontsize=fontlarge)
+    if cumsum is True:
+        axs[0].legend(loc=0, frameon=False)
+        axs[0].set_ylabel(r'$\rm{Cumulative\ Fraction\ of\ {TP\!-\!AGB}\ Stars}$', fontsize=fontlarge)
+        axs[0].set_xlim(0.6, 3)
+        fname = 'tpagb_mass_hist_%s_%s.png' % (band, model)
+    else:
+        [ax.set_xlim(0.8, 3) for ax in axs]
+        plt.annotate(r'$\rm{\#\ of\ {TP\!-\!AGB}\ Stars}$', (0.03, 0.5),
+                     fontsize=fontlarge, va='center',
+               xycoords='figure fraction', rotation='vertical')
+        fname = 'tpagb_mass_hist_%s_%s_nocumsum.png' % (band, model)
+        [ax.locator_params(axis='y', nbins=3) for ax in axs]
+        fig.subplots_adjust(hspace=0.001)
+    plt.savefig(fname, dpi=150)
+    return axs
+
 
 
 def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False,
-		 mass=True, old=False):
+         mass=True, old=False, force=False):
     '''
     using the chi2file run trilegal with the best fit sfh and return the
     normalization and tp-agb masses (scaled simulation)
@@ -491,25 +512,30 @@ def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False,
     if model_src == 'default':
         model_src = snap_src + '/models/varysfh/'
 
+
     components = os.path.split(chi2file)[1].split('_')
     model = '_'.join(components[:3])
     target = components[3]
     model_loc = os.path.join(model_src, target, model, 'mc')
+    if force is False:
+        # read chi2 file
+        chi2_data = rsp.fileIO.readfile(chi2file)
 
-    # read chi2 file
-    chi2_data = rsp.fileIO.readfile(chi2file)
+        # best fitting chi2 run in band
+        ibest_fit = np.argmin(chi2_data['%s_chi2' % band])
 
-    # best fitting chi2 run in band
-    ibest_fit = np.argmin(chi2_data['%s_chi2' % band])
+        # should work out to isfr == ibest_fit, but just in case:
+        isfr = chi2_data['sfr'][ibest_fit]
 
-    # should work out to isfr == ibest_fit, but just in case:
-    isfr = chi2_data['sfr'][ibest_fit]
-
-    # associated input file for best run
-    tri_inp, = rsp.fileIO.get_files(model_loc, '*%03d.dat' % isfr)
-
+        # associated input file for best run
+        tri_inp, = rsp.fileIO.get_files(model_loc, '*%03d.dat' % isfr)
+        tri_outp = tri_inp.replace('.dat', '_%s_best.dat' % band).replace('inp', 'outp')
+    else:
+        tri_inp, = rsp.fileIO.get_files(model_loc, '*best.dat')
+        tri_outp = tri_inp.replace('inp', 'outp')
+    rsp.fileIO.ensure_file(tri_inp)
     # run trilegal with best run
-    tri_outp = tri_inp.replace('.dat', '_%s_best.dat' % band).replace('inp', 'outp')
+
     cmd_input = 'cmd_input_%s.dat' % model.upper()
     rsp.TrilegalUtils.run_trilegal(cmd_input, tri_inp, tri_outp,
                                    dry_run=dry_run)
@@ -525,15 +551,15 @@ def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False,
     files.load_trilegal_data()
     sopt_rgb, sir_rgb, sopt_agb, sir_agb = \
         sfh_tests.rgb_agb_regions(files.sgal, files.opt_offset,
-                                             files.opt_trgb, files.opt_trgb_err,
-                                             ags, files.ir_offset,
-                                             files.ir_trgb, files.ir_trgb_err,
-                                             files.opt_mag, files.ir_mag)
+                                  files.opt_trgb, files.opt_trgb_err,
+                                  ags, files.ir_offset,
+                                  files.ir_trgb, files.ir_trgb_err,
+                                  files.opt_mag, files.ir_mag)
     opt_norm, ir_norm, opt_rgb, ir_rgb, opt_agb, ir_agb = \
         sfh_tests.normalize_simulation(files.opt_mag, files.ir_mag,
-                                                  files.nopt_rgb, files.nir_rgb,
-                                                  sopt_rgb, sir_rgb, sopt_agb,
-                                                  sir_agb)
+                                       files.nopt_rgb, files.nir_rgb,
+                                       sopt_rgb, sir_rgb, sopt_agb,
+                                       sir_agb)
     print target, opt_norm, ir_norm
     with open(tri_inp.replace('.dat', '_norms.dat'), 'w') as out:
         out.write('# opt_norm ir_norm\n')
@@ -555,13 +581,13 @@ def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False,
 
     if mass is True:
         mass = files.sgal.data.get_col('m_ini')
-	ret_val = mass[itpagb]
+        ret_val = mass[itpagb]
     else:
         met = files.sgal.data.get_col('[M/H]')
         if old is True:
-	    olds, = np.nonzero(files.sgal.data.get_col('logAge') > 8.5)
-	    itpagb = list(set(files.sgal.itpagb) & set(cut_inds) & set(olds))
-	ret_val = met[itpagb]
+            olds, = np.nonzero(files.sgal.data.get_col('logAge') > 8.5)
+            itpagb = list(set(files.sgal.itpagb) & set(cut_inds) & set(olds))
+        ret_val = met[itpagb]
     return ret_val, norm
 
 
@@ -577,20 +603,20 @@ def trilegal_metals(chi2_location='draft_run', band='opt', dry_run=False,
     # get the tpagb masses
     (mhs, norm) = zip(*[tpagb_masses(c, band=band, dry_run=dry_run,
                                         model_src=model_src, mass=False,
-					old=old) for c in chi2files])
+                                        old=old) for c in chi2files])
     ts = [os.path.split(c)[1].split('_')[3] for c in chi2files]
     targets = galaxy_tests.ancients()
     tinds = [ts.index(t.lower()) for t in targets]
     targets = np.array(ts)[tinds]
     from ResolvedStellarPops.convertz import convertz
     if feh is True:
-	ind = 4
+        ind = 4
     else:
-	ind = 1
+        ind = 1
     zs = np.array([convertz(mh=i)[ind] for i in mhs])
     for i, target in enumerate(targets):
-	print '%.4f %.4f %.4f %s ' % (np.min(zs[i]), np.median(zs[i]),
-				      np.max(zs[i]), target)
+        print '%.4f %.4f %.4f %s ' % (np.min(zs[i]), np.median(zs[i]),
+                                      np.max(zs[i]), target)
 
 
 def plot_random_sfhs(targets='ancients'):
@@ -608,7 +634,7 @@ def plot_random_sfhs(targets='ancients'):
         hmc_file_loc = os.path.join(snap_src, 'data', 'sfh_parsec')
 
         target = target.replace('-deep', '')
-        outfile = os.path.join(sfr_file_loc, '%s_random_sfr.png' % target)
+        outfile = '%s_random_sfr.png' % target
         hmc_file, = rsp.fileIO.get_files(hmc_file_loc, '%s*sfh' % target)
 
         sfh = sfh_tests.StarFormationHistories(hmc_file, 'match-hmc',
@@ -616,5 +642,5 @@ def plot_random_sfhs(targets='ancients'):
                                                sfr_file_search_fmt='*sfr')
 
         sfh.plot_sfh('sfr', plot_random_arrays_kw={'from_files': True},
-                     outfile=outfile)
+                     outfile=outfile, zoom=True)
     return

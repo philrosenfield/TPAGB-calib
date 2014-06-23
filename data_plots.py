@@ -14,6 +14,8 @@ This is a work in progress, which sorts of intro figures should I have for the p
 
 '''
 color_scheme = ['#d73027', '#fc8d59', '#fee090', '#669966', '#e0f3f8', '#4575b4']
+fontlarge = 24
+fontmid = 20
 
 def plot_ifmr(imfrfile, ax=None, z=0.001, data_m4=True, label='',
               color='k'):
@@ -39,8 +41,8 @@ def plot_ifmr(imfrfile, ax=None, z=0.001, data_m4=True, label='',
                              alpha=.25)
             ax.add_patch(rect)
     ax.legend(loc=2, frameon=False)
-    ax.set_xlabel(r'$M_i/M_{\odot}$', fontsize=20)
-    ax.set_ylabel(r'$M_f/M_{\odot}$', fontsize=20)
+    ax.set_xlabel(r'$M_i/M_{\odot}$', fontsize=fontlarge)
+    ax.set_ylabel(r'$M_f/M_{\odot}$', fontsize=fontlarge)
     plt.savefig(imfrfile.replace('dat', 'png'))
     #plt.close()
     return ax
@@ -88,8 +90,8 @@ def plot_opt_hess(targets=None, fits_src='default', filter1='F606W'):
     #ax.imshow(galshess[2], **imshow_kw)
     ax.set_aspect(1./2.)
 
-    ax.set_xlabel('$%s-%s$' % (filter1, gals.galaxies[0].filter2), fontsize=20)
-    ax.set_ylabel('$%s$' % gals.galaxies[0].filter2, fontsize=20)
+    ax.set_xlabel('$%s-%s$' % (filter1, gals.galaxies[0].filter2), fontsize=fontlarge)
+    ax.set_ylabel('$%s$' % gals.galaxies[0].filter2, fontsize=fontlarge)
     ax.hlines(mean_trgb, *ax.get_xlim(), lw=2, color='red', zorder=100)
     #ax.hlines(mean_trgb+1.5, *ax.get_xlim(), lw=2, color='red', zorder=100)
     #for k, v in poly_dict.items():
@@ -103,10 +105,8 @@ def plot_cum_sum_sfr(targets, file_origin='match-hmc'):
     '''cumulative sfr plot from match, no errors.'''
     match_sfh_src = snap_src + '/data/sfh_parsec/'
 
-    fig, ax = plt.subplots()
-    ngals = len(targets)
-    bmap = brewer2mpl.get_map('Spectral', 'Diverging', ngals)
-    #cols = ['#d73027', '#fc8d59', '#fee090', '#e0f3f8', '#91bfdb', '#4575b4']
+    fig, ax = plt.subplots(figsize=(8,6))
+    plt.subplots_adjust(right=0.95, left=0.1, bottom=0.11, top=0.95)
     cols = color_scheme
     for i, target in enumerate(targets):
         search = target.lower().replace('-deep', '')
@@ -120,13 +120,12 @@ def plot_cum_sum_sfr(targets, file_origin='match-hmc'):
         ax.plot(age, csfh[1:], color=cols[i], lw=3,
                 label='$%s$' % search.upper().replace('-','\!-\!'))
 
-    #ax.set_xscale('log')
     ax.set_xlim(13.4, -0.01)
     ax.set_ylim(-0.01, 1.01)
-    ax.set_xlabel('$\\rm{Time\ (Gyr)}$', fontsize=20)
-    ax.set_ylabel('$\\rm{Culmulative\ SF}$', fontsize=20)
-    plt.legend(loc=0, frameon=False)
-    plt.tick_params(labelsize=16)
+    ax.set_xlabel('$\\rm{Time\ (Gyr)}$', fontsize=fontlarge)
+    ax.set_ylabel('$\\rm{Culmulative\ SF}$', fontsize=fontlarge)
+    plt.legend(loc=0, frameon=False, fontsize=fontmid)
+    plt.tick_params(labelsize=fontmid)
     plt.savefig('csfr_ancients.png', dpi=150)
 
 
@@ -174,11 +173,11 @@ def plot_cmd_lf(target, band):
     plt.subplots_adjust(wspace=0)
     ax2.tick_params(labelleft=False, labelright=True)
     ax2.set_xlim(min(hist), ax2.get_xlim()[1])
-    ax2.set_xlabel('$\#$', fontsize=20)
-    ax1.set_ylabel('$%s$' % gal.filter2, fontsize=20)
-    ax1.set_xlabel('$%s-%s$' % (gal.filter1, gal.filter2), fontsize=20)
+    ax2.set_xlabel('$\#$', fontsize=fontlarge)
+    ax1.set_ylabel('$%s$' % gal.filter2, fontsize=fontlarge)
+    ax1.set_xlabel('$%s-%s$' % (gal.filter1, gal.filter2), fontsize=fontlarge)
     add_color_cuts(gal.filter1, ax=ax1, vline_kw={'linestyle': '--', 'lw': 2})
-    plt.tick_params(labelsize=16)
+    plt.tick_params(labelsize=fontmid)
     outfname = '%s_%s_cmd.png' % (target, band)
     outfile = os.path.join(snap_src, 'plots', outfname)
     fig.savefig(outfile, dpi=150)
@@ -260,8 +259,8 @@ def bolometric_correction_plot(filter1=None, filter2=None, tp_mass=1., logg_val=
     ax.set_xlim(12000,3000)
     ax.set_ylim(1, -3)
     ax.legend(loc=0, frameon=False)
-    ax.set_xlabel('$T_{eff}$', fontsize=20)
-    ax.set_ylabel('$BC$', fontsize=20)
+    ax.set_xlabel('$T_{eff}$', fontsize=fontlarge)
+    ax.set_ylabel('$BC$', fontsize=fontlarge)
     #ax.set_xscale('log')
     return ax
 
@@ -310,7 +309,7 @@ def color_teff_plot(ax=None, filter_combos=None, logg_val=2, tracks_base=None,
 
     ax.set_ylim(-.1, 4)
     ax.set_xlim(12000, 3000)
-    ax.set_xlabel('$T_{eff}$', fontsize=20)
-    ax.set_ylabel('$Color$', fontsize=20)
+    ax.set_xlabel('$T_{eff}$', fontsize=fontlarge)
+    ax.set_ylabel('$Color$', fontsize=fontlarge)
     ax.legend(loc=0, frameon=False)
     return ax
