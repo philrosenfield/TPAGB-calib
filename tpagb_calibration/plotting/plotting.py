@@ -257,9 +257,8 @@ class Plotting(object):
 
     def compare_to_gal(self, opt_gal, ir_gal, opt_limit, ir_limit,
                        narratio=True, no_agb=False, xlim=None, ylim=None,
-                       extra_str='',
-                       cols=None, stage_lf_kw=None, axs=None,
-                       plt_kw=None ):
+                       extra_str='', cols=None, stage_lf_kw=None, axs=None,
+                       plt_kw=None):
         '''
         Plot the LFs and galaxy LF.
 

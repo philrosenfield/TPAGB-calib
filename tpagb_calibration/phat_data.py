@@ -11,8 +11,9 @@ import ResolvedStellarPops as rsp
 from sfhs.vary_sfh import VarySFHs
 
 def load_data_files(inputs):
-    opt_files = [os.path.join(inputs.data_src, o) for o in inputs.opt_data]
-    ir_files = [os.path.join(inputs.data_src, o) for o in inputs.ir_data]
+    data_src = os.path.join(inputs.base_dir, inputs.data_src)
+    opt_files = [os.path.join(data_src, o) for o in inputs.opt_data]
+    ir_files = [os.path.join(data_src, o) for o in inputs.ir_data]
     return opt_files, ir_files
 
 
@@ -109,7 +110,10 @@ def prepare_vsfh_run(inputs, object_mass=None):
 
     vsfh_kw = {'file_origin': inputs.sfh_file_origin,
                'nsfhs': inputs.nsfhs,
-               'filter1': inputs.opt_filter1,
+               'opt_filter1': inputs.opt_filter1,
+               'opt_filter2': inputs.opt_filter2,
+               'ir_filter1': inputs.ir_filter1,
+               'ir_filter2': inputs.ir_filter2,
                'photsys': inputs.photsys,
                'opt_color_min': inputs.opt_color_min,
                'ir_color_min': inputs.ir_color_min,
@@ -166,8 +170,8 @@ def phat_data(inputs, object_mass=None):
     opt_files, ir_files = load_data_files(inputs)
     for i, vsfh in enumerate(vsfhs):
         if nruns < 10:
-            vsfh.vary_the_SFH(object_mass=object_mass, dry_run=inputs.dry_run)
-            vsfh.write_results()
+            res_dict = vsfh.vary_the_SFH(object_mass=object_mass, dry_run=inputs.dry_run)
+            vsfh.write_results(res_dict)
         pl = Plotting(vsfh)
         gal_kw = {'filetype': inputs.data_ftype, 'angst': False, 'hla': False}
         opt_gal = rsp.Galaxy(opt_files[i], filter1='F475W', filter2='F814W',
@@ -175,7 +179,7 @@ def phat_data(inputs, object_mass=None):
         ir_gal = rsp.Galaxy(ir_files[i], filter1='F110W', filter2='F160W',
                             **gal_kw)
 
-        pl.compare_to_gal(opt_gal, ir_gal, 28, 28, narratio=False)
+        pl.compare_to_gal(opt_gal, ir_gal, 28, 28, narratio=False, ylim=(.1,1e5))
 
 
 if __name__ == '__main__':
@@ -184,5 +188,5 @@ if __name__ == '__main__':
     if hasattr(inp_obj, 'object_mass'):
         object_mass = inp_obj.object_mass
     else:
-        object_mass = 5e8
-    phat_data(inp_obj, object_mass=1e6)
+        object_mass = 1e7
+    phat_data(inp_obj, object_mass=object_mass)

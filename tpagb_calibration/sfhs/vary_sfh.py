@@ -1,10 +1,11 @@
-from star_formation_histories import StarFormationHistories
+import matplotlib.pylab as plt
+import numpy as np
 import os
+
+from analysis import stats
 from pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 import ResolvedStellarPops as rsp
-import numpy as np
-import matplotlib.pylab as plt
-from analysis import stats
+from star_formation_histories import StarFormationHistories
 
 __all__ = ['setup_files', 'VarySFHs']
 
@@ -12,10 +13,9 @@ def setup_files(agb_mod, target, outfile_loc, extra_str=''):
 
     names = ['opt_lf', 'ir_lf', 'narratio', 'opt_mass_met', 'ir_mass_met',
              'contam']
-    name_fmt = '%s_%s_%s%s.dat'
+    fmt = '%s_%s_%s%s.dat'
 
-    fnames = [os.path.join(outfile_loc,\
-                           name_fmt % (agb_mod, target, f, extra_str))
+    fnames = [os.path.join(outfile_loc, fmt % (agb_mod, target, f, extra_str))
               for f in names]
 
     return fnames
@@ -42,7 +42,10 @@ class VarySFHs(StarFormationHistories):
                                'dmod': 0.,
                                'extra_str': '',
                                'file_origin': None,
-                               'filter1': None,
+                               'opt_filter1': None,
+                               'opt_filter2': None,
+                               'ir_filter1': None,
+                               'ir_filter2': None,
                                'galaxy_input': None,
                                'ir_bins': None,
                                'ir_color_min': -99.,
@@ -75,10 +78,10 @@ class VarySFHs(StarFormationHistories):
 
         if None in [self.ir_trgb, self.opt_trgb]:
             assert self.Mtrgb is not None, 'need to supply trgb data'
-            self.ir_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb, 'F160W',
+            self.ir_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb, self.ir_filter2,
                                                   self.photsys, dmod=self.dmod,
                                                   Av=self.Av)
-            self.opt_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb, 'F814W',
+            self.opt_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb, self.opt_filter2,
                                                    self.photsys, dmod=self.dmod,
                                                    Av=self.Av)
 
@@ -134,7 +137,7 @@ class VarySFHs(StarFormationHistories):
         if tpagb_lf is True:
             # load mags
             if not hasattr(self, 'opt_mag'):
-                self.load_trilegal_data()
+                self.load_trilegal_catalog()
 
             opt_hist, opt_bins = np.histogram(self.opt_mag, bins=self.opt_bins)
 
@@ -158,15 +161,15 @@ class VarySFHs(StarFormationHistories):
             ir_inds = self.sgal.itpagb
 
             mag2 = self.sgal.mag2
-            mag4 = self.sgal.data.get_col('F160W')
+            mag4 = self.sgal.data[self.ir_filter2]
 
             opt_key = 'opt_mass_met_line'
             ir_key = 'ir_mass_met_line'
             for mag, inds, key in zip([mag2, mag4], [opt_inds, ir_inds],
                                       [opt_key, ir_key]):
-                mass = self.sgal.data.get_col('m_ini')[inds]
+                mass = self.sgal.data.m_ini[inds]
                 mag = mag[inds]
-                mh = self.sgal.data.get_col('[M/H]')[inds]
+                mh = self.sgal.data.MH[inds]
                 result_dict[key] = \
                     '\n'.join([' '.join(['%g' % t for t in mag]),
                                ' '.join(['%g' % t for t in mass]),
@@ -197,9 +200,9 @@ class VarySFHs(StarFormationHistories):
                         'opt_ar_ratio': nopt_agb / nopt_rgb,
                         'ir_ar_ratio': nir_agb / nir_rgb,
                         'opt_ar_ratio_err':
-                            rsp.math.utils.count_uncert_ratio(nopt_agb, nopt_rgb),
+                            rsp.utils.count_uncert_ratio(nopt_agb, nopt_rgb),
                         'ir_ar_ratio_err':
-                            rsp.math.utils.count_uncert_ratio(nir_agb, nir_rgb),
+                            rsp.utils.count_uncert_ratio(nir_agb, nir_rgb),
                         'nopt_rgb': nopt_rgb,
                         'nopt_agb': nopt_agb,
                         'nir_rgb': nir_rgb,
@@ -210,13 +213,16 @@ class VarySFHs(StarFormationHistories):
 
     def load_trilegal_catalog(self, trilegal_output, shift_mags=False):
         '''read the trilegal cat mag1 and mag2 are optical.'''
-        self.sgal = rsp.SimGalaxy(trilegal_output, filter1=self.filter1,
-                                  filter2='F814W')
+        only_keys = ['logAge','[M/H]','m_ini','logL','logTe','m-M0','Av','mbol',
+                     'Mact', 'stage', self.opt_filter2, self.opt_filter1,
+                     self.ir_filter2, self.ir_filter1]
+        self.sgal = rsp.SimGalaxy(trilegal_output, filter1=self.opt_filter1,
+                                  filter2=self.opt_filter2, only_keys=only_keys)
 
-        opt_mag = self.sgal.data.get_col('F814W')
-        ir_mag = self.sgal.data.get_col('F160W')
-        opt_mag1 = self.sgal.mag1
-        ir_mag1 = self.sgal.data.get_col('F110W')
+        opt_mag = self.sgal.data[self.opt_filter2]
+        ir_mag = self.sgal.data[self.ir_filter2]
+        opt_mag1 = self.sgal.data[self.opt_filter1]
+        ir_mag1 = self.sgal.data[self.ir_filter1]
 
         opt_color_cut, = np.nonzero((opt_mag1 - opt_mag) > self.opt_color_min)
         ir_color_cut, = np.nonzero((ir_mag1 - ir_mag) > self.ir_color_min)
@@ -358,10 +364,10 @@ class VarySFHs(StarFormationHistories):
                                                   self.ir_color_cut])):
             if i == 1:
                 band = 'ir'
-                mag = self.sgal.data.get_col('F160W')[inds]
+                mag = self.sgal.data[self.ir_filter2][inds]
             else:
                 band = 'opt'
-                mag = self.sgal.data.get_col('F814W')[inds]
+                mag = self.sgal.data[self.opt_filter2][inds]
 
             ncontam_rgb = [list(set(s) & set(inds) & set(rgb)) for s in indss]
             ncontam_agb = [list(set(s) & set(inds) & set(agb)) for s in indss]

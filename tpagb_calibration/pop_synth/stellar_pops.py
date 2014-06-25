@@ -16,6 +16,7 @@ def rgb_agb_regions(sgal, offsets, trgb_excludes, opt_trgb,
     # define AGB regions
     opt_mid = opt_trgb - trgb_excludes[0]
     opt_high = 10.
+
     ir_mid = ir_trgb - trgb_excludes[1]
     ir_high = 10.
 
