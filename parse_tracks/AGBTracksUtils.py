@@ -1,13 +1,10 @@
 import pdb
 import trilegal_diagnostics
-import GoogleSitesTable
-import galaxy_tests
 import os
 import sys
 import numpy as np
 import fileIO
 import graphics
-import multiprocessing
 import ResolvedStellarPops as rsp
 
 def metallicity_from_dir(met):
@@ -27,7 +24,7 @@ def metallicity_from_dir(met):
 def AGB_file_setup(infile):
     '''set up files and directories for TPAGB parsing.'''
     infile.home = os.getcwd()
-    
+
     # Check for Paola's formatted tracks
     rsp.fileIO.ensure_dir(infile.isotrack_dir)
 
@@ -75,48 +72,11 @@ def AGB_file_setup(infile):
     print 'found %i metallicities' % len(metal_dirs)
 
 
-def multipro_plots(agb_tracks, infile):
-    for agb_track in agb_tracks:
-        # load track
-        track = fileIO.get_numeric_data(agb_track)
-        if track.bad_track is True:
-            continue
-        # make diagnostic plots
-        graphics.diag_plots(track, infile)    
-    return
-
-def make_plots(infile):
-    if infile.diagnostic_dir0 is None:
-        return 
-
-    pool = multiprocessing.Pool()
-    res = []
-
-    for metal_dir in infile.metal_dirs:
-        diagnostic_dir = os.path.join(infile.diagnostic_dir0,
-                                      infile.agb_mix,
-                                      infile.set_name,
-                                      metal_dir) + '/'
-        fileIO.ensure_dir(diagnostic_dir)
-        # update infile class to place plots in this directory
-        infile.diagnostic_dir = diagnostic_dir
-        agb_tracks = fileIO.get_files(os.path.join(infile.working_dir,
-                                                   metal_dir),
-                                                   infile.track_identifier)
-        agb_tracks.sort()
-
-        res.append(pool.apply_async(multipro_plots, (agb_tracks, infile)))
-
-    for r in res:
-        r.get()
-
-    return
-    
 def do_everything(infile):
     '''
     This script formats Paola's tracks and creates the files needed to use them
     with TRILEGAL as well as the option to make diagnostic plots.
-    
+
     infile is an input_file object. See class InputFile
 
     WHAT'S GOING ON:
@@ -158,7 +118,7 @@ def do_everything(infile):
                                           infile.agb_mix,
                                           infile.set_name,
                                           metal_dir)  + '/'
-            fileIO.ensure_dir(diagnostic_dir)
+            rsp.fileIO.ensure_dir(diagnostic_dir)
             # update infile class to place plots in this directory
             infile.diagnostic_dir = diagnostic_dir
 
@@ -172,7 +132,7 @@ def do_everything(infile):
 
         if infile.over_write is False and os.path.isfile(isofile):
             print 'not over writing %s' % isofile
-            out = None         
+            out = None
         if infile.over_write is True:
             out = open(isofile, 'w')
             out.write('# age(yr) logL logTe m_act mcore c/o period ip')
@@ -314,18 +274,4 @@ if __name__ == "__main__":
         plt_dir = os.path.join(diagnostic_dir, agb_mix, set_name, track_set)
         trilegal_diagnostics.main(track_set, sfh_dir, tri_dir, plt_dir,
                                   over_write=infile.over_write, multi=False)
-        if infile.google_table:
-            image_location = infile.image_location
-            if not image_location:
-                image_location = plt_dir
-            GoogleSitesTable.trilegal_diag_table(image_location)
 
-    # Scripts to make LF compared to data
-    if hasattr(infile, 'galaxy_test_inp'):
-        gt_kw = {'outdir': infile.galaxy_outdir}
-        if infile.google_table:
-           gt_kw['make_plots'] = True
-           gt_kw['publish_plots'] = True
-        
-        galaxy_tests.main(infile.galaxy_tests_inp)
-        pass

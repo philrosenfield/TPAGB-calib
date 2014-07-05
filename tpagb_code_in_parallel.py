@@ -22,7 +22,7 @@ def main(targets, cmd_inputs, nsfhs, dry_run=False, comp_corr=False):
     clients.block = False
 
     clients[:].execute('cd ~/research/TP-AGBcalib/code/TPAGB-calib/')
-    clients[:].execute('import sfh_tests_multi_proc as sfh_tests')
+    clients[:].execute('import sfh_tests')
 
     if comp_corr is True:
         table_file = 'comp_corr'
