@@ -442,11 +442,11 @@ def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=True,
     # mask 0 values so there is a vertical line on the plot
     for i in range(len(hists)):
         norm_hists[i][norm_hists[i]==0] = 1e-5
-	yplot = np.cumsum(norm_hists[i]) / np.sum(norm_hists[i])
-	#yplot = norm_hists[i]
-	ax.plot(bins[:-1], yplot, linestyle='steps-pre', color='grey', lw=4)
-	ax.plot(bins[:-1], yplot, linestyle='steps-pre', color=cols[i],
-		lw=2, label=labels[i], alpha=.9)
+        yplot = np.cumsum(norm_hists[i]) / np.sum(norm_hists[i])
+        #yplot = norm_hists[i]
+        ax.plot(bins[:-1], yplot, linestyle='steps-pre', color='grey', lw=4)
+        ax.plot(bins[:-1], yplot, linestyle='steps-pre', color=cols[i],
+                lw=2, label=labels[i], alpha=.9)
 
     #ax.plot(bins[:-1], np.sum(norm_hists, axis=0), linestyle='steps-pre',
     #             color='darkgrey', lw=3, label=r'$\rm{Total}$')

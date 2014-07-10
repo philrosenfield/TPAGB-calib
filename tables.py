@@ -1,3 +1,4 @@
+
 import galaxy_tests
 import os
 import ResolvedStellarPops as rsp
@@ -85,6 +86,30 @@ def find_completeness(target, comp_val, ast_kw=None):
         (ast_dict['%s_filter1' % band], ast_dict['%s_filter2' % band]) = \
             asts.get_completeness_fraction(comp_val)
     return ast_dict
+
+def completeness_below_trgb():
+    targets = galaxy_tests.ancients()
+    ast_kw = {'combined_filters': True, 'interpolate': True}
+
+    for target in targets:
+        fake_files = galaxy_tests.get_fake_files(target)
+        for band, fake_file in zip(['opt', 'ir'], fake_files):
+            if band == 'opt':
+                fits_src = snap_src + '/data/angst_no_trim'
+            else:
+                continue
+                fits_src = 'default'
+            gal = galaxy_tests.load_galaxy(target, band=band,
+                                           fits_src=fits_src)
+            gal.make_hess(binsize=0.1, hess_kw={'cbinsize': 0.05})
+            
+            asts = rsp.Galaxies.artificial_star_tests(fake_file)
+            asts.completeness(**ast_kw)
+            
+            imag, icol = np.argwhere(gal.hess[2] == gal.hess[2].max())[0]
+            rc_mag2 = gal.hess[1][imag]
+            comp = asts.fcomp2(rc_mag2 - 1.)
+            print '%s %s %.3f %.3f' % (target, band, rc_mag2, comp)
 
 def completeness_corrections(dmag=0.1):
     '''
