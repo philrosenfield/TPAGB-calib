@@ -12,22 +12,28 @@ from sfhs.vary_sfh import VarySFHs
 
 def load_data_files(inputs):
     data_src = os.path.join(inputs.base_dir, inputs.data_src)
-    opt_files = [os.path.join(data_src, o) for o in inputs.opt_data]
-    ir_files = [os.path.join(data_src, o) for o in inputs.ir_data]
+    if type(inputs.opt_data) is str:
+        inputs.opt_data = [inputs.opt_data]
+    if type(inputs.ir_data) is str:
+        inputs.ir_data = [inputs.ir_data]
+    opt_files = [os.path.join(data_src, i) for i in inputs.opt_data]
+    ir_files = [os.path.join(data_src, i) for i in inputs.ir_data]
     return opt_files, ir_files
 
 
 def prepare_data_table(inputs):
-    offsets = []
-    ir_trgb = rsp.astronomy_utils.Mag2mag(inputs.Mtrgb, inputs.ir_filter2,
-                                          inputs.photsys, dmod=inputs.dmod,
-                                          Av=inputs.Av)
-    opt_trgb = rsp.astronomy_utils.Mag2mag(inputs.Mtrgb, inputs.opt_filter2,
-                                           inputs.photsys, dmod=inputs.dmod,
-                                           Av=inputs.Av)
-    offsets[0] = opt_trgb - inputs.offsets[0]
-    offsets[1] = ir_trgb - inputs.offsets[1]
-
+    if hasattr(inputs, 'Mtrgb'):
+        mtrgb = inputs.Mtrgb
+    else:
+        mtrgb = np.nan
+    if not hasattr(inputs, 'ir_trgb'):
+        inputs.ir_trgb = rsp.astronomy_utils.Mag2mag(inputs.Mtrgb, inputs.ir_filter2,
+                                              inputs.photsys, dmod=inputs.dmod,
+                                              Av=inputs.Av)
+    if not hasattr(inputs, 'opt_trgb'):
+        inputs.opt_trgb = rsp.astronomy_utils.Mag2mag(inputs.Mtrgb, inputs.opt_filter2,
+                                               inputs.photsys, dmod=inputs.dmod,
+                                               Av=inputs.Av)
     fmt = '%s %i %i %i %i %.2f %.2f %.2f %.2f \n'
     header = '# opt: F814W ir: F160W Mtrgb: %.2f dmod: %.2f Av: %.1f \n'
     header += '# opt, ir: color_min (%.1f, %.1f) trgb (%.2f, %.2f) '
@@ -36,28 +42,26 @@ def prepare_data_table(inputs):
     header += ' opt_min ir_min \n'
 
     out = open('phat_b21_data.dat', 'w')
-    out.write(header % (inputs.Mtrgb, inputs.dmod, inputs.Av,
+    out.write(header % (mtrgb, inputs.dmod, inputs.Av,
                         inputs.opt_color_min, inputs.ir_color_min,
-                        inputs.opt_trgb, inputs.ir_trgb, offsets[0], offsets[1],
+                        inputs.opt_trgb, inputs.ir_trgb, inputs.offsets[0], inputs.offsets[1],
                         inputs.trgb_excludes[0], inputs.trgb_excludes[1]))
 
     opt_files, ir_files = load_data_files(inputs)
     for i in range(len(opt_files)):
-        opt_gal = rsp.galaxies.galaxy.Galaxy(opt_files[i],
-                                         filetype=inputs.data_ftype, angst=False,
-                                         hla=False, filter1=inputs.opt_filter1,
-                                         filter2=inputs.opt_filter2)
-        ir_gal = rsp.galaxies.galaxy.Galaxy(ir_files[i],
-                                         filetype=inputs.data_ftype, angst=False,
-                                         hla=False, filter1=inputs.ir_filter1,
-                                         filter2=inputs.ir_filter2)
+        opt_gal = rsp.Galaxy(opt_files[i], filetype=inputs.data_ftype, angst=False,
+                             hla=False, filter1=inputs.opt_filter1,
+                             filter2=inputs.opt_filter2)
+        ir_gal = rsp.Galaxy(ir_files[i], filetype=inputs.data_ftype, angst=False,
+                            hla=False, filter1=inputs.ir_filter1,
+                            filter2=inputs.ir_filter2)
         opt_color_cut, = np.nonzero((opt_gal.color) > inputs.opt_color_min)
         ir_color_cut, = np.nonzero((ir_gal.color) > inputs.ir_color_min)
         ir_mag = ir_gal.mag2[ir_color_cut]
         opt_mag = opt_gal.mag2[opt_color_cut]
         opt_rgb, ir_rgb, opt_agb, ir_agb = \
             rgb_agb_regions(opt_gal, inputs.offsets, inputs.trgb_excludes,
-                            opt_trgb, ir_trgb, opt_mag, ir_mag)
+                            inputs.opt_trgb, inputs.ir_trgb, opt_mag, ir_mag)
         out.write(fmt % (opt_files[i].split('.')[0], len(opt_rgb), len(opt_agb),
                          len(ir_rgb), len(ir_agb), opt_gal.mag2.max(),
                          ir_gal.mag2.max(), opt_gal.mag2.min(),
@@ -170,8 +174,9 @@ def phat_data(inputs, object_mass=None):
     opt_files, ir_files = load_data_files(inputs)
     for i, vsfh in enumerate(vsfhs):
         if nruns < 10:
-            res_dict = vsfh.vary_the_SFH(object_mass=object_mass, dry_run=inputs.dry_run)
-            vsfh.write_results(res_dict)
+            if inputs.dry_run is False:
+                res_dict = vsfh.vary_the_SFH(object_mass=object_mass, dry_run=inputs.dry_run)
+                vsfh.write_results(res_dict)
         pl = Plotting(vsfh)
         gal_kw = {'filetype': inputs.data_ftype, 'angst': False, 'hla': False}
         opt_gal = rsp.Galaxy(opt_files[i], filter1='F475W', filter2='F814W',
@@ -179,7 +184,7 @@ def phat_data(inputs, object_mass=None):
         ir_gal = rsp.Galaxy(ir_files[i], filter1='F110W', filter2='F160W',
                             **gal_kw)
 
-        pl.compare_to_gal(opt_gal, ir_gal, 28, 28, narratio=False, ylim=(.1,1e5))
+        pl.compare_to_gal(opt_gal, ir_gal, 28, 28, narratio=False, ylim=(.1, 1e5))
 
 
 if __name__ == '__main__':
@@ -189,4 +194,5 @@ if __name__ == '__main__':
         object_mass = inp_obj.object_mass
     else:
         object_mass = 1e7
+    prepare_data_table(inp_obj)
     phat_data(inp_obj, object_mass=object_mass)

@@ -97,8 +97,8 @@ class StatisticalComparisons(object):
         agb_ibins, = np.nonzero(ir_gal.bins <= self.files.ir_trgb - \
                                                 self.files.ir_trgb_err * \
                                                 self.files.ags.factor[1])
-        opt_model_hists, opt_models_binss = self.files.load_lf_file(self.fnames[0])
-        ir_model_hists, ir_models_binss = self.files.load_lf_file(self.fnames[1])
+        opt_model_hists, opt_models_binss, opt_model_norms = self.files.load_lf_file(self.fnames[0])
+        ir_model_hists, ir_models_binss, ir_model_norms = self.files.load_lf_file(self.fnames[1])
 
         opt_chi2 = np.array([])
         ir_chi2 = np.array([])
