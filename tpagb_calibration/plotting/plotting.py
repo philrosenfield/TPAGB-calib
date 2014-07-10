@@ -50,23 +50,23 @@ class Plotting(object):
             plt.subplots_adjust(right=0.95, left=0.05, wspace=0.1)
 
         # these have like 50 histograms each
-        opt_hists, opt_binss = self.vsfh.load_lf_file(self.opt_lf_file)
-        ir_hists, ir_binss = self.vsfh.load_lf_file(self.ir_lf_file)
+        opt_hists, opt_binss, opt_norms = self.vsfh.load_lf_file(self.opt_lf_file)
+        ir_hists, ir_binss, ir_norms = self.vsfh.load_lf_file(self.ir_lf_file)
 
-        for i, (hists, binss, limit) in enumerate(zip([opt_hists, ir_hists],
-                                                      [opt_binss, ir_binss],
-                                                      [opt_limit, ir_limit])):
+        for i, (hists, binss, limit, norms) in \
+            enumerate(zip([opt_hists, ir_hists], [opt_binss, ir_binss],
+                          [opt_limit, ir_limit], [opt_norms, ir_norms])):
 
-            for j, (hist, bins) in enumerate(zip(hists, binss)):
+            for j, (hist, bins, norm) in enumerate(zip(hists, binss, norms)):
                 if j != 0:
                     kw = plt_kw
                 else:
                     kw = plt_kw_lab
                 if limit is not None:
                     inds, = np.nonzero(bins <= limit)
-                    axs[i].plot(bins[inds], hist[inds], **kw)
+                    axs[i].plot(bins[inds], hist[inds] * norm, **kw)
                 else:
-                    axs[i].plot(bins, hist, **kw)
+                    axs[i].plot(bins, hist * norm, **kw)
 
         return axs
 
@@ -270,6 +270,7 @@ class Plotting(object):
         ax1, ax2: axes instances created for the plot.
 
         '''
+        import pdb; pdb.set_trace()
         # plot lfs from simulations (and initialize figure)
         plt_kw = plt_kw or {}
         (ax1, ax2) = \

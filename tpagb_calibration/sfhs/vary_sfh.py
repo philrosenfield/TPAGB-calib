@@ -144,15 +144,15 @@ class VarySFHs(StarFormationHistories):
             ir_hist, ir_bins = np.histogram(self.ir_mag, bins=self.ir_bins)
 
             # scale the simulated LF to match the data LF
-            opt_hist = np.array(opt_hist, dtype=float) * self.opt_norm
-            ir_hist = np.array(ir_hist, dtype=float) * self.ir_norm
+            opt_hist = np.array(opt_hist, dtype=float) #* self.opt_norm
+            ir_hist = np.array(ir_hist, dtype=float) #* self.ir_norm
 
             result_dict['opt_lf_line'] = \
-                '\n'.join([' '.join(['%g' % t for t in opt_hist]),
+                '\n'.join(['%.4f' % self.opt_norm, ' '.join(['%g' % t for t in opt_hist]),
                            ' '.join(['%g' % t for t in opt_bins[1:]])])
 
             result_dict['ir_lf_line'] = \
-                '\n'.join([' '.join(['%g' % t for t in ir_hist]),
+                '\n'.join(['%.4f' % self.ir_norm, ' '.join(['%g' % t for t in ir_hist]),
                            ' '.join(['%g' % t for t in ir_bins[1:]])])
 
         if mass_met is True:
@@ -226,7 +226,6 @@ class VarySFHs(StarFormationHistories):
 
         opt_color_cut, = np.nonzero((opt_mag1 - opt_mag) > self.opt_color_min)
         ir_color_cut, = np.nonzero((ir_mag1 - ir_mag) > self.ir_color_min)
-
 
         if shift_mags is True:
             # Threshold for number of rgb stars in a bin.
@@ -344,10 +343,10 @@ class VarySFHs(StarFormationHistories):
         with open(lf_file, 'r') as lff:
             lines = [l.strip() for l in lff.readlines()
                      if not l.startswith('#')]
-
-        hists = [np.array(l.split(), dtype=float) for l in lines[0::2]]
-        binss = [np.array(l.split(), dtype=float) for l in lines[1::2]]
-        return hists, binss
+        norms = [np.float(l) for l in lines[0::3]]
+        hists = [np.array(l.split(), dtype=float) for l in lines[1::3]]
+        binss = [np.array(l.split(), dtype=float) for l in lines[2::3]]
+        return hists, binss, norms
 
     def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb,
                                 diag_plot=False):
