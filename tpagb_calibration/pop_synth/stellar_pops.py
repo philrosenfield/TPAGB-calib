@@ -1,6 +1,7 @@
 import numpy as np
+from ResolvedStellarPops.galaxies.starpop import stars_in_region
 
-def rgb_agb_regions(sgal, offsets, trgb_excludes, opt_trgb,
+def rgb_agb_regions(offsets, trgb_excludes, opt_trgb,
                     ir_trgb, opt_mag, ir_mag):
     # define RGB regions
     opt_low = offsets[0]
@@ -10,8 +11,8 @@ def rgb_agb_regions(sgal, offsets, trgb_excludes, opt_trgb,
     ir_mid = ir_trgb + trgb_excludes[1]
 
     # Recovered stars in simulated RGB region.
-    sopt_rgb = sgal.stars_in_region(opt_mag, opt_low, opt_mid)
-    sir_rgb = sgal.stars_in_region(ir_mag, ir_low, ir_mid)
+    sopt_rgb = stars_in_region(opt_mag, opt_low, opt_mid)
+    sir_rgb = stars_in_region(ir_mag, ir_low, ir_mid)
 
     # define AGB regions
     opt_mid = opt_trgb - trgb_excludes[0]
@@ -21,8 +22,8 @@ def rgb_agb_regions(sgal, offsets, trgb_excludes, opt_trgb,
     ir_high = 10.
 
     # Recovered stars in simulated AGB region.
-    sopt_agb = sgal.stars_in_region(opt_mag, opt_mid, opt_high)
-    sir_agb = sgal.stars_in_region(ir_mag, ir_mid, ir_high)
+    sopt_agb = stars_in_region(opt_mag, opt_mid, opt_high)
+    sir_agb = stars_in_region(ir_mag, ir_mid, ir_high)
     return sopt_rgb, sir_rgb, sopt_agb, sir_agb
 
 
