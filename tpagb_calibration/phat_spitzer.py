@@ -7,7 +7,8 @@ plt_labelsize = 20
 tck_labelsize = 16
 
 
-def load_data(fname, opt_color_min, nir_color_min, field=None, ir_filter1=None, ir_filter2=None):
+def load_data(fname, opt_color_min, nir_color_min, field=None, ir_filter1=None,
+              ir_filter2=None):
     gal = rsp.StarPop()
     gal.data = pyfits.getdata(fname)
 
@@ -208,18 +209,26 @@ for field in fields:
     coldats = ['CO', 'm_ini', 'MH']
     collabels = ['C/O', 'Initial Mass', '[M/H]']
     for coldat, collabel in zip(coldats, collabels):
-        vmin = np.min([sgal.data[coldat][sgal.opt_agb].min(), sgal.data[coldat][sgal.nir_agb].min()])
-        vmax = np.max([sgal.data[coldat][sgal.opt_agb].max(), sgal.data[coldat][sgal.nir_agb].max()])
+        vmin = np.min([sgal.data[coldat][sgal.opt_agb].min(),
+                       sgal.data[coldat][sgal.nir_agb].min()])
+        vmax = np.max([sgal.data[coldat][sgal.opt_agb].max(),
+                       sgal.data[coldat][sgal.nir_agb].max()])
 
         fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6))
-        ax1 = gal.plot_cmd(gal.data[gopt_filt1][icut] - gal.data[gopt_filt2][icut], gal.data[gopt_filt2][icut], ax=ax1)
-        ax2 = gal.plot_cmd(gal.data[gnir_filt1][icut] - gal.data[gnir_filt2][icut], gal.data[gnir_filt2][icut], ax=ax2)
-        cs = ax1.scatter(sgal.opt_mag1[sgal.opt_agb] - sgal.opt_mag[sgal.opt_agb], sgal.opt_mag[sgal.opt_agb],
-                         c=sgal.data[coldat][sgal.opt_agb], cmap=plt.cm.get_cmap('RdBu'), vmin=vmin, vmax=vmax,
+        ax1 = gal.plot_cmd(gal.data[gopt_filt1][icut] - gal.data[gopt_filt2][icut],
+                           gal.data[gopt_filt2][icut], ax=ax1)
+        ax2 = gal.plot_cmd(gal.data[gnir_filt1][icut] - gal.data[gnir_filt2][icut],
+                           gal.data[gnir_filt2][icut], ax=ax2)
+        cs = ax1.scatter(sgal.opt_mag1[sgal.opt_agb] - sgal.opt_mag[sgal.opt_agb],
+                         sgal.opt_mag[sgal.opt_agb],
+                         c=sgal.data[coldat][sgal.opt_agb],
+                         cmap=plt.cm.get_cmap('RdBu'), vmin=vmin, vmax=vmax,
                          alpha=0.3)
 
-        cs = ax2.scatter(sgal.nir_mag1[sgal.nir_agb] - sgal.nir_mag[sgal.nir_agb], sgal.nir_mag[sgal.nir_agb],
-                      c=sgal.data[coldat][sgal.nir_agb], cmap=plt.cm.get_cmap('RdBu'),vmin=vmin, vmax=vmax,
+        cs = ax2.scatter(sgal.nir_mag1[sgal.nir_agb] - sgal.nir_mag[sgal.nir_agb],
+                         sgal.nir_mag[sgal.nir_agb],
+                         c=sgal.data[coldat][sgal.nir_agb],
+                         cmap=plt.cm.get_cmap('RdBu'),vmin=vmin, vmax=vmax,
                       alpha=0.3)
         cbar = plt.colorbar(cs)
         cbar.set_label(r'$%s$' % collabel)
