@@ -127,7 +127,9 @@ gal_file = '/home/rosenfield/research/TP-AGBcalib/PHAT/data/Spitzer/b21-6filt-cu
 ir_filt1 = None
 ir_filt2 = None
 
-fields = [6, 12, 15]
+#fields = [6, 12, 15]
+fields = [12, 15]
+agb_mod = 'mar13'
 for field in fields:
     gal = load_data(gal_file, opt_color_min, nir_color_min, ir_filter1=ir_filt1,
                     ir_filter2=ir_filt2, field=field)
@@ -161,7 +163,7 @@ for field in fields:
     # the best sfh with aringer
     #sgal_name = '/home/rosenfield/research/TP-AGBcalib/PHAT/vary_sfh/output_M31-B21_3x6-006.aringer.dat'
     # the best sfh
-    sgal_name = '/home/rosenfield/research/TP-AGBcalib/PHAT/vary_sfh/output_M31-B21_3x6-0%02i.dat' % field
+    sgal_name = '/home/rosenfield/research/TP-AGBcalib/PHAT/vary_sfh/output_M31-B21_3x6-0%02i_%s.dat' % (field, agb_mod)
 
     sgal = load_model(sgal_name, opt_color_min, nir_color_min)
     sopt_filt1 = 'F475W'
@@ -203,7 +205,7 @@ for field in fields:
     [ax.set_ylim(1, ax.get_ylim()[1]) for ax in [ax1, ax2]]
     ax1, ax2 = add_vlines_lf(ax1, ax2, offsets, trgb_excludes, opt_trgb, nir_trgb)
     ax1.set_title('B21F%02i' % field)
-    plt.savefig('M31_B21_F%02i_lfs.png' % field)
+    plt.savefig('M31_B21_F%02i_%s_lfs.png' % (field, agb_mod))
     #[ax.set_ylim(1,300) for ax in [ax1, ax2]]
 
     coldats = ['CO', 'm_ini', 'MH']
@@ -241,7 +243,7 @@ for field in fields:
         ax1.set_ylabel(r'$%s$' % sopt_filt2, fontsize=20)
         ax2.set_ylabel(r'$%s$' % snir_filt2, fontsize=20)
         ax1.set_title('B21F%02i' % field)
-        plt.savefig('M31_B21_F%02i_cmd_%s.png' % (field, coldat))
+        plt.savefig('M31_B21_F%02i_cmd_%s_%s.png' % (field, coldat, agb_mod))
 
 # trgbs:
 #ax1.vlines(nir_trgb, *ax1.get_ylim(), lw=2, color='gray')
