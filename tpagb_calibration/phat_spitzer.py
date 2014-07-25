@@ -100,6 +100,7 @@ def make_lf(hist1, bin1s, hist2, bin2s, err1s=None, err2s=None, ax1=None,
     ax1.set_ylabel(r'${\rm Number\ of\ Stars}$', fontsize=20)
     return ax1, ax2
 
+
 def add_vlines_lf(ax1, ax2, offsets, trgb_excludes, opt_trgb, nir_trgb):
     trgb = [opt_trgb, nir_trgb]
     for i, ax  in enumerate([ax1, ax2]):
@@ -112,7 +113,7 @@ def add_vlines_lf(ax1, ax2, offsets, trgb_excludes, opt_trgb, nir_trgb):
     return ax1, ax2
 
 offsets = [22.5, 19.2]
-trgb_excludes = [0.1, 0.2]
+trgb_excludes = [0.1, 0.15]
 #trgb_excludes = [0., 0.]
 opt_trgb = 20.5
 nir_trgb = 18.3
@@ -123,127 +124,148 @@ nir_color_min = 0.98
 #gal_file = '/home/rosenfield/research/TP-AGBcalib/PHAT/data/Spitzer/B21_phat_irac_fields.fits'
 #ir_filt1 = 'IRAC1'
 #ir_filt2 = 'IRAC2'
-gal_file = '/home/rosenfield/research/TP-AGBcalib/PHAT/data/Spitzer/b21-6filt-cut-shallow-fields.fits'
+base = '/home/rosenfield/research/TP-AGBcalib/PHAT/'
+gal_file = base + 'data/Spitzer/b21-6filt-cut-shallow-fields.fits'
 ir_filt1 = None
 ir_filt2 = None
 
 #fields = [6, 12, 15]
-fields = [12, 15]
-agb_mod = 'mar13'
-for field in fields:
-    gal = load_data(gal_file, opt_color_min, nir_color_min, ir_filter1=ir_filt1,
-                    ir_filter2=ir_filt2, field=field)
+fields = [6, 12, 15]
+extras = ['.aringer', '']
+agb_mods = ['nov13_pagb', 'mar13_pagb']
+for extra in extras:
+    for agb_mod in agb_mods:
+        for field in fields:
+            gal = load_data(gal_file, opt_color_min, nir_color_min,
+                            ir_filter1=ir_filt1, ir_filter2=ir_filt2,
+                            field=field)
 
-    gopt_filt1 = 'F475W_VEGA'
-    gopt_filt2 = 'F814W_VEGA'
-    gnir_filt1 = 'F110W_VEGA'
-    gnir_filt2 = 'F160W_VEGA'
+            gopt_filt1 = 'F475W_VEGA'
+            gopt_filt2 = 'F814W_VEGA'
+            gnir_filt1 = 'F110W_VEGA'
+            gnir_filt2 = 'F160W_VEGA'
 
-    # select data stars to compare with model
-    icut = list(set(gal.gst) & set(gal.finds))
-    opt_cut = list(set(icut) & set(gal.opt_color_cut))
-    nir_cut = list(set(icut) & set(gal.nir_color_cut))
-    gal.opt_mag1 = gal.data[gopt_filt1][opt_cut]
-    gal.opt_mag = gal.data[gopt_filt2][opt_cut]
-    gal.nir_mag1 = gal.data[gnir_filt1][nir_cut]
-    gal.nir_mag = gal.data[gnir_filt2][nir_cut]
+            # select data stars to compare with model
+            icut = list(set(gal.gst) & set(gal.finds))
+            opt_cut = list(set(icut) & set(gal.opt_color_cut))
+            nir_cut = list(set(icut) & set(gal.nir_color_cut))
+            gal.opt_mag1 = gal.data[gopt_filt1][opt_cut]
+            gal.opt_mag = gal.data[gopt_filt2][opt_cut]
+            gal.nir_mag1 = gal.data[gnir_filt1][nir_cut]
+            gal.nir_mag = gal.data[gnir_filt2][nir_cut]
 
-    # number of rgb and agb stars in the data
-    gal.opt_rgb, gal.nir_rgb, gal.opt_agb, gal.nir_agb = \
-        rgb_agb_regions(offsets, trgb_excludes, opt_trgb, nir_trgb,
-                        gal.opt_mag, gal.nir_mag)
+            # number of rgb and agb stars in the data
+            gal.opt_rgb, gal.nir_rgb, gal.opt_agb, gal.nir_agb = \
+                rgb_agb_regions(offsets, trgb_excludes, opt_trgb, nir_trgb,
+                                gal.opt_mag, gal.nir_mag)
 
-    # bin the data
-    bins = np.arange(16, 28, 0.1)
-    gal.opt_hist, gal.opt_bins = np.histogram(gal.opt_mag, bins=bins)
-    gal.nir_hist, gal.nir_bins = np.histogram(gal.nir_mag, bins=bins)
-    opt_err = np.sqrt(gal.opt_hist)
-    nir_err = np.sqrt(gal.nir_hist)
+            # bin the data
+            bins = np.arange(16, 28, 0.1)
+            gal.opt_hist, gal.opt_bins = np.histogram(gal.opt_mag, bins=bins)
+            gal.nir_hist, gal.nir_bins = np.histogram(gal.nir_mag, bins=bins)
+            opt_err = np.sqrt(gal.opt_hist)
+            nir_err = np.sqrt(gal.nir_hist)
 
-    # the best sfh with aringer
-    #sgal_name = '/home/rosenfield/research/TP-AGBcalib/PHAT/vary_sfh/output_M31-B21_3x6-006.aringer.dat'
-    # the best sfh
-    sgal_name = '/home/rosenfield/research/TP-AGBcalib/PHAT/vary_sfh/output_M31-B21_3x6-0%02i_%s.dat' % (field, agb_mod)
+            # the best sfh with aringer
+            #sgal_name = '/home/rosenfield/research/TP-AGBcalib/PHAT/vary_sfh/output_M31-B21_3x6-006.aringer.dat'
+            # the best sfh
+            sgal_name = \
+                base + 'vary_sfh/output_M31-B21_3x6-0%02i_%s%s.dat' % (field,
+                                                                       agb_mod,
+                                                                       extra)
 
-    sgal = load_model(sgal_name, opt_color_min, nir_color_min)
-    sopt_filt1 = 'F475W'
-    sopt_filt2 = 'F814W'
-    snir_filt1 = 'F110W'
-    snir_filt2 = 'F160W'
+            sgal = load_model(sgal_name, opt_color_min, nir_color_min)
+            sopt_filt1 = 'F475W'
+            sopt_filt2 = 'F814W'
+            snir_filt1 = 'F110W'
+            snir_filt2 = 'F160W'
 
-    sgal.opt_mag1 = sgal.data[sopt_filt1][sgal.opt_color_cut]
-    sgal.opt_mag = sgal.data[sopt_filt2][sgal.opt_color_cut]
-    sgal.nir_mag1 = sgal.data[snir_filt1][sgal.nir_color_cut]
-    sgal.nir_mag = sgal.data[snir_filt2][sgal.nir_color_cut]
+            sgal.opt_mag1 = sgal.data[sopt_filt1][sgal.opt_color_cut]
+            sgal.opt_mag = sgal.data[sopt_filt2][sgal.opt_color_cut]
+            sgal.nir_mag1 = sgal.data[snir_filt1][sgal.nir_color_cut]
+            sgal.nir_mag = sgal.data[snir_filt2][sgal.nir_color_cut]
 
-    sgal.opt_hist, sgal.opt_bins = np.histogram(sgal.opt_mag, bins=bins)
-    sgal.nir_hist, sgal.nir_bins = np.histogram(sgal.nir_mag, bins=bins)
+            sgal.opt_hist, sgal.opt_bins = np.histogram(sgal.opt_mag, bins=bins)
+            sgal.nir_hist, sgal.nir_bins = np.histogram(sgal.nir_mag, bins=bins)
 
-    sgal.opt_rgb, sgal.nir_rgb, sgal.opt_agb, sgal.nir_agb = \
-        rgb_agb_regions(offsets, trgb_excludes, opt_trgb, nir_trgb,
-                        sgal.opt_mag, sgal.nir_mag)
+            sgal.opt_rgb, sgal.nir_rgb, sgal.opt_agb, sgal.nir_agb = \
+                rgb_agb_regions(offsets, trgb_excludes, opt_trgb, nir_trgb,
+                                sgal.opt_mag, sgal.nir_mag)
 
-    # scale the simulation
-    opt_norm, nir_norm, sc_opt_rgb, sc_nir_rgb, sc_opt_agb, sc_nir_agb = \
-        normalize_simulation(sgal.opt_mag, sgal.nir_mag, float(len(gal.opt_rgb)),
-                             float(len(gal.nir_rgb)), sgal.opt_rgb, sgal.nir_rgb,
-                             sgal.opt_agb, sgal.nir_agb)
+            # scale the simulation
+            opt_norm, nir_norm, sc_opt_rgb, sc_nir_rgb, sc_opt_agb, sc_nir_agb = \
+                normalize_simulation(sgal.opt_mag, sgal.nir_mag,
+                                     float(len(gal.opt_rgb)),
+                                     float(len(gal.nir_rgb)),
+                                     sgal.opt_rgb, sgal.nir_rgb,
+                                     sgal.opt_agb, sgal.nir_agb)
 
-    sgal.opt_hist *= opt_norm
-    sgal.nir_hist *= nir_norm
+            sgal.opt_hist *= opt_norm
+            sgal.nir_hist *= nir_norm
 
-    ax1, ax2 = make_lf(gal.opt_hist, gal.opt_bins, gal.nir_hist, gal.nir_bins,
-                           err1s=opt_err, err2s=nir_err)
+            ax1, ax2 = make_lf(gal.opt_hist, gal.opt_bins, gal.nir_hist,
+                               gal.nir_bins,
+                                   err1s=opt_err, err2s=nir_err)
 
-    ax1, ax2 = make_lf(sgal.opt_hist, sgal.opt_bins, sgal.nir_hist, sgal.nir_bins,
-                       color='darkred', label='sim', ax1=ax1, ax2=ax2)
+            ax1, ax2 = make_lf(sgal.opt_hist, sgal.opt_bins, sgal.nir_hist,
+                               sgal.nir_bins,
+                               color='darkred', label='sim', ax1=ax1, ax2=ax2)
 
-    ax1.set_xlabel(r'$%s$' % sopt_filt2, fontsize=20)
-    ax2.set_xlabel(r'$%s$' % snir_filt2, fontsize=20)
-    ax1.set_xlim(23, 16)
-    ax2.set_xlim(21.3, 14)
-    [ax.set_ylim(1, ax.get_ylim()[1]) for ax in [ax1, ax2]]
-    ax1, ax2 = add_vlines_lf(ax1, ax2, offsets, trgb_excludes, opt_trgb, nir_trgb)
-    ax1.set_title('B21F%02i' % field)
-    plt.savefig('M31_B21_F%02i_%s_lfs.png' % (field, agb_mod))
-    #[ax.set_ylim(1,300) for ax in [ax1, ax2]]
+            ax1.set_xlabel(r'$%s$' % sopt_filt2, fontsize=20)
+            ax2.set_xlabel(r'$%s$' % snir_filt2, fontsize=20)
+            ax1.set_xlim(23, 16)
+            ax2.set_xlim(21.3, 14)
+            [ax.set_ylim(1, ax.get_ylim()[1]) for ax in [ax1, ax2]]
+            ax1, ax2 = add_vlines_lf(ax1, ax2, offsets, trgb_excludes,
+                                     opt_trgb, nir_trgb)
+            ax1.set_title('B21F%02i' % field)
+            plt.savefig('M31_B21_F%02i_lfs_%s%s.png' % (field, agb_mod, extra))
+            #[ax.set_ylim(1,300) for ax in [ax1, ax2]]
 
-    coldats = ['CO', 'm_ini', 'MH']
-    collabels = ['C/O', 'Initial Mass', '[M/H]']
-    for coldat, collabel in zip(coldats, collabels):
-        vmin = np.min([sgal.data[coldat][sgal.opt_agb].min(),
-                       sgal.data[coldat][sgal.nir_agb].min()])
-        vmax = np.max([sgal.data[coldat][sgal.opt_agb].max(),
-                       sgal.data[coldat][sgal.nir_agb].max()])
+            coldats = ['CO', 'm_ini', 'MH']
+            collabels = ['C/O', 'Initial Mass', '[M/H]']
+            for coldat, collabel in zip(coldats, collabels):
+                vmin = np.min([sgal.data[coldat][sgal.opt_agb].min(),
+                               sgal.data[coldat][sgal.nir_agb].min()])
+                vmax = np.max([sgal.data[coldat][sgal.opt_agb].max(),
+                               sgal.data[coldat][sgal.nir_agb].max()])
 
-        fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6))
-        ax1 = gal.plot_cmd(gal.data[gopt_filt1][icut] - gal.data[gopt_filt2][icut],
-                           gal.data[gopt_filt2][icut], ax=ax1)
-        ax2 = gal.plot_cmd(gal.data[gnir_filt1][icut] - gal.data[gnir_filt2][icut],
-                           gal.data[gnir_filt2][icut], ax=ax2)
-        cs = ax1.scatter(sgal.opt_mag1[sgal.opt_agb] - sgal.opt_mag[sgal.opt_agb],
-                         sgal.opt_mag[sgal.opt_agb],
-                         c=sgal.data[coldat][sgal.opt_agb],
-                         cmap=plt.cm.get_cmap('RdBu'), vmin=vmin, vmax=vmax,
-                         alpha=0.3)
+                fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6))
+                ax1 = gal.plot_cmd(gal.data[gopt_filt1][icut] -
+                                    gal.data[gopt_filt2][icut],
+                                   gal.data[gopt_filt2][icut], ax=ax1)
+                ax2 = gal.plot_cmd(gal.data[gnir_filt1][icut] -
+                                      gal.data[gnir_filt2][icut],
+                                   gal.data[gnir_filt2][icut], ax=ax2)
+                cs = ax1.scatter(sgal.opt_mag1[sgal.opt_agb] -
+                                    sgal.opt_mag[sgal.opt_agb],
+                                 sgal.opt_mag[sgal.opt_agb],
+                                 c=sgal.data[coldat][sgal.opt_agb],
+                                 cmap=plt.cm.get_cmap('RdBu'), vmin=vmin,
+                                 vmax=vmax, alpha=0.3)
 
-        cs = ax2.scatter(sgal.nir_mag1[sgal.nir_agb] - sgal.nir_mag[sgal.nir_agb],
-                         sgal.nir_mag[sgal.nir_agb],
-                         c=sgal.data[coldat][sgal.nir_agb],
-                         cmap=plt.cm.get_cmap('RdBu'),vmin=vmin, vmax=vmax,
-                      alpha=0.3)
-        cbar = plt.colorbar(cs)
-        cbar.set_label(r'$%s$' % collabel)
-        ax1.set_xlim(3.2, 5.5)
-        ax1.set_ylim(20.5, 19.2)
-        ax2.set_xlim(.95, 1.6)
-        ax2.set_ylim(18.2, 15.1)
-        ax1.set_xlabel(r'$%s-%s$' % (sopt_filt1, sopt_filt2), fontsize=20)
-        ax2.set_xlabel(r'$%s-%s$' % (snir_filt1, snir_filt2), fontsize=20)
-        ax1.set_ylabel(r'$%s$' % sopt_filt2, fontsize=20)
-        ax2.set_ylabel(r'$%s$' % snir_filt2, fontsize=20)
-        ax1.set_title('B21F%02i' % field)
-        plt.savefig('M31_B21_F%02i_cmd_%s_%s.png' % (field, coldat, agb_mod))
+                cs = ax2.scatter(sgal.nir_mag1[sgal.nir_agb] -
+                                    sgal.nir_mag[sgal.nir_agb],
+                                 sgal.nir_mag[sgal.nir_agb],
+                                 c=sgal.data[coldat][sgal.nir_agb],
+                                 cmap=plt.cm.get_cmap('RdBu'),vmin=vmin,
+                                 vmax=vmax,
+                              alpha=0.3)
+                cbar = plt.colorbar(cs)
+                cbar.set_label(r'$%s$' % collabel)
+                ax1.set_xlim(3.2, 5.5)
+                ax1.set_ylim(20.5, 19.2)
+                ax2.set_xlim(.95, 1.6)
+                ax2.set_ylim(18.2, 15.1)
+                ax1.set_xlabel(r'$%s-%s$' % (sopt_filt1, sopt_filt2),
+                               fontsize=20)
+                ax2.set_xlabel(r'$%s-%s$' % (snir_filt1, snir_filt2),
+                               fontsize=20)
+                ax1.set_ylabel(r'$%s$' % sopt_filt2, fontsize=20)
+                ax2.set_ylabel(r'$%s$' % snir_filt2, fontsize=20)
+                ax1.set_title('B21F%02i' % field)
+                plt.savefig('M31_B21_F%02i_cmd_%s_%s%s.png' % (field, coldat,
+                                                               agb_mod, extra))
 
 # trgbs:
 #ax1.vlines(nir_trgb, *ax1.get_ylim(), lw=2, color='gray')

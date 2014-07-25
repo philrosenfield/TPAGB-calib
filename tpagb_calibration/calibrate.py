@@ -46,8 +46,8 @@ def main(vsfhs, vsfh_kws=None, timeout=900, dry_run=False):
         time.sleep(timeout)
         print 'checking first set...'
 
-    print 'writing first set'
-    [vsfhs[i].write_results(res[i].result) for i in range(ntimes)]
+    #print 'writing first set'
+    #[vsfhs[i].write_results(res[i].result) for i in range(ntimes)]
 
     print 'calling second set'
     res2 = [clients[i].apply(caller, vsfhs[i+ntimes], vsfh_kws[i+ntimes],)
@@ -58,7 +58,7 @@ def main(vsfhs, vsfh_kws=None, timeout=900, dry_run=False):
         time.sleep(timeout)
         print 'checking second set...'
 
-    print 'writing second set'
-    [vsfhs[i+ntimes].write_results(res2[i].result) for i in range(ndiff)]
+    #print 'writing second set'
+    #[vsfhs[i+ntimes].write_results(res2[i].result) for i in range(ndiff)]
 
     print 'done.'

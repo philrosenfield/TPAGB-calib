@@ -77,14 +77,19 @@ class VarySFHs(StarFormationHistories):
                 os.path.split(self.cmd_input_file)[1].replace('.dat', '').lower()
 
         if None in [self.ir_trgb, self.opt_trgb]:
-            assert self.Mtrgb is not None, 'need to supply trgb data'
-            self.ir_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb, self.ir_filter2,
-                                                  self.photsys, dmod=self.dmod,
-                                                  Av=self.Av)
-            self.opt_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb, self.opt_filter2,
-                                                   self.photsys, dmod=self.dmod,
-                                                   Av=self.Av)
+            if self.Mtrgb is not None:
+                self.ir_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb,
+                                                           self.ir_filter2,
+                                                           self.photsys,
+                                                           dmod=self.dmod,
+                                                           Av=self.Av)
+                self.opt_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb,
+                                                            self.opt_filter2,
+                                                            self.photsys,
+                                                            dmod=self.dmod,
+                                                            Av=self.Av)
 
+    def prepare_outfiles(self):
         # setup the locations all the files to write and read from
         self.fnames =  setup_files(self.agb_mod, self.target, self.outfile_loc,
                                    extra_str=self.extra_str)
@@ -282,8 +287,9 @@ class VarySFHs(StarFormationHistories):
         else:
             return (sopt_rgb, sopt_agb, sir_rgb, sir_agb), result_dict
 
-    def vary_the_SFH(self, random_sfr=True, random_z=False,
-                     zdisp=True, dry_run=False, object_mass=None):
+    def vary_the_SFH(self, random_sfr=True, random_z=False, do_norm=True,
+                     zdisp=True, dry_run=False, object_mass=None, cols=None,
+                     write_culled=False):
         '''
         make the sfhs, make the galaxy inputs, run trilegal. For no trilegal
         runs, set dry_run True.
@@ -310,19 +316,46 @@ class VarySFHs(StarFormationHistories):
             rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
                                            triout, rmfiles=False,
                                            dry_run=dry_run)
+            if do_norm:
+                norm_out, result_dict = self.do_normalization(triout=triout)
 
-            norm_out, result_dict = self.do_normalization(triout=triout)
-
-            result_dict['contam_line'] = self.contamination_by_phases(*norm_out)
-            result_dicts.append(result_dict)
+                result_dict['contam_line'] = self.contamination_by_phases(*norm_out)
+                result_dicts.append(result_dict)
+            if write_culled:
+                self.write_truncated_file(triout, cols=cols)
             # remove the last trilegal output to save space
-            if dry_run is False:
+            if dry_run is False and do_norm:
                 lastnum = i - 1
                 if os.path.isfile(triout_fmt % lastnum) is True:
                     os.remove(triout_fmt % lastnum)
+        if do_norm:
+            result = rsp.tools.helpers.combine_list_of_dictionaries(result_dicts)
+            return result
+        else:
+            return
 
-        result = rsp.tools.helpers.combine_list_of_dictionaries(result_dicts)
-        return result
+    def write_truncated_file(self, triout, cols=['F110W', 'F160W']):
+
+        def load_model(fname, cols=['F110W', 'F160W']):
+            # all the columns
+            with open(fname, 'r') as f:
+                col_keys = f.readline().strip().split()
+
+            # the columns I want
+            usecols = [col_keys.index(c) for c in cols]
+            data = np.genfromtxt(fname, usecols=usecols, names=cols)
+            return data
+
+        def write_model(fname, data):
+            header = '# %s \n' % ' '.join(data.dtype.names)
+            with open(fname, 'w') as f:
+                f.write(header)
+                np.savetxt(f, data, fmt='%.4f')
+
+        write_model(triout, load_model(triout, cols=cols))
+
+
+
 
     def write_results(self, res_dict):
         '''writes out the results to self.fnames (see __init__)'''
