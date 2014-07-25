@@ -1,6 +1,5 @@
 import ResolvedStellarPops as rsp
 import numpy as np
-from matplotlib.nxutils import points_inside_poly
 import os
 import pyfits
 from sfhs.vary_sfh import VarySFHs
@@ -31,7 +30,7 @@ def call_vsfh():
                            base + 'input/input_SCL-DE1.dat']
 
     # number of times to run trilegal
-    nsfhs = 10
+    nsfhs = 1
     # agb_model to use
     cmd_input_file = 'cmd_input_CAF09_S_NOV13.dat'
     # columns to save from trilegal
@@ -41,14 +40,11 @@ def call_vsfh():
     vary_kws = []
     for i in range(len(sfh_files)):
         vsfhs.append(VarySFHs(sfh_file=sfh_files[i],
-                             galaxy_input=gal_input_templates[i],
-                             target=gal_input_templates[i].replace('.dat', '').split('_')[-1],
-                             nsfhs=nsfhs,
-                             cmd_input_file=cmd_input_file, file_origin=file_origin))
+                              galaxy_input=gal_input_templates[i],
+                              target=gal_input_templates[i].replace('.dat', '').split('_')[-1],
+                              nsfhs=nsfhs,
+                              cmd_input_file=cmd_input_file, file_origin=file_origin))
         vary_kws.append({'do_norm': False, 'write_culled': True, 'cols': cols})
-    #os.system('ipcluster start -n=%i' % len(sfh_files))
-    #import time
-    #time.sleep(30)
 
     clients = parallel.Client()
     clients.block = False
@@ -61,15 +57,17 @@ def call_vsfh():
            for i in range(len(sfh_files))]
 
     while False in [r.ready() for r in res]:
-        print 'waiting 30s ...'
-        time.sleep(30)
-        print 'checking ...'
+        time.sleep(10)
     print 'done.'
     os.system('ipcluster stop')
 
+
 def rgb_agb_regions(offset, trgb_exclude, trgb, mag):
     # define RGB regions
-    low = offset + trgb
+    if offset >= 2.:
+        low = offset
+    else:
+        low = offset + trgb
     mid = trgb + trgb_exclude
 
     # Recovered stars in simulated RGB region.
@@ -82,6 +80,7 @@ def rgb_agb_regions(offset, trgb_exclude, trgb, mag):
     # Recovered stars in simulated AGB region.
     sagb = rsp.starpop.stars_in_region(mag, mmid, high)
     return srgb, sagb
+
 
 def normalize_simulation(mag, ndata_rgb, srgb, sagb):
     norm = ndata_rgb / float(len(srgb))
@@ -98,57 +97,114 @@ def normalize_simulation(mag, ndata_rgb, srgb, sagb):
     agb = list(set(ind) & set(sagb))
     return norm, rgb, agb
 
+def normalize_to_flux(mag, flux, srgb, sagb):
+    norm = flux / 10**(-.4 * mag)
+    rands = np.random.random(len(mag))
+    ind, = np.nonzero(rands < norm)
+    # scaled rgb: norm + in rgb
+    rgb = list(set(ind) & set(srgb))
+
+    # scaled agb
+    agb = list(set(ind) & set(sagb))
+    return norm, rgb, agb
+
 def load_model(fname, cols=['F110W', 'F160W']):
     sgal = rsp.StarPop()
 
     # all the columns
-    with open(fname, 'r') as f:
-        col_keys = f.readline().strip().split()
+    #with open(fname, 'r') as f:
+    #    col_keys = f.readline().strip().split()
 
     # the columns I want
-    usecols = [col_keys.index(c) for c in cols]
-    sgal.data = np.genfromtxt(fname, usecols=usecols,
-                              names=cols).view(np.recarray)
+    #usecols = [col_keys.index(c) for c in cols]
+    sgal.data = np.genfromtxt(fname, names=cols).view(np.recarray)
     return sgal
 
-def write_model(fname, data):
-    header = '# %s \n' % ' '.join(data.dtype.names)
-    with open(fname, 'w') as f:
-        f.write(header)
-        np.savetxt(f, data, fmt='%.4f')
+
+def select_rgbagb(StarPop, field1, field2, color_lim, offset, trgb_exclude, trgb):
+    StarPop.color_cut, = np.nonzero(StarPop.data[field1] - StarPop.data[field2] > color_lim)
+    StarPop.mag = StarPop.data[field2][StarPop.color_cut]
+    StarPop.rgb, StarPop.agb = rgb_agb_regions(offset, trgb_exclude, trgb, StarPop.mag)
+    return StarPop
 
 
 def compare_model_data():
+    agb_table = '/home/rosenfield/research/TP-AGBcalib/tables/melbourne2012_tab.dat'
+    agb_tab = rsp.fileio.readfile(agb_table, string_column=0)
 
-
-    model_folder =  '/home/rosenfield/research/TP-AGBcalib/SNAP/models/varysfh/comp_corr/'
-    model_files = ['ddo71/caf09_s_nov13/mc/output_DDO71_ir_lf.dat',
-                   'ddo78/caf09_s_nov13/mc/output_DDO78_029_opt_best.dat',
-                   'hs117/caf09_s_nov13/mc/output_HS117_027_opt_best.dat',
-                   'kkh37/caf09_s_nov13/mc/output_KKH37_027_opt_best.dat',
-                   'ngc2976-deep/caf09_s_nov13/mc/output_NGC2976-DEEP_036_opt_best.dat',
-                   'scl-de1/caf09_s_nov13/mc/output_SCL-DE1_015_opt_best.dat']
-
-    sgals = []
+    color_lim = 0.1
+    offsets = [23.51, 23.63, 23.85, 23.26, 22.67, 24.27]
+    trgb_exclude = 0.2
+    targets = ['DDO71', 'DDO78', 'HS117', 'KKH37', 'NGC2976-DEEP', 'SCL-DE1']
+    model_folder =  '/home/rosenfield/research/TP-AGBcalib/SNAP/models/agb_flux'
+    model_fmt = 'output_%s_%s_???.dat'
+    data_folder =  '/home/rosenfield/research/TP-AGBcalib/SNAP/data/galaxies/'
+    data_fmt = '11719_%s_IR_F110W_F160W.gst.fits'
+    agb_mod = 'cmd_input_caf09_s_nov13'
+    models = {}
     gals = []
-    for i in range(len(data_files)):
-        dfname = os.path.join(data_folder, data_files[i])
-        mfname =  os.path.join(model_folder, model_files[i])
+    print 'target fmagb/fdagb fmagb/fdagb fdagb/fdtot, nagb_model/nagb_data agb/rgb_data agb_rgb_model'
+    for i, target in enumerate(targets):
+        dfname, = rsp.fileio.get_files(data_folder, data_fmt % target)
+        mfnames = rsp.fileio.get_files(model_folder, model_fmt % (target, agb_mod))
 
-        sgal = load_model(mfname)
-        sgal.target = os.path.split(dfname)[1].split('_')[1]
-        trgb  = rsp.angst_tables.angst_data.get_snap_trgb_av_dmod(sgal.target)[0]
-        sgal = select_rgbagb(sgal, 'F110W', 'F160W', color_lim, offset, trgb_exclude, trgb)
+        trgb  = rsp.angst_tables.angst_data.get_snap_trgb_av_dmod(target)[0]
 
         gal = rsp.StarPop()
-        gal.target = sgal.target
+        gal.target = target
         gal.data = pyfits.getdata(dfname)
-        gal = select_rgbagb(gal, 'MAG1_IR', 'MAG2_IR', color_lim, offset, trgb_exclude, trgb)
+        gal = select_rgbagb(gal, 'MAG1_IR', 'MAG2_IR', color_lim, offsets[i],
+                            trgb_exclude, trgb)
         gal.agbflux = np.sum(10 ** (-.4 * gal.mag[gal.agb]))
+        mag2 = gal.data['MAG2_IR']
 
-        sgal.norm,  sgal.norm_rgb, sgal.norm_agb = normalize_simulation(sgal.mag, float(len(gal.rgb)), sgal.rgb, sgal.agb)
-        sgal.agbflux = np.sum(10 ** (-.4 * sgal.mag[sgal.norm_agb]))
-        print float(len(gal.rgb)) / float(len(sgal.norm_rgb))
-        print '%s %.3g %i %i %.3g' % (sgal.target, sgal.agbflux/gal.agbflux, len(gal.agb), len(sgal.agb), float(len(sgal.agb))/float(len(gal.agb)))
-        sgals.append(sgal)
+        gal.totflux = np.sum(10 ** (-.4 * mag2))
+        #gal.normflux = np.sum(10 ** (-.4 * gal.mag))
+        #gal.totflux =  rsp.fileio.item_from_row(agb_tab, 'Galaxy', target, 'F160W_Flux')
+        #agb_flux = rsp.fileio.item_from_row(agb_tab, 'Galaxy', target, 'fAGB_ftot') * gal.totflux
+        #print gal.agbflux / agb_flux,  gal.agbflux, agb_flux, totflux, gal.totflux,  gal.totflux /  totflux
         gals.append(gal)
+
+        sgals = []
+        for mfname in mfnames:
+            sgal = load_model(mfname)
+            sgal.target = target
+            sgal = select_rgbagb(sgal, 'F110W', 'F160W', color_lim, offsets[i],
+                                 trgb_exclude, trgb)
+            _,  sgal.norm_rgb, sgal.norm_agb = \
+                normalize_simulation(sgal.mag, float(len(gal.rgb)), sgal.rgb,
+                                     sgal.agb)
+            gal.frgb = np.sum(10 ** (-.4 * gal.mag[gal.rgb]))
+            sgal.frgb = np.sum(10 ** (-.4 * sgal.mag[sgal.rgb]))
+            #print gal.frgb, sgal.frgb, gal.frgb/sgal.frgb
+            sgal.norm  = gal.frgb / sgal.frgb
+            sgal.totflux = np.sum(10 ** (-.4 * sgal.data.F160W))
+            #sgal.norm = gal.totflux / sgal.totflux
+            sgal.agbflux1 = np.sum(10 ** (-.4 * sgal.mag[sgal.agb])) * sgal.norm
+            sgal.agbflux = np.sum(10 ** (-.4 * sgal.mag[sgal.norm_agb])) #* sgal.norm
+
+            sgals.append(sgal)
+            del sgal
+
+        mean_flux1 = np.mean([s.agbflux1 for s in sgals])
+        mean_flux = np.mean([s.agbflux for s in sgals])
+
+        mean_agb = np.mean([float(len(s.norm_agb)) for s in sgals])
+        mean_rgb = np.mean([float(len(s.norm_rgb)) for s in sgals])
+        ndata_agb = float(len(gal.agb))
+        print '%s %.3g %.3g %.3g %.3g %.4g %.4g' % (target, mean_flux1 / gal.agbflux,
+                                               mean_flux / gal.agbflux,
+                                               gal.agbflux / gal.totflux,
+                                               mean_agb / ndata_agb,
+                                               ndata_agb / float(len(gal.rgb)),
+                                               mean_agb / mean_rgb)
+        del gal
+        models[target + '_mean'] = mean_flux
+        models[target + '_nagb'] = mean_agb
+
+        models[target] = sgals
+    return gals, models
+
+if __name__ == '__main__':
+    call_vsfh()
+    compare_model_data()
