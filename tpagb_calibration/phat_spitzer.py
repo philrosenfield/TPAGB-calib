@@ -2,19 +2,57 @@ import ResolvedStellarPops as rsp
 import pyfits
 import numpy as np
 import matplotlib.pylab as plt
-from pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
+#from pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 plt_labelsize = 20
 tck_labelsize = 16
 
 
-def load_data(fname, opt_color_min, nir_color_min, field=None, ir_filter1=None,
-              ir_filter2=None):
+def rgb_agb_regions(offset, trgb_exclude, trgb, mag):
+    # define RGB regions
+    if offset >= 2.:
+        low = offset
+    else:
+        low = offset + trgb
+    mid = trgb + trgb_exclude
+
+    # Recovered stars in simulated RGB region.
+    srgb = rsp.starpop.stars_in_region(mag, low, mid)
+
+    # define AGB regions
+    mmid = trgb - trgb_exclude
+    high = 10.
+
+    # Recovered stars in simulated AGB region.
+    sagb = rsp.starpop.stars_in_region(mag, mmid, high)
+    return srgb, sagb
+
+
+def normalize_simulation(mag, ndata_rgb, srgb, sagb):
+    norm = ndata_rgb / float(len(srgb))
+    #print 'Normalization: %f' % norm
+
+    # random sample the data distribution
+    rands = np.random.random(len(mag))
+    ind, = np.nonzero(rands < norm)
+
+    # scaled rgb: norm + in rgb
+    rgb = list(set(ind) & set(srgb))
+
+    # scaled agb
+    agb = list(set(ind) & set(sagb))
+    return norm, rgb, agb
+
+
+def load_data(fname, field=None):
     gal = rsp.StarPop()
     gal.data = pyfits.getdata(fname)
 
-    gst, = np.nonzero((gal.data.F160W_GST == 'T') & (gal.data.F110W_GST == 'T') &
-                      (gal.data.F475W_GST == 'T') & (gal.data.F814W_GST == 'T'))
-    gal.gst = gst
+    if hasattr(gal.data, 'F160W_GST'):
+        gst, = np.nonzero((gal.data.F160W_GST == 'T') & (gal.data.F110W_GST == 'T') &
+                          (gal.data.F475W_GST == 'T') & (gal.data.F814W_GST == 'T'))
+        gal.gst = gst
+    else:
+        gal.gst = np.arange(len(gal.data.field('field')))
 
     if field is not None:
         finds, = np.nonzero(gal.data.field('field') == field)
@@ -23,26 +61,37 @@ def load_data(fname, opt_color_min, nir_color_min, field=None, ir_filter1=None,
             finds2, = np.nonzero(gal.data.field('field') == 18)
             finds = np.concatenate([finds,finds2])
         gal.finds = finds
-
-    gal = load_phot(gal, 'F475W_VEGA', 'F814W_VEGA', 'F110W_VEGA', 'F160W_VEGA',
-                    opt_color_min, nir_color_min, ir_filter1=ir_filter1,
-                    ir_filter2=ir_filter2)
+    else:
+        gal.finds = np.arange(len(gal.data.field('field')))
     return gal
 
 
-def load_phot(StarPop, opt_filter1, opt_filter2, nir_filter1, nir_filter2,
-              opt_color_min, nir_color_min, ir_filter1=None, ir_filter2=None ):
-    StarPop.opt_color = StarPop.data[opt_filter1] - StarPop.data[opt_filter2]
-    StarPop.nir_color = StarPop.data[nir_filter1] - StarPop.data[nir_filter2]
-    if not None in [ir_filter1, ir_filter2]:
-        StarPop.ir_color = StarPop.data[ir_filter1] - StarPop.data[ir_filter2]
+def load_phot(StarPop, band, filter1=None, filter2=None, color_min=None):
 
-    StarPop.opt_color_cut, = np.nonzero((StarPop.opt_color) > opt_color_min)
-    StarPop.nir_color_cut, = np.nonzero((StarPop.nir_color) > nir_color_min)
+    try:
+        StarPop.icut = list(set(StarPop.gst) & set(StarPop.finds))
+    except AttributeError:
+        StarPop.icut = np.arange(len(StarPop.data[filter1]))
+    mag_attr = '%s_mag' % band
+    mag1_attr = '%s_mag1' % band
+    color_attr = '%s_color' % band
+    color_cut_attr = '%s_color_cut' % band
+    if not None in [filter1, filter2]:
+        color = StarPop.data[filter1] - StarPop.data[filter2]
+        StarPop.__setattr__(color_attr, color)
+        if color_min is not None:
+            color_cut, = np.nonzero((color) > color_min)
+            StarPop.cut = list(set(StarPop.icut) & set(color_cut))
+            StarPop.__setattr__(color_cut_attr, color_cut)
+        else:
+            StarPop.cut = StarPop.icut
+        StarPop.__setattr__(mag1_attr, StarPop.data[filter1][StarPop.cut])
+        StarPop.__setattr__(mag_attr, StarPop.data[filter2][StarPop.cut])
+
     return StarPop
 
 
-def load_model(fname, opt_color_min, nir_color_min):
+def load_model(fname):
     sgal = rsp.StarPop()
 
     # all the columns
@@ -71,157 +120,180 @@ def load_model(fname, opt_color_min, nir_color_min):
               'stage']
     usecols = [col_keys.index(c) for c in cols]
     sgal.data = np.genfromtxt(fname, usecols=usecols,
-                              names=cols).view(np.recarray)
-    sgal = load_phot(sgal, 'F475W', 'F814W', 'F110W', 'F160W', opt_color_min,
-                     nir_color_min, ir_filter1='IRAC_36', ir_filter2='IRAC_45')
+                              names=cols)
+
     return sgal
 
 
-def make_lf(hist1, bin1s, hist2, bin2s, err1s=None, err2s=None, ax1=None,
-            ax2=None, color='black', label=''):
+def make_lf(ghist, gbins, shist, sbins, gerrs=None, serrs=None,
+            colors=['black', 'darkred'], label='', ax=None):
 
-    if ax1 is None and ax2 is None:
-        fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12,6))
-    if not None in [err1s, err2s]:
-        plt_kw = {'drawstyle': 'steps-mid', 'color': color,
-                  'lw': 2, 'label': label}
-        ax1.errorbar(bin1s[1:], hist1, yerr=err1s, **plt_kw)
-        ax2.errorbar(bin2s[1:], hist2, yerr=err2s, **plt_kw)
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(8, 8))
+    if not None in [gerrs, serrs]:
+        plt_kw = {'drawstyle': 'steps-mid', 'color': colors[0],
+                  'lw': 2}
+        ax.errorbar(gbins[1:], ghist, yerr=gerrs, **plt_kw)
+        plt_kw['color'] = colors[1]
+        plt_kw['label'] = label
+        plt_kw['alpha'] = 0.3
+        ax.errorbar(sbins[1:], shist, yerr=serrs, **plt_kw)
     else:
-        plt_kw = {'linestyle': 'steps-mid', 'color': color,
-                  'lw': 2, 'label': label}
-        ax1.plot(bin1s[1:], hist1, **plt_kw)
-        ax2.plot(bin2s[1:], hist2, **plt_kw)
+        plt_kw = {'linestyle': 'steps-mid', 'color': colors[0],
+                  'lw': 2}
+        ax.plot(gbins[1:], ghist, **plt_kw)
+        plt_kw['color'] = colors[1]
+        plt_kw['label'] = label
+        plt_kw['alpha'] = 0.3
+        ax.plot(sbins[1:], shist, **plt_kw)
 
-    for ax in [ax1, ax2]:
-        ax.set_yscale('log')
-        ax.tick_params(labelsize=16)
+    ax.set_yscale('log')
+    ax.tick_params(labelsize=16)
 
-    ax1.set_ylabel(r'${\rm Number\ of\ Stars}$', fontsize=20)
-    return ax1, ax2
+    ax.set_ylabel(r'${\rm Number\ of\ Stars}$', fontsize=20)
+    return ax
 
 
-def add_vlines_lf(ax1, ax2, offsets, trgb_excludes, opt_trgb, nir_trgb):
-    trgb = [opt_trgb, nir_trgb]
-    for i, ax  in enumerate([ax1, ax2]):
-        yarr = np.linspace(*ax.get_ylim())
-        ax.fill_betweenx(yarr, trgb[i] - trgb_excludes[i],
-                         trgb[i] + trgb_excludes[i],
-                         color='black', alpha=0.1)
-        ax.vlines(trgb[i], *ax.get_ylim(), color='black', linestyle='--')
-        ax.vlines(offsets[i], *ax.get_ylim(), color='black', linestyle='--')
-    return ax1, ax2
+def add_vlines_lf(ax, offset, trgb_exclude, trgb):
+    yarr = np.linspace(*ax.get_ylim())
+    ax.fill_betweenx(yarr, trgb - trgb_exclude, trgb + trgb_exclude,
+                     color='black', alpha=0.1)
+    ax.vlines(trgb, *ax.get_ylim(), color='black', linestyle='--')
+    ax.vlines(offset, *ax.get_ylim(), color='black', linestyle='--')
+    return ax
 
-offsets = [22.5, 19.2]
-trgb_excludes = [0.1, 0.15]
-#trgb_excludes = [0., 0.]
+#offsets = [22.5, 19.2]
+nir_offset = 19.2
+opt_offset = 22.5
+#trgb_excludes = [0.1, 0.15]
+nir_trgb_exclude = 0.15
+opt_trgb_exclude = 0.1
+
 opt_trgb = 20.5
 nir_trgb = 18.3
-opt_color_min = 3.5
-nir_color_min = 0.98
-
+bands = ['opt', 'nir', 'ir']
+color_mins = [3.5, 0.98, None]
 # load data and model
-#gal_file = '/home/rosenfield/research/TP-AGBcalib/PHAT/data/Spitzer/B21_phat_irac_fields.fits'
-#ir_filt1 = 'IRAC1'
-#ir_filt2 = 'IRAC2'
+
 base = '/home/rosenfield/research/TP-AGBcalib/PHAT/'
-gal_file = base + 'data/Spitzer/b21-6filt-cut-shallow-fields.fits'
-ir_filt1 = None
-ir_filt2 = None
 
-#fields = [6, 12, 15]
+#gal_file = base + 'data/Spitzer/b21-6filt-cut-shallow-fields.fits'
+#gfilters = ['F475W_VEGA', 'F814W_VEGA', 'F110W_VEGA', 'F160W_VEGA', None, None]
+#sfilt1ers= ['F475W', 'F814W', 'F110W', 'F160W', None, None]
+
+#gal_file = base + 'data/Spitzer/B21_phat_irac_fields.fits'
+gal_file = base + 'data/Spitzer/B21_phat_irac_v2_fields.fits'
+gfilters = [['F475W_VEGA', 'F814W_VEGA'], ['F110W_VEGA', 'F160W_VEGA'], ['IRAC1', 'IRAC2']]
+sfilters = [['F475W', 'F814W'], ['F110W', 'F160W'], ['IRAC_36', 'IRAC_45']]
+
+bins = np.arange(10, 23, 0.2)
 fields = [6, 12, 15]
-extras = ['.aringer', '']
-agb_mods = ['nov13_pagb', 'mar13_pagb']
+# the best sfh with aringer, the best sfh with loidl
+extras = [''] #['.aringer', '']
+colors = ['navy', 'darkred', 'orange']
+agb_mods = ['nov13_pagb', 'mar13_pagb', 'oct13_pagb']
+sgal_fmt = base + 'vary_sfh/output_M31-B21_3x6-0%02i_%s%s.dat'
+
 for extra in extras:
-    for agb_mod in agb_mods:
-        for field in fields:
-            gal = load_data(gal_file, opt_color_min, nir_color_min,
-                            ir_filter1=ir_filt1, ir_filter2=ir_filt2,
-                            field=field)
+    for field in fields:
+        fig, axs = plt.subplots(ncols=3, figsize=(18, 8))
+        for k, agb_mod in enumerate(agb_mods):
+            # read the data files
+            gal = load_data(gal_file, field=field)
+            sgal_name = sgal_fmt % (field, agb_mod, extra)
+            sgal = load_model(sgal_name)
+            for i, filters in enumerate(gfilters):
+                # load the photometery in each filter set
+                gal = load_phot(gal, bands[i], filter1=filters[0],
+                                filter2=filters[1], color_min=color_mins[i])
 
-            gopt_filt1 = 'F475W_VEGA'
-            gopt_filt2 = 'F814W_VEGA'
-            gnir_filt1 = 'F110W_VEGA'
-            gnir_filt2 = 'F160W_VEGA'
+                sgal = load_phot(sgal, bands[i],  filter1=sfilters[i][0],
+                                 filter2=sfilters[i][1], color_min=color_mins[i])
 
-            # select data stars to compare with model
-            icut = list(set(gal.gst) & set(gal.finds))
-            opt_cut = list(set(icut) & set(gal.opt_color_cut))
-            nir_cut = list(set(icut) & set(gal.nir_color_cut))
-            gal.opt_mag1 = gal.data[gopt_filt1][opt_cut]
-            gal.opt_mag = gal.data[gopt_filt2][opt_cut]
-            gal.nir_mag1 = gal.data[gnir_filt1][nir_cut]
-            gal.nir_mag = gal.data[gnir_filt2][nir_cut]
+                # bin the data
+                hist_attr = '%s_hist' % bands[i]
+                bins_attr = '%s_bins' % bands[i]
+                err_attr = '%s_err' % bands[i]
+                mag_attr = '%s_mag' % bands[i]
+
+                if bands[i] == 'ir':
+                    # bin IRAC1, not IRAC2 (convention?)
+                    mag_attr = '%s_mag1' % bands[i]
+
+
+                for g in [gal, sgal]:
+                    mag = g.__getattribute__(mag_attr)
+                    hist, bins = np.histogram(mag, bins=bins)
+                    err = np.sqrt(hist)
+
+                    g.__setattr__(hist_attr, hist)
+                    g.__setattr__(bins_attr, bins)
+                    g.__setattr__(err_attr, err)
 
             # number of rgb and agb stars in the data
-            gal.opt_rgb, gal.nir_rgb, gal.opt_agb, gal.nir_agb = \
-                rgb_agb_regions(offsets, trgb_excludes, opt_trgb, nir_trgb,
-                                gal.opt_mag, gal.nir_mag)
+            for g in [gal, sgal]:
+                g.nir_rgb, g.nir_agb = \
+                    rgb_agb_regions(nir_offset, nir_trgb_exclude, nir_trgb,
+                                    g.nir_mag)
 
-            # bin the data
-            bins = np.arange(16, 28, 0.1)
-            gal.opt_hist, gal.opt_bins = np.histogram(gal.opt_mag, bins=bins)
-            gal.nir_hist, gal.nir_bins = np.histogram(gal.nir_mag, bins=bins)
-            opt_err = np.sqrt(gal.opt_hist)
-            nir_err = np.sqrt(gal.nir_hist)
-
-            # the best sfh with aringer
-            #sgal_name = '/home/rosenfield/research/TP-AGBcalib/PHAT/vary_sfh/output_M31-B21_3x6-006.aringer.dat'
-            # the best sfh
-            sgal_name = \
-                base + 'vary_sfh/output_M31-B21_3x6-0%02i_%s%s.dat' % (field,
-                                                                       agb_mod,
-                                                                       extra)
-
-            sgal = load_model(sgal_name, opt_color_min, nir_color_min)
-            sopt_filt1 = 'F475W'
-            sopt_filt2 = 'F814W'
-            snir_filt1 = 'F110W'
-            snir_filt2 = 'F160W'
-
-            sgal.opt_mag1 = sgal.data[sopt_filt1][sgal.opt_color_cut]
-            sgal.opt_mag = sgal.data[sopt_filt2][sgal.opt_color_cut]
-            sgal.nir_mag1 = sgal.data[snir_filt1][sgal.nir_color_cut]
-            sgal.nir_mag = sgal.data[snir_filt2][sgal.nir_color_cut]
-
-            sgal.opt_hist, sgal.opt_bins = np.histogram(sgal.opt_mag, bins=bins)
-            sgal.nir_hist, sgal.nir_bins = np.histogram(sgal.nir_mag, bins=bins)
-
-            sgal.opt_rgb, sgal.nir_rgb, sgal.opt_agb, sgal.nir_agb = \
-                rgb_agb_regions(offsets, trgb_excludes, opt_trgb, nir_trgb,
-                                sgal.opt_mag, sgal.nir_mag)
+                g.opt_rgb, g.opt_agb = \
+                    rgb_agb_regions(opt_offset, opt_trgb_exclude, opt_trgb,
+                                    g.opt_mag)
 
             # scale the simulation
-            opt_norm, nir_norm, sc_opt_rgb, sc_nir_rgb, sc_opt_agb, sc_nir_agb = \
-                normalize_simulation(sgal.opt_mag, sgal.nir_mag,
-                                     float(len(gal.opt_rgb)),
-                                     float(len(gal.nir_rgb)),
-                                     sgal.opt_rgb, sgal.nir_rgb,
-                                     sgal.opt_agb, sgal.nir_agb)
-
+            opt_norm, sc_opt_rgb, sc_opt_agb = \
+                    normalize_simulation(sgal.opt_mag, float(len(gal.opt_rgb)),
+                                         sgal.opt_rgb, sgal.opt_agb)
+            nir_norm, sc_nir_rgb, sc_nir_agb = \
+                    normalize_simulation(sgal.nir_mag, float(len(gal.nir_rgb)),
+                                         sgal.nir_rgb, sgal.nir_agb)
             sgal.opt_hist *= opt_norm
             sgal.nir_hist *= nir_norm
+            sgal.ir_hist *= nir_norm  # using the NIR scaling for IR.
 
-            ax1, ax2 = make_lf(gal.opt_hist, gal.opt_bins, gal.nir_hist,
-                               gal.nir_bins,
-                                   err1s=opt_err, err2s=nir_err)
 
-            ax1, ax2 = make_lf(sgal.opt_hist, sgal.opt_bins, sgal.nir_hist,
-                               sgal.nir_bins,
-                               color='darkred', label='sim', ax1=ax1, ax2=ax2)
+            for i, band in enumerate(bands):
+                j = 1  # choose filter2
+                if band == 'ir':
+                    j = 0  # choose IRAC1
+                #hist_attr = '%s_hist' % band
+                #bins_attr = '%s_bins' % band
+                #err_attr = '%s_err' % band
+                #ax = make_lf(gal.__getattribute__(hist_attr),
+                #             gal.__getattribute__(bins_attr),
+                #             sgal.__getattribute__(hist_attr),
+                #             sgal.__getattribute__(bins_attr),
+                #             gerrs=gal.__getattribute__(err_attr),
+                #             serrs=sgal.__getattribute__(err_attr),
+                #             ax=axs[i])
+                ghist = np.histogram(gal.data[gfilters[i][j]][gal.icut], bins=bins)[0]
+                shist = np.histogram(sgal.data[sfilters[i][j]][sgal.icut], bins=bins)[0]
+                if band == 'opt':
+                    shist *= opt_norm
+                if 'ir' in band:
+                    shist *= nir_norm
+                gerr = np.sqrt(ghist)
+                serr = np.sqrt(shist)
+                ax = make_lf(ghist, bins, shist, bins, gerrs=gerr, serrs=serr,
+                             ax=axs[i], colors=['k', colors[k]], label=agb_mod.replace('_pagb', ''))
+                ax.set_xlabel(r'$%s$' % sfilters[i][j].replace('_', ''), fontsize=20)
 
-            ax1.set_xlabel(r'$%s$' % sopt_filt2, fontsize=20)
-            ax2.set_xlabel(r'$%s$' % snir_filt2, fontsize=20)
-            ax1.set_xlim(23, 16)
-            ax2.set_xlim(21.3, 14)
-            [ax.set_ylim(1, ax.get_ylim()[1]) for ax in [ax1, ax2]]
-            ax1, ax2 = add_vlines_lf(ax1, ax2, offsets, trgb_excludes,
-                                     opt_trgb, nir_trgb)
-            ax1.set_title('B21F%02i' % field)
-            plt.savefig('M31_B21_F%02i_lfs_%s%s.png' % (field, agb_mod, extra))
-            #[ax.set_ylim(1,300) for ax in [ax1, ax2]]
+                ax.set_xlim(24, 14)
+                ax.set_ylim(1, 500)
 
+                if band == 'nir':
+                    ax = add_vlines_lf(ax, nir_offset, nir_trgb_exclude,
+                                       nir_trgb)
+                    #ax.set_xlim(20, 16)
+                if band == 'opt':
+                    ax = add_vlines_lf(ax, opt_offset, opt_trgb_exclude,
+                                       opt_trgb)
+                    ax.set_title(r'$\rm{B21F%02i}$' % field, fontsize=20)
+                    #ax.set_xlim(24, 16)
+                ax.legend(loc=0)
+        plt.savefig('M31_B21_F%02i_lfs%s.png' % (field, extra))
+        #[ax.set_ylim(1,300) for ax in [ax1, ax2]]
+        '''
             coldats = ['CO', 'm_ini', 'MH']
             collabels = ['C/O', 'Initial Mass', '[M/H]']
             for coldat, collabel in zip(coldats, collabels):
@@ -238,7 +310,7 @@ for extra in extras:
                                       gal.data[gnir_filt2][icut],
                                    gal.data[gnir_filt2][icut], ax=ax2)
                 cs = ax1.scatter(sgal.opt_mag1[sgal.opt_agb] -
-                                    sgal.opt_mag[sgal.opt_agb],
+                                 sgal.opt_mag[sgal.opt_agb],
                                  sgal.opt_mag[sgal.opt_agb],
                                  c=sgal.data[coldat][sgal.opt_agb],
                                  cmap=plt.cm.get_cmap('RdBu'), vmin=vmin,
@@ -266,7 +338,7 @@ for extra in extras:
                 ax1.set_title('B21F%02i' % field)
                 plt.savefig('M31_B21_F%02i_cmd_%s_%s%s.png' % (field, coldat,
                                                                agb_mod, extra))
-
+        '''
 # trgbs:
 #ax1.vlines(nir_trgb, *ax1.get_ylim(), lw=2, color='gray')
 #rgb_hist, rgb_bins = np.histogram(sgal.data.IRAC_36[sgal.data.stage==3.], bins=bins)
