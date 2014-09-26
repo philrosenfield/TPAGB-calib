@@ -5,6 +5,74 @@ import pyfits
 from sfhs.vary_sfh import VarySFHs
 import time
 from IPython import parallel
+import matplotlib.pylab as plt
+
+def plot_lf_files():
+    import plotting as pl
+    from astropy.io import fits
+
+    def translate_model_name(model, small=False):
+        if 'oct' in model.lower():
+            name = 'R75'
+        if 'nov13eta' in model.lower():
+            name = '\eta=0'
+        if 'nov13_' in model.lower():
+            name = 'mSC05'
+        if 'feb' in model.lower():
+            name = 'FEB14'
+        if small is True:
+            new_model = r'$\dot M_{\rm pre\!-\!dust}^{\rm %s}$' % name
+        else:
+            new_model = r'$\dot{M}_{\rm pre\!-\!dust}\!=\!%s$' % name
+        return new_model
+
+    opt_lfs = ['/Users/phil/Downloads/caf09_s_nov13_ddo71_opt_lf.dat',
+               '/Users/phil/Downloads/caf09_s_nov13eta0_ddo71_opt_lf.dat',
+               '/Users/phil/Downloads/caf09_s_oct13_ddo71_opt_lf.dat']
+
+    ir_lfs = ['/Users/phil/Downloads/caf09_s_nov13_ddo71_ir_lf.dat',
+              '/Users/phil/Downloads/caf09_s_nov13eta0_ddo71_ir_lf.dat',
+              '/Users/phil/Downloads/caf09_s_oct13_ddo71_ir_lf.dat']
+    colors = ['navy', 'orange', 'darkred']
+
+    target = 'DDO71'
+    opt_trgb = 23.71
+    ir_trgb = 22.14
+    opt_limit = 26.11
+    ir_limit = 23.51
+
+    base = '/Users/phil/research/TP-AGBcalib/SNAP/data/galaxies/'
+    opt_galname = os.path.join(base, '9884_DDO71_F606W_F814W.gst.trim.fits')
+    ir_galname = os.path.join(base, '11719_DDO71_IR_F110W_F160W.gst.fits')
+
+    opt_gal = fits.open(opt_galname)
+    ir_gal = fits.open(ir_galname)
+
+    opt_mag2 = opt_gal[1].data['MAG2_ACS']
+    ir_mag2 = ir_gal[1].data['MAG2_IR']
+
+    _, (axs) = plt.subplots(ncols=2, figsize=(12, 6))
+    plt.subplots_adjust(right=0.98, left=0.07, wspace=0.1)
+    plot_data = True
+
+    for i in range(len(opt_lfs)):
+        plt_kw = {'color': colors[i], 'label': translate_model_name(opt_lfs[i])}
+        axs = pl.plotting.compare_to_gal(opt_lfs[i], ir_lfs[i], opt_mag2,
+                                         ir_mag2, 'F814W', 'F160W', opt_limit,
+                                         ir_limit, opt_trgb=opt_trgb,
+                                         ir_trgb=ir_trgb, axs=axs,
+                                         plt_kw=plt_kw, target=target,
+                                         trgb_excludes=[0.1, 0.2],
+                                         plot_data=plot_data)
+        plot_data = False
+
+    axs[0].set_ylim(1, axs[0].get_ylim()[1])
+    axs[0].set_xlim(21, 28.6)
+    axs[1].set_xlim(19, 25.2)
+    axs[1].set_ylim(1, axs[1].get_ylim()[1])
+    plt.savefig('%s_lfs.eps' % target.lower())
+    return axs
+
 
 def caller(vsfh, vary_kws={}):
     return vsfh.vary_the_SFH(**vary_kws)

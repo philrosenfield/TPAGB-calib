@@ -20,6 +20,12 @@ def setup_files(agb_mod, target, outfile_loc, extra_str=''):
 
     return fnames
 
+def load_lf_file(lf_file):
+    with open(lf_file, 'r') as lff:
+        lines = [l.strip() for l in lff.readlines() if not l.startswith('#')]
+    hists = [np.array(l.split(), dtype=float) for l in lines[0::2]]
+    binss = [np.array(l.split(), dtype=float) for l in lines[1::2]]
+    return hists, binss
 
 class VarySFHs(StarFormationHistories):
     '''
@@ -68,7 +74,7 @@ class VarySFHs(StarFormationHistories):
 
         [self.__setattr__(k, v) for k, v in default_kwargs.items()]
 
-        if self.just_once is False:
+        if not self.just_once:
             StarFormationHistories.__init__(self, self.sfh_file,
                                             self.file_origin)
 
@@ -355,8 +361,6 @@ class VarySFHs(StarFormationHistories):
         write_model(triout, load_model(triout, cols=cols))
 
 
-
-
     def write_results(self, res_dict):
         '''writes out the results to self.fnames (see __init__)'''
 
@@ -373,13 +377,7 @@ class VarySFHs(StarFormationHistories):
         return
 
     def load_lf_file(self, lf_file):
-        with open(lf_file, 'r') as lff:
-            lines = [l.strip() for l in lff.readlines()
-                     if not l.startswith('#')]
-        norms = [np.float(l) for l in lines[0::3]]
-        hists = [np.array(l.split(), dtype=float) for l in lines[1::3]]
-        binss = [np.array(l.split(), dtype=float) for l in lines[2::3]]
-        return hists, binss, norms
+        return load_lf_file(lf_file)
 
     def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb,
                                 diag_plot=False):
