@@ -2,8 +2,44 @@ import os
 import matplotlib.pylab as plt
 import numpy as np
 import ResolvedStellarPops as rsp
-from sfhs import star_formation_histories
+import sys
+from ..sfhs import star_formation_histories
 __all__ = ['Plotting']
+
+
+def ast_corrections_plot(mag1, mag2, mag1_cor, mag2_cor, ymag='I'):
+    fig, ax = plt.subplots(figsize=(8,8))
+
+    rec, = np.nonzero((np.abs(mag1_cor) < 30) & (np.abs(mag2_cor)< 30))
+    mag = mag1[rec]
+    mag_cor = mag1_cor[rec]
+    if ymag == 'I':
+        mag = mag2[rec]
+        mag_cor = mag2_cor[rec]
+
+    color = mag1[rec] - mag2[rec]
+    color_cor = mag1_cor[rec] - mag2_cor[rec]
+    dcol = color_cor - color
+    dmag = mag_cor - mag
+    for i in range(len(rec)):
+        if dcol[i] == 0 or dmag[i] == 0:
+            continue
+        ax.arrow(color[i], mag[i], dcol[i], dmag[i], length_includes_head=True,
+              width=1e-4, color='k', alpha=0.3)
+
+def load_lf_file(lf_file):
+    with open(lf_file, 'r') as lf:
+        lines = [l.strip() for l in lf.readlines() if not l.startswith('#')]
+    norms = [np.float(l) for l in lines[0::8]]
+    mag2s = [np.array(l.split(), dtype=float) for l in lines[1::8]]
+    mag1s = [np.array(l.split(), dtype=float) for l in lines[2::8]]
+    rgbs = [np.array(l.split(), dtype=int) for l in lines[3::8]]
+    agbs = [np.array(l.split(), dtype=int) for l in lines[4::8]]
+    srgbs = [np.array(l.split(), dtype=int) for l in lines[5::8]]
+    sagbs = [np.array(l.split(), dtype=int) for l in lines[6::8]]
+    inorm = [np.array(l.split(), dtype=int) for l in lines[7::8]]
+
+    return norms, mag2s, mag1s, rgbs, agbs, srgbs, sagbs, inorm
 
 
 def plot_random_sfhs(vsfh):
@@ -26,49 +62,12 @@ def plot_random_sfhs(vsfh):
     return
 
 class Plotting(object):
-    def __init__(self, vsfh):
-        key = ['target', 'agb_mod', 'fnames', 'offsets', 'trgb_excludes',
-               'nopt_rgb', 'nir_rgb', 'nopt_agb', 'nir_agb', 'opt_trgb',
-               'ir_trgb']
-        [self.__setattr__(k, vsfh.__getattribute__(k)) for k in key]
-        self.opt_lf_file, = [f for f in self.fnames if 'opt_lf' in f]
-        self.ir_lf_file, = [f for f in self.fnames if 'ir_lf' in f]
-        self.narratio_file, = [f for f in self.fnames if 'narratio' in f]
-        self.vsfh = vsfh
+    def __init__(self, input_file=None, kwargs={}):
+        self.input_file = input_file
+        if input_file is not None:
+            kwargs.update(rsp.fileio.load_input(input_file))
 
-    def plot_lf_file(self, opt_lf_file, ir_lf_file, axs=None, plt_kw=None,
-                     opt_limit=None, ir_limit=None):
-        '''needs work, but: plot the lf files.'''
-        # set up the plot
-        plt_kw = plt_kw or {}
-        plt_kw = dict({'linestyle': 'steps-mid', 'color': 'black',
-                       'alpha': 0.2}.items() + plt_kw.items())
-        label = '%s' % self.agb_mod.split('_')[-1]
-        plt_kw_lab = dict(plt_kw.items() + {'label': label}.items())
-        if axs is None:
-            fig, (axs) = plt.subplots(ncols=2, figsize=(12, 6))
-            plt.subplots_adjust(right=0.95, left=0.05, wspace=0.1)
-
-        # these have like 50 histograms each
-        opt_hists, opt_binss, opt_norms = self.vsfh.load_lf_file(self.opt_lf_file)
-        ir_hists, ir_binss, ir_norms = self.vsfh.load_lf_file(self.ir_lf_file)
-
-        for i, (hists, binss, limit, norms) in \
-            enumerate(zip([opt_hists, ir_hists], [opt_binss, ir_binss],
-                          [opt_limit, ir_limit], [opt_norms, ir_norms])):
-
-            for j, (hist, bins, norm) in enumerate(zip(hists, binss, norms)):
-                if j != 0:
-                    kw = plt_kw
-                else:
-                    kw = plt_kw_lab
-                if limit is not None:
-                    inds, = np.nonzero(bins <= limit)
-                    axs[i].plot(bins[inds], hist[inds] * norm, **kw)
-                else:
-                    axs[i].plot(bins, hist * norm, **kw)
-
-        return axs
+        [self.__setattr__(k, v) for k, v in kwargs.items()]
 
     def count_stars_from_hist(self, opt_hist, opt_bins, ir_hist, ir_bins):
         ratio_data = {}
@@ -93,51 +92,6 @@ class Plotting(object):
             ratio_data['n%s_agb'% band] = nagb
         return ratio_data
 
-    def add_narratio_to_plot(self, ax, band, ratio_data):
-        stext_kw = dict({'color': 'black', 'fontsize': 14, 'ha': 'center'}.items() +
-                        rsp.graphics.GraphicsUtils.ann_kwargs.items())
-        dtext_kw = dict(stext_kw.items() + {'color': 'darkred'}.items())
-
-        nrgb = ratio_data['n%s_rgb' % band]
-        nagb = ratio_data['n%s_agb'% band]
-        dratio = nagb / nrgb
-        dratio_err = rsp.utils.count_uncert_ratio(nagb, nrgb)
-
-        #yval = 1.2  # text yloc found by eye, depends on fontsize
-        stext_kw['transform'] = ax.transAxes
-        dtext_kw['transform'] = ax.transAxes
-        yval = 0.95
-        xagb_val = 0.17
-        xrgb_val = 0.5
-        xratio_val = 0.83
-        xvals = [xagb_val, xrgb_val, xratio_val]
-
-        # simulated nrgb and nagb are the mean values
-        srgb_text = '$\langle N_{\\rm RGB}\\rangle =%i$' % \
-                    np.mean(ratio_data['n%s_rgb' % band])
-        sagb_text = '$\langle N_{\\rm TP-AGB}\\rangle=%i$' % \
-                    np.mean(ratio_data['n%s_agb' % band])
-
-        # one could argue taking the mean isn't the best idea for
-        # the ratio errors.
-        sratio_text = '$f=%.3f\pm%.3f$' % \
-                      (np.mean(ratio_data['%s_ar_ratio' % band]),
-                       np.mean(ratio_data['%s_ar_ratio_err' % band]))
-
-        drgb_text = '$N_{\\rm RGB}=%i$' % nrgb
-        dagb_text = '$N_{\\rm TP-AGB}=%i$' % nagb
-        dratio_text =  '$f = %.3f\pm%.3f$' % (dratio, dratio_err)
-
-        textss = [[sagb_text, srgb_text, sratio_text],
-                 [dagb_text, drgb_text, dratio_text]]
-        kws = [stext_kw, dtext_kw]
-
-        for kw, texts in zip(kws, textss):
-            for xval, text in zip(xvals, texts):
-                ax.text(xval, yval, text, **kw)
-            yval -= .05  # stack the text
-        return ax
-
     def plot_by_stage(self, ax1, ax2, add_stage_lfs='default', stage_lf_kw=None,
                       cols=None, trilegal_output=None, hist_it_up=False,
                       narratio=True):
@@ -154,8 +108,6 @@ class Plotting(object):
                             stage_lf_kw.items())
         if hasattr(stage_lf_kw, 'label'):
             stage_lf_kw['olabel'] = stage_lf_kw['label']
-        if cols is None:
-            cols = color_scheme
 
         # load the trilegal catalog if it is given, if it is given,
         # no LF scaling... need to save this info better. Currently only
@@ -237,99 +189,191 @@ class Plotting(object):
         ax2.plot(sir_bins[:-1], sir_hist, **stage_lf_kw)
         return ax1, ax2
 
-    def plot_gal(self, opt_gal, ir_gal, ax1, ax2):
-        dplot_kw = {'drawstyle': 'steps-mid', 'color': 'darkred', 'lw': 2,
-                    'label': '$%s$' % self.target}
-        # HACK to mask low values
-        #opt_gal.hist[opt_gal.hist < 0.1] = 0.1
-        #ir_gal.hist[ir_gal.hist < 0.1] = 0.1
-        opt_gal.hist, opt_gal.bins = np.histogram(opt_gal.mag2,
-                                                  bins=self.vsfh.opt_bins)
-        ir_gal.hist, ir_gal.bins = np.histogram(ir_gal.mag2,
-                                                bins=self.vsfh.ir_bins)
-        opt_err = np.sqrt(opt_gal.hist)
-        ir_err = np.sqrt(ir_gal.hist)
-        ax1.errorbar(opt_gal.bins[1:], opt_gal.hist, yerr=opt_err,
-                     **dplot_kw)
-        ax2.errorbar(ir_gal.bins[1:], ir_gal.hist, yerr=ir_err,
-                     **dplot_kw)
-        return ax1, ax2
+    def compare_to_gal(self):
+        compare_to_gal(**self.__dict__)
 
-    def compare_to_gal(self, opt_gal, ir_gal, opt_limit, ir_limit,
-                       narratio=True, no_agb=False, xlim=None, ylim=None,
-                       extra_str='', cols=None, stage_lf_kw=None, axs=None,
-                       plt_kw=None):
-        '''
-        Plot the LFs and galaxy LF.
+def add_narratio_to_plot(ax, ratio_data, nrgb, nagb, mid_txt='RGB'):
+    stext_kw = dict({'color': 'black', 'fontsize': 14, 'ha': 'center'}.items() +
+                    rsp.graphics.GraphicsUtils.ann_kwargs.items())
+    dtext_kw = dict(stext_kw.items() + {'color': 'darkred'}.items())
 
-        ARGS:
-        narratio: overlay NRGB, NAGB, and NAGB/NRGB +/- err
-        no_agb: plot the LF without AGB stars
+    mrgb = ratio_data['nrgb']
+    magb = ratio_data['nagb']
+    dratio = float(nagb) / float(nrgb)
+    dratio_err = rsp.utils.count_uncert_ratio(float(nagb), float(nrgb))
 
-        RETURNS:
-        ax1, ax2: axes instances created for the plot.
+    #yval = 1.2  # text yloc found by eye, depends on fontsize
+    stext_kw['transform'] = ax.transAxes
+    dtext_kw['transform'] = ax.transAxes
+    yval = 0.95
+    xagb_val = 0.17
+    xrgb_val = 0.5
+    xratio_val = 0.83
+    xvals = [xagb_val, xrgb_val, xratio_val]
 
-        '''
-        import pdb; pdb.set_trace()
-        # plot lfs from simulations (and initialize figure)
-        plt_kw = plt_kw or {}
-        (ax1, ax2) = \
-            self.plot_lf_file(self.opt_lf_file, self.ir_lf_file,
-                              opt_limit=opt_limit,
-                              ir_limit=ir_limit, axs=axs,
-                              plt_kw=plt_kw)
-        # plot galaxy data
-        ax1, ax2 = self.plot_gal(opt_gal, ir_gal, ax1, ax2)
+    # simulated nrgb and nagb are the mean values
+    srgb_text = '$\langle N_{\\rm %s}\\rangle =%i$' %  (mid_txt, np.mean(mrgb))
+    sagb_text = '$\langle N_{\\rm TP-AGB}\\rangle=%i$' % np.mean(magb)
 
-        # initialize add numbers to the plot
-        if narratio is True:
-            # count stars from the saved file
-            ratio_data = rsp.fileio.readfile(self.narratio_file,
-                                             string_column=0)
-            # get the number ratios for the annotations
+    # one could argue taking the mean isn't the best idea for
+    # the ratio errors.
+    sratio_text = '$f=%.3f\pm%.3f$' % (np.mean(ratio_data['ar_ratio']),
+                                       np.mean(ratio_data['ar_ratio_err']))
 
-            mean_ratio = {}
-            for key in ratio_data.dtype.names:
-                if key == 'target':
-                    continue
-                mean_ratio[key] = np.mean(ratio_data[:][key])
+    drgb_text = '$N_{\\rm %s}=%i$' % (mid_txt, nrgb)
+    dagb_text = '$N_{\\rm TP-AGB}=%i$' % nagb
+    dratio_text =  '$f = %.3f\pm%.3f$' % (dratio, dratio_err)
 
-        for i, (ax, gal, trgb) in enumerate(zip([ax1, ax2], [opt_gal, ir_gal],
-                                                [self.opt_trgb, self.ir_trgb])):
-            ax.set_yscale('log')
-            if ylim is not None:
-                ax.set_ylim(ylim)
-            if xlim is not None:
-                ax.set_xlim(xlim)
+    textss = [[sagb_text, srgb_text, sratio_text],
+             [dagb_text, drgb_text, dratio_text]]
+    kws = [stext_kw, dtext_kw]
 
-            yarr = np.linspace(*ax.get_ylim())
-            # vertical lines around the trgb exclude region
-            ax.fill_betweenx(yarr, trgb - self.trgb_excludes[i],
-                             trgb + self.trgb_excludes[i],
+    for kw, texts in zip(kws, textss):
+        for xval, text in zip(xvals, texts):
+            ax.text(xval, yval, text, **kw)
+        yval -= .05  # stack the text
+    return ax
+
+
+def plot_model(mag2s, bins, norms, inorm=None, ax=None, plt_kw=None, limit=None,
+               agb_mod=None):
+    '''needs work, but: plot the lf files.'''
+    # set up the plot
+    plt_kw = plt_kw or {}
+    plt_kw = dict({'linestyle': 'steps-mid', 'color': 'black',
+                   'alpha': 0.2}.items() + plt_kw.items())
+    if agb_mod is not None:
+        label = '%s' % agb_mod.split('_')[-1]
+        plt_kw_lab = dict(plt_kw.items() + {'label': label}.items())
+    else:
+        plt_kw_lab = plt_kw
+    if ax is None:
+        fig, (ax) = plt.subplots(figsize=(12, 6))
+        #plt.subplots_adjust(right=0.95, left=0.05)
+
+    for i in range(len(mag2s)):
+        if inorm is not None:
+            mag2 = mag2s[i][inorm[i]]
+            norm = 1.
+        else:
+            mag2 = mag2s[i]
+            norm = norms[i]
+        if limit is not None:
+            inds, = np.nonzero(mag2 <= limit)
+        else:
+            inds = np.arange(len(mag2))
+        hist = np.histogram(mag2[inds], bins=bins)[0]
+        if i != 0:
+            kw = plt_kw
+        else:
+            kw = plt_kw_lab
+            pass
+        ax.plot(bins[1:], hist * norm, **kw)
+    return ax
+
+def plot_gal(mag2, bins, ax=None, target=None, dplot_kw={}):
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(6,6))
+    dplot_kw = dict({'drawstyle': 'steps-mid', 'color': 'darkred', 'lw': 2,
+                     'label': '$%s$' % target}.items() + dplot_kw.items())
+
+    hist = np.histogram(mag2, bins=bins)[0]
+    err = np.sqrt(hist)
+
+    ax.errorbar(bins[1:], hist, yerr=err, **dplot_kw)
+    return ax
+
+def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
+                   narratio=True, no_agb=False, xlim=None, ylim=None,
+                   extra_str='', cols=None, stage_lf_kw=None, ax=None,
+                   plt_kw=None, trgb=None, trgb_exclude=None,
+                   filter2=None, narratio_file=None, **kwargs):
+    '''
+    Plot the LFs and galaxy LF.
+
+    ARGS:
+    narratio: overlay NRGB, NAGB, and NAGB/NRGB +/- err
+    no_agb: plot the LF without AGB stars
+
+    RETURNS:
+    ax1, ax2: axes instances created for the plot.
+
+    '''
+    target = kwargs.get('target')
+    agb_mod = kwargs.get('agb_mod')
+    nrgb = kwargs.get('nrgbs')
+    nagb = kwargs.get('nagbs')
+    ast_corr = kwargs.get('ast_corr', False)
+    mag_faint = kwargs.get('mag_faint')
+    mag_bright = kwargs.get('mag_bright')
+    mag_limit_val = kwargs.get('mag_limit_val')
+
+    if ast_corr:
+        extra_str += '_ast'
+
+    norms, mag2s, mag1s, rgbs, agbs, srgbs, sagbs, inorm = load_lf_file(lf_file)
+    mag1, mag2 = np.loadtxt(matchphot, unpack=True)
+    bins = np.arange(15.1, 27, 0.1)
+    # plot lfs from simulations (and initialize figure)
+    plt_kw = plt_kw or {}
+    inorm = None
+    ax = plot_model(mag2s, bins, norms, inorm=inorm, limit=limit, ax=ax,
+                    plt_kw=plt_kw, agb_mod=agb_mod)
+    # plot galaxy data
+    ax = plot_gal(mag2, bins, ax=ax, target=target)
+
+    # initialize add numbers to the plot
+    if narratio:
+        # count stars from the saved file
+        ratio_data = rsp.fileio.readfile(narratio_file, string_column=0)
+        # get the number ratios for the annotations
+
+        mean_ratio = {}
+        for key in ratio_data.dtype.names:
+            if key == 'target':
+                continue
+            try:
+                mean_ratio[key] = np.nanmean(ratio_data[:][key])
+            except ValueError:
+                mean_ratio[key] = np.nanmean(ratio_data[key])
+
+    ax.set_yscale('log')
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    if xlim is not None:
+        ax.set_xlim(xlim)
+
+    if draw_lines:
+        yarr = np.linspace(*ax.get_ylim())
+        # vertical lines around the trgb exclude region
+        ax.fill_betweenx(yarr, trgb - trgb_exclude, trgb + trgb_exclude,
+                         color='black', alpha=0.1)
+        ax.vlines(trgb, *ax.get_ylim(), color='black', linestyle='--')
+        if not None in [mag_faint, mag_bright]:
+            ax.fill_betweenx(yarr, mag_faint, mag_bright,
+                             color='black', alpha=0.1)
+        if mag_limit_val is not None:
+            ax.fill_betweenx(yarr, mag_limit_val, ax.get_xlim()[-1],
                              color='black', alpha=0.1)
 
-            ax.vlines(trgb, *ax.get_ylim(), color='black',
-                      linestyle='--')
+    loc = 4
+    if not narratio:
+        loc = 0
+    ax.legend(loc=loc)
+    ax.set_xlabel('$%s$' % filter2, fontsize=20)
 
-            loc = 4
-            if narratio is False:
-                loc = 0
-            ax.legend(loc=loc)
-            ax.set_xlabel('$%s$' % gal.filter2, fontsize=20)
+    if narratio:
+        # need to load the data nrgb and nagb, calculate the ratio
+        # and error.
+        mid_txt = kwargs.get('mid_txt', 'RGB')
+        ax = add_narratio_to_plot(ax, mean_ratio, nrgb, nagb, mid_txt=mid_txt)
+        pass
 
-            if narratio is True:
-                # need to load the data nrgb and nagb, calculate the ratio
-                # and error.
-                #self.add_narratio_to_plot(ax, band, mean_ratio)
-                pass
-
-        ax1.set_ylabel(r'${\rm Number\ of\ Stars}$', fontsize=20)
-        plt.tick_params(labelsize=16)
-        outfile = '%s%s_lfs.png' % (self.opt_lf_file.split('opt_lf')[0][:-1],
-                                    extra_str)
-        plt.savefig(outfile, dpi=150)
-        print 'wrote %s' % outfile
-        return ax1, ax2
+    plt.tick_params(labelsize=16)
+    outfile = '%s%s_lfs.png' % (lf_file.split('_lf')[0], extra_str)
+    plt.savefig(outfile, dpi=150)
+    print 'wrote %s' % outfile
+    return ax
 
 class DiagnosticPlots(Plotting):
     def __init__(self, vsfh):
@@ -572,3 +616,8 @@ def trilegal_metals(chi2_location='draft_run', band='opt', dry_run=False,
     for i, target in enumerate(targets):
 	print '%.4f %.4f %.4f %s ' % (np.min(zs[i]), np.median(zs[i]),
 				      np.max(zs[i]), target)
+
+if __name__ == '__main__':
+    import pdb; pdb.set_trace()
+    pl = Plotting(input_file=sys.argv[1])
+    pl.compare_to_gal()

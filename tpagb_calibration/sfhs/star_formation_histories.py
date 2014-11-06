@@ -51,7 +51,7 @@ def parse_sfh_data(filename, file_origin, frac=0.2):
 class StarFormationHistories(object):
     '''Make TRILEGAL star formation history files from MATCH'''
     def __init__(self, sfh_file, file_origin, sfr_files=None, sfr_file_loc=None,
-                 sfr_file_search_fmt=None, sfh_ext='.sfh'):
+                 sfr_file_search_fmt=None, sfh_ext='.sfh', **kwargs):
         self.base, self.name = os.path.split(sfh_file)
         self.data = parse_sfh_data(sfh_file, file_origin)
         self.file_origin = file_origin

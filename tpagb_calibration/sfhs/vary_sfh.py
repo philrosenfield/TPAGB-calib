@@ -1,25 +1,34 @@
 import matplotlib.pylab as plt
 import numpy as np
 import os
-
-from analysis import stats
-from pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
+from IPython import parallel
+import time
+#from ..analysis import stats
+from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 import ResolvedStellarPops as rsp
 from star_formation_histories import StarFormationHistories
 
-__all__ = ['setup_files', 'VarySFHs']
+__all__ = ['VarySFHs', 'run_once']
 
-def setup_files(agb_mod, target, outfile_loc, extra_str=''):
-
-    names = ['opt_lf', 'ir_lf', 'narratio', 'opt_mass_met', 'ir_mass_met',
-             'contam']
-    fmt = '%s_%s_%s%s.dat'
-
-    fnames = [os.path.join(outfile_loc, fmt % (agb_mod, target, f, extra_str))
-              for f in names]
-
-    return fnames
-
+def initialize_inputs():
+    return {'cmd_input_file': None,
+            'extra_str': '',
+            'file_origin': None,
+            'filter1': None,
+            'filter2': None,
+            'galaxy_input': None,
+            'bins': None,
+            'trgb': None,
+            'Mtrgb': None,
+            'nrgb': None,
+            'nsfhs': 1,
+            'offset': -2.,
+            'outfile_loc': os.getcwd(),
+            'photsys': None,
+            'sfh_file': None,
+            'target': None,
+            'trgb_exclude': .1,
+            'dry_run': False}
 
 class VarySFHs(StarFormationHistories):
     '''
@@ -30,81 +39,26 @@ class VarySFHs(StarFormationHistories):
     needed to cull the model output down to what is necessary for the
     analysis.
     '''
-    def __init__(self, **kwargs):
+    def __init__(self, inp_obj=None, input_file=None, kwargs={}):
         '''
         galaxy_input is a template.
         '''
         # load SFH instance to make lots of trilegal runs
+        self.input_file = input_file
+        if input_file is not None:
+            kwargs.update(rsp.fileio.load_input(input_file))
+            indict = dict(initialize_inputs.items() + kwargs.items())
+        if inp_obj is not None:
+            indict = inp_obj.__dict__
+        if inp_obj.nsfhs > 1:
+            StarFormationHistories.__init__(self, inp_obj.hmc_file,
+                                            inp_obj.file_origin)
 
-        default_kwargs = dict({'agb_mod': None,
-                               'Av': 0.,
-                               'cmd_input_file': None,
-                               'dmod': 0.,
-                               'extra_str': '',
-                               'file_origin': None,
-                               'opt_filter1': None,
-                               'opt_filter2': None,
-                               'ir_filter1': None,
-                               'ir_filter2': None,
-                               'galaxy_input': None,
-                               'ir_bins': None,
-                               'ir_color_min': -99.,
-                               'ir_trgb': None,
-                               'just_once': False,
-                               'Mtrgb': None,
-                               'nir_rgb': None,
-                               'nopt_rgb': None,
-                               'nsfhs': None,
-                               'offsets': [-2., -1.5],
-                               'opt_bins': None,
-                               'opt_color_min': -99.,
-                               'opt_trgb': None,
-                               'outfile_loc': os.getcwd(),
-                               'photsys': None,
-                               'sfh_file': None,
-                               'target': None,
-                               'trgb_excludes': [.1, .2]}.items()
-                               + kwargs.items())
+        [self.__setattr__(k, v) for k, v in indict.items()]
 
-        [self.__setattr__(k, v) for k, v in default_kwargs.items()]
-
-        if self.just_once is False:
-            StarFormationHistories.__init__(self, self.sfh_file,
-                                            self.file_origin)
-
-        if self.agb_mod is None:
-            self.agb_mod = \
-                os.path.split(self.cmd_input_file)[1].replace('.dat', '').lower()
-
-        if None in [self.ir_trgb, self.opt_trgb]:
-            if self.Mtrgb is not None:
-                self.ir_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb,
-                                                           self.ir_filter2,
-                                                           self.photsys,
-                                                           dmod=self.dmod,
-                                                           Av=self.Av)
-                self.opt_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb,
-                                                            self.opt_filter2,
-                                                            self.photsys,
-                                                            dmod=self.dmod,
-                                                            Av=self.Av)
-
-    def prepare_outfiles(self):
-        # setup the locations all the files to write and read from
-        self.fnames =  setup_files(self.agb_mod, self.target, self.outfile_loc,
-                                   extra_str=self.extra_str)
-
-        # header files are needed in two cases
-        # nagb/nrgb ratio file
-        self.narratio_header = '# target nopt_rgb nopt_agb nir_rgb nir_agb '
-        self.narratio_header += 'opt_ar_ratio ir_ar_ratio opt_ar_ratio_err '
-        self.narratio_header += 'ir_ar_ratio_err \n'
-
-        # contamination of phases in rgb and agb region file
-        # (changing the self.regions will disrupt calculation of
-        # rheb_eagb_contamination -- see contamination_by_phases code)
-        self.regions = ['MS', 'RGB', 'HEB', 'BHEB', 'RHEB', 'EAGB', 'TPAGB']
-        self.contam_header = '# %s %s \n' % (' '.join(self.regions),'Total')
+        cmd_input_file = os.path.split(self.cmd_input_file)[1]
+        self.agb_mod = \
+            cmd_input_file.replace('.dat', '').lower().replace('cmd_input_', '')
 
     def prepare_galaxy_input(self, object_mass=None, dry_run=False):
         '''
@@ -113,8 +67,9 @@ class VarySFHs(StarFormationHistories):
         file.
         '''
         self.galaxy_inputs = []
-        ext = '.' + self.galaxy_input.split('.')[-1]
-        lines = open(self.galaxy_input).readlines()
+        galaxy_input = self.galaxy_input
+        ext = '.' + galaxy_input.split('.')[-1]
+        lines = open(galaxy_input).readlines()
         # line that links to sfr file.
         extra = ' '.join(lines[-3].split(' ')[1:])
 
@@ -125,9 +80,7 @@ class VarySFHs(StarFormationHistories):
             lines[-3] = ' '.join([self.sfr_files[i], extra])
             if object_mass is not None:
                 lines[-6] = ' '.join(['%.4e' % object_mass, extra2]) + '\n'
-            new_name = \
-                os.path.split(self.galaxy_input)[1].replace(ext,
-                                                            '_%003i' % i + ext )
+            new_name = os.path.split(galaxy_input)[1].replace(ext, '_%003i' % i + ext)
             new_out = os.path.join(self.outfile_loc, new_name)
             if dry_run is False:
                 with open(new_out, 'w') as f:
@@ -135,161 +88,8 @@ class VarySFHs(StarFormationHistories):
                 print 'wrote %s' % new_out
             self.galaxy_inputs.append(new_out)
 
-    def gather_results(self, mass_met=True, tpagb_lf=True, narratio_dict=None):
-        '''gather results into strings or lists of strings for writing.'''
-        result_dict = {}
-
-        if tpagb_lf is True:
-            # load mags
-            if not hasattr(self, 'opt_mag'):
-                self.load_trilegal_catalog()
-
-            opt_hist, opt_bins = np.histogram(self.opt_mag, bins=self.opt_bins)
-
-            ir_hist, ir_bins = np.histogram(self.ir_mag, bins=self.ir_bins)
-
-            # scale the simulated LF to match the data LF
-            opt_hist = np.array(opt_hist, dtype=float) #* self.opt_norm
-            ir_hist = np.array(ir_hist, dtype=float) #* self.ir_norm
-
-            result_dict['opt_lf_line'] = \
-                '\n'.join(['%.4f' % self.opt_norm, ' '.join(['%g' % t for t in opt_hist]),
-                           ' '.join(['%g' % t for t in opt_bins[1:]])])
-
-            result_dict['ir_lf_line'] = \
-                '\n'.join(['%.4f' % self.ir_norm, ' '.join(['%g' % t for t in ir_hist]),
-                           ' '.join(['%g' % t for t in ir_bins[1:]])])
-
-        if mass_met is True:
-            self.sgal.all_stages('TPAGB')
-            opt_inds = self.sgal.itpagb
-            ir_inds = self.sgal.itpagb
-
-            mag2 = self.sgal.mag2
-            mag4 = self.sgal.data[self.ir_filter2]
-
-            opt_key = 'opt_mass_met_line'
-            ir_key = 'ir_mass_met_line'
-            for mag, inds, key in zip([mag2, mag4], [opt_inds, ir_inds],
-                                      [opt_key, ir_key]):
-                mass = self.sgal.data.m_ini[inds]
-                mag = mag[inds]
-                mh = self.sgal.data.MH[inds]
-                result_dict[key] = \
-                    '\n'.join([' '.join(['%g' % t for t in mag]),
-                               ' '.join(['%g' % t for t in mass]),
-                               ' '.join(['%.3f' % t for t in mh])])
-
-
-        # N agb/rgb ratio file
-        narratio_dict = narratio_dict or {}
-        if len(narratio_dict) > 0:
-            self.narratio_header = '# target nopt_rgb nopt_agb nir_rgb nir_agb '
-            self.narratio_header += 'opt_ar_ratio ir_ar_ratio opt_ar_ratio_err '
-            self.narratio_header += 'ir_ar_ratio_err \n'
-
-            narratio_fmt = '%(target)s %(nopt_rgb)i %(nopt_agb)i %(nir_rgb)i '
-            narratio_fmt += '%(nir_agb)i %(opt_ar_ratio).3f %(ir_ar_ratio).3f '
-            narratio_fmt += '%(opt_ar_ratio_err).3f  %(ir_ar_ratio_err).3f'
-
-            opt_rgb = narratio_dict['opt_rgb']
-            opt_agb = narratio_dict['opt_agb']
-            ir_rgb = narratio_dict['ir_rgb']
-            ir_agb = narratio_dict['ir_agb']
-
-            nopt_rgb = float(len(opt_rgb))
-            nopt_agb = float(len(opt_agb))
-            nir_rgb = float(len(ir_rgb))
-            nir_agb = float(len(ir_agb))
-            out_dict = {'target': self.target,
-                        'opt_ar_ratio': nopt_agb / nopt_rgb,
-                        'ir_ar_ratio': nir_agb / nir_rgb,
-                        'opt_ar_ratio_err':
-                            rsp.utils.count_uncert_ratio(nopt_agb, nopt_rgb),
-                        'ir_ar_ratio_err':
-                            rsp.utils.count_uncert_ratio(nir_agb, nir_rgb),
-                        'nopt_rgb': nopt_rgb,
-                        'nopt_agb': nopt_agb,
-                        'nir_rgb': nir_rgb,
-                        'nir_agb': nir_agb}
-            result_dict['narratio_line'] = narratio_fmt % out_dict
-
-        return result_dict
-
-    def load_trilegal_catalog(self, trilegal_output, shift_mags=False):
-        '''read the trilegal cat mag1 and mag2 are optical.'''
-        only_keys = ['logAge','[M/H]','m_ini','logL','logTe','m-M0','Av','mbol',
-                     'Mact', 'stage', self.opt_filter2, self.opt_filter1,
-                     self.ir_filter2, self.ir_filter1]
-        self.sgal = rsp.SimGalaxy(trilegal_output, filter1=self.opt_filter1,
-                                  filter2=self.opt_filter2, only_keys=only_keys)
-
-        opt_mag = self.sgal.data[self.opt_filter2]
-        ir_mag = self.sgal.data[self.ir_filter2]
-        opt_mag1 = self.sgal.data[self.opt_filter1]
-        ir_mag1 = self.sgal.data[self.ir_filter1]
-
-        opt_color_cut, = np.nonzero((opt_mag1 - opt_mag) > self.opt_color_min)
-        ir_color_cut, = np.nonzero((ir_mag1 - ir_mag) > self.ir_color_min)
-
-        if shift_mags is True:
-            # Threshold for number of rgb stars in a bin.
-            rgb_thresh = 5.
-            rgb_bins = np.arange(10, 30, 0.01)
-            self.sgal.all_stages('RGB')
-
-            rgb_inds = np.intersect1d(self.sgal.irgb, opt_color_cut)
-            rgb_hist, _ = np.histogram(opt_mag[rgb_inds], bins=rgb_bins)
-            rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
-            opt_offset = rgb_bins[rgb_bin_edge] - self.opt_trgb
-
-            rgb_inds = np.intersect1d(self.sgal.irgb, ir_color_cut)
-            rgb_hist, _ = np.histogram(ir_mag[rgb_inds], bins=rgb_bins)
-            rgb_bin_edge = np.nonzero(rgb_hist > rgb_thresh)[0][0] - 1
-            ir_offset = rgb_bins[rgb_bin_edge] - self.ir_trgb
-        else:
-            ir_offset = 0.
-            opt_offset = 0.
-
-        self.ir_moffset = ir_offset
-        self.opt_moffset = opt_offset
-        self.opt_color_cut = opt_color_cut
-        self.ir_color_cut = ir_color_cut
-        self.opt_mag = opt_mag[opt_color_cut] - opt_offset
-        self.ir_mag = ir_mag[ir_color_cut] - ir_offset
-        return
-
-    def do_normalization(self, triout=None, debug=False):
-        '''Do the normalization and save small part of outputs.'''
-        if not hasattr(self, 'sgal') or self.nsfhs > 1:
-            assert triout is not None, \
-                'need sgal loaded or pass trilegal catalog file name'
-            self.load_trilegal_catalog(triout)
-
-        # select rgb and agb regions
-        sopt_rgb, sir_rgb, sopt_agb, sir_agb = \
-            rgb_agb_regions(self.sgal, self.offsets,
-                            self.trgb_excludes, self.opt_trgb,
-                            self.ir_trgb, self.opt_mag,
-                            self.ir_mag)
-
-        # normalization
-        self.opt_norm, self.ir_norm, opt_rgb, ir_rgb, opt_agb, ir_agb = \
-            normalize_simulation(self.opt_mag, self.ir_mag, self.nopt_rgb,
-                                 self.nir_rgb, sopt_rgb, sir_rgb, sopt_agb,
-                                 sir_agb)
-
-        narratio_dict = {'opt_rgb': opt_rgb, 'opt_agb': opt_agb,
-                         'ir_rgb': ir_rgb, 'ir_agb': ir_agb}
-        result_dict = self.gather_results(narratio_dict=narratio_dict)
-        if debug is True:
-            return narratio_dict, (sopt_rgb, sopt_agb, sir_rgb, sir_agb), result_dict
-        else:
-            return (sopt_rgb, sopt_agb, sir_rgb, sir_agb), result_dict
-
-    def vary_the_SFH(self, random_sfr=True, random_z=False, do_norm=True,
-                     zdisp=True, dry_run=False, object_mass=None, cols=None,
-                     write_culled=False):
+    def vary_the_SFH(self, random_sfr=True, random_z=False,
+                     zdisp=True, dry_run=False, object_mass=None):
         '''
         make the sfhs, make the galaxy inputs, run trilegal. For no trilegal
         runs, set dry_run True.
@@ -305,160 +105,376 @@ class VarySFHs(StarFormationHistories):
 
         self.prepare_galaxy_input(dry_run=dry_run, object_mass=object_mass)
 
+        return
+
+    def run(self, do_norm=True, dry_run=False, do_norm_kw={}):
+        do_norm_kw = dict(self.__dict__.items() + do_norm_kw.items())
+        try:
+            del do_norm_kw['sgal']
+        except:
+            pass
+        result = run_once(do_norm=do_norm, dry_run=dry_run,
+                          do_norm_kw=do_norm_kw)
+        if do_norm:
+            filter2 = self.filter2
+            if self.ast_corr is True or result[1] is True:
+                filter2 = '%s_cor' % self.filter2
+            fdict = write_results(result[0], self.agb_mod, self.target,
+                                  self.outfile_loc, filter2,
+                                  extra_str=self.extra_str)
+            [self.__setattr__(k, v) for k, v in fdict.items()]
+
+        return self.__dict__
+
+    def run_parallel(self, do_norm=True, dry_run=False, max_proc=8, start=30,
+                     timeout=45):
+        if self.nsfhs <= 1:
+            self.run(do_norm=do_norm, dry_run=dry_run)
+            out_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
+            out_obj.add_params(self.__dict__)
+            out_obj.write_params(self.input_file)
+            return
+
+        try:
+            clients = parallel.Client()
+        except IOError:
+            print('Starting ipcluster... waiting %i s for spin up' % start)
+            os.system('ipcluster start --n=%i &' % max_proc)
+            time.sleep(start)
+
+
         tname = os.path.join(self.outfile_loc,
                              'output_%s_%s' % (self.target, self.agb_mod))
         triout_fmt = tname + '_%003i.dat'
 
-        result_dicts = []
-        for i, galaxy_input in enumerate(self.galaxy_inputs):
-            triout = triout_fmt % i
+        outfile = os.path.join(self.outfile_loc, os.path.split(self.input_file)[1])
+        outparam = rsp.fileio.replace_ext(outfile, '_inp_%003i.dat')
+        out_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
+        out_obj.add_params(self.__dict__)
 
-            rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
-                                           triout, rmfiles=False,
-                                           dry_run=dry_run)
-            if do_norm:
-                norm_out, result_dict = self.do_normalization(triout=triout)
+        self.vary_the_SFH(random_sfr=True, random_z=False,
+                          zdisp=True, dry_run=dry_run, object_mass=None)
 
-                result_dict['contam_line'] = self.contamination_by_phases(*norm_out)
-                result_dicts.append(result_dict)
-            if write_culled:
-                self.write_truncated_file(triout, cols=cols)
-            # remove the last trilegal output to save space
-            if dry_run is False and do_norm:
-                lastnum = i - 1
-                if os.path.isfile(triout_fmt % lastnum) is True:
-                    os.remove(triout_fmt % lastnum)
-        if do_norm:
-            result = rsp.tools.helpers.combine_list_of_dictionaries(result_dicts)
-            return result
-        else:
-            return
+        clients = parallel.Client()
+        clients.block = False
+        clients[:].use_dill()
+        clients[:].execute('import ResolvedStellarPops as rsp')
+        clients[:].execute('import numpy as np')
+        clients[:].execute('import os')
+        clients[:].execute('import matplotlib.pylab as plt')
+        clients[:]['do_normalization'] = do_normalization
+        clients[:]['load_trilegal_catalog'] = load_trilegal_catalog
+        clients[:]['run_once'] = run_once
+        clients[:]['normalize_simulation'] = normalize_simulation
+        clients[:]['rgb_agb_regions'] = rgb_agb_regions
+        clients[:]['contamination_by_phases'] = contamination_by_phases
+        clients[:]['gather_results'] = gather_results
+        clients[:]['write_results'] = write_results
+        #dv.execute('cd %s' % here)
+        #dv.execute('from sfhs.vary_sfh import run_once')
+        niters = np.ceil(self.nsfhs/float(max_proc))
+        sets = np.arange(niters * max_proc, dtype=int).reshape(niters, max_proc)
 
-    def write_truncated_file(self, triout, cols=['F110W', 'F160W']):
+        for j, iset in enumerate(sets):
+            iset = iset[iset < self.nsfhs]
+            do_norm_kws = [{'galaxy_input': self.galaxy_inputs[i],
+                            'triout': triout_fmt % i} for i in iset]
+            res = [clients[i].apply(self.run, do_norm, dry_run, do_norm_kws[i],)
+                   for i in range(len(iset))]
+            while False in [r.ready() for r in res]:
+                print 'waiting on %i of %i set' % (j, niters)
+                time.sleep(timeout)
+                print 'checking on %i set...' % j
 
-        def load_model(fname, cols=['F110W', 'F160W']):
-            # all the columns
-            with open(fname, 'r') as f:
-                col_keys = f.readline().strip().split()
+            for i in iset:
+                if i != self.nsfhs - 1:
+                    if os.path.isfile(triout_fmt % i):
+                        os.remove(triout_fmt % i)
 
-            # the columns I want
-            usecols = [col_keys.index(c) for c in cols]
-            data = np.genfromtxt(fname, usecols=usecols, names=cols)
-            return data
+            for i in range(len(res)):
+                out_obj.add_params(res[i].result)
+                out_obj.write_params(outparam % i)
 
-        def write_model(fname, data):
-            header = '# %s \n' % ' '.join(data.dtype.names)
-            with open(fname, 'w') as f:
-                f.write(header)
-                np.savetxt(f, data, fmt='%.4f')
+def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
+                            color_cut=None, target='', line=''):
 
-        write_model(triout, load_model(triout, cols=cols))
+    # contamination of phases in rgb and agb region file
+    # (changing the self.regions will disrupt calculation of
+    # rheb_eagb_contamination -- see contamination_by_phases code)
+    regions = ['MS', 'RGB', 'HEB', 'BHEB', 'RHEB', 'EAGB', 'TPAGB']
+    if line == '':
+        line += '# %s %s \n' % (' '.join(regions), 'Total')
+
+    sgal.all_stages()
+    indss = [sgal.__getattribute__('i%s' % r.lower()) for r in regions]
+
+    if diag_plot is True:
+        fig, ax = plt.subplots()
+
+    if color_cut is None:
+        inds = np.arange(len(sgal.data[filter2]))
+    else:
+        inds = color_cut
+    mag = sgal.data[filter2][inds]
+    ncontam_rgb = [list(set(s) & set(inds) & set(srgb)) for s in indss]
+    ncontam_agb = [list(set(s) & set(inds) & set(sagb)) for s in indss]
+
+    rheb_eagb_contam = len(ncontam_rgb[4]) + len(ncontam_rgb[5])
+    frac_rheb_eagb = float(rheb_eagb_contam) / \
+        float(np.sum([len(n) for n in ncontam_rgb]))
+
+    heb_rgb_contam = len(ncontam_rgb[2])
+    frac_heb_rgb_contam = float(heb_rgb_contam) / \
+        float(np.sum([len(n) for n in ncontam_rgb]))
+
+    mags = [mag[n] if len(n) > 0 else np.zeros(10) for n in ncontam_rgb]
+
+    mms = np.concatenate(mags)
+    ms, = np.nonzero(mms > 0)
+    bins = np.linspace(np.min(mms[ms]), np.max(mms[ms]), 10)
+    if diag_plot is True:
+        [ax.hist(mags, bins=bins, alpha=0.5, stacked=True,
+                     label=regions)]
+
+    nrgb_cont = np.array([len(n) for n in ncontam_rgb], dtype=int)
+    nagb_cont = np.array([len(n) for n in ncontam_agb], dtype=int)
+
+    line += 'rgb %s %i \n' % ( ' '.join(map(str, nrgb_cont)), np.sum(nrgb_cont))
+    line += 'agb %s %i \n' % (' '.join(map(str, nagb_cont)), np.sum(nagb_cont))
+
+    line += '# rgb eagb contamination: %i \n' % rheb_eagb_contam
+    line += '# frac of total in rgb region: %.3f \n' % frac_rheb_eagb
+    line += '# rc contamination: %i \n' % heb_rgb_contam
+    line += '# frac of total in rgb region: %.3f \n' % frac_heb_rgb_contam
+
+    print line
+    if diag_plot is True:
+        ax.legend(numpoints=1, loc=0)
+        ax.set_title(target)
+        plt.savefig('contamination_%s.png' % target, dpi=150)
+
+    return line
 
 
+def do_normalization(filter1=None, filter2=None, sgal=None, triout=None,
+                     offset=None, trgb_exclude=None, trgb=None, ast_corr=False,
+                     col_min=None, col_max=None, nrgbs=None, **kwargs):
+    '''Do the normalization and save small part of outputs.'''
+    if sgal is None:
+        assert triout is not None, \
+            'need sgal loaded or pass trilegal catalog file name'
+        sgal = load_trilegal_catalog(triout, filter1, filter2)
+
+    if ast_corr:
+        if not filter1.endswith('cor'):
+            filter1 += '_cor'
+        if not filter2.endswith('cor'):
+            filter2 += '_cor'
+
+    # select rgb and agb regions
+    mag_bright = kwargs.get('mag_bright')
+    mag_faint = kwargs.get('mag_faint')
+    srgb, sagb = rgb_agb_regions(offset, trgb_exclude, trgb, sgal.data[filter2],
+                                 col_min=col_min, col_max=col_max,
+                                 mag_bright=mag_bright, mag_faint=mag_faint,
+                                 mag1=sgal.data[filter1])
+
+    # normalization
+    norm, inorm, rgb, agb = normalize_simulation(sgal.data[filter2], nrgbs, srgb, sagb)
+    return  sgal, norm, inorm, (srgb, sagb), (rgb, agb)
 
 
-    def write_results(self, res_dict):
-        '''writes out the results to self.fnames (see __init__)'''
+def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
+             dry_run=False, do_norm=True, do_norm_kw={}, write_culled=False,
+             cols=None, filter1=None, filter2=None, target=None,
+             fake_file=None):
 
-        for fname in self.fnames:
-            with open(fname, 'a') as fh:
-                fshort = fname.split(self.target)[-1][1:].replace('.dat', '').replace(self.extra_str, '')
-                if 'narratio' in fname:
-                    fh.write(self.narratio_header)
-                if 'contam' in fname:
-                    fh.write(self.contam_header)
+    cmd_input_file = do_norm_kw.get('cmd_input_file', cmd_input_file)
+    galaxy_input = do_norm_kw.get('galaxy_input', galaxy_input)
+    filter1 = do_norm_kw.get('filter1', filter1)
+    filter2 = do_norm_kw.get('filter2', filter2)
+    target = do_norm_kw.get('target', target)
+    fake_file = do_norm_kw.get('fake_file', fake_file)
+    ast_corr = do_norm_kw.get('ast_corr', False)
+    diag_plot = do_norm_kw.get('diag_plot', False)
+    triout =  do_norm_kw.get('triout')
 
-                [fh.write('%s \n' % l)for l in res_dict['%s_line' % fshort]]
+    rsp.trilegal.utils.run_trilegal(cmd_input_file, galaxy_input, triout,
+                                    rmfiles=rmfiles, dry_run=dry_run)
 
-        return
+    if fake_file is not None and dry_run is False:
+        print("adding ast corrections to %s" % triout)
+        sgal = load_trilegal_catalog(triout, filter1, filter2, only_keys=None)
+        rsp.ast_correct_starpop(sgal, overwrite=True, outfile=triout,
+                                fake_file=fake_file, diag_plot=diag_plot)
+        ast_corr = True
+        do_norm_kw['ast_corr'] = ast_corr
+        do_norm_kw['sgal'] = sgal
 
-    def load_lf_file(self, lf_file):
-        with open(lf_file, 'r') as lff:
-            lines = [l.strip() for l in lff.readlines()
-                     if not l.startswith('#')]
-        norms = [np.float(l) for l in lines[0::3]]
-        hists = [np.array(l.split(), dtype=float) for l in lines[1::3]]
-        binss = [np.array(l.split(), dtype=float) for l in lines[2::3]]
-        return hists, binss, norms
+    if write_culled:
+        print("write_culled disabled: possible confusion with ast corr.")
+        pass
+        # cols = ['logAge','[M/H]','m_ini','logL','logTe','m-M0','Av','mbol',
+        #         'Mact', 'stage', filter1, filter2]
+        # write_truncated_file(triout, cols=cols)
 
-    def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb,
-                                diag_plot=False):
-        self.sgal.all_stages()
-        indss = [self.sgal.__getattribute__('i%s' % r.lower())
-                 for r in self.regions]
-        line = ''
-        contam_line = []
-        if diag_plot is True:
-            fig, (axs) = plt.subplots(ncols=2)
-        for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb],
-                                                 [sopt_agb, sir_agb],
-                                                 [self.opt_color_cut,
-                                                  self.ir_color_cut])):
-            if i == 1:
-                band = 'ir'
-                mag = self.sgal.data[self.ir_filter2][inds]
-            else:
-                band = 'opt'
-                mag = self.sgal.data[self.opt_filter2][inds]
+    if do_norm:
+        do_norm_kw['triout'] = triout
+        sgal, norm, inorm, (srgb, sagb), (rgb, agb) = \
+            do_normalization(**do_norm_kw)
+        if ast_corr:
+            filter1 = '%s_cor' % filter1
+            filter2 = '%s_cor' % filter2
+        contam_line = contamination_by_phases(sgal, srgb, sagb,
+                                              filter2)
+        result_dict = gather_results(sgal, norm, target, filter1, filter2,
+                                     narratio_dict={'rgb': rgb, 'agb': agb,
+                                                    'srgb': srgb, 'sagb': sagb,
+                                                    'inorm': inorm})
+        result_dict['contam_line'] = contam_line
 
-            ncontam_rgb = [list(set(s) & set(inds) & set(rgb)) for s in indss]
-            ncontam_agb = [list(set(s) & set(inds) & set(agb)) for s in indss]
+        #return sgal, norm, (srgb, sagb), result_dict, ast_corr
+        return result_dict, ast_corr
 
-            rheb_eagb_contam = len(ncontam_rgb[4]) + len(ncontam_rgb[5])
-            frac_rheb_eagb = float(rheb_eagb_contam) / \
-                float(np.sum([len(n) for n in ncontam_rgb]))
 
-            heb_rgb_contam = len(ncontam_rgb[2])
-            frac_heb_rgb_contam = float(heb_rgb_contam) / \
-                float(np.sum([len(n) for n in ncontam_rgb]))
+def load_trilegal_catalog(trilegal_output, filter1, filter2,
+                          only_keys='default'):
+    '''read the trilegal cat.'''
+    if only_keys == 'default':
+        only_keys = ['logAge','MH','m_ini','logL','logTe','mM0','Av','mbol',
+                     'Mact', 'stage', filter2, filter1, '%s_cor' % filter1,
+                     '%s_cor' % filter2, 'CO']
+    elif type(only_keys) != list:
+        only_keys = None
 
-            mags = [mag[n] if len(n) > 0 else np.zeros(10) for n in ncontam_rgb]
+    sgal = rsp.SimGalaxy(trilegal_output, filter1=filter1, filter2=filter2,
+                         only_keys=only_keys)
+    return sgal
 
-            mms = np.concatenate(mags)
-            ms, = np.nonzero(mms > 0)
-            bins = np.linspace(np.min(mms[ms]), np.max(mms[ms]), 10)
-            if diag_plot is True:
-                [axs[i].hist(mags, bins=bins, alpha=0.5, stacked=True,
-                             label=self.regions)]
 
-            nrgb_cont = np.array([len(n) for n in ncontam_rgb], dtype=int)
-            nagb_cont = np.array([len(n) for n in ncontam_agb], dtype=int)
+def gather_results(sgal, norm, target, filter1, filter2,
+                   mass_met=True, tpagb_lf=True, narratio_dict=None):
+    '''gather results into strings or lists of strings for writing.'''
+    result_dict = {}
 
-            line += 'rgb %s %s %i \n' % (band, ' '.join(map(str, nrgb_cont)),
-                                        np.sum(nrgb_cont))
-            line += 'agb %s %s %i \n' % (band, ' '.join(map(str, nagb_cont)),
-                                         np.sum(nagb_cont))
+    if tpagb_lf:
+        result_dict['lf_line'] = '# norm mag2 mag1 rgb agb srgb sagb inorm\n' + \
+            '\n'.join(['%.4f' % norm,
+                       ' '.join(['%g' % m for m in sgal.data[filter2]]),
+                       ' '.join(['%g' % m for m in sgal.data[filter1]]),
+                       ' '.join(['%i' % m for m in narratio_dict['rgb']]),
+                       ' '.join(['%i' % m for m in narratio_dict['agb']]),
+                       ' '.join(['%i' % m for m in narratio_dict['srgb']]),
+                       ' '.join(['%i' % m for m in narratio_dict['sagb']]),
+                       ' '.join(['%i' % m for m in narratio_dict['inorm']])])
 
-            line += '# rgb eagb contamination: %i \n' % rheb_eagb_contam
-            line += '# frac of total in rgb region: %.3f \n' % frac_rheb_eagb
-            line += '# rc contamination: %i \n' % heb_rgb_contam
-            line += '# frac of total in rgb region: %.3f \n' % \
-                    frac_heb_rgb_contam
+    if mass_met is True:
+        sgal.all_stages('TPAGB')
+        inds = sgal.itpagb
+        mag = sgal.mag2
 
-            print line
+        key = 'mass_met_line'
+        mass = sgal.data.m_ini[inds]
+        mag = mag[inds]
+        mh = sgal.data.MH[inds]
+        result_dict[key] = \
+            '\n'.join([' '.join(['%g' % t for t in mag]),
+                       ' '.join(['%g' % t for t in mass]),
+                       ' '.join(['%.3f' % t for t in mh])])
 
-        contam_line.append(line)
+    # N agb/rgb ratio file
+    if len(narratio_dict) > 0:
+        narratio_fmt = '%(target)s %(nrgb)i %(nagb)i '
+        narratio_fmt += '%(ar_ratio).3f %(ar_ratio_err).3f'
 
-        if diag_plot is True:
-            axs[0].legend(numpoints=1, loc=0)
-            axs[0].set_title(self.target)
-            plt.savefig('contamination_%s.png' % self.target, dpi=150)
+        rgb = narratio_dict['rgb']
+        agb = narratio_dict['agb']
 
-        return line
+        nrgb = float(len(rgb))
+        nagb = float(len(agb))
+        out_dict = {'target': target,
+                    'ar_ratio': nagb / nrgb,
+                    'ar_ratio_err': rsp.utils.count_uncert_ratio(nagb, nrgb),
+                    'nrgb': nrgb,
+                    'nagb': nagb}
+        result_dict['narratio_line'] = narratio_fmt % out_dict
 
-def narratio_table(self):
-    narratio_files = rsp.fileIO.get_files(self.outfile_dir, '*narratio*dat')
-    stats.narratio_table(narratio_files)
+    return result_dict
+
+
+def write_truncated_file(triout, cols=['F110W', 'F160W']):
+    """
+    This is really stupid. Why read a file like this to cull it down.
+    Write the truncated file when the data are in memory.
+    """
+    def load_model(fname, cols=['F110W', 'F160W']):
+        # all the columns
+        with open(fname, 'r') as f:
+            col_keys = f.readline().strip().split()
+
+        # the columns I want
+        usecols = [col_keys.index(c) for c in cols]
+        data = np.genfromtxt(fname, usecols=usecols, names=cols)
+        return data
+
+    def write_model(fname, data):
+        header = '# %s \n' % ' '.join(data.dtype.names)
+        with open(fname, 'w') as f:
+            f.write(header)
+            np.savetxt(f, data, fmt='%.4f')
+
+    #write_model(triout, load_model(triout, cols=cols))
+    print(write_truncated_file.__doc__)
     return
 
-def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
-    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
-                                            outfile_loc=outfile_dir,
-                                            extra_str=extra_str)
-    chi2_dicts = stats.result2dict(chi2_files)
-    stats.chi2plot(chi2_dicts, outfile_loc=outfile_dir)
-    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
-                                            outfile_loc=outfile_dir,
-                                            extra_str=extra_str,
-                                            just_gauss=True)
-    return
+
+def write_results(res_dict, agb_mod, target, outfile_loc, filter2,
+                  extra_str=''):
+    '''
+    Write results of VSFH output dict to files.
+
+    Paramaters
+    ----------
+    res_dict : dict
+        output of run_once keys with %s_line will be written to a file
+
+    agb_mod, target, filter2, extra_str : strings
+        file name formatting stings
+
+    outfile_loc : string
+        path to write output file
+
+    Returns
+    -------
+    fdict : dictionary
+        file and path to file
+        ex: lf_file: <path_to_lf_file>
+    '''
+    fmt = '%s_%s_%s_%s%s.dat'
+    narratio_header = '# target nrgb nagb ar_ratio ar_ratio_err \n'
+    fdict = {}
+    for key, line in res_dict.items():
+        name = key.replace('_line', '')
+        fname = (fmt % (agb_mod, target, filter2, name, extra_str)).lower()
+        fname = os.path.join(outfile_loc, fname)
+        with open(fname, 'a') as fh:
+            if 'narratio' in key:
+                fh.write(narratio_header)
+            if type(line) == str:
+                line = [line]
+            [fh.write('%s \n' % l) for l in line]
+        fdict['%s_file' % name] = fname
+    return fdict
+
+def main(input_file):
+    inp_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
+    inp_obj.input_file = input_file
+    inp_obj.add_params(rsp.fileio.load_input(inp_obj.input_file))
+
+    vsh = VarySFHs(inp_obj=inp_obj)
+    import pdb; pdb.set_trace()
+    vsh.run_parallel(dry_run=inp_obj.dry_run)
+
+if __name__ == '__main__':
+    import sys
+    main(sys.argv[1])
