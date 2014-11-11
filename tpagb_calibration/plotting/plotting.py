@@ -4,6 +4,7 @@ import numpy as np
 import ResolvedStellarPops as rsp
 import sys
 from ..sfhs import star_formation_histories
+from ..pop_synth import stellar_pops
 __all__ = ['Plotting']
 
 
@@ -192,6 +193,7 @@ class Plotting(object):
     def compare_to_gal(self):
         compare_to_gal(**self.__dict__)
 
+
 def add_narratio_to_plot(ax, ratio_data, nrgb, nagb, mid_txt='RGB'):
     stext_kw = dict({'color': 'black', 'fontsize': 14, 'ha': 'center'}.items() +
                     rsp.graphics.GraphicsUtils.ann_kwargs.items())
@@ -271,17 +273,28 @@ def plot_model(mag2s, bins, norms, inorm=None, ax=None, plt_kw=None, limit=None,
         ax.plot(bins[1:], hist * norm, **kw)
     return ax
 
-def plot_gal(mag2, bins, ax=None, target=None, dplot_kw={}):
+
+def plot_gal(mag2, bins, ax=None, target=None, dplot_kw={}, fake_file=None):
     if ax is None:
         fig, ax = plt.subplots(figsize=(6,6))
-    dplot_kw = dict({'drawstyle': 'steps-mid', 'color': 'darkred', 'lw': 2,
+    dplot_kw = dict({'drawstyle': 'steps-mid', 'color': 'darkred', 'lw': 1,
                      'label': '$%s$' % target}.items() + dplot_kw.items())
 
     hist = np.histogram(mag2, bins=bins)[0]
     err = np.sqrt(hist)
-
     ax.errorbar(bins[1:], hist, yerr=err, **dplot_kw)
+
+    if fake_file is not None:
+        comp_corr = stellar_pops.completeness_corrections(fake_file, bins)
+
+    hist = np.histogram(mag2, bins=bins)[0]
+    hist /= comp_corr[1:]
+    err = np.sqrt(hist)
+    dplot_kw['lw'] += 1
+    ax.errorbar(bins[1:], hist, yerr=err, **dplot_kw)
+
     return ax
+
 
 def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
                    narratio=True, no_agb=False, xlim=None, ylim=None,
@@ -307,20 +320,20 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     mag_faint = kwargs.get('mag_faint')
     mag_bright = kwargs.get('mag_bright')
     mag_limit_val = kwargs.get('mag_limit_val')
-
+    fake_file = kwargs.get('fake_file')
     if ast_corr:
         extra_str += '_ast'
 
     norms, mag2s, mag1s, rgbs, agbs, srgbs, sagbs, inorm = load_lf_file(lf_file)
     mag1, mag2 = np.loadtxt(matchphot, unpack=True)
-    bins = np.arange(15.1, 27, 0.1)
+    bins = np.arange(10, 27, 0.1)
     # plot lfs from simulations (and initialize figure)
     plt_kw = plt_kw or {}
     inorm = None
     ax = plot_model(mag2s, bins, norms, inorm=inorm, limit=limit, ax=ax,
                     plt_kw=plt_kw, agb_mod=agb_mod)
     # plot galaxy data
-    ax = plot_gal(mag2, bins, ax=ax, target=target)
+    ax = plot_gal(mag2, bins, ax=ax, target=target, fake_file=fake_file)
 
     # initialize add numbers to the plot
     if narratio:
@@ -374,6 +387,49 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     plt.savefig(outfile, dpi=150)
     print 'wrote %s' % outfile
     return ax
+
+def model_cmd_withasts(fname=None, sgal=None, filter1=None, filter2=None,
+                       trgb=None, trgb_exclude=None, mag_faint=None,
+                       xlim=(-.5, 5), mag_bright=None, mag_limit_val=None,
+                       agb=None, rgb=None, **kwargs):
+    """plot cmd and ast corrected cmd side by side"""
+    if sgal is None:
+        sgal = rsp.SimGalaxy(fname, filter1=filter1, filter2=filter2)
+    sgal.load_ast_corrections()
+
+    fig, axs = plt.subplots(ncols=2, figsize=(12,8), sharex=True, sharey=True)
+    axs[0] = sgal.plot_cmd(sgal.color, sgal.mag2, ax=axs[0])
+    ylim = axs[0].get_ylim()
+
+    axs[1] = sgal.plot_cmd(sgal.ast_color, sgal.ast_mag2, ax=axs[1])
+    axs[0].set_xlim(xlim)
+    axs[0].set_ylim(ylim)
+    [ax.set_xlabel(r'$%s-%s$' % (filter1, filter2), fontsize=20) for ax in axs]
+    axs[0].set_ylabel(r'$%s$' % filter2, fontsize=20)
+    axs[1].set_title(r'$\emph{%s}$' % sgal.name.replace('_', r'\_'),
+                     fontsize=12)
+
+    ax = axs[1]
+    xarr = np.linspace(*ax.get_xlim())
+        # vertical lines around the trgb exclude region
+    ax.fill_between(xarr, trgb - trgb_exclude, trgb + trgb_exclude,
+                    color='black', alpha=0.1)
+    ax.hlines(trgb, *ax.get_xlim(), color='black', linestyle='--')
+    if not None in [mag_faint, mag_bright]:
+        ax.fill_between(xarr, mag_faint, mag_bright, color='black', alpha=0.1)
+    if mag_limit_val is not None:
+        ax.fill_between(xarr, mag_limit_val, ax.get_ylim()[0], color='black',
+                        alpha=0.1)
+    if agb is not None:
+        ax.plot(sgal.ast_color[agb], sgal.ast_mag2[agb], 'o', color='red',
+                mec='none', alpha=0.3)
+    if rgb is not None:
+        ax.plot(sgal.ast_color[rgb], sgal.ast_mag2[rgb], '.', color='darkred',
+                mec='none', alpha=0.3)
+
+    plt.savefig(os.path.join(sgal.base, sgal.name) + 'cmds.png')
+    plt.close()
+    return axs, sgal
 
 class DiagnosticPlots(Plotting):
     def __init__(self, vsfh):
@@ -618,6 +674,6 @@ def trilegal_metals(chi2_location='draft_run', band='opt', dry_run=False,
 				      np.max(zs[i]), target)
 
 if __name__ == '__main__':
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
     pl = Plotting(input_file=sys.argv[1])
     pl.compare_to_gal()

@@ -7,6 +7,7 @@ import time
 from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 import ResolvedStellarPops as rsp
 from star_formation_histories import StarFormationHistories
+from ..plotting import plotting
 
 __all__ = ['VarySFHs', 'run_once']
 
@@ -128,8 +129,15 @@ class VarySFHs(StarFormationHistories):
 
     def run_parallel(self, do_norm=True, dry_run=False, max_proc=8, start=30,
                      timeout=45):
+        tname = os.path.join(self.outfile_loc,
+                             'output_%s_%s' % (self.target, self.agb_mod))
+        triout_fmt = tname + '_%003i.dat'
+
         if self.nsfhs <= 1:
-            self.run(do_norm=do_norm, dry_run=dry_run)
+            # don't run parallel.
+            do_norm_kw = {'galaxy_input': self.galaxy_input,
+                          'triout': tname + '_bestsfr.dat'}
+            self.run(do_norm=do_norm, dry_run=dry_run, do_norm_kw=do_norm_kw)
             out_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
             out_obj.add_params(self.__dict__)
             out_obj.write_params(self.input_file)
@@ -141,11 +149,6 @@ class VarySFHs(StarFormationHistories):
             print('Starting ipcluster... waiting %i s for spin up' % start)
             os.system('ipcluster start --n=%i &' % max_proc)
             time.sleep(start)
-
-
-        tname = os.path.join(self.outfile_loc,
-                             'output_%s_%s' % (self.target, self.agb_mod))
-        triout_fmt = tname + '_%003i.dat'
 
         outfile = os.path.join(self.outfile_loc, os.path.split(self.input_file)[1])
         outparam = rsp.fileio.replace_ext(outfile, '_inp_%003i.dat')
@@ -181,19 +184,21 @@ class VarySFHs(StarFormationHistories):
                             'triout': triout_fmt % i} for i in iset]
             res = [clients[i].apply(self.run, do_norm, dry_run, do_norm_kws[i],)
                    for i in range(len(iset))]
+
             while False in [r.ready() for r in res]:
                 print 'waiting on %i of %i set' % (j, niters)
                 time.sleep(timeout)
                 print 'checking on %i set...' % j
-
-            for i in iset:
-                if i != self.nsfhs - 1:
-                    if os.path.isfile(triout_fmt % i):
-                        os.remove(triout_fmt % i)
-
+            print([r.ready() for r in res])
+            #for i in iset:
+            #    if i != self.nsfhs - 1:
+            #        if os.path.isfile(triout_fmt % i):
+            #            os.remove(triout_fmt % i)
             for i in range(len(res)):
                 out_obj.add_params(res[i].result)
                 out_obj.write_params(outparam % i)
+
+        os.system('ipcluster stop')
 
 def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
                             color_cut=None, target='', line=''):
@@ -207,7 +212,12 @@ def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
 
     sgal.all_stages()
     indss = [sgal.__getattribute__('i%s' % r.lower()) for r in regions]
-
+    try:
+        if np.sum(indss) == 0:
+            print 'no stages in starpop!'
+            return 'no stages in starpop!\n'
+    except:
+        pass
     if diag_plot is True:
         fig, ax = plt.subplots()
 
@@ -285,7 +295,7 @@ def do_normalization(filter1=None, filter2=None, sgal=None, triout=None,
 
 
 def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
-             dry_run=False, do_norm=True, do_norm_kw={}, write_culled=False,
+             dry_run=False, do_norm=True, do_norm_kw={},
              cols=None, filter1=None, filter2=None, target=None,
              fake_file=None):
 
@@ -297,7 +307,7 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
     fake_file = do_norm_kw.get('fake_file', fake_file)
     ast_corr = do_norm_kw.get('ast_corr', False)
     diag_plot = do_norm_kw.get('diag_plot', False)
-    triout =  do_norm_kw.get('triout')
+    triout =  do_norm_kw.get('triout', triout)
 
     rsp.trilegal.utils.run_trilegal(cmd_input_file, galaxy_input, triout,
                                     rmfiles=rmfiles, dry_run=dry_run)
@@ -310,13 +320,6 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
         ast_corr = True
         do_norm_kw['ast_corr'] = ast_corr
         do_norm_kw['sgal'] = sgal
-
-    if write_culled:
-        print("write_culled disabled: possible confusion with ast corr.")
-        pass
-        # cols = ['logAge','[M/H]','m_ini','logL','logTe','m-M0','Av','mbol',
-        #         'Mact', 'stage', filter1, filter2]
-        # write_truncated_file(triout, cols=cols)
 
     if do_norm:
         do_norm_kw['triout'] = triout
@@ -332,8 +335,10 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
                                                     'srgb': srgb, 'sagb': sagb,
                                                     'inorm': inorm})
         result_dict['contam_line'] = contam_line
-
-        #return sgal, norm, (srgb, sagb), result_dict, ast_corr
+        if diag_plot:
+            axs, sgal = plotting.model_cmd_withasts(sgal, rgb=rgb, agb=agb,
+                                                    **do_norm_kw)
+            #import pdb; pdb.set_trace()
         return result_dict, ast_corr
 
 
@@ -402,32 +407,6 @@ def gather_results(sgal, norm, target, filter1, filter2,
     return result_dict
 
 
-def write_truncated_file(triout, cols=['F110W', 'F160W']):
-    """
-    This is really stupid. Why read a file like this to cull it down.
-    Write the truncated file when the data are in memory.
-    """
-    def load_model(fname, cols=['F110W', 'F160W']):
-        # all the columns
-        with open(fname, 'r') as f:
-            col_keys = f.readline().strip().split()
-
-        # the columns I want
-        usecols = [col_keys.index(c) for c in cols]
-        data = np.genfromtxt(fname, usecols=usecols, names=cols)
-        return data
-
-    def write_model(fname, data):
-        header = '# %s \n' % ' '.join(data.dtype.names)
-        with open(fname, 'w') as f:
-            f.write(header)
-            np.savetxt(f, data, fmt='%.4f')
-
-    #write_model(triout, load_model(triout, cols=cols))
-    print(write_truncated_file.__doc__)
-    return
-
-
 def write_results(res_dict, agb_mod, target, outfile_loc, filter2,
                   extra_str=''):
     '''
@@ -472,9 +451,9 @@ def main(input_file):
     inp_obj.add_params(rsp.fileio.load_input(inp_obj.input_file))
 
     vsh = VarySFHs(inp_obj=inp_obj)
-    import pdb; pdb.set_trace()
     vsh.run_parallel(dry_run=inp_obj.dry_run)
 
 if __name__ == '__main__':
     import sys
+    #import pdb; pdb.set_trace()
     main(sys.argv[1])
