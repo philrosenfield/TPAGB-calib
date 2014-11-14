@@ -7,7 +7,7 @@ import time
 from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 import ResolvedStellarPops as rsp
 from star_formation_histories import StarFormationHistories
-from ..plotting import plotting
+from ..plotting.plotting import model_cmd_withasts
 
 __all__ = ['VarySFHs', 'run_once']
 
@@ -109,6 +109,7 @@ class VarySFHs(StarFormationHistories):
         return
 
     def run(self, do_norm=True, dry_run=False, do_norm_kw={}):
+        """call run_once and write results if normalization happened"""
         do_norm_kw = dict(self.__dict__.items() + do_norm_kw.items())
         try:
             del do_norm_kw['sgal']
@@ -129,6 +130,29 @@ class VarySFHs(StarFormationHistories):
 
     def run_parallel(self, do_norm=True, dry_run=False, max_proc=8, start=30,
                      timeout=45):
+        def setup_parallel():
+            """
+            I would love a better way to do this.
+            """
+            clients = parallel.Client()
+            clients.block = False
+            clients[:].use_dill()
+            clients[:].execute('import ResolvedStellarPops as rsp')
+            clients[:].execute('import numpy as np')
+            clients[:].execute('import os')
+            clients[:].execute('import matplotlib.pylab as plt')
+            clients[:]['do_normalization'] = do_normalization
+            clients[:]['load_trilegal_catalog'] = load_trilegal_catalog
+            clients[:]['run_once'] = run_once
+            clients[:]['normalize_simulation'] = normalize_simulation
+            clients[:]['rgb_agb_regions'] = rgb_agb_regions
+            clients[:]['contamination_by_phases'] = contamination_by_phases
+            clients[:]['gather_results'] = gather_results
+            clients[:]['write_results'] = write_results
+            clients[:]['model_cmd_withasts'] = model_cmd_withasts
+            return clients
+
+        # trilegal output format
         tname = os.path.join(self.outfile_loc,
                              'output_%s_%s' % (self.target, self.agb_mod))
         triout_fmt = tname + '_%003i.dat'
@@ -142,7 +166,8 @@ class VarySFHs(StarFormationHistories):
             out_obj.add_params(self.__dict__)
             out_obj.write_params(self.input_file)
             return
-
+        self.nsfhs = 8
+        # check for clusters.
         try:
             clients = parallel.Client()
         except IOError:
@@ -150,50 +175,45 @@ class VarySFHs(StarFormationHistories):
             os.system('ipcluster start --n=%i &' % max_proc)
             time.sleep(start)
 
+        # make a new "input file" for use in plotting or as a log
         outfile = os.path.join(self.outfile_loc, os.path.split(self.input_file)[1])
         outparam = rsp.fileio.replace_ext(outfile, '_inp_%003i.dat')
         out_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
         out_obj.add_params(self.__dict__)
 
+        # create the sfr and galaxy input files
         self.vary_the_SFH(random_sfr=True, random_z=False,
                           zdisp=True, dry_run=dry_run, object_mass=None)
 
-        clients = parallel.Client()
-        clients.block = False
-        clients[:].use_dill()
-        clients[:].execute('import ResolvedStellarPops as rsp')
-        clients[:].execute('import numpy as np')
-        clients[:].execute('import os')
-        clients[:].execute('import matplotlib.pylab as plt')
-        clients[:]['do_normalization'] = do_normalization
-        clients[:]['load_trilegal_catalog'] = load_trilegal_catalog
-        clients[:]['run_once'] = run_once
-        clients[:]['normalize_simulation'] = normalize_simulation
-        clients[:]['rgb_agb_regions'] = rgb_agb_regions
-        clients[:]['contamination_by_phases'] = contamination_by_phases
-        clients[:]['gather_results'] = gather_results
-        clients[:]['write_results'] = write_results
-        #dv.execute('cd %s' % here)
-        #dv.execute('from sfhs.vary_sfh import run_once')
-        niters = np.ceil(self.nsfhs/float(max_proc))
+        # find looping parameters. How many sets of calls to the max number of
+        # processors
+        niters = np.ceil(self.nsfhs / float(max_proc))
         sets = np.arange(niters * max_proc, dtype=int).reshape(niters, max_proc)
 
+        # in case it takes more than 45 s to spin up clusters, set up as
+        # late as possible
+        clients = setup_parallel()
         for j, iset in enumerate(sets):
+            # don't use not needed procs
             iset = iset[iset < self.nsfhs]
+
+            # parallel call to run
             do_norm_kws = [{'galaxy_input': self.galaxy_inputs[i],
                             'triout': triout_fmt % i} for i in iset]
             res = [clients[i].apply(self.run, do_norm, dry_run, do_norm_kws[i],)
                    for i in range(len(iset))]
 
+            print 'waiting on set %i of %i' % (j, niters)
             while False in [r.ready() for r in res]:
-                print 'waiting on %i of %i set' % (j, niters)
-                time.sleep(timeout)
-                print 'checking on %i set...' % j
-            print([r.ready() for r in res])
+                time.sleep(1)
+            print 'set %i complete' % j
+            # to eliminate clutter
             #for i in iset:
             #    if i != self.nsfhs - 1:
             #        if os.path.isfile(triout_fmt % i):
             #            os.remove(triout_fmt % i)
+
+            # write the new "input file"
             for i in range(len(res)):
                 out_obj.add_params(res[i].result)
                 out_obj.write_params(outparam % i)
@@ -336,8 +356,8 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
                                                     'inorm': inorm})
         result_dict['contam_line'] = contam_line
         if diag_plot:
-            axs, sgal = plotting.model_cmd_withasts(sgal, rgb=rgb, agb=agb,
-                                                    **do_norm_kw)
+            model_cmd_withasts(sgal, rgb=rgb, agb=agb, inorm=inorm,
+                               **do_norm_kw)
             #import pdb; pdb.set_trace()
         return result_dict, ast_corr
 

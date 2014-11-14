@@ -85,6 +85,7 @@ def main(inps, angst=False):
     inps.galaxy_input = os.path.join(inps.outfile_loc,
                                      '%s.inp' % inps.target.lower())
     object_mass = inps.object_mass or 1e7
+    binary_frac = inps.binary_frac or 0.
     gal_inp =\
         {'photsys': inps.photsys,
          'object_mass': object_mass,
@@ -93,7 +94,7 @@ def main(inps, angst=False):
          'file_imf': 'tab_imf/imf_salpeter.dat',
          'object_av': inps.Av,
          'object_dist': 10 ** (inps.dmod/5. + 1.),
-         'binary_frac': 0.35,
+         'binary_frac': binary_frac,
          'object_cutoffmass': 0.8}
 
     inps.__dict__.update(gal_inp)

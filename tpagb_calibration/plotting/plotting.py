@@ -389,7 +389,7 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     return ax
 
 def model_cmd_withasts(fname=None, sgal=None, filter1=None, filter2=None,
-                       trgb=None, trgb_exclude=None, mag_faint=None,
+                       trgb=None, trgb_exclude=None, mag_faint=None, inorm=None,
                        xlim=(-.5, 5), mag_bright=None, mag_limit_val=None,
                        agb=None, rgb=None, **kwargs):
     """plot cmd and ast corrected cmd side by side"""
@@ -398,10 +398,15 @@ def model_cmd_withasts(fname=None, sgal=None, filter1=None, filter2=None,
     sgal.load_ast_corrections()
 
     fig, axs = plt.subplots(ncols=2, figsize=(12,8), sharex=True, sharey=True)
-    axs[0] = sgal.plot_cmd(sgal.color, sgal.mag2, ax=axs[0])
+    if inorm is None:
+        axs[0] = sgal.plot_cmd(sgal.color, sgal.mag2, ax=axs[0])
+        inorm = np.arange(len(sgal.ast_color))
+    else:
+        axs[1] = sgal.plot_cmd(sgal.ast_color, sgal.ast_mag2, ax=axs[1])
+
     ylim = axs[0].get_ylim()
 
-    axs[1] = sgal.plot_cmd(sgal.ast_color, sgal.ast_mag2, ax=axs[1])
+    axs[1] = sgal.plot_cmd(sgal.ast_color[inorm], sgal.ast_mag2[inorm], ax=axs[1])
     axs[0].set_xlim(xlim)
     axs[0].set_ylim(ylim)
     [ax.set_xlabel(r'$%s-%s$' % (filter1, filter2), fontsize=20) for ax in axs]
@@ -427,9 +432,9 @@ def model_cmd_withasts(fname=None, sgal=None, filter1=None, filter2=None,
         ax.plot(sgal.ast_color[rgb], sgal.ast_mag2[rgb], '.', color='darkred',
                 mec='none', alpha=0.3)
 
-    plt.savefig(os.path.join(sgal.base, sgal.name) + 'cmds.png')
+    plt.savefig(os.path.join(sgal.base, sgal.name).replace('.dat', 'cmds.png'))
     plt.close()
-    return axs, sgal
+    return #axs, sgal
 
 class DiagnosticPlots(Plotting):
     def __init__(self, vsfh):
