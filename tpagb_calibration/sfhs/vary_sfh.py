@@ -475,5 +475,5 @@ def main(input_file):
 
 if __name__ == '__main__':
     import sys
-    #import pdb; pdb.set_trace()
+    import pdb; pdb.set_trace()
     main(sys.argv[1])
