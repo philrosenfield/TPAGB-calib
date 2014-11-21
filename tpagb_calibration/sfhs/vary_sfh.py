@@ -29,7 +29,8 @@ def initialize_inputs():
             'sfh_file': None,
             'target': None,
             'trgb_exclude': .1,
-            'dry_run': False}
+            'dry_run': False,
+            'debug': False}
 
 class VarySFHs(StarFormationHistories):
     '''
@@ -60,6 +61,9 @@ class VarySFHs(StarFormationHistories):
         cmd_input_file = os.path.split(self.cmd_input_file)[1]
         self.agb_mod = \
             cmd_input_file.replace('.dat', '').lower().replace('cmd_input_', '')
+
+        if inp_obj.debug:
+            import pdb; pdb.set_trace()
 
     def prepare_galaxy_input(self, object_mass=None, dry_run=False):
         '''
@@ -332,7 +336,8 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
     rsp.trilegal.utils.run_trilegal(cmd_input_file, galaxy_input, triout,
                                     rmfiles=rmfiles, dry_run=dry_run)
 
-    if fake_file is not None and dry_run is False:
+    if ast_corr is True and dry_run is False:
+        assert fake_file is not None, 'Need fake file for ast corrections'
         print("adding ast corrections to %s" % triout)
         sgal = load_trilegal_catalog(triout, filter1, filter2, only_keys=None)
         rsp.ast_correct_starpop(sgal, overwrite=True, outfile=triout,
@@ -355,9 +360,9 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
                                                     'srgb': srgb, 'sagb': sagb,
                                                     'inorm': inorm})
         result_dict['contam_line'] = contam_line
-        if diag_plot:
-            model_cmd_withasts(sgal, rgb=rgb, agb=agb, inorm=inorm,
-                               **do_norm_kw)
+        #if diag_plot:
+            #model_cmd_withasts(sgal, rgb=rgb, agb=agb, inorm=inorm,
+            #                   **do_norm_kw)
             #import pdb; pdb.set_trace()
         return result_dict, ast_corr
 
@@ -475,5 +480,5 @@ def main(input_file):
 
 if __name__ == '__main__':
     import sys
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
     main(sys.argv[1])

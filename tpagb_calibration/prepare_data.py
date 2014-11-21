@@ -37,10 +37,12 @@ def initialize_inputs():
             'sfh_file': None,
             'matchphot': None,
             'Mtrgb': -4,
-            'comp_frac': None,
+            'comp_frac': 0.9,
             'object_sfr_file': None,
             'object_mass': None,
-            'outfile_loc': os.getcwd()}
+            'outfile_loc': os.getcwd(),
+            'file_imf': None,
+            'object_cutoffmass': None}
 
 
 def main(inps, angst=False):
@@ -67,7 +69,10 @@ def main(inps, angst=False):
 
     mag1, mag2 = np.loadtxt(inps.matchphot, unpack=True)
 
-    inps.offset = inps.trgb - inps.mag_faint
+    if inps.mag_faint is None:
+        inps.offset = 2.
+    else:
+        inps.offset = inps.trgb - inps.mag_faint
     rgbs, agbs = rgb_agb_regions(inps.offset, inps.trgb_exclude, inps.trgb,
                                  mag2, mag_faint=inps.mag_faint,
                                  mag_bright=inps.mag_bright,
@@ -84,18 +89,17 @@ def main(inps, angst=False):
 
     inps.galaxy_input = os.path.join(inps.outfile_loc,
                                      '%s.inp' % inps.target.lower())
-    object_mass = inps.object_mass or 1e7
-    binary_frac = inps.binary_frac or 0.
+
     gal_inp =\
-        {'photsys': inps.photsys,
-         'object_mass': object_mass,
-         'object_sfr_file': inps.object_sfr_file,
-         'mag_limit_val': limiting_mag(inps.fake_file, 0.1)[1],
-         'file_imf': 'tab_imf/imf_salpeter.dat',
+        {'mag_limit_val': limiting_mag(inps.fake_file, 0.1)[1],
          'object_av': inps.Av,
          'object_dist': 10 ** (inps.dmod/5. + 1.),
-         'binary_frac': binary_frac,
-         'object_cutoffmass': 0.8}
+         'photsys': inps.photsys,
+         'object_mass': inps.object_mass or 1e7,
+         'object_sfr_file': inps.object_sfr_file,
+         'file_imf': inps.file_imf or 'tab_imf/imf_salpeter.dat',
+         'binary_frac': inps.binary_frac or 0.,
+         'object_cutoffmass': inps.object_cutoffmass or 0.8}
 
     inps.__dict__.update(gal_inp)
     gal_inp['filter1'] = inps.filter2

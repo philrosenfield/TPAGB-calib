@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from ResolvedStellarPops.galaxies.starpop import stars_in_region
 from ResolvedStellarPops.galaxies.asts import ASTs
@@ -10,6 +11,8 @@ def rgb_agb_regions(offset, trgb_exclude, trgb, mag, col_min=None,
         low = mag_faint
         mid = mag_bright
     else:
+        assert offset is not None, \
+            'rgb_agb_regions: need either offset or mag limits'
         low = offset
         mid = trgb + trgb_exclude
 
@@ -61,13 +64,15 @@ def limiting_mag(fakefile, comp_frac):
     comp1, comp2 : float, float
         the completeness fraction in each filter
     """
+    assert os.path.isfile(fakefile), \
+        'limiting mag: fakefile %s not found' % fakefile
     ast = ASTs(fakefile)
     ast.completeness(combined_filters=True, interpolate=True)
     comp1, comp2 = ast.get_completeness_fraction(comp_frac)
     return comp1, comp2
 
 
-def completeness_corrections(fake_file, mag_bins, mag2=True):
+def completeness_corrections(fakefile, mag_bins, mag2=True):
     '''
     get the completeness fraction for a given list of magnitudes.
     for details see ResolvedStellarPops.galaxies.asts.ASTs.__doc__.
@@ -86,7 +91,9 @@ def completeness_corrections(fake_file, mag_bins, mag2=True):
     ast_c : array len(mag_bins)
         completeness corrections to mag_bins
     '''
-    ast = ASTs(fake_file)
+    assert os.path.isfile(fakefile), \
+        'completeness corrections: fakefile %s not found' % fakefile
+    ast = ASTs(fakefile)
     ast.completeness(combined_filters=True, interpolate=True)
 
     if mag2:

@@ -679,6 +679,6 @@ def trilegal_metals(chi2_location='draft_run', band='opt', dry_run=False,
 				      np.max(zs[i]), target)
 
 if __name__ == '__main__':
-    #import pdb; pdb.set_trace()
+    import pdb; pdb.set_trace()
     pl = Plotting(input_file=sys.argv[1])
     pl.compare_to_gal()
