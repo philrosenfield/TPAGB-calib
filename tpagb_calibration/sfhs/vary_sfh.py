@@ -168,7 +168,7 @@ class VarySFHs(StarFormationHistories):
             self.run(do_norm=do_norm, dry_run=dry_run, do_norm_kw=do_norm_kw)
             out_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
             out_obj.add_params(self.__dict__)
-            out_obj.write_params(self.input_file)
+            out_obj.write_params(self.input_file.replace('.inp', 'ran.inp'))
             return
         self.nsfhs = 8
         # check for clusters.

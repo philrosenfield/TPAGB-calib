@@ -85,8 +85,12 @@ def main(inps, angst=False):
         inps.outfile_loc = os.path.split(inps.matchphot)[0]
     inps.object_sfr_file = os.path.join(inps.outfile_loc,
                                         '%s.sfr' % inps.target.lower())
-    rsp.match.utils.process_match_sfh(inps.sfh_file, outfile=inps.object_sfr_file)
-
+    # If match was run with setz, this is the logz dispersion.
+    # Only useful for clusters, also it is not saved in the match output files
+    # only set in the match parameter file.
+    inps.match_zdisp = 0.05
+    rsp.match.utils.process_match_sfh(inps.sfh_file, outfile=inps.object_sfr_file,
+                                      zdisp=inps.match_zdisp)
     inps.galaxy_input = os.path.join(inps.outfile_loc,
                                      '%s.inp' % inps.target.lower())
 
@@ -110,9 +114,9 @@ def main(inps, angst=False):
 
     return inps
 
-
 if __name__ == "__main__":
     inp_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
     inp_obj.add_params(rsp.fileio.load_input(sys.argv[1]))
+
     inp_obj = main(inp_obj, angst=False)
-    inp_obj.write_params(sys.argv[1])
+    inp_obj.write_params(sys.argv[1].replace('.inp', 'prepped.inp'))
