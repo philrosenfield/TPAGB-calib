@@ -9,9 +9,8 @@ gal_file = os.path.join(tpagb_path, 'SNAP/tables/snap_galaxies.dat')
 
 gal_table = rsp.fileio.readfile(gal_file, string_column=[0,-4, -3, -2,-1],
                                 string_length=216)
-import pdb
+
 for i in range(len(gal_table)):
-    pdb.set_trace()
     phot = gal_table[i]['opt_phot']
     target = gal_table[i]['target']
     filt1 = gal_table[i]['opt1']
