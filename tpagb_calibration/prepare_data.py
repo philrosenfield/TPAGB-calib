@@ -157,7 +157,7 @@ def main(argv):
     # If match was run with setz, this is the logz dispersion.
     # Only useful for clusters, also it is not saved in the match output files
     # only set in the match parameter file.
-    #inps.match_zdisp = 0.05
+    inps.match_zdisp = 0.00
     rsp.match.utils.process_match_sfh(inps.sfh_file,
                                       outfile=inps.object_sfr_file,
                                       zdisp=inps.match_zdisp)
