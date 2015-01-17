@@ -21,8 +21,8 @@ for i in range(len(gal_table)):
 
     hdu = fits.getdata(os.path.join(tpagb_path, 'SNAP/data/angst_no_trim/',
                                     gal_table[i]['opt_phot']))
-    mag1 = hdu['MAG1_{}'.format(photsys.split('_')[0].upper()]
-    mag2 = hdu['MAG2_{}'.format(photsys.split('_')[0].upper()]
+    mag1 = hdu['MAG1_{}'.format(photsys.split('_')[0].upper())]
+    mag2 = hdu['MAG2_{}'.format(photsys.split('_')[0].upper())]
     Mag1 = rsp.astronomy_utils.mag2Mag(mag1, filt1, photsys,
                                        target=gal_table[i]['target'].upper(),
                                        filter1=filt1, filter2=filt2)
