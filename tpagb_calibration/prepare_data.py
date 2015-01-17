@@ -23,6 +23,7 @@ import argparse
 
 def possible_inputs():
     return {'Av': 0.,
+            'binary_frac': 0.35,
             'dmod': 0.,
             'file_origin': None,
             'filter1': None,
@@ -68,18 +69,19 @@ def main(argv):
     parser = argparse.ArgumentParser(description="Create input file for VarySFH")
 
     parser.add_argument('-d', '--directory', action='store_true',
-                        help='act on a MATCH directory instead of a partial input file')
+                        help='create partial input file from specified directory')
 
     parser.add_argument('-v', '--pdb', action='store_true',
                         help='debugging mode')
 
     parser.add_argument('name', type=str,
-                        help='filename or if using -d, directory name')
+                        help='partial input file or if using -d, directory name')
 
     args = parser.parse_args(argv)
 
     if args.pdb:
-        import pdb; pdb.set_trace()
+        import pdb
+        pdb.set_trace()
 
     if args.directory:
         pars = {'matchphot': rsp.fileio.get_files(args.name, '*match')[0],
