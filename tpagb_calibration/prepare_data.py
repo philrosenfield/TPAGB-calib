@@ -110,7 +110,7 @@ def main(argv):
         newdir = os.path.join(tpagb_path, target)
         pars.update({'outfile_loc': newdir,
                      'col_min': gal_table['target' == target]['colmin'],
-                     'col_max': gal_table['target' == target]['colmax']}
+                     'col_max': gal_table['target' == target]['colmax']})
         rsp.fileio.ensure_dir(newdir)
         filename = os.path.join(newdir, '%s.inp' % target)
         inp = rsp.fileio.InputParameters()
