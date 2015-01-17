@@ -67,13 +67,14 @@ def main(argv):
 
     parser = argparse.ArgumentParser(description="Create input file for VarySFH")
     
-    parser.add_argument('-d', '--directory', type=str, action='store_true',
+    parser.add_argument('-d', '--directory', action='store_true',
                         help='act on a MATCH directory instead of a partial input file')
     
     parser.add_argument('-v', '--pdb', action='store_true',
                         help='debugging mode')
 
-    parser.add_argument('name', help='filename or if using -d, directory name')
+    parser.add_argument('name', type=str,
+                        help='filename or if using -d, directory name')
     
     args = parser.parse_args(argv)
      
