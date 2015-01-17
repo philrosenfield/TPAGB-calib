@@ -78,10 +78,10 @@ def main(argv):
     
     args = parser.parse_args(argv)
      
-    if args.v:
+    if args.pdb:
         import pdb; pdb.set_trace()
     
-    if args.d:
+    if args.directory:
         pars = {'matchphot': rsp.fileio.get_files(args.name, '*match')[0],
                 'fake_file': rsp.fileio.get_files(args.name, '*fake')[0],
                 'sfh_file': rsp.fileio.get_files(args.name, '*sfh')[0]}
