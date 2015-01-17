@@ -15,7 +15,7 @@ for i in range(len(gal_table)):
     target = gal_table[i]['target']
     filt1 = gal_table[i]['opt1']
     filt2 = gal_table[i]['opt2']
-    photsys = phot.split('_')[3]
+    photsys = phot.split('_')[3].replace('-', '_')
 
     new_fname = phot.replace('.fits', '_absmag.dat')
 
@@ -24,7 +24,7 @@ for i in range(len(gal_table)):
     mag1 = hdu['MAG1_ACS']
     mag2 = hdu['MAG2_ACS']
     Mag1 = rsp.astronomy_utils.mag2Mag(mag1, filt1, 'acs-wfc',
-                                       target=gal_table[i]['target'],
+                                       target=gal_table[i]['target'].upper(),
                                        filter1=filt1, filter2=filt2)
 
     Mag2 = rsp.astronomy_utils.mag2Mag(mag2, filt2, 'acs-wfc',
