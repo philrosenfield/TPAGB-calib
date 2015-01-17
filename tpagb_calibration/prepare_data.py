@@ -73,8 +73,7 @@ def main(argv):
     parser.add_argument('-v', '--pdb', action='store_true',
                         help='debugging mode')
 
-    parser.add_argument('name', type=str,
-                        help='filename or if using -d, directory name')
+    parser.add_argument('name', help='filename or if using -d, directory name')
     
     args = parser.parse_args(argv)
      
