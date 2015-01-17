@@ -66,31 +66,31 @@ def main(argv):
     angst_data = rsp.angst_tables.angst_data
 
     parser = argparse.ArgumentParser(description="Create input file for VarySFH")
-    
+
     parser.add_argument('-d', '--directory', action='store_true',
                         help='act on a MATCH directory instead of a partial input file')
-    
+
     parser.add_argument('-v', '--pdb', action='store_true',
                         help='debugging mode')
 
     parser.add_argument('name', type=str,
                         help='filename or if using -d, directory name')
-    
+
     args = parser.parse_args(argv)
-     
+
     if args.pdb:
         import pdb; pdb.set_trace()
-    
+
     if args.directory:
         pars = {'matchphot': rsp.fileio.get_files(args.name, '*match')[0],
                 'fake_file': rsp.fileio.get_files(args.name, '*fake')[0],
                 'sfh_file': rsp.fileio.get_files(args.name, '*sfh')[0]}
-        
+
         try:
             pars['hmc_file'] = rsp.fileio.get_files(args.name, '*zc')[0]
         except:
             pass
-        
+
         matchpar, = rsp.fileio.get_files(args.name, '*param')
         # assuming mag is mag2 (i.e, I)
         pars['mag_bright'], pars['mag_faint'] = \
@@ -104,7 +104,8 @@ def main(argv):
         rsp.fileio.ensure_dir(newdir)
         filename = os.path.join(newdir, '%s.inp' % target)
         inp = rsp.fileio.InputParameters()
-        inp.write_params(pars)
+        inp.add_params(pars)
+        inp.write_params(filename)
     else:
         filename = args.name
 
