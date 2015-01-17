@@ -18,7 +18,7 @@ import ResolvedStellarPops as rsp
 import numpy as np
 import sys
 import os
-import optparse
+import argparse
 
 
 def possible_inputs():
