@@ -105,8 +105,8 @@ def main(argv):
     else:
         filename = args.name
 
-    inp_obj = rsp.fileio.InputParameters(default_dict=possible_inputs())
-    inp_obj.add_params(rsp.fileio.load_input(filename)
+    inps = rsp.fileio.InputParameters(default_dict=possible_inputs())
+    inps.add_params(rsp.fileio.load_input(filename)
     inps.target, inps.filter1, inps.filter2 = rsp.parse_pipeline(inps.matchphot)
 
     if inps.offset is None:
