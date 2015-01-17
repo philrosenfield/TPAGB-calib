@@ -1,3 +1,5 @@
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pylab as plt
 import numpy as np
 import os
@@ -341,7 +343,7 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
         print("adding ast corrections to %s" % triout)
         sgal = load_trilegal_catalog(triout, filter1, filter2, only_keys=None)
         rsp.ast_correct_starpop(sgal, overwrite=True, outfile=triout,
-                                fake_file=fake_file, diag_plot=diag_plot)
+                                fake_file=fake_file, diag_plot=False)
         ast_corr = True
         do_norm_kw['ast_corr'] = ast_corr
         do_norm_kw['sgal'] = sgal
