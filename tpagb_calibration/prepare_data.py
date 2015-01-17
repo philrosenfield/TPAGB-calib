@@ -10,7 +10,10 @@ Write optical LF
 write ratio table
 """
 from __future__ import print_function
-from .pop_synth.stellar_pops import limiting_mag, rgb_agb_regions
+if __name__ == '__main__':
+    from pop_synth.stellar_pops import limiting_mag, rgb_agb_regions
+else:
+    from .pop_synth.stellar_pops import limiting_mag, rgb_agb_regions
 import ResolvedStellarPops as rsp
 import numpy as np
 import sys
