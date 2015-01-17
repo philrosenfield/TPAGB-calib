@@ -70,7 +70,7 @@ def main(argv):
     parser.add_argument('-d', '--directory', type=str, action='store_true',
                         help='act on a MATCH directory instead of a partial input file')
     
-    parser.add_argument('-v', '--pdb', type=str, action='store_true',
+    parser.add_argument('-v', '--pdb', action='store_true',
                         help='debugging mode')
 
     parser.add_argument('name', type=str,
