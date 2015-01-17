@@ -1,3 +1,11 @@
+"""
+convert mag to abs mag and save to a new file.
+
+Uses a table to find the target, filters, photometric file. Could all be done
+with just the name of the hla file though...
+
+Will need BCDIR set for the mag2Mag call to work.
+"""
 import numpy as np
 import os
 import ResolvedStellarPops as rsp

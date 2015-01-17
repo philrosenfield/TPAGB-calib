@@ -10,15 +10,18 @@ Write optical LF
 write ratio table
 """
 from __future__ import print_function
-if __name__ == '__main__':
-    from pop_synth.stellar_pops import limiting_mag, rgb_agb_regions
-else:
-    from .pop_synth.stellar_pops import limiting_mag, rgb_agb_regions
 import ResolvedStellarPops as rsp
 import numpy as np
 import sys
 import os
 import argparse
+
+from ResolvedStellarPops.tpagb_path_config import tpagb_path
+
+if __name__ == '__main__':
+    from pop_synth.stellar_pops import limiting_mag, rgb_agb_regions
+else:
+    from .pop_synth.stellar_pops import limiting_mag, rgb_agb_regions
 
 
 def possible_inputs():
@@ -84,6 +87,9 @@ def main(argv):
         pdb.set_trace()
 
     if args.directory:
+        gal_file = os.path.join(tpagb_path, 'SNAP/tables/paperII_varsfh_table.dat')
+        rsp.fileio.readfile(gal_file, string_column=[0,-2,-1], string_length=216)
+
         pars = {'matchphot': rsp.fileio.get_files(args.name, '*match')[0],
                 'fake_file': rsp.fileio.get_files(args.name, '*fake')[0],
                 'sfh_file': rsp.fileio.get_files(args.name, '*sfh')[0]}
@@ -101,8 +107,10 @@ def main(argv):
         # find matchphot, fake, sfh_file, col_min, col_max, mag_faint, mag_bright
         # write to file
         target = os.path.split(args.name)[1]
-        vsfh_loc = '/home/rosenfield/research/TP-AGBcalib/SNAP/varysfh/'
-        newdir = os.path.join(vsfh_loc, target)
+        newdir = os.path.join(tpagb_path, target)
+        pars.update({'outfile_loc': newdir,
+                     'col_min': gal_table['target' == target]['colmin'],
+                     'col_max': gal_table['target' == target]['colmax']}
         rsp.fileio.ensure_dir(newdir)
         filename = os.path.join(newdir, '%s.inp' % target)
         inp = rsp.fileio.InputParameters()
