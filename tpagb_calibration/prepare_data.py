@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 prepare input file
 
@@ -95,6 +96,7 @@ def main(argv):
         # find matchphot, fake, sfh_file, col_min, col_max, mag_faint, mag_bright
         # write to file
         target = os.path.split(args.name)[1]
+        vsfh_loc = '/home/rosenfield/research/TP-AGBcalib/SNAP/varysfh/'
         newdir = os.path.join(vsfh_loc, target)
         rsp.fileio.ensure_dir(newdir)
         filename = os.path.join(newdir, '%s.inp' % target)
