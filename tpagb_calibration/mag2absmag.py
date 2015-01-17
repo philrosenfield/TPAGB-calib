@@ -24,11 +24,11 @@ for i in range(len(gal_table)):
                                     gal_table[i]['opt_phot']))
     mag1 = hdu['MAG1_ACS']
     mag2 = hdu['MAG2_ACS']
-    Mag1 = rsp.astronomy_utils.mag2Mag(mag1, filt1, 'acs-wfc',
+    Mag1 = rsp.astronomy_utils.mag2Mag(mag1, filt1, photsys,
                                        target=gal_table[i]['target'].upper(),
                                        filter1=filt1, filter2=filt2)
 
-    Mag2 = rsp.astronomy_utils.mag2Mag(mag2, filt2, 'acs-wfc',
+    Mag2 = rsp.astronomy_utils.mag2Mag(mag2, filt2, photsys,
                                        target=gal_table[i]['target'],
                                        filter1=filt1, filter2=filt2)
     header = '# mag_{0} mag_{1} Mag_{0} Mag_{1} \n'.format(filt1, filt2)
