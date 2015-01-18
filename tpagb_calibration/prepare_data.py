@@ -135,7 +135,10 @@ def main(argv):
         target_row = angst_data.__getattribute__(inps.target.upper())
         inps.trgb = target_row['%s,%s' % (inps.filter1, inps.filter2)]['mTRGB']
         if inps.photsys is None:
-            inps.photsys = angst_data.get_item(inps.target.upper(), 'camera')
+            inps.photsys = angst_data.get_item(inps.target.upper(), 'camera').lower()
+            if inps.photsys == 'acs':
+                inps.photsys = 'acs_wfc'
+            
     except AttributeError:
         print('{} not found in angst tables, using M=-4 to find mTRGB'.format(inps.target.upper()))
         inps.trgb = rsp.astronomy_utils.Mag2mag(-4., inps.filter2, inps.photsys,
