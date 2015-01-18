@@ -195,7 +195,7 @@ def main(argv):
     gal_inp = rsp.fileio.InputParameters(default_dict=gal_inp)
     gal_inp.write_params(inps.galaxy_input,
                          rsp.trilegal.utils.galaxy_input_fmt())
-    inp_obj.write_params(filename.replace('.inp', 'prepped.inp'))
+    inps.write_params(filename.replace('.inp', 'prepped.inp'))
     return inps
 
 if __name__ == "__main__":
