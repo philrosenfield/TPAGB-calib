@@ -104,7 +104,7 @@ def main(argv):
         # find matchphot, fake, sfh_file, col_min, col_max, mag_faint, mag_bright
         # write to file
         target = os.path.split(args.name)[1]
-        newdir = os.path.join(tpagb_path, target)
+        newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
         gal_file = os.path.join(tpagb_path, 'SNAP/tables/paperII_varsfh_table.dat')
         gal_table = rsp.fileio.readfile(gal_file, string_column=[0,-2,-1], string_length=216)
 
