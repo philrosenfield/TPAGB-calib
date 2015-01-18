@@ -93,8 +93,10 @@ def main(argv):
 
         try:
             pars['hmc_file'] = rsp.fileio.get_files(args.name, '*zc')[0]
+            pars['file_origin'] = 'match-hmc'
         except:
-            pass
+            pars['hmc_file'] = pars['sfh_file']
+            pars['file_origin'] = 'match-grid'
 
         matchpar, = rsp.fileio.get_files(args.name, '*param')
         # assuming mag is mag2 (i.e, I)
