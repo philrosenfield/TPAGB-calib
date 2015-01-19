@@ -29,23 +29,23 @@ else:
 angst_data = rsp.angst_tables.angst_data
 
 
-
 def load_sim_masses(target):
     '''
     adapted from thesis spaz.
-    
+
     the simulation should have more than 2.5 times the number of stars in
     the CMD as are in the data. Set here are object_mass that should give
     at least that number of stars based on the best fit sfh.
     '''
-    if target in ['ngc3741', 'eso540-030', 'ugc-5139', 'ugc-4305-1', 'kkh37',
-                  'ugc-4305-2', 'ngc404', 'ngc2976-deep', 'ngc4163', 'ddo78',
-                  'ngc2403-deep']:
-        mass = 5e+08 
+    if target in ['ngc3741', 'eso540-030', 'ugc-4305-1', 'kkh37', 'ugc-4305-2',
+                  'ngc404', 'ngc2976-deep', 'ngc4163', 'ddo78', 'ngc2403-deep']:
+        mass = 5e+08
     elif target in ['ddo82', 'ic2574-sgs']:
         mass = 2.5e+09
+    elif target in ['ugc-5139']:
+        mass = 1.0e+09
     else:
-        mass = 1e+08
+        mass = 1.0e+08
 
     return mass
 
@@ -110,7 +110,7 @@ def prepare_from_directory(args, search_str, inp_extra):
     matchpar, = rsp.fileio.get_files(args.name,
                                      search_str.format('param'))
     # assuming mag is mag2 (i.e, I)
-    pars['mag_bright'], pars['mag_faint'] = \
+    _, pars['mag_limit_val'] = \
         np.array(open(matchpar).readlines()[5].split()[:-1], dtype=float)
 
     # get col_min, col_max from saved table (COULD BE AN ARG=filename LATER)
