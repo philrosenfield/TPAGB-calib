@@ -81,7 +81,7 @@ def main(argv):
                         help='debugging mode')
 
     parser.add_argument('-f', '--filter', type=str, default=None
-                        help='V filter (if more than one in directory')
+                        help='V filter (if more than one in directory)'
 
     parser.add_argument('name', type=str,
                         help='partial input file or if using -d, directory name')
