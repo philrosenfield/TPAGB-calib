@@ -172,9 +172,8 @@ class VarySFHs(StarFormationHistories):
             self.run(do_norm=do_norm, dry_run=dry_run, do_norm_kw=do_norm_kw)
             out_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
             out_obj.add_params(self.__dict__)
-            out_obj.write_params(self.input_file.replace('.inp', 'ran.inp'))
+            out_obj.write_params(self.input_file.replace('.vsfhinp', 'ran.inp'))
             return
-        self.nsfhs = 8
         # check for clusters.
         try:
             clients = parallel.Client()
@@ -184,7 +183,8 @@ class VarySFHs(StarFormationHistories):
             time.sleep(start)
 
         # make a new "input file" for use in plotting or as a log
-        outfile = os.path.join(self.outfile_loc, os.path.split(self.input_file)[1])
+        outfile = os.path.join(self.outfile_loc,
+                               os.path.split(self.input_file)[1])
         outparam = rsp.fileio.replace_ext(outfile, '_inp_%003i.dat')
         out_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
         out_obj.add_params(self.__dict__)
