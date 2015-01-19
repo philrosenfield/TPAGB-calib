@@ -10,11 +10,14 @@ Write optical LF
 write ratio table
 """
 from __future__ import print_function
+
+import argparse
+import difflib
+import os
+import sys
+
 import ResolvedStellarPops as rsp
 import numpy as np
-import sys
-import os
-import argparse
 
 from ResolvedStellarPops.tpagb_path_config import tpagb_path
 
@@ -87,6 +90,7 @@ def main(argv):
         pdb.set_trace()
 
     if args.directory:
+        assert os.path.isdir(args.directory), 'Must supply valid directory name'
         pars = {'matchphot': rsp.fileio.get_files(args.name, '*match')[0],
                 'fake_file': rsp.fileio.get_files(args.name, '*fake')[0],
                 'sfh_file': rsp.fileio.get_files(args.name, '*sfh')[0]}
@@ -106,6 +110,7 @@ def main(argv):
         # find matchphot, fake, sfh_file, col_min, col_max, mag_faint, mag_bright
         # write to file
         target = os.path.split(args.name)[1]
+        difflib.get_close_matches(target, angst_data.targets)[0]
         newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
         gal_file = os.path.join(tpagb_path, 'SNAP/tables/paperII_varsfh_table.dat')
         gal_table = rsp.fileio.readfile(gal_file, string_column=[0,-2,-1], string_length=216)
