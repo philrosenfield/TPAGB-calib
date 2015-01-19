@@ -15,7 +15,8 @@ from ..plotting.plotting import model_cmd_withasts
 __all__ = ['VarySFHs', 'run_once']
 
 def initialize_inputs():
-    return {'cmd_input_file': 'cmd_input_parsecCAF09_V1.2S_M36_S12D2.dat',
+    return {'ast_corr': True,
+            'cmd_input_file': 'cmd_input_parsecCAF09_V1.2S_M36_S12D2.dat',
             'extra_str': '',
             'file_origin': None,
             'filter1': None,
