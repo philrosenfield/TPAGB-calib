@@ -80,7 +80,7 @@ def main(argv):
     parser.add_argument('-v', '--pdb', action='store_true',
                         help='debugging mode')
 
-    parser.add_argument('-f', '--filter', type=str, default=None
+    parser.add_argument('-f', '--filter', type=str, default=None,
                         help='V filter (if more than one in directory)'
 
     parser.add_argument('name', type=str,
