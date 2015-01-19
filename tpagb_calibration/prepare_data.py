@@ -198,6 +198,7 @@ def prepare_galaxy_inputfile(inps):
          'binary_frac': inps.binary_frac or 0.,
          'object_cutoffmass': inps.object_cutoffmass or 0.8}
 
+    # filter1 and 2 are used in a different way here!
     gal_inp['filter1'] = inps.filter2
     gal_inp = rsp.trilegal.utils.galaxy_input_dict(**gal_inp)
 
@@ -205,7 +206,7 @@ def prepare_galaxy_inputfile(inps):
     gal_inp.write_params(inps.galaxy_input,
                          rsp.trilegal.utils.galaxy_input_fmt())
     # filter1 and 2 are used in a different way here!
-    del gal_inp['filter1']
+    gal_inp['filter1'] = inps.filter1
     return gal_inp
 
 def prepare_outfiles(inps, inp_extra):
