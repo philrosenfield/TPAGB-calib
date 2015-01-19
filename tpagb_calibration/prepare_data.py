@@ -208,7 +208,7 @@ def prepare_galaxy_inputfile(inps):
     del gal_inp['filter1']
     return gal_inp
 
-def prepare_outfiles(inps):
+def prepare_outfiles(inps, inp_extra):
     """
     set up default output file syntax
     """
@@ -283,7 +283,7 @@ def main(argv):
     inps = rsp.fileio.InputParameters(default_dict=possible_inputs())
     inps.add_params(rsp.fileio.load_input(partial_inpfile))
 
-    inps = prepare_outfiles(inps)
+    inps = prepare_outfiles(inps, inp_extra)
 
     # varysfh input file name
     outfile = partial_inpfile.replace('.inp', '.vsfhinp')
