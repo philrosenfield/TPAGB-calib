@@ -205,7 +205,9 @@ def prepare_galaxy_inputfile(inps):
     gal_inp = rsp.fileio.InputParameters(default_dict=gal_inp)
     gal_inp.write_params(inps.galaxy_input,
                          rsp.trilegal.utils.galaxy_input_fmt())
+
     # filter1 and 2 are used in a different way here!
+    import pdb; pdb.set_trace()
     gal_inp['filter1'] = inps.filter1
     return gal_inp
 
