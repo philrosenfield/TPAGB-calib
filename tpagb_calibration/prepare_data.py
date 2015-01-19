@@ -105,7 +105,7 @@ def main(argv):
         matchpar, = rsp.fileio.get_files(args.name, '*param')
         # assuming mag is mag2 (i.e, I)
         pars['mag_bright'], pars['mag_faint'] = \
-            map(float, open(matchpar).readlines()[5].split()[:-1])
+            np.array(open(matchpar).readlines()[5].split()[:-1], dtype=float)
 
         # find matchphot, fake, sfh_file, col_min, col_max, mag_faint,
         # mag_bright write to file
@@ -113,14 +113,13 @@ def main(argv):
         newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
         gal_file = os.path.join(tpagb_path,
                                 'SNAP/tables/paperII_varsfh_table.dat')
-        gal_table = rsp.fileio.readfile(gal_file, string_column=[0,-2,-1],
+        gal_table = rsp.fileio.readfile(gal_file, string_column=[0, -2, -1],
                                         string_length=216)
         target = difflib.get_close_matches(target, gal_table['target'])[0]
         print('using target: {}'.format(target))
-    
-        pars.update({'outfile_loc': newdir,
-                     'col_min': gal_table[np.where(gal_table['target']==target)],
-                     'col_max': gal_table[np.where(gal_table['target']==target)]})
+        row = gal_table[np.where(gal_table['target']==target)]
+        pars.update({'outfile_loc': newdir, 'col_min': row['colmin'],
+                     'col_max': row['colmax']})
         rsp.fileio.ensure_dir(newdir)
         filename = os.path.join(newdir, '%s.inp' % target)
         inp = rsp.fileio.InputParameters()
