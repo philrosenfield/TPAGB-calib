@@ -201,12 +201,12 @@ def prepare_galaxy_inputfile(inps):
     # filter1 is used here to find the mag depth for trilegal input.
     # It doesn't get returned so it shouldn't mess shit up.
     gal_dict['filter1'] = inps.filter2
-    gal_dict = rsp.trilegal.utils.galaxy_input_dict(**gal_dict)
+    trigal_dict = rsp.trilegal.utils.galaxy_input_dict(**gal_dict)
 
-    gal_inp = rsp.fileio.InputParameters(default_dict=gal_dict)
+    gal_inp = rsp.fileio.InputParameters(default_dict=trigal_dict)
     gal_inp.write_params(inps.galaxy_input,
                          rsp.trilegal.utils.galaxy_input_fmt())
-
+    del gal_dict['filter1']
     return gal_dict
 
 def prepare_outfiles(inps, inp_extra):
