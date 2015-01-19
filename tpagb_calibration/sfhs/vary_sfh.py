@@ -6,6 +6,7 @@ import os
 from IPython import parallel
 import time
 #from ..analysis import stats
+
 from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 import ResolvedStellarPops as rsp
 from star_formation_histories import StarFormationHistories
@@ -14,7 +15,7 @@ from ..plotting.plotting import model_cmd_withasts
 __all__ = ['VarySFHs', 'run_once']
 
 def initialize_inputs():
-    return {'cmd_input_file': None,
+    return {'cmd_input_file': 'cmd_input_parsecCAF09_V1.2S_M36_S12D2.dat',
             'extra_str': '',
             'file_origin': None,
             'filter1': None,
