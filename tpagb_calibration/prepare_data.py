@@ -80,6 +80,9 @@ def main(argv):
     parser.add_argument('-v', '--pdb', action='store_true',
                         help='debugging mode')
 
+    parser.add_argument('-f', '--filter', type=str, default=None
+                        help='V filter (if more than one in directory')
+
     parser.add_argument('name', type=str,
                         help='partial input file or if using -d, directory name')
 
@@ -89,20 +92,26 @@ def main(argv):
         import pdb
         pdb.set_trace()
 
+    if args.f is not None:
+        fsearch = '*{}'.format(args.f)
+    else:
+        fsearch = ''
+
+    search_str = fsearch + '*{}'
     if args.directory:
         assert os.path.isdir(args.name), 'Must supply valid directory name'
-        pars = {'matchphot': rsp.fileio.get_files(args.name, '*match')[0],
-                'fake_file': rsp.fileio.get_files(args.name, '*fake')[0],
-                'sfh_file': rsp.fileio.get_files(args.name, '*sfh')[0]}
+        pars = {'matchphot': rsp.fileio.get_files(args.name, search_str.format('match'))[0],
+                'fake_file': rsp.fileio.get_files(args.name, search_str.format('fake'))[0],
+                'sfh_file': rsp.fileio.get_files(args.name, search_str.format('sfh'))[0]}
 
         try:
-            pars['hmc_file'] = rsp.fileio.get_files(args.name, '*zc')[0]
+            pars['hmc_file'] = rsp.fileio.get_files(args.name, search_str.format('zc'))[0]
             pars['file_origin'] = 'match-hmc'
         except:
             pars['hmc_file'] = pars['sfh_file']
             pars['file_origin'] = 'match-grid'
 
-        matchpar, = rsp.fileio.get_files(args.name, '*param')
+        matchpar, = rsp.fileio.get_files(args.name, search_str.format('param'))
         # assuming mag is mag2 (i.e, I)
         pars['mag_bright'], pars['mag_faint'] = \
             np.array(open(matchpar).readlines()[5].split()[:-1], dtype=float)
