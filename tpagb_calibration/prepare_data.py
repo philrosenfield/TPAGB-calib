@@ -90,7 +90,7 @@ def main(argv):
         pdb.set_trace()
 
     if args.directory:
-        assert os.path.isdir(args.directory), 'Must supply valid directory name'
+        assert os.path.isdir(args.name), 'Must supply valid directory name'
         pars = {'matchphot': rsp.fileio.get_files(args.name, '*match')[0],
                 'fake_file': rsp.fileio.get_files(args.name, '*fake')[0],
                 'sfh_file': rsp.fileio.get_files(args.name, '*sfh')[0]}
