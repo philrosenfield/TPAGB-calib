@@ -181,7 +181,7 @@ def prepare_galaxy_inputfile(inps):
     """
     # If match was run with setz, this is the logz dispersion.
     # Only useful for clusters, also it is not saved in the match output files
-    # only set in the match parameter file.
+    # Only set in the match parameter file.
     inps.match_zdisp = 0.00
     rsp.match.utils.process_match_sfh(inps.sfh_file,
                                       outfile=inps.object_sfr_file,
@@ -199,14 +199,14 @@ def prepare_galaxy_inputfile(inps):
          'object_cutoffmass': inps.object_cutoffmass or 0.8}
 
     # filter1 is used here to find the mag depth for trilegal input.
-    # It doesn't get returned so it shouldn't mess shit up.
     gal_dict['filter1'] = inps.filter2
     trigal_dict = rsp.trilegal.utils.galaxy_input_dict(**gal_dict)
+    del gal_dict['filter1']
 
     gal_inp = rsp.fileio.InputParameters(default_dict=trigal_dict)
     gal_inp.write_params(inps.galaxy_input,
                          rsp.trilegal.utils.galaxy_input_fmt())
-    del gal_dict['filter1']
+    
     return gal_dict
 
 def prepare_outfiles(inps, inp_extra):
