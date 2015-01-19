@@ -102,7 +102,7 @@ def main(argv):
     search_str = fsearch + '*{}'
     if args.directory:
         args.name = os.path.abspath(args.name)
-        print args.name
+        print(args.name)
         assert os.path.isdir(args.name), 'Must supply valid directory name'
         pars = {'matchphot': rsp.fileio.get_files(args.name,
                                                   search_str.format('match'))[0],
