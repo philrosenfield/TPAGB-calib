@@ -32,36 +32,22 @@ angst_data = rsp.angst_tables.angst_data
 
 def load_sim_masses(target):
     '''
-    RIPPED FROM THESIS SPAZ!!
-    I let the code loop overnight and took these masses that were necessary for
-    jan13 tracks to run. Some are a bit higher than necessary, but by no more
-    than a factor of 2.5
+    adapted from thesis spaz.
+    
+    the simulation should have more than 2.5 times the number of stars in
+    the CMD as are in the data. Set here are object_mass that should give
+    at least that number of stars based on the best fit sfh.
     '''
-    mass_dict = {'scl-de1': 1e+08,
-                 'ngc2403-halo-6': 1e+08,
-                 'ngc7793-halo-6': 1e+08,
-                 'ugc-04459': 1e+08,
-                 'ugc-4305-1': 5e+08,
-                 'ugc-4305-2': 5e+08,
-                 'ugc-5139': 1e+08,
-                 'ddo78': 5e+08,
-                 'ddo82': 2.5e+09,
-                 'kdg73': 2e+07,
-                 'kkh37': 1e+08,
-                 'ngc0300-wide1': 1e+08,
-                 'ngc404': 5e+08,
-                 'ngc2403-deep': 1e+08,
-                 'ngc2976-deep': 5e+08,
-                 'ngc3741': 1e+08,
-                 'ngc4163': 5e+08,
-                 'ugc8508': 1e+08,
-                 'ugca292': 2e+07,
-                 'ngc3077-phoenix': 1e+08,
-                 'ic2574-sgs': 2.5e+09,
-                 'hs117': 2e+07,
-                 'ddo71': 1e+08,
-                 'eso540-030': 1e+08}
-    return mass_dict[target]
+    if target in ['ngc3741', 'eso540-030', 'ugc-5139', 'ugc-4305-1', 'kkh37',
+                  'ugc-4305-2', 'ngc404', 'ngc2976-deep', 'ngc4163', 'ddo78',
+                  'ngc2403-deep']:
+        mass = 5e+08 
+    elif target in ['ddo82', 'ic2574-sgs']:
+        mass = 2.5e+09
+    else:
+        mass = 1e+08
+
+    return mass
 
 
 
