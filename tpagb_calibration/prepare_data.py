@@ -29,6 +29,42 @@ else:
 angst_data = rsp.angst_tables.angst_data
 
 
+
+def load_sim_masses(target):
+    '''
+    RIPPED FROM THESIS SPAZ!!
+    I let the code loop overnight and took these masses that were necessary for
+    jan13 tracks to run. Some are a bit higher than necessary, but by no more
+    than a factor of 2.5
+    '''
+    mass_dict = {'scl-de1': 1e+08,
+                 'ngc2403-halo-6': 1e+08,
+                 'ngc7793-halo-6': 1e+08,
+                 'ugc-04459': 1e+08,
+                 'ugc-4305-1': 5e+08,
+                 'ugc-4305-2': 5e+08,
+                 'ugc-5139': 1e+08,
+                 'ddo78': 5e+08,
+                 'ddo82': 2.5e+09,
+                 'kdg73': 2e+07,
+                 'kkh37': 1e+08,
+                 'ngc0300-wide1': 1e+08,
+                 'ngc404': 5e+08,
+                 'ngc2403-deep': 1e+08,
+                 'ngc2976-deep': 5e+08,
+                 'ngc3741': 1e+08,
+                 'ngc4163': 5e+08,
+                 'ugc8508': 1e+08,
+                 'ugca292': 2e+07,
+                 'ngc3077-phoenix': 1e+08,
+                 'ic2574-sgs': 2.5e+09,
+                 'hs117': 2e+07,
+                 'ddo71': 1e+08,
+                 'eso540-030': 1e+08}
+    return mass_dict[target]
+
+
+
 def possible_inputs():
     return {'Av': 0.,
             'binary_frac': 0.35,
@@ -192,7 +228,7 @@ def prepare_galaxy_inputfile(inps):
          'object_av': inps.Av,
          'object_dist': 10 ** (inps.dmod/5. + 1.),
          'photsys': inps.photsys,
-         'object_mass': inps.object_mass or 1e7,
+         'object_mass': inps.object_mass or load_sim_masses(inps.target),
          'object_sfr_file': inps.object_sfr_file,
          'file_imf': inps.file_imf or 'tab_imf/imf_salpeter.dat',
          'binary_frac': inps.binary_frac or 0.,
