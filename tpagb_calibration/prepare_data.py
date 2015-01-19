@@ -200,7 +200,7 @@ def main(argv):
         rsp.fileio.ensure_dir(inps.outfile_loc)
 
     inps.object_sfr_file = os.path.join(inps.outfile_loc,
-                                        '%s.sfr' % inps.target.lower())
+                                        '{0}{1}.trisfr'.format(target, inp_extra))
 
     # If match was run with setz, this is the logz dispersion.
     # Only useful for clusters, also it is not saved in the match output files
@@ -210,7 +210,7 @@ def main(argv):
                                       outfile=inps.object_sfr_file,
                                       zdisp=inps.match_zdisp)
     inps.galaxy_input = os.path.join(inps.outfile_loc,
-                                     '%s.inp' % inps.target.lower())
+                                     '{0}{1}.galinp'.format(target, inp_extra))
 
     gal_inp =\
         {'mag_limit_val': limiting_mag(inps.fake_file, 0.1)[1],
@@ -230,7 +230,7 @@ def main(argv):
     gal_inp = rsp.fileio.InputParameters(default_dict=gal_inp)
     gal_inp.write_params(inps.galaxy_input,
                          rsp.trilegal.utils.galaxy_input_fmt())
-    inps.write_params(filename.replace('.inp', 'prepped.inp'))
+    inps.write_params(filename.replace('.inp', '.vsfhinp'))
     return inps
 
 if __name__ == "__main__":
