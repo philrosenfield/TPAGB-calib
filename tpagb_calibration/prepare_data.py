@@ -93,7 +93,7 @@ def main(argv):
         pdb.set_trace()
 
     if args.filter is not None:
-        fsearch = '*{}'.format(args.filter)
+        fsearch = '*{}'.format(args.filter.lower())
         inp_extra = '_{}'.format(args.filter)
     else:
         fsearch = ''
@@ -102,18 +102,23 @@ def main(argv):
     search_str = fsearch + '*{}'
     if args.directory:
         assert os.path.isdir(args.name), 'Must supply valid directory name'
-        pars = {'matchphot': rsp.fileio.get_files(args.name, search_str.format('match'))[0],
-                'fake_file': rsp.fileio.get_files(args.name, search_str.format('fake'))[0],
-                'sfh_file': rsp.fileio.get_files(args.name, search_str.format('sfh'))[0]}
+        pars = {'matchphot': rsp.fileio.get_files(args.name,
+                                                  search_str.format('match'))[0],
+                'fake_file': rsp.fileio.get_files(args.name,
+                                                  search_str.format('fake'))[0],
+                'sfh_file': rsp.fileio.get_files(args.name,
+                                                 search_str.format('sfh'))[0]}
 
         try:
-            pars['hmc_file'] = rsp.fileio.get_files(args.name, search_str.format('zc'))[0]
+            pars['hmc_file'] = rsp.fileio.get_files(args.name,
+                                                    search_str.format('zc'))[0]
             pars['file_origin'] = 'match-hmc'
         except:
             pars['hmc_file'] = pars['sfh_file']
             pars['file_origin'] = 'match-grid'
 
-        matchpar, = rsp.fileio.get_files(args.name, search_str.format('param'))
+        matchpar, = rsp.fileio.get_files(args.name,
+                                         search_str.format('param'))
         # assuming mag is mag2 (i.e, I)
         pars['mag_bright'], pars['mag_faint'] = \
             np.array(open(matchpar).readlines()[5].split()[:-1], dtype=float)
@@ -138,7 +143,7 @@ def main(argv):
         pars.update({'outfile_loc': newdir, 'col_min': row['colmin'],
                      'col_max': row['colmax']})
         rsp.fileio.ensure_dir(newdir)
-        
+
         filename = os.path.join(newdir, '{0}{1}.inp'.format(target, inp_extra))
         inp = rsp.fileio.InputParameters()
         inp.add_params(pars)
