@@ -26,6 +26,8 @@ if __name__ == '__main__':
 else:
     from .pop_synth.stellar_pops import limiting_mag, rgb_agb_regions
 
+angst_data = rsp.angst_tables.angst_data
+
 
 def possible_inputs():
     return {'Av': 0.,
@@ -56,113 +58,79 @@ def possible_inputs():
             'file_imf': None,
             'object_cutoffmass': None}
 
-
-def main(argv):
+def prepare_from_directory(args, search_str, inp_extra):
     """
-    need matchphot in the format of target filter1 filter2
-    need match sfh file for Av and dmod
-    col_min, col_max, mag_faint, mag_bright
-    fakefile
-    photsys
-    'object_mass': inps.object_mass or 1e7,
-    'object_sfr_file': inps.object_sfr_file,
-    'file_imf': inps.file_imf or 'tab_imf/imf_salpeter.dat',
-    'binary_frac': inps.binary_frac or 0.,
-    'object_cutoffmass': inps.object_cutoffmass or 0.8}
+    Make a partial input file culled from information in several different files
+    inp_extra should be used to specify filter1 if more than one filter is in
+    a directory.
     """
-    angst_data = rsp.angst_tables.angst_data
+    args.name = os.path.abspath(args.name)
+    assert os.path.isdir(args.name), 'Must supply valid directory name'
 
-    parser = argparse.ArgumentParser(description="Create input file for VarySFH")
+    # get matchphot, fake, sfh_file, Hybric MC file
+    pars = {'matchphot': \
+                rsp.fileio.get_files(args.name,
+                                     search_str.format('match'))[0],
+            'fake_file': rsp.fileio.get_files(args.name,
+                                              search_str.format('fake'))[0],
+            'sfh_file': rsp.fileio.get_files(args.name,
+                                             search_str.format('sfh'))[0]}
 
-    parser.add_argument('-d', '--directory', action='store_true',
-                        help='create partial input file from specified directory')
+    try:
+        pars['hmc_file'] = rsp.fileio.get_files(args.name,
+                                                search_str.format('zc'))[0]
+        pars['file_origin'] = 'match-hmc'
+    except:
+        pars['hmc_file'] = pars['sfh_file']
+        pars['file_origin'] = 'match-grid'
 
-    parser.add_argument('-v', '--pdb', action='store_true',
-                        help='debugging mode')
+    # get maglimits from match parameter file
+    matchpar, = rsp.fileio.get_files(args.name,
+                                     search_str.format('param'))
+    # assuming mag is mag2 (i.e, I)
+    pars['mag_bright'], pars['mag_faint'] = \
+        np.array(open(matchpar).readlines()[5].split()[:-1], dtype=float)
 
-    parser.add_argument('-f', '--filter', type=str, default=None,
-                        help='V filter (if more than one in directory)')
+    # get col_min, col_max from saved table (COULD BE AN ARG=filename LATER)
+    gal_file = os.path.join(tpagb_path,
+                            'SNAP/tables/paperII_varsfh_table.dat')
+    gal_table = rsp.fileio.readfile(gal_file, string_column=[0, -2, -1],
+                                    string_length=216)
 
-    parser.add_argument('name', type=str,
-                        help='partial input file or if using -d, directory name')
+    target = os.path.split(args.name)[1]
+    target = difflib.get_close_matches(target, gal_table['target'])[0]
+    print('using target: {}'.format(target))
 
-    args = parser.parse_args(argv)
-
-    if args.pdb:
-        import pdb
-        pdb.set_trace()
-
+    row = gal_table[np.where(gal_table['target']==target)]
     if args.filter is not None:
-        fsearch = '*{}'.format(args.filter)
-        inp_extra = '_{}'.format(args.filter)
-    else:
-        fsearch = ''
-        inp_extra = ''
+        row = row[[i for i, r in enumerate(row)
+                   if args.filter.lower() in r['opt_phot']]]
 
-    search_str = fsearch + '*{}'
-    if args.directory:
-        args.name = os.path.abspath(args.name)
-        print(args.name)
-        assert os.path.isdir(args.name), 'Must supply valid directory name'
-        pars = {'matchphot': rsp.fileio.get_files(args.name,
-                                                  search_str.format('match'))[0],
-                'fake_file': rsp.fileio.get_files(args.name,
-                                                  search_str.format('fake'))[0],
-                'sfh_file': rsp.fileio.get_files(args.name,
-                                                 search_str.format('sfh'))[0]}
+    # write partial varysfh input file
+    newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
+    rsp.fileio.ensure_dir(newdir)
 
-        try:
-            pars['hmc_file'] = rsp.fileio.get_files(args.name,
-                                                    search_str.format('zc'))[0]
-            pars['file_origin'] = 'match-hmc'
-        except:
-            pars['hmc_file'] = pars['sfh_file']
-            pars['file_origin'] = 'match-grid'
+    pars.update({'outfile_loc': newdir, 'col_min': row['colmin'],
+                 'col_max': row['colmax']})
 
-        matchpar, = rsp.fileio.get_files(args.name,
-                                         search_str.format('param'))
-        # assuming mag is mag2 (i.e, I)
-        pars['mag_bright'], pars['mag_faint'] = \
-            np.array(open(matchpar).readlines()[5].split()[:-1], dtype=float)
+    partial_inpfile = os.path.join(newdir, '{0}{1}.inp'.format(target,
+                                                               inp_extra))
+    inp = rsp.fileio.InputParameters()
+    inp.add_params(pars)
+    inp.write_params(partial_inpfile)
+    return partial_inpfile
 
-        # find matchphot, fake, sfh_file, col_min, col_max, mag_faint,
-        # mag_bright write to file
-        target = os.path.split(args.name)[1]
-        newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
-        rsp.fileio.ensure_dir(newdir)
-
-        gal_file = os.path.join(tpagb_path,
-                                'SNAP/tables/paperII_varsfh_table.dat')
-        gal_table = rsp.fileio.readfile(gal_file, string_column=[0, -2, -1],
-                                        string_length=216)
-        target = difflib.get_close_matches(target, gal_table['target'])[0]
-        print('using target: {}'.format(target))
-
-        row = gal_table[np.where(gal_table['target']==target)]
-
-        if args.filter is not None:
-            row = row[[i for i, r in enumerate(row)
-                       if args.filter.lower() in r['opt_phot']]]
-
-        pars.update({'outfile_loc': newdir, 'col_min': row['colmin'],
-                     'col_max': row['colmax']})
-
-        filename = os.path.join(newdir, '{0}{1}.inp'.format(target, inp_extra))
-        inp = rsp.fileio.InputParameters()
-        inp.add_params(pars)
-        inp.write_params(filename)
-    else:
-        filename = args.name
-
-    inps = rsp.fileio.InputParameters(default_dict=possible_inputs())
-    inps.add_params(rsp.fileio.load_input(filename))
-    inps.target, inps.filter1, inps.filter2 = rsp.parse_pipeline(inps.matchphot)
-
+def prepare_for_varysfh(inps, outfile):
+    """
+    Prepare a default varysfh inputfile
+    """
+    # get completeness mags for mag limits
     if inps.offset is None:
         print('finding completeness fraction from fake file')
         inps.comp_mag1, inps.comp_mag2 = limiting_mag(inps.fake_file,
                                                       inps.comp_frac)
 
+    # get Av, dmod, mTRGB, photsys
     msfh = rsp.match.utils.MatchSFH(inps.sfh_file)
     inps.Av = msfh.Av
     inps.dmod = msfh.dmod
@@ -182,6 +150,7 @@ def main(argv):
         inps.trgb = rsp.astronomy_utils.Mag2mag(-4., inps.filter2, inps.photsys,
                                                 dmod=inps.dmod, Av=inps.Av)
 
+    # get observered number of RGB and AGB stars
     mag1, mag2 = np.loadtxt(inps.matchphot, unpack=True)
 
     if inps.mag_faint is None:
@@ -189,6 +158,7 @@ def main(argv):
         inps.offset = 2.
     else:
         inps.offset = inps.trgb - inps.mag_faint
+
     rgbs, agbs = rgb_agb_regions(inps.offset, inps.trgb_exclude, inps.trgb,
                                  mag2, mag_faint=inps.mag_faint,
                                  mag_bright=inps.mag_bright,
@@ -197,14 +167,18 @@ def main(argv):
 
     inps.nrgbs = len(rgbs)
     inps.nagbs = len(agbs)
-    if inps.outfile_loc is None:
-        inps.outfile_loc = os.path.split(inps.matchphot)[0]
-    else:
-        rsp.fileio.ensure_dir(inps.outfile_loc)
 
-    inps.object_sfr_file = os.path.join(inps.outfile_loc,
-                                        '{0}{1}.trisfr'.format(target, inp_extra))
+    # convert match SFH to trilegal AMR
+    gal_inp = prepare_galaxy_inputfile(inps)
 
+    inps.__dict__.update(gal_inp)
+    inps.write_params(outfile)
+
+def prepare_galaxy_inputfile(inps):
+    """
+    Make a galaxy input file for trilegal
+    TODO: Better object_mass selection based on target
+    """
     # If match was run with setz, this is the logz dispersion.
     # Only useful for clusters, also it is not saved in the match output files
     # only set in the match parameter file.
@@ -212,8 +186,6 @@ def main(argv):
     rsp.match.utils.process_match_sfh(inps.sfh_file,
                                       outfile=inps.object_sfr_file,
                                       zdisp=inps.match_zdisp)
-    inps.galaxy_input = os.path.join(inps.outfile_loc,
-                                     '{0}{1}.galinp'.format(target, inp_extra))
 
     gal_inp =\
         {'mag_limit_val': limiting_mag(inps.fake_file, 0.1)[1],
@@ -226,15 +198,98 @@ def main(argv):
          'binary_frac': inps.binary_frac or 0.,
          'object_cutoffmass': inps.object_cutoffmass or 0.8}
 
-    inps.__dict__.update(gal_inp)
     gal_inp['filter1'] = inps.filter2
     gal_inp = rsp.trilegal.utils.galaxy_input_dict(**gal_inp)
 
     gal_inp = rsp.fileio.InputParameters(default_dict=gal_inp)
     gal_inp.write_params(inps.galaxy_input,
                          rsp.trilegal.utils.galaxy_input_fmt())
-    inps.write_params(filename.replace('.inp', '.vsfhinp'))
+    # filter1 and 2 are used in a different way here!
+    del gal_inp['filter1']
+    return gal_inp
+
+def prepare_outfiles(inps):
+    """
+    set up default output file syntax
+    """
+    # where things are going
+    if inps.outfile_loc is None:
+        inps.outfile_loc = os.path.split(inps.matchphot)[0]
+        assert os.path.isdir(inps.outfile_loc), 'bad output directory'
+    else:
+        rsp.fileio.ensure_dir(inps.outfile_loc)
+
+    inps.target, inps.filter1, inps.filter2 = rsp.parse_pipeline(inps.matchphot)
+    # trilegal sfr filename
+    inps.object_sfr_file = os.path.join(inps.outfile_loc,
+                                        '{0}{1}.trisfr'.format(inps.target,
+                                                               inp_extra))
+    # trilegal galaxy input filename
+    inps.galaxy_input = os.path.join(inps.outfile_loc,
+                                     '{0}{1}.galinp'.format(inps.target,
+                                                            inp_extra))
     return inps
+
+def main(argv):
+    """
+    need matchphot in the format of target filter1 filter2
+    need match sfh file for Av and dmod
+    col_min, col_max, mag_faint, mag_bright
+    fakefile
+    photsys
+    'object_mass': inps.object_mass or 1e7,
+    'object_sfr_file': inps.object_sfr_file,
+    'file_imf': inps.file_imf or 'tab_imf/imf_salpeter.dat',
+    'binary_frac': inps.binary_frac or 0.,
+    'object_cutoffmass': inps.object_cutoffmass or 0.8}
+    """
+
+    parser = argparse.ArgumentParser(description="Create input file \
+                                                  for VarySFH")
+
+    parser.add_argument('-d', '--directory', action='store_true',
+                        help='create partial input file from \
+                              specified directory')
+
+    parser.add_argument('-v', '--pdb', action='store_true',
+                        help='debugging mode')
+
+    parser.add_argument('-f', '--filter', type=str, default=None,
+                        help='V filter (if more than one in directory)')
+
+    parser.add_argument('name', type=str,
+                        help='partial input file or if using -d, \
+                             directory name')
+
+    args = parser.parse_args(argv)
+
+    if args.pdb:
+        import pdb
+        pdb.set_trace()
+
+
+    if args.directory:
+        if args.filter is not None:
+            fsearch = '*{}'.format(args.filter)
+            inp_extra = '_{}'.format(args.filter)
+        else:
+            fsearch = ''
+            inp_extra = ''
+        search_str = fsearch + '*{}'
+        partial_inpfile = prepare_from_directory(args, search_str, inp_extra)
+    else:
+        partial_inpfile = args.name
+
+    inps = rsp.fileio.InputParameters(default_dict=possible_inputs())
+    inps.add_params(rsp.fileio.load_input(partial_inpfile))
+
+    inps = prepare_outfiles(inps)
+
+    # varysfh input file name
+    outfile = partial_inpfile.replace('.inp', '.vsfhinp')
+    prepare_for_varysfh(inps, outfile)
+    return inps
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
