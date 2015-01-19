@@ -139,7 +139,7 @@ def main(argv):
                      'col_max': row['colmax']})
         rsp.fileio.ensure_dir(newdir)
         
-        filename = os.path.join(newdir, '{0}{1}.inp' % (target, inp_extra))
+        filename = os.path.join(newdir, '{0}{1}.inp'.format(target, inp_extra))
         inp = rsp.fileio.InputParameters()
         inp.add_params(pars)
         inp.write_params(filename)
