@@ -126,7 +126,13 @@ def main(argv):
                                         string_length=216)
         target = difflib.get_close_matches(target, gal_table['target'])[0]
         print('using target: {}'.format(target))
+        
         row = gal_table[np.where(gal_table['target']==target)]
+
+        if args.filter is not None:
+            row = row[[i for i, r in enumerate(row)
+                       if args.filter in r['opt_phot']]]
+
         pars.update({'outfile_loc': newdir, 'col_min': row['colmin'],
                      'col_max': row['colmax']})
         rsp.fileio.ensure_dir(newdir)
