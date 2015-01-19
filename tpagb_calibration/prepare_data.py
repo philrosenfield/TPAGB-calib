@@ -92,8 +92,8 @@ def main(argv):
         import pdb
         pdb.set_trace()
 
-    if args.f is not None:
-        fsearch = '*{}'.format(args.f)
+    if args.filter is not None:
+        fsearch = '*{}'.format(args.filter)
     else:
         fsearch = ''
 
