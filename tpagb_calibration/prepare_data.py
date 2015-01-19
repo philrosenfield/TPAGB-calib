@@ -93,7 +93,7 @@ def main(argv):
         pdb.set_trace()
 
     if args.filter is not None:
-        fsearch = '*{}'.format(args.filter.lower())
+        fsearch = '*{}'.format(args.filter)
         inp_extra = '_{}'.format(args.filter)
     else:
         fsearch = ''
@@ -138,7 +138,7 @@ def main(argv):
 
         if args.filter is not None:
             row = row[[i for i, r in enumerate(row)
-                       if args.filter in r['opt_phot']]]
+                       if args.filter.lower() in r['opt_phot']]]
 
         pars.update({'outfile_loc': newdir, 'col_min': row['colmin'],
                      'col_max': row['colmax']})
