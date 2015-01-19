@@ -140,17 +140,19 @@ def main(argv):
     msfh = rsp.match.utils.MatchSFH(inps.sfh_file)
     inps.Av = msfh.Av
     inps.dmod = msfh.dmod
+    angst_target = \
+        difflib.get_close_matches(inps.target.upper(),
+                                  angst_data.targets)[0].replace('-', '_')
     try:
-        target_row = angst_data.__getattribute__(inps.target.upper())
+        target_row = angst_data.__getattribute__(angst_target)
         inps.trgb = target_row['%s,%s' % (inps.filter1, inps.filter2)]['mTRGB']
         if inps.photsys is None:
-            inps.photsys = angst_data.get_item(inps.target.upper(),
-                                               'camera').lower()
+            inps.photsys = angst_data.get_item(angst_target, 'camera').lower()
             if inps.photsys == 'acs':
                 inps.photsys = 'acs_wfc'
     except AttributeError:
         print('{} not found in angst tables, \
-              using M=-4 to find mTRGB'.format(inps.target.upper()))
+              using M=-4 to find mTRGB'.format(angst_target))
         inps.trgb = rsp.astronomy_utils.Mag2mag(-4., inps.filter2, inps.photsys,
                                                 dmod=inps.dmod, Av=inps.Av)
 
