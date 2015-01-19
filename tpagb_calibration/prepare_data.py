@@ -107,18 +107,20 @@ def main(argv):
         pars['mag_bright'], pars['mag_faint'] = \
             map(float, open(matchpar).readlines()[5].split()[:-1])
 
-        # find matchphot, fake, sfh_file, col_min, col_max, mag_faint, mag_bright
-        # write to file
+        # find matchphot, fake, sfh_file, col_min, col_max, mag_faint,
+        # mag_bright write to file
         target = os.path.split(args.name)[1]
         newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
-        gal_file = os.path.join(tpagb_path, 'SNAP/tables/paperII_varsfh_table.dat')
-        gal_table = rsp.fileio.readfile(gal_file, string_column=[0,-2,-1], string_length=216)
+        gal_file = os.path.join(tpagb_path,
+                                'SNAP/tables/paperII_varsfh_table.dat')
+        gal_table = rsp.fileio.readfile(gal_file, string_column=[0,-2,-1],
+                                        string_length=216)
         target = difflib.get_close_matches(target, gal_table['target'])[0]
         print('using target: {}'.format(target))
-
+    
         pars.update({'outfile_loc': newdir,
-                     'col_min': gal_table['target' == target]['colmin'],
-                     'col_max': gal_table['target' == target]['colmax']})
+                     'col_min': gal_table[np.where(gal_table['target']==target)],
+                     'col_max': gal_table[np.where(gal_table['target']==target)]})
         rsp.fileio.ensure_dir(newdir)
         filename = os.path.join(newdir, '%s.inp' % target)
         inp = rsp.fileio.InputParameters()
@@ -143,12 +145,13 @@ def main(argv):
         target_row = angst_data.__getattribute__(inps.target.upper())
         inps.trgb = target_row['%s,%s' % (inps.filter1, inps.filter2)]['mTRGB']
         if inps.photsys is None:
-            inps.photsys = angst_data.get_item(inps.target.upper(), 'camera').lower()
+            inps.photsys = angst_data.get_item(inps.target.upper(),
+                                               'camera').lower()
             if inps.photsys == 'acs':
                 inps.photsys = 'acs_wfc'
-            
     except AttributeError:
-        print('{} not found in angst tables, using M=-4 to find mTRGB'.format(inps.target.upper()))
+        print('{} not found in angst tables, \
+              using M=-4 to find mTRGB'.format(inps.target.upper()))
         inps.trgb = rsp.astronomy_utils.Mag2mag(-4., inps.filter2, inps.photsys,
                                                 dmod=inps.dmod, Av=inps.Av)
 
