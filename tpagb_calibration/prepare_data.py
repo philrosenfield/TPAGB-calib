@@ -113,7 +113,7 @@ def main(argv):
         newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
         gal_file = os.path.join(tpagb_path, 'SNAP/tables/paperII_varsfh_table.dat')
         gal_table = rsp.fileio.readfile(gal_file, string_column=[0,-2,-1], string_length=216)
-        target = difflib.get_close_matches(target, gal_table['target')[0]
+        target = difflib.get_close_matches(target, gal_table['target'])[0]
         print('using target: {}'.format(target))
 
         pars.update({'outfile_loc': newdir,
