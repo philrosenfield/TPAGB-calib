@@ -94,8 +94,10 @@ def main(argv):
 
     if args.filter is not None:
         fsearch = '*{}'.format(args.filter)
+        inp_extra = '_{}'.format(args.filter)
     else:
         fsearch = ''
+        inp_extra = ''
 
     search_str = fsearch + '*{}'
     if args.directory:
@@ -126,7 +128,7 @@ def main(argv):
                                         string_length=216)
         target = difflib.get_close_matches(target, gal_table['target'])[0]
         print('using target: {}'.format(target))
-        
+
         row = gal_table[np.where(gal_table['target']==target)]
 
         if args.filter is not None:
@@ -136,7 +138,8 @@ def main(argv):
         pars.update({'outfile_loc': newdir, 'col_min': row['colmin'],
                      'col_max': row['colmax']})
         rsp.fileio.ensure_dir(newdir)
-        filename = os.path.join(newdir, '%s.inp' % target)
+        
+        filename = os.path.join(newdir, '{0}{1}.inp' % (target, inp_extra))
         inp = rsp.fileio.InputParameters()
         inp.add_params(pars)
         inp.write_params(filename)
