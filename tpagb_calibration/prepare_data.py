@@ -110,11 +110,11 @@ def main(argv):
         # find matchphot, fake, sfh_file, col_min, col_max, mag_faint, mag_bright
         # write to file
         target = os.path.split(args.name)[1]
-        target = difflib.get_close_matches(target, angst_data.targets)[0]
-        print('using target: {}'.format(target))
         newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
         gal_file = os.path.join(tpagb_path, 'SNAP/tables/paperII_varsfh_table.dat')
         gal_table = rsp.fileio.readfile(gal_file, string_column=[0,-2,-1], string_length=216)
+        target = difflib.get_close_matches(target, gal_table['target')[0]
+        print('using target: {}'.format(target))
 
         pars.update({'outfile_loc': newdir,
                      'col_min': gal_table['target' == target]['colmin'],
