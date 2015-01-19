@@ -127,6 +127,8 @@ def main(argv):
         # mag_bright write to file
         target = os.path.split(args.name)[1]
         newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
+        rsp.fileio.ensure_dir(newdir)
+
         gal_file = os.path.join(tpagb_path,
                                 'SNAP/tables/paperII_varsfh_table.dat')
         gal_table = rsp.fileio.readfile(gal_file, string_column=[0, -2, -1],
@@ -142,7 +144,6 @@ def main(argv):
 
         pars.update({'outfile_loc': newdir, 'col_min': row['colmin'],
                      'col_max': row['colmax']})
-        rsp.fileio.ensure_dir(newdir)
 
         filename = os.path.join(newdir, '{0}{1}.inp'.format(target, inp_extra))
         inp = rsp.fileio.InputParameters()
