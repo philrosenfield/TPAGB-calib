@@ -1,4 +1,4 @@
-#!/Users/rosenfield/anaconda/bin/python
+#!/usr/bin/python
 import argparse
 import matplotlib.pylab as plt
 import numpy as np
