@@ -31,6 +31,7 @@ def ast_corrections_plot(mag1, mag2, mag1_cor, mag2_cor, ymag='I'):
         ax.arrow(color[i], mag[i], dcol[i], dmag[i], length_includes_head=True,
                  width=1e-4, color='k', alpha=0.3)
 
+
 def load_lf_file(lf_file):
     with open(lf_file, 'r') as lf:
         lines = [l.strip() for l in lf.readlines() if not l.startswith('#')]
@@ -64,6 +65,7 @@ def plot_random_sfhs(vsfh):
     sfh.plot_sfh('sfr', plot_random_arrays_kw={'from_files': True},
                  outfile=outfile)
     return
+
 
 class Plotting(object):
     def __init__(self, input_file=None, kwargs={}):
@@ -217,8 +219,8 @@ def add_narratio_to_plot(ax, ratio_data, nrgb, nagb, mid_txt='RGB'):
     xvals = [xagb_val, xrgb_val, xratio_val]
 
     # simulated nrgb and nagb are the mean values
-    srgb_text = '$\langle N_{\\rm %s}\\rangle =%i$' %  (mid_txt, np.mean(mrgb))
-    sagb_text = '$\langle N_{\\rm TP-AGB}\\rangle=%i$' % np.mean(magb)
+    srgb_text = r'$\langle N_{\\rm %s}\\rangle =%i$' % (mid_txt, np.mean(mrgb))
+    sagb_text = r'$\langle N_{\\rm TP-AGB}\\rangle=%i$' % np.mean(magb)
 
     # one could argue taking the mean isn't the best idea for
     # the ratio errors.
@@ -323,7 +325,7 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     mag_bright = kwargs.get('mag_bright')
     mag_limit_val = kwargs.get('mag_limit_val')
     offset = kwargs.get('offset')
-    
+
     fake_file = kwargs.get('fake_file')
     if ast_corr:
         extra_str += '_ast'
@@ -366,6 +368,8 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
         xmax = ax.get_xlim()[-1]
         if mag_limit_val is not None:
             xmax = mag_limit_val
+        import pdb;
+        pdb.set_trace()
         ax.set_xlim(np.min([np.min(mag2), np.min(mag2s)]), xmax)
 
     if draw_lines:
@@ -382,7 +386,7 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
         ax.fill_betweenx(yarr, trgb - trgb_exclude, trgb + trgb_exclude,
                          color='black', alpha=0.1)
         ax.vlines(trgb, *ax.get_ylim(), color='black', linestyle='--')
-        
+
         ax.vlines(low, *ax.get_ylim(), color='black', linestyle='--')
         #ax.fill_betweenx(yarr, low, mid, color='black', alpha=0.1)
         #if mag_limit_val is not None:
@@ -455,6 +459,7 @@ def model_cmd_withasts(fname=None, sgal=None, filter1=None, filter2=None,
     plt.savefig(os.path.join(sgal.base, sgal.name).replace('.dat', 'cmds.png'))
     plt.close()
     return #axs, sgal
+
 
 class DiagnosticPlots(Plotting):
     def __init__(self, vsfh):
@@ -697,6 +702,7 @@ def trilegal_metals(chi2_location='draft_run', band='opt', dry_run=False,
     for i, target in enumerate(targets):
         print '%.4f %.4f %.4f %s ' % (np.min(zs[i]), np.median(zs[i]),
                                       np.max(zs[i]), target)
+
 
 if __name__ == '__main__':
     pl = Plotting(input_file=sys.argv[1])
