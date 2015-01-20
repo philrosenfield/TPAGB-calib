@@ -1,16 +1,21 @@
+"""
+Run many trilegal simulations and cull scaled LF functions to compare with data
+"""
+import argparse
+import numpy as np
+import os
+import sys
+import time
+
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pylab as plt
-import numpy as np
-import os
-from IPython import parallel
-import time
-#from ..analysis import stats
-
-from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 import ResolvedStellarPops as rsp
-from star_formation_histories import StarFormationHistories
+
+from IPython import parallel
+from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 from ..plotting.plotting import model_cmd_withasts
+from star_formation_histories import StarFormationHistories
 
 __all__ = ['VarySFHs', 'run_once']
 
@@ -25,16 +30,12 @@ def initialize_inputs():
             'bins': None,
             'trgb': None,
             'Mtrgb': None,
-            'nrgb': None,
-            'nsfhs': 1,
             'offset': -2.,
             'outfile_loc': os.getcwd(),
             'photsys': None,
             'sfh_file': None,
             'target': None,
-            'trgb_exclude': .1,
-            'dry_run': False,
-            'debug': False}
+            'trgb_exclude': .1}
 
 class VarySFHs(StarFormationHistories):
     '''
@@ -56,6 +57,7 @@ class VarySFHs(StarFormationHistories):
             indict = dict(initialize_inputs.items() + kwargs.items())
         if inp_obj is not None:
             indict = inp_obj.__dict__
+        
         if inp_obj.nsfhs > 1:
             StarFormationHistories.__init__(self, inp_obj.hmc_file,
                                             inp_obj.file_origin)
@@ -65,9 +67,6 @@ class VarySFHs(StarFormationHistories):
         cmd_input_file = os.path.split(self.cmd_input_file)[1]
         self.agb_mod = \
             cmd_input_file.replace('.dat', '').lower().replace('cmd_input_', '')
-
-        if inp_obj.debug:
-            import pdb; pdb.set_trace()
 
     def prepare_galaxy_input(self, object_mass=None, dry_run=False):
         '''
@@ -475,15 +474,30 @@ def write_results(res_dict, agb_mod, target, outfile_loc, filter2,
         fdict['%s_file' % name] = fname
     return fdict
 
-def main(input_file):
+def main(argv):
+    parser = argparse.ArgumentParser(description="Run trilegal many times by \
+                                     randomly sampling SFH uncertainies")
+
+    parser.add_argument('-d', '--dry_run', action='store_true',
+                        help='do not call trilegal')
+
+    parser.add_argument('-v', '--pdb', action='store_true',
+                        help='debugging mode')
+    
+    parser.add_argument('name', type=str, help='input file')
+
+    args = parser.parse_args(argv)
+
+    if args.pdb:
+        import pdb
+        pdb.set_trace()
+
     inp_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
-    inp_obj.input_file = input_file
-    inp_obj.add_params(rsp.fileio.load_input(inp_obj.input_file))
+    inp_obj.input_file = args.name
+    inp_obj.add_params(rsp.fileio.load_input(inp_obj.input_file), loud=args.pdb)
 
     vsh = VarySFHs(inp_obj=inp_obj)
-    vsh.run_parallel(dry_run=inp_obj.dry_run)
+    vsh.run_parallel(dry_run=args.dry_run)
 
 if __name__ == '__main__':
-    import sys
-    #import pdb; pdb.set_trace()
-    main(sys.argv[1])
+    main(sys.argv[1:])

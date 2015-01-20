@@ -290,7 +290,6 @@ def main(argv):
         import pdb
         pdb.set_trace()
 
-
     if args.directory:
         if args.filter is not None:
             fsearch = '*{}'.format(args.filter)
@@ -304,7 +303,7 @@ def main(argv):
         partial_inpfile = args.name
 
     inps = rsp.fileio.InputParameters(default_dict=possible_inputs())
-    inps.add_params(rsp.fileio.load_input(partial_inpfile))
+    inps.add_params(rsp.fileio.load_input(partial_inpfile), loud=args.pdb)
 
     inps = prepare_outfiles(inps, inp_extra)
 
