@@ -363,7 +363,10 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     if xlim is not None:
         ax.set_xlim(xlim)
     else:
-        ax.set_xlim(np.min([np.min(mag2), np.min(mag2s)]), ax.get_xlim()[-1])
+        xmax = ax.get_xlim()[-1]
+        if mag_limit_val is not None:
+            xmax = mag_limit_val
+        ax.set_xlim(np.min([np.min(mag2), np.min(mag2s)]), xmax)
 
     if draw_lines:
         if mag_bright is not None:
@@ -380,10 +383,11 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
                          color='black', alpha=0.1)
         ax.vlines(trgb, *ax.get_ylim(), color='black', linestyle='--')
         
-        ax.fill_betweenx(yarr, low, mid, color='black', alpha=0.1)
-        if mag_limit_val is not None:
-            ax.fill_betweenx(yarr, mag_limit_val, ax.get_xlim()[-1],
-                             color='black', alpha=0.5)
+        ax.vlines(low, *ax.get_ylim(), color='black', linestyle='--')
+        #ax.fill_betweenx(yarr, low, mid, color='black', alpha=0.1)
+        #if mag_limit_val is not None:
+        #    ax.fill_betweenx(yarr, mag_limit_val, ax.get_xlim()[-1],
+        #                     color='black', alpha=0.5)
 
     loc = 4
     if not narratio:
