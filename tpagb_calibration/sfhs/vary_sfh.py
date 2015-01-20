@@ -495,6 +495,16 @@ def main(argv):
 
     args = parser.parse_args(argv)
 
+    # set up logging
+    handler = logging.FileHandler('{}.log'.format(args.name))
+    if args.pdb:
+        handler.setLevel(logging.DEBUG)
+    else:
+        handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
     inp_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
     inp_obj.input_file = args.name
     inp_obj.add_params(rsp.fileio.load_input(inp_obj.input_file), loud=args.pdb)
