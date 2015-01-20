@@ -368,9 +368,7 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
         xmax = ax.get_xlim()[-1]
         if mag_limit_val is not None:
             xmax = mag_limit_val
-        import pdb;
-        pdb.set_trace()
-        ax.set_xlim(np.min([np.min(mag2), np.min(mag2s)]), xmax)
+        ax.set_xlim(np.min([np.min(mag2), np.min(np.concatenate(mag2s))]), xmax)
 
     if draw_lines:
         if mag_bright is not None:
