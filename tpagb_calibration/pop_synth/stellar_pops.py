@@ -13,7 +13,7 @@ def rgb_agb_regions(offset, trgb_exclude, trgb, mag, col_min=None,
     else:
         assert offset is not None, \
             'rgb_agb_regions: need either offset or mag limits'
-        low = offset
+        low = trgb + offset
         mid = trgb + trgb_exclude
 
     # Recovered stars in simulated RGB region.

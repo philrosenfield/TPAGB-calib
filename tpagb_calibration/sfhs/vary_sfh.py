@@ -172,7 +172,7 @@ class VarySFHs(StarFormationHistories):
             self.run(do_norm=do_norm, dry_run=dry_run, do_norm_kw=do_norm_kw)
             out_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
             out_obj.add_params(self.__dict__)
-            out_obj.write_params(self.input_file.replace('.vsfhinp', 'ran.inp'))
+            out_obj.write_params(self.input_file.replace('.vsfhinp', '.plotinp'))
             return
         # check for clusters.
         try:
@@ -318,7 +318,8 @@ def do_normalization(filter1=None, filter2=None, sgal=None, triout=None,
                                  mag1=sgal.data[filter1])
 
     # normalization
-    norm, inorm, rgb, agb = normalize_simulation(sgal.data[filter2], nrgbs, srgb, sagb)
+    norm, inorm, rgb, agb = normalize_simulation(sgal.data[filter2], nrgbs,
+                                                 srgb, sagb)
     return  sgal, norm, inorm, (srgb, sagb), (rgb, agb)
 
 

@@ -7,13 +7,14 @@ import ResolvedStellarPops as rsp
 import sys
 from ..sfhs import star_formation_histories
 from ..pop_synth import stellar_pops
+
 __all__ = ['Plotting']
 
 
 def ast_corrections_plot(mag1, mag2, mag1_cor, mag2_cor, ymag='I'):
-    fig, ax = plt.subplots(figsize=(8,8))
+    fig, ax = plt.subplots(figsize=(8, 8))
 
-    rec, = np.nonzero((np.abs(mag1_cor) < 30) & (np.abs(mag2_cor)< 30))
+    rec, = np.nonzero((np.abs(mag1_cor) < 30) & (np.abs(mag2_cor) < 30))
     mag = mag1[rec]
     mag_cor = mag1_cor[rec]
     if ymag == 'I':
@@ -28,7 +29,7 @@ def ast_corrections_plot(mag1, mag2, mag1_cor, mag2_cor, ymag='I'):
         if dcol[i] == 0 or dmag[i] == 0:
             continue
         ax.arrow(color[i], mag[i], dcol[i], dmag[i], length_includes_head=True,
-              width=1e-4, color='k', alpha=0.3)
+                 width=1e-4, color='k', alpha=0.3)
 
 def load_lf_file(lf_file):
     with open(lf_file, 'r') as lf:
@@ -57,8 +58,8 @@ def plot_random_sfhs(vsfh):
     hmc_file, = rsp.fileIO.get_files(hmc_file_loc, '%s*mcmc.zc' % vsfh.target)
 
     sfh = star_formation_histories(hmc_file, 'match-hmc',
-                                 sfr_file_loc=sfr_file_loc,
-                                 sfr_file_search_fmt='*sfr')
+                                   sfr_file_loc=sfr_file_loc,
+                                   sfr_file_search_fmt='*sfr')
 
     sfh.plot_sfh('sfr', plot_random_arrays_kw={'from_files': True},
                  outfile=outfile)
@@ -108,7 +109,7 @@ class Plotting(object):
         nstages = len(add_stage_lfs)
         stage_lf_kw = stage_lf_kw or {}
         stage_lf_kw = dict({'linestyle': 'steps', 'lw': 2}.items() +
-                            stage_lf_kw.items())
+                           stage_lf_kw.items())
         if hasattr(stage_lf_kw, 'label'):
             stage_lf_kw['olabel'] = stage_lf_kw['label']
 
@@ -278,7 +279,7 @@ def plot_model(mag2s, bins, norms, inorm=None, ax=None, plt_kw=None, limit=None,
 
 def plot_gal(mag2, bins, ax=None, target=None, dplot_kw={}, fake_file=None):
     if ax is None:
-        fig, ax = plt.subplots(figsize=(6,6))
+        fig, ax = plt.subplots(figsize=(6, 6))
     dplot_kw = dict({'drawstyle': 'steps-mid', 'color': 'darkred', 'lw': 1,
                      'label': '$%s$' % target}.items() + dplot_kw.items())
 
@@ -299,10 +300,9 @@ def plot_gal(mag2, bins, ax=None, target=None, dplot_kw={}, fake_file=None):
 
 
 def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
-                   narratio=True, no_agb=False, xlim=None, ylim=None,
-                   extra_str='', cols=None, stage_lf_kw=None, ax=None,
-                   plt_kw=None, trgb=None, trgb_exclude=None,
-                   filter2=None, narratio_file=None, **kwargs):
+                   narratio=True, xlim=None, ylim=None, extra_str='', ax=None,
+                   plt_kw=None, trgb=None, trgb_exclude=None, filter2=None,
+                   narratio_file=None, **kwargs):
     '''
     Plot the LFs and galaxy LF.
 
@@ -326,7 +326,7 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     if ast_corr:
         extra_str += '_ast'
 
-    norms, mag2s, mag1s, rgbs, agbs, srgbs, sagbs, inorm = load_lf_file(lf_file)
+    norms, mag2s, _, _, _, _, _, inorm = load_lf_file(lf_file)
     mag1, mag2 = np.loadtxt(matchphot, unpack=True)
     bins = np.arange(10, 27, 0.1)
     # plot lfs from simulations (and initialize figure)
@@ -375,14 +375,13 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     if not narratio:
         loc = 0
     ax.legend(loc=loc)
-    ax.set_xlabel('$%s$' % filter2, fontsize=20)
+    ax.set_xlabel('${}$'.format(filter2), fontsize=20)
 
     if narratio:
         # need to load the data nrgb and nagb, calculate the ratio
         # and error.
         mid_txt = kwargs.get('mid_txt', 'RGB')
         ax = add_narratio_to_plot(ax, mean_ratio, nrgb, nagb, mid_txt=mid_txt)
-        pass
 
     plt.tick_params(labelsize=16)
     outfile = '%s%s_lfs.png' % (lf_file.split('_lf')[0], extra_str)
@@ -408,7 +407,8 @@ def model_cmd_withasts(fname=None, sgal=None, filter1=None, filter2=None,
 
     ylim = axs[0].get_ylim()
 
-    axs[1] = sgal.plot_cmd(sgal.ast_color[inorm], sgal.ast_mag2[inorm], ax=axs[1])
+    axs[1] = sgal.plot_cmd(sgal.ast_color[inorm], sgal.ast_mag2[inorm],\
+                           ax=axs[1])
     axs[0].set_xlim(xlim)
     axs[0].set_ylim(ylim)
     [ax.set_xlabel(r'$%s-%s$' % (filter1, filter2), fontsize=20) for ax in axs]
@@ -571,7 +571,7 @@ def tpagb_mass_histograms(chi2_location='draft_run', band='opt', dry_run=True,
 
 
 def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False,
-		 mass=True, old=False):
+                 mass=True, old=False):
     '''
     using the chi2file run trilegal with the best fit sfh and return the
     normalization and tp-agb masses (scaled simulation)
@@ -643,13 +643,13 @@ def tpagb_masses(chi2file, band='opt', model_src='default', dry_run=False,
 
     if mass is True:
         mass = files.sgal.data.get_col('m_ini')
-	ret_val = mass[itpagb]
+        ret_val = mass[itpagb]
     else:
         met = files.sgal.data.get_col('[M/H]')
         if old is True:
-	    olds, = np.nonzero(files.sgal.data.get_col('logAge') > 8.5)
-	    itpagb = list(set(files.sgal.itpagb) & set(cut_inds) & set(olds))
-	ret_val = met[itpagb]
+            olds, = np.nonzero(files.sgal.data.get_col('logAge') > 8.5)
+            itpagb = list(set(files.sgal.itpagb) & set(cut_inds) & set(olds))
+        ret_val = met[itpagb]
     return ret_val, norm
 
 
@@ -665,20 +665,20 @@ def trilegal_metals(chi2_location='draft_run', band='opt', dry_run=False,
     # get the tpagb masses
     (mhs, norm) = zip(*[tpagb_masses(c, band=band, dry_run=dry_run,
                                         model_src=model_src, mass=False,
-					old=old) for c in chi2files])
+                                        old=old) for c in chi2files])
     ts = [os.path.split(c)[1].split('_')[3] for c in chi2files]
     targets = galaxy_tests.ancients()
     tinds = [ts.index(t.lower()) for t in targets]
     targets = np.array(ts)[tinds]
     from ResolvedStellarPops.convertz import convertz
     if feh is True:
-	ind = 4
+        ind = 4
     else:
-	ind = 1
+        ind = 1
     zs = np.array([convertz(mh=i)[ind] for i in mhs])
     for i, target in enumerate(targets):
-	print '%.4f %.4f %.4f %s ' % (np.min(zs[i]), np.median(zs[i]),
-				      np.max(zs[i]), target)
+        print '%.4f %.4f %.4f %s ' % (np.min(zs[i]), np.median(zs[i]),
+                                      np.max(zs[i]), target)
 
 if __name__ == '__main__':
     pl = Plotting(input_file=sys.argv[1])
