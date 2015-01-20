@@ -496,7 +496,7 @@ def main(argv):
     args = parser.parse_args(argv)
 
     # set up logging
-    handler = logging.FileHandler('{}.log'.format(args.name))
+    handler = logging.FileHandler('{}_vary_sfh.log'.format(args.name))
     if args.pdb:
         handler.setLevel(logging.DEBUG)
     else:

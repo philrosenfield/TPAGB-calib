@@ -51,7 +51,6 @@ def load_sim_masses(target):
         mass = 1.0e+09
     else:
         mass = 1.0e+08
-
     return mass
 
 
@@ -126,7 +125,7 @@ def prepare_from_directory(args, search_str, inp_extra):
 
     target = os.path.split(args.name)[1]
     target = difflib.get_close_matches(target, gal_table['target'])[0]
-    print('using target: {}'.format(target))
+    logger.info('using target: {}'.format(target))
 
     row = gal_table[np.where(gal_table['target']==target)]
     if args.filter is not None:
@@ -153,7 +152,7 @@ def prepare_for_varysfh(inps, outfile):
     """
     # get completeness mags for mag limits
     if inps.offset is None:
-        print('finding completeness fraction from fake file')
+        logger.info('finding completeness fraction from fake file')
         inps.comp_mag1, inps.comp_mag2 = limiting_mag(inps.fake_file,
                                                       inps.comp_frac)
 
@@ -172,8 +171,8 @@ def prepare_for_varysfh(inps, outfile):
             if inps.photsys == 'acs':
                 inps.photsys = 'acs_wfc'
     except AttributeError:
-        print('{} not found in angst tables, \
-              using M=-4 to find mTRGB'.format(angst_target))
+        logger.error('{} not found in angst tables, \
+                     using M=-4 to find mTRGB'.format(angst_target))
         inps.trgb = rsp.astronomy_utils.Mag2mag(-4., inps.filter2, inps.photsys,
                                                 dmod=inps.dmod, Av=inps.Av)
 
@@ -181,7 +180,7 @@ def prepare_for_varysfh(inps, outfile):
     mag1, mag2 = np.loadtxt(inps.matchphot, unpack=True)
 
     if inps.mag_faint is None:
-        print('assuming faint mag offset of 2')
+        logger.info('assuming faint mag offset of 2')
         inps.offset = 2.
     else:
         inps.offset = inps.trgb - inps.mag_faint
@@ -291,9 +290,16 @@ def main(argv):
 
     args = parser.parse_args(argv)
 
+    # set up logging
+    handler = logging.FileHandler('{}_prepare_data.log'.format(args.name))
     if args.pdb:
-        import pdb
-        pdb.set_trace()
+        handler.setLevel(logging.DEBUG)
+    else:
+        handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
 
     if args.directory:
         if args.filter is not None:
@@ -314,8 +320,13 @@ def main(argv):
 
     # varysfh input file name
     outfile = partial_inpfile.replace('.inp', '.vsfhinp')
-    prepare_for_varysfh(inps, outfile)
-    return inps
+    
+    if args.pdb:
+        import pdb
+        pdb.run(prepare_for_varysfh(inps, outfile))
+    else:
+        prepare_for_varysfh(inps, outfile)
+    return
 
 
 if __name__ == "__main__":
