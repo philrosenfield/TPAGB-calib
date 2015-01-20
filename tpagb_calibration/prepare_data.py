@@ -13,6 +13,7 @@ from __future__ import print_function
 
 import argparse
 import difflib
+import logging
 import os
 import sys
 
@@ -20,6 +21,10 @@ import ResolvedStellarPops as rsp
 import numpy as np
 
 from ResolvedStellarPops.tpagb_path_config import tpagb_path
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 if __name__ == '__main__':
     from pop_synth.stellar_pops import limiting_mag, rgb_agb_regions

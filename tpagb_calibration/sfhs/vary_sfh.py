@@ -2,6 +2,7 @@
 Run many trilegal simulations and cull scaled LF functions to compare with data
 """
 import argparse
+import logging
 import numpy as np
 import os
 import sys
@@ -16,6 +17,9 @@ from IPython import parallel
 from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 from ..plotting.plotting import model_cmd_withasts
 from star_formation_histories import StarFormationHistories
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 __all__ = ['VarySFHs', 'run_once']
 
@@ -57,7 +61,7 @@ class VarySFHs(StarFormationHistories):
             indict = dict(initialize_inputs.items() + kwargs.items())
         if inp_obj is not None:
             indict = inp_obj.__dict__
-        
+
         if inp_obj.nsfhs > 1:
             StarFormationHistories.__init__(self, inp_obj.hmc_file,
                                             inp_obj.file_origin)
@@ -93,7 +97,7 @@ class VarySFHs(StarFormationHistories):
             if dry_run is False:
                 with open(new_out, 'w') as f:
                     f.write(''.join(lines))
-                print 'wrote %s' % new_out
+                logger.info('wrote {}'.format(new_out))
             self.galaxy_inputs.append(new_out)
 
     def vary_the_SFH(self, random_sfr=True, random_z=False,
@@ -177,8 +181,8 @@ class VarySFHs(StarFormationHistories):
         try:
             clients = parallel.Client()
         except IOError:
-            print('Starting ipcluster... waiting %i s for spin up' % start)
-            os.system('ipcluster start --n=%i &' % max_proc)
+            logger.debug('Starting ipcluster... waiting {} s for spin up'.format(start))
+            os.system('ipcluster start --n={} &',format(max_proc))
             time.sleep(start)
 
         # make a new "input file" for use in plotting or as a log
@@ -210,15 +214,15 @@ class VarySFHs(StarFormationHistories):
             res = [clients[i].apply(self.run, do_norm, dry_run, do_norm_kws[i],)
                    for i in range(len(iset))]
 
-            print 'waiting on set %i of %i' % (j, niters)
+            logger.debug('waiting on set {} of {}'.format(j, niters))
             while False in [r.ready() for r in res]:
                 time.sleep(1)
-            print 'set %i complete' % j
+            logger.debug('set {} complete'.format(j))
             # to eliminate clutter
-            #for i in iset:
-            #    if i != self.nsfhs - 1:
-            #        if os.path.isfile(triout_fmt % i):
-            #            os.remove(triout_fmt % i)
+            for i in iset:
+                if i != self.nsfhs - 1:
+                    if os.path.isfile(triout_fmt % i):
+                        os.remove(triout_fmt % i)
 
             # write the new "input file"
             for i in range(len(res)):
@@ -241,7 +245,7 @@ def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
     indss = [sgal.__getattribute__('i%s' % r.lower()) for r in regions]
     try:
         if np.sum(indss) == 0:
-            print 'no stages in starpop!'
+            logger.warning('no stages in starpop!')
             return 'no stages in starpop!\n'
     except:
         pass
@@ -342,7 +346,7 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
 
     if ast_corr is True and dry_run is False:
         assert fake_file is not None, 'Need fake file for ast corrections'
-        print("adding ast corrections to %s" % triout)
+        logger.info('adding ast corrections to {}'.format(triout))
         sgal = load_trilegal_catalog(triout, filter1, filter2, only_keys=None)
         rsp.ast_correct_starpop(sgal, overwrite=True, outfile=triout,
                                 fake_file=fake_file, diag_plot=False)
@@ -483,21 +487,24 @@ def main(argv):
 
     parser.add_argument('-v', '--pdb', action='store_true',
                         help='debugging mode')
-    
+
+    parser.add_argument('-n', '--nproc', type=int, default=8,
+                        help='number of processors')
+
     parser.add_argument('name', type=str, help='input file')
 
     args = parser.parse_args(argv)
-
-    if args.pdb:
-        import pdb
-        pdb.set_trace()
 
     inp_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
     inp_obj.input_file = args.name
     inp_obj.add_params(rsp.fileio.load_input(inp_obj.input_file), loud=args.pdb)
 
     vsh = VarySFHs(inp_obj=inp_obj)
-    vsh.run_parallel(dry_run=args.dry_run)
+    if args.pdb:
+        import pdb
+        pdb.run(vsh.run_parallel(dry_run=args.dry_run, max_proc=args.nproc))
+    else:
+        vsh.run_parallel(dry_run=args.dry_run, max_proc=args.nproc)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

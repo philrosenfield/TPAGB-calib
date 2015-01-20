@@ -1,7 +1,11 @@
+import logging
 import os
 import numpy as np
 from ResolvedStellarPops.galaxies.starpop import stars_in_region
 from ResolvedStellarPops.galaxies.asts import ASTs
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def rgb_agb_regions(offset, trgb_exclude, trgb, mag, col_min=None,
                     col_max=None, mag1=None, mag_bright=None,
@@ -33,7 +37,7 @@ def rgb_agb_regions(offset, trgb_exclude, trgb, mag, col_min=None,
 def normalize_simulation(mag, nrgb, srgb, sagb):
     norm = nrgb / float(len(srgb))
 
-    print 'Normalization: %f' % norm
+    logger.info('Normalization: %f' % norm)
 
     # random sample the data distribution
     rands = np.random.random(len(mag))
