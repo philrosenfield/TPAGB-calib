@@ -165,7 +165,7 @@ class VarySFHs(StarFormationHistories):
 
         # trilegal output format
         tname = os.path.join(self.outfile_loc,
-                             'output_%s_%s' % (self.target, self.agb_mod))
+                             'output_%s_%s_%s_%s' % (self.target, self.filter1, self.filter2, self.agb_mod))
         triout_fmt = tname + '_%003i.dat'
 
         if self.nsfhs <= 1:
@@ -230,6 +230,7 @@ class VarySFHs(StarFormationHistories):
                 out_obj.write_params(outparam % i)
 
         os.system('ipcluster stop')
+
 
 def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
                             color_cut=None, target='', line=''):
@@ -462,12 +463,12 @@ def write_results(res_dict, agb_mod, target, outfile_loc, filter2,
         file and path to file
         ex: lf_file: <path_to_lf_file>
     '''
-    fmt = '%s_%s_%s_%s%s.dat'
+    fmt = '%s_%s_%s_%s_%s%s.dat'
     narratio_header = '# target nrgb nagb ar_ratio ar_ratio_err \n'
     fdict = {}
     for key, line in res_dict.items():
         name = key.replace('_line', '')
-        fname = (fmt % (agb_mod, target, filter2, name, extra_str)).lower()
+        fname = (fmt % (agb_mod, target, filter1, filter2, name, extra_str)).lower()
         fname = os.path.join(outfile_loc, fname)
         with open(fname, 'a') as fh:
             if 'narratio' in key:
@@ -477,6 +478,7 @@ def write_results(res_dict, agb_mod, target, outfile_loc, filter2,
             [fh.write('%s \n' % l) for l in line]
         fdict['%s_file' % name] = fname
     return fdict
+
 
 def main(argv):
     parser = argparse.ArgumentParser(description="Run trilegal many times by \
