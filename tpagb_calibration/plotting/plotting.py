@@ -363,7 +363,7 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     if xlim is not None:
         ax.set_xlim(xlim)
     else:
-        ax.set_xlim(np.min([np.min(mag2), np.min(mag2s)])),
+        ax.set_xlim(np.min([np.min(mag2), np.min(mag2s)]),
                     np.max([np.max(mag2), np.max(mag2s)]))
 
     if draw_lines:
