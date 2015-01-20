@@ -322,6 +322,8 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     mag_faint = kwargs.get('mag_faint')
     mag_bright = kwargs.get('mag_bright')
     mag_limit_val = kwargs.get('mag_limit_val')
+    offset = kwargs.get('offset')
+    
     fake_file = kwargs.get('fake_file')
     if ast_corr:
         extra_str += '_ast'
@@ -355,21 +357,31 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     ax.set_yscale('log')
     if ylim is not None:
         ax.set_ylim(ylim)
+    else:
+        ax.set_ylim(1, ax.get_ylim()[-1])
+
     if xlim is not None:
         ax.set_xlim(xlim)
 
     if draw_lines:
+        if mag_bright is not None:
+            low = mag_faint
+            mid = mag_bright
+        else:
+            assert offset is not None, \
+                'need either offset or mag limits'
+            low = trgb + offset
+            mid = trgb + trgb_exclude
         yarr = np.linspace(*ax.get_ylim())
         # vertical lines around the trgb exclude region
         ax.fill_betweenx(yarr, trgb - trgb_exclude, trgb + trgb_exclude,
                          color='black', alpha=0.1)
         ax.vlines(trgb, *ax.get_ylim(), color='black', linestyle='--')
-        if not None in [mag_faint, mag_bright]:
-            ax.fill_betweenx(yarr, mag_faint, mag_bright,
-                             color='black', alpha=0.1)
+        
+        ax.fill_betweenx(yarr, low, mid, color='black', alpha=0.1)
         if mag_limit_val is not None:
             ax.fill_betweenx(yarr, mag_limit_val, ax.get_xlim()[-1],
-                             color='black', alpha=0.1)
+                             color='black', alpha=0.5)
 
     loc = 4
     if not narratio:
