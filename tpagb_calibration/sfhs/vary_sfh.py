@@ -18,7 +18,7 @@ from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 from ..plotting.plotting import model_cmd_withasts
 from star_formation_histories import StarFormationHistories
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 __all__ = ['VarySFHs', 'run_once']
@@ -195,7 +195,7 @@ class VarySFHs(StarFormationHistories):
                                os.path.split(self.input_file)[1])
         outparam = rsp.fileio.replace_ext(outfile, '_inp_%003i.dat')
         out_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
-        out_obj.add_params(self.__dict__)
+        out_obj.add_params(self.__dict__, loud=True)
 
         # create the sfr and galaxy input files
         self.vary_the_SFH(random_sfr=True, random_z=False,
@@ -242,7 +242,7 @@ class VarySFHs(StarFormationHistories):
             # write the new "input file"
             for i in range(len(res)):
                 out_obj.add_params(res[i].result)
-                out_obj.write_params(outparam % i)
+                out_obj.write_params(outparam % i, loud=True)
 
         os.system('ipcluster stop')
 
