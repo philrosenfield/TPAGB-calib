@@ -140,7 +140,7 @@ class VarySFHs(StarFormationHistories):
                     filter2 = '%s_cor' % self.filter2
                     filter1 = '%s_cor' % self.filter1
                 fdict = write_results(result[0], self.agb_mod, self.target,
-                                      self.outfile_loc, filter2, filter1
+                                      self.outfile_loc, filter2, filter1,
                                       extra_str=self.extra_str)
                 [self.__setattr__(k, v) for k, v in fdict.items()]
             final_result = self.__dict__
