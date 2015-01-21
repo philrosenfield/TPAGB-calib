@@ -191,7 +191,7 @@ class VarySFHs(StarFormationHistories):
             clients = parallel.Client()
         except IOError:
             logger.debug('Starting ipcluster... waiting {} s for spin up'.format(start))
-            os.system('ipcluster start --n={} &',format(max_proc))
+            os.system('ipcluster start --n={} &'.format(max_proc))
             time.sleep(start)
 
         # make a new "input file" for use in plotting or as a log
