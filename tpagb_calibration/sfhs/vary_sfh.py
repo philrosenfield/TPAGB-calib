@@ -102,10 +102,7 @@ class VarySFHs(StarFormationHistories):
 
     def vary_the_SFH(self, random_sfr=True, random_z=False,
                      zdisp=True, dry_run=False, object_mass=None):
-        '''
-        make the sfhs, make the galaxy inputs, run trilegal. For no trilegal
-        runs, set dry_run True.
-        '''
+        '''make the sfhs, make the galaxy inputs'''
         new_fmt = self.target + '_tri_%003i.sfr'
         outfile_fmt = os.path.join(self.outfile_loc, new_fmt)
         self.sfr_files = self.make_many_trilegal_sfhs(nsfhs=self.nsfhs,
@@ -119,7 +116,7 @@ class VarySFHs(StarFormationHistories):
 
         return
 
-    def run(self, do_norm=True, dry_run=False, do_norm_kw={}):
+    def run(self, do_norm=True, dry_run=False, is_parallel=False, do_norm_kw={}):
         """call run_once and write results if normalization happened"""
         do_norm_kw = dict(self.__dict__.items() + do_norm_kw.items())
         try:
@@ -128,16 +125,24 @@ class VarySFHs(StarFormationHistories):
             pass
         result = run_once(do_norm=do_norm, dry_run=dry_run,
                           do_norm_kw=do_norm_kw)
-        if do_norm:
-            filter2 = self.filter2
-            if self.ast_corr is True or result[1] is True:
-                filter2 = '%s_cor' % self.filter2
-            fdict = write_results(result[0], self.agb_mod, self.target,
-                                  self.outfile_loc, filter2,
-                                  extra_str=self.extra_str)
-            [self.__setattr__(k, v) for k, v in fdict.items()]
-
-        return self.__dict__
+        
+        self.ast_corr = False
+        if result[1] is True:
+            self.ast_corr = True
+        
+        final_result = result[0]
+        
+        if not is_parallel:
+            if do_norm:
+                filter2 = self.filter2
+                if self.ast_corr:
+                    filter2 = '%s_cor' % self.filter2
+                fdict = write_results(result[0], self.agb_mod, self.target,
+                                      self.outfile_loc, filter2,
+                                      extra_str=self.extra_str)
+                [self.__setattr__(k, v) for k, v in fdict.items()]
+            final_result = self.__dict__
+        return final_result
 
     def run_parallel(self, do_norm=True, dry_run=False, max_proc=8, start=30,
                      timeout=45):
@@ -211,13 +216,23 @@ class VarySFHs(StarFormationHistories):
             # parallel call to run
             do_norm_kws = [{'galaxy_input': self.galaxy_inputs[i],
                             'triout': triout_fmt % i} for i in iset]
-            res = [clients[i].apply(self.run, do_norm, dry_run, do_norm_kws[i],)
+            res = [clients[i].apply(self.run, do_norm, dry_run, True, do_norm_kws[i],)
                    for i in range(len(iset))]
 
             logger.debug('waiting on set {} of {}'.format(j, niters))
             while False in [r.ready() for r in res]:
                 time.sleep(1)
             logger.debug('set {} complete'.format(j))
+
+            if do_norm:
+                for r in res:
+                    filter2 = self.filter2
+                    if self.ast_corr:
+                        filter2 = '{}_cor'.format(self.filter2)
+                    write_results(r.result, self.agb_mod, self.target,
+                                  self.outfile_loc, filter2,
+                                  extra_str=self.extra_str)
+
             # to eliminate clutter
             for i in iset:
                 if i != self.nsfhs - 1:
@@ -289,7 +304,7 @@ def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
     line += '# rc contamination: %i \n' % heb_rgb_contam
     line += '# frac of total in rgb region: %.3f \n' % frac_heb_rgb_contam
 
-    print line
+    logger.info(line)
     if diag_plot is True:
         ax.legend(numpoints=1, loc=0)
         ax.set_title(target)
@@ -351,8 +366,6 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
         sgal = load_trilegal_catalog(triout, filter1, filter2, only_keys=None)
         rsp.ast_correct_starpop(sgal, overwrite=True, outfile=triout,
                                 fake_file=fake_file, diag_plot=False)
-        ast_corr = True
-        do_norm_kw['ast_corr'] = ast_corr
         do_norm_kw['sgal'] = sgal
 
     if do_norm:
@@ -362,13 +375,13 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
         if ast_corr:
             filter1 = '%s_cor' % filter1
             filter2 = '%s_cor' % filter2
-        contam_line = contamination_by_phases(sgal, srgb, sagb,
-                                              filter2)
+
         result_dict = gather_results(sgal, norm, target, filter1, filter2,
                                      narratio_dict={'rgb': rgb, 'agb': agb,
                                                     'srgb': srgb, 'sagb': sagb,
                                                     'inorm': inorm})
-        result_dict['contam_line'] = contam_line
+        result_dict['contam_line'] = contamination_by_phases(sgal, srgb, sagb,
+                                                             filter2)
         #if diag_plot:
             #model_cmd_withasts(sgal, rgb=rgb, agb=agb, inorm=inorm,
             #                   **do_norm_kw)

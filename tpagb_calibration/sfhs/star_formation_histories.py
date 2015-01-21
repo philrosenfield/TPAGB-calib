@@ -1,3 +1,4 @@
+from __future__ import print_function
 import logging
 import os
 
@@ -9,6 +10,8 @@ from ResolvedStellarPops.convertz import convertz
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+__all__ = ['StarFormationHistories', 'parse_sfh_data']
 
 def parse_sfh_data(filename, file_origin, frac=0.2):
     '''
