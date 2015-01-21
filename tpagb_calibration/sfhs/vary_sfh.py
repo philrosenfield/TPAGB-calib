@@ -211,6 +211,7 @@ class VarySFHs(StarFormationHistories):
         # in case it takes more than 45 s to spin up clusters, set up as
         # late as possible
         clients = setup_parallel()
+        logger.debug('ready to go!')
         for j, iset in enumerate(sets):
             # don't use not needed procs
             iset = iset[iset < self.nsfhs]
