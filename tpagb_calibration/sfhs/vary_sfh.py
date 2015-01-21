@@ -166,6 +166,7 @@ class VarySFHs(StarFormationHistories):
             clients[:]['gather_results'] = gather_results
             clients[:]['write_results'] = write_results
             clients[:]['model_cmd_withasts'] = model_cmd_withasts
+            clients[:]['logger'] = logger
             return clients
 
         # trilegal output format
