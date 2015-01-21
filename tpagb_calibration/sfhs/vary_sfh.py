@@ -145,7 +145,7 @@ class VarySFHs(StarFormationHistories):
         return final_result
 
     def run_parallel(self, do_norm=True, dry_run=False, max_proc=8, start=30,
-                     timeout=45):
+                     timeout=45, cleanup=False):
         def setup_parallel():
             """
             I would love a better way to do this.
@@ -240,10 +240,11 @@ class VarySFHs(StarFormationHistories):
                                   extra_str=self.extra_str)
 
             # to eliminate clutter
-            for i in iset:
-                if i != self.nsfhs - 1:
-                    if os.path.isfile(triout_fmt % i):
-                        os.remove(triout_fmt % i)
+            if cleanup:
+                for i in iset:
+                    if i != self.nsfhs - 1:
+                        if os.path.isfile(triout_fmt % i):
+                            os.remove(triout_fmt % i)
 
             # write the new "input file"
             for i in range(len(res)):
@@ -512,6 +513,9 @@ def main(argv):
     parser.add_argument('-n', '--nproc', type=int, default=8,
                         help='number of processors')
 
+    parser.add_argument('-c', '--cleanup', action='store_true',
+                        help='remove large files when finished')
+
     parser.add_argument('name', type=str, help='input file')
 
     args = parser.parse_args(argv)
@@ -533,9 +537,11 @@ def main(argv):
     vsh = VarySFHs(inp_obj=inp_obj)
     if args.pdb:
         import pdb
-        pdb.run(vsh.run_parallel(dry_run=args.dry_run, max_proc=args.nproc))
+        pdb.run(vsh.run_parallel(dry_run=args.dry_run, max_proc=args.nproc,
+                                 cleanup=args.cleanup))
     else:
-        vsh.run_parallel(dry_run=args.dry_run, max_proc=args.nproc)
+        vsh.run_parallel(dry_run=args.dry_run, max_proc=args.nproc,
+                         cleanup=args.cleanup)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
