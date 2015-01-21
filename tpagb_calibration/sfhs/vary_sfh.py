@@ -135,10 +135,12 @@ class VarySFHs(StarFormationHistories):
         if not is_parallel:
             if do_norm:
                 filter2 = self.filter2
+                filter1 = self.filter1
                 if self.ast_corr:
                     filter2 = '%s_cor' % self.filter2
+                    filter1 = '%s_cor' % self.filter1
                 fdict = write_results(result[0], self.agb_mod, self.target,
-                                      self.outfile_loc, filter2,
+                                      self.outfile_loc, filter2, filter1
                                       extra_str=self.extra_str)
                 [self.__setattr__(k, v) for k, v in fdict.items()]
             final_result = self.__dict__
