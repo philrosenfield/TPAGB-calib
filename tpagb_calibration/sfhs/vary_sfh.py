@@ -229,6 +229,7 @@ class VarySFHs(StarFormationHistories):
 
             if do_norm:
                 for r in res:
+                    logging.info(r.result)
                     filter2 = self.filter2
                     filter1 = self.filter1
                     if self.ast_corr:
