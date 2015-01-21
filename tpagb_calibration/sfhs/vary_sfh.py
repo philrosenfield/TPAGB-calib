@@ -157,6 +157,7 @@ class VarySFHs(StarFormationHistories):
             clients[:].execute('import numpy as np')
             clients[:].execute('import os')
             clients[:].execute('import matplotlib.pylab as plt')
+            clients[:].execute('import logging')
             clients[:]['do_normalization'] = do_normalization
             clients[:]['load_trilegal_catalog'] = load_trilegal_catalog
             clients[:]['run_once'] = run_once
@@ -228,10 +229,12 @@ class VarySFHs(StarFormationHistories):
             if do_norm:
                 for r in res:
                     filter2 = self.filter2
+                    filter1 = self.filter1
                     if self.ast_corr:
                         filter2 = '{}_cor'.format(self.filter2)
+                        filter1 = '{}_cor'.format(self.filter1)
                     write_results(r.result, self.agb_mod, self.target,
-                                  self.outfile_loc, filter2,
+                                  self.outfile_loc, filter2, filter1,
                                   extra_str=self.extra_str)
 
             # to eliminate clutter
@@ -455,7 +458,7 @@ def gather_results(sgal, norm, target, filter1, filter2,
     return result_dict
 
 
-def write_results(res_dict, agb_mod, target, outfile_loc, filter2,
+def write_results(res_dict, agb_mod, target, outfile_loc, filter2, filter1,
                   extra_str=''):
     '''
     Write results of VSFH output dict to files.
