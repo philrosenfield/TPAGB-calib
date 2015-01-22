@@ -148,6 +148,10 @@ class VarySFHs(StarFormationHistories):
 
     def run_parallel(self, do_norm=True, dry_run=False, max_proc=8, start=30,
                      timeout=45, cleanup=False):
+        """
+        Call self.run in parallel... or if only self.nsfhs == 1, hop out and
+        do not run in parallel.
+        """
         def setup_parallel():
             """
             I would love a better way to do this.
@@ -174,7 +178,8 @@ class VarySFHs(StarFormationHistories):
 
         # trilegal output format
         tname = os.path.join(self.outfile_loc,
-                             'output_%s_%s_%s_%s' % (self.target, self.filter1, self.filter2, self.agb_mod))
+                             'output_%s_%s_%s_%s' % (self.target, self.filter1,
+                                                     self.filter2, self.agb_mod))
         triout_fmt = tname + '_%003i.dat'
 
         if self.nsfhs <= 1:
@@ -237,9 +242,10 @@ class VarySFHs(StarFormationHistories):
                     if self.ast_corr:
                         filter2 = '{}_cor'.format(self.filter2)
                         filter1 = '{}_cor'.format(self.filter1)
-                    write_results(r.result, self.agb_mod, self.target,
-                                  self.outfile_loc, filter2, filter1,
-                                  extra_str=self.extra_str)
+                    fdict = write_results(r.result, self.agb_mod, self.target,
+                                         self.outfile_loc, filter2, filter1,
+                                         extra_str=self.extra_str)
+                    r.result.update(fdict)
 
             # to eliminate clutter
             if cleanup:
@@ -259,9 +265,9 @@ class VarySFHs(StarFormationHistories):
 def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
                             color_cut=None, target='', line=''):
 
-    # contamination of phases in rgb and agb region file
-    # (changing the self.regions will disrupt calculation of
-    # rheb_eagb_contamination -- see contamination_by_phases code)
+    """
+    contamination by other phases than rgb and agb
+    """
     regions = ['MS', 'RGB', 'HEB', 'BHEB', 'RHEB', 'EAGB', 'TPAGB']
     if line == '':
         line += '# %s %s \n' % (' '.join(regions), 'Total')
@@ -270,8 +276,9 @@ def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
     indss = [sgal.__getattribute__('i%s' % r.lower()) for r in regions]
     try:
         if np.sum(indss) == 0:
-            logger.warning('no stages in starpop!')
-            return 'no stages in starpop!\n'
+            msg = 'No stages in StarPop. Run trilegal with -l flag'
+            logger.warning(msg)
+            return '{}\n'.format(msg)
     except:
         pass
     if diag_plot is True:
@@ -318,7 +325,6 @@ def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
         ax.legend(numpoints=1, loc=0)
         ax.set_title(target)
         plt.savefig('contamination_%s.png' % target, dpi=150)
-
     return line
 
 
@@ -503,6 +509,9 @@ def write_results(res_dict, agb_mod, target, outfile_loc, filter2, filter1,
 
 
 def main(argv):
+    """
+    call vsfh.run_parallel with command line options and set up logger.
+    """
     parser = argparse.ArgumentParser(description="Run trilegal many times by \
                                      randomly sampling SFH uncertainies")
 
