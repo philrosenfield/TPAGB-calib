@@ -25,7 +25,7 @@ __all__ = ['VarySFHs', 'run_once']
 
 def initialize_inputs():
     return {'ast_corr': True,
-            'cmd_input_file': 'cmd_input_parsecCAF09_V1.2S_M36_S12D2.dat',
+            'cmd_input_file': 'cmd_input_parsecCAF09_V1.2S_M36_S12D2_MAR13.dat',
             'extra_str': '',
             'file_origin': None,
             'filter1': None,
@@ -103,7 +103,7 @@ class VarySFHs(StarFormationHistories):
     def vary_the_SFH(self, random_sfr=True, random_z=False,
                      zdisp=True, dry_run=False, object_mass=None):
         '''make the sfhs, make the galaxy inputs'''
-        new_fmt = self.target + '_tri_%003i.sfr'
+        new_fmt = '{}{}_tri_%003i.sfr'.format(self.target, self.filter1) 
         outfile_fmt = os.path.join(self.outfile_loc, new_fmt)
         self.sfr_files = self.make_many_trilegal_sfhs(nsfhs=self.nsfhs,
                                                       outfile_fmt=outfile_fmt,

@@ -409,6 +409,7 @@ def compare_to_gal(matchphot=None, lf_file=None, limit=None, draw_lines=True,
     print 'wrote %s' % outfile
     return ax
 
+
 def model_cmd_withasts(fname=None, sgal=None, filter1=None, filter2=None,
                        trgb=None, trgb_exclude=None, mag_faint=None, inorm=None,
                        xlim=(-.5, 5), mag_bright=None, mag_limit_val=None,
