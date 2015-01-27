@@ -92,12 +92,12 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
         run_once(prefs[0], dry_run=dry_run)
         return
 
-    try:
-        clients = parallel.Client()
-    except IOError:
-        logger.debug('Starting ipcluster. Waiting {}s for spin up'.format(start))
-        os.system('ipcluster start --n={} &'.format(nproc))
-        time.sleep(start)
+    #try:
+    #    clients = parallel.Client()
+    #except IOError:
+    #    logger.debug('Starting ipcluster. Waiting {}s for spin up'.format(start))
+    #    os.system('ipcluster start --n={} &'.format(nproc))
+    #    time.sleep(start)
 
     # find looping parameters. How many sets of calls to the max number of
     # processors
@@ -110,7 +110,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
     cmd2 = '{0} {1} -bestonly > {2}'
     # in case it takes more than start sec to spin up clusters, set up as
     # late as possible
-    clients = setup_parallel()
+    #clients = setup_parallel()
 
     for j, iset in enumerate(sets):
         # don't use not needed procs
@@ -118,18 +118,18 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
 
         # parallel call to run
         res = []
+        procs = []
         for i in range(len(iset)):
-            clients[i].block = True
             param, match, fake = existing_files(prefs[i])
             out, scrn, sfh = new_files(prefs[i])
-            clients[i].apply(subprocess.Popen, cmd1.format(calcsfh, param, match, fake, out, scrn), shell=True,)
-            clients[i].apply(subprocess.Popen, cmd2.format(zcombine, out, sfh), shell=True,)
-            logger.info(cmd1)
-            logger.info(cmd2)
-
-        logger.debug('waiting on set {} of {}'.format(j, niters))
-        while False in [r.ready() for r in res]:
-            time.sleep(1)
+            procs.append(subprocess.Popen(cmd1.format(calcsfh, param, match, fake, out, scrn), shell=True))
+        
+        [p.wait() for p in procs]
+        procs = []
+        for i in range(len(iset)):
+            procs.append(subprocess.Popen(cmd2.format(zcombine, out, sfh), shell=True))
+        [p.wait() for p in procs]
+        
         logger.debug('set {} complete'.format(j))
     #os.system('ipcluster stop')
 
