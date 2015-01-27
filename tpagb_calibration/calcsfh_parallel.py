@@ -122,7 +122,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
         while False in [r.ready() for r in res]:
             time.sleep(1)
         logger.debug('set {} complete'.format(j))
-    os.system('ipcluster stop')
+    #os.system('ipcluster stop')
 
 def main(argv):
     parser = argparse.ArgumentParser(description="Run calcsfh in parallel")
