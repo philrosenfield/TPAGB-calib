@@ -30,12 +30,14 @@ def test_files(prefs):
     return
 
 def existing_files(pref):
+    pref = pref.strip()
     param = pref + '.param'
     match = pref + '.match'
     fake = pref + '.matchfake'
     return (param, match, fake)
     
 def new_files(pref):
+    pref = pref.strip()
     out = pref + '.out'
     scrn = pref + '.scrn'
     sfh = pref + '.sfh'
