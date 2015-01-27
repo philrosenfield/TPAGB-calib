@@ -54,8 +54,8 @@ def run_once(pref, dry_run=False):
                                                             match, fake, out,
                                                             scrn)
     cmd2 = '{0} {1} -bestonly > {2}'.format(zcombine, out, sfh)
-    print(cmd1)
-    print(cmd2)
+    logger.info(cmd1)
+    logger.info(cmd2)
 
     if not dry_run:
         rc1 = os.system(cmd1)
