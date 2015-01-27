@@ -61,55 +61,54 @@ def run_once(pref, dry_run=False):
 
 
 def run_parallel(prefs, dry_run=False, nproc=8, start=30, timeout=45):
+    """
+    """
+    retrun_code = test_files(prefs)
+    
+    def setup_parallel():
         """
+        I would love a better way to do this.
         """
-        retrun_code = test_files(prefs)
-        
-        def setup_parallel():
-            """
-            I would love a better way to do this.
-            """
-            clients = parallel.Client()
-            clients.block = False
-            clients[:].use_dill()
-            clients[:].execute('import os')
-            clients[:].execute('import logging')
-            clients[:].execute('import numpy as np')
-            clients[:]['run_once'] = run_once
-            clients[:]['new_files'] = new_files
-            clients[:]['existing_files'] = existing_files
-            clients[:]['logger'] = logger
-            return clients
+        clients = parallel.Client()
+        clients.block = False
+        clients[:].use_dill()
+        clients[:].execute('import os')
+        clients[:].execute('import logging')
+        clients[:].execute('import numpy as np')
+        clients[:]['run_once'] = run_once
+        clients[:]['new_files'] = new_files
+        clients[:]['existing_files'] = existing_files
+        clients[:]['logger'] = logger
+        return clients
 
-        try:
-            clients = parallel.Client()
-        except IOError:
-            logger.debug('Starting ipcluster. Waiting {}s for spin up'.format(start))
-            os.system('ipcluster start --n={} &'.format(nproc))
-            time.sleep(start)
+    try:
+        clients = parallel.Client()
+    except IOError:
+        logger.debug('Starting ipcluster. Waiting {}s for spin up'.format(start))
+        os.system('ipcluster start --n={} &'.format(nproc))
+        time.sleep(start)
 
-        # find looping parameters. How many sets of calls to the max number of
-        # processors
-        niters = np.ceil(len(prefs) / float(nproc))
-        sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
+    # find looping parameters. How many sets of calls to the max number of
+    # processors
+    niters = np.ceil(len(prefs) / float(nproc))
+    sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
 
-        # in case it takes more than 45 s to spin up clusters, set up as
-        # late as possible
-        clients = setup_parallel()
+    # in case it takes more than 45 s to spin up clusters, set up as
+    # late as possible
+    clients = setup_parallel()
 
-        for j, iset in enumerate(sets):
-            # don't use not needed procs
-            iset = iset[iset < len(prefs)]
+    for j, iset in enumerate(sets):
+        # don't use not needed procs
+        iset = iset[iset < len(prefs)]
 
-            # parallel call to run
-            res = [clients[i].apply(run_once, prefs[i], dry_run,)
-                   for i in range(len(iset))]
+        # parallel call to run
+        res = [clients[i].apply(run_once, prefs[i], dry_run,)
+               for i in range(len(iset))]
 
-            logger.debug('waiting on set {} of {}'.format(j, niters))
-            while False in [r.ready() for r in res]:
-                time.sleep(1)
-            logger.debug('set {} complete'.format(j))
-
+        logger.debug('waiting on set {} of {}'.format(j, niters))
+        while False in [r.ready() for r in res]:
+            time.sleep(1)
+        logger.debug('set {} complete'.format(j))
     os.system('ipcluster stop')
 
 def main(argv):
