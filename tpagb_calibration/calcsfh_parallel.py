@@ -104,7 +104,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
 
     niters = np.ceil(len(prefs) / float(nproc))
     sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
-    logging.debug('{} prefs, {} niters, {} sets'.format(len(prefs), niters, sets))
+    logging.debug('{} prefs, {} niters'.format(len(prefs), niters))
     
     # in case it takes more than start sec to spin up clusters, set up as
     # late as possible
@@ -115,7 +115,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
         iset = iset[iset < len(prefs)]
 
         # parallel call to run
-        res = [clients[i].apply(run_once, prefs[i], dry_run=dry_run,)
+        res = [clients[i].apply_async(run_once, prefs[i], dry_run=dry_run,)
                for i in range(len(iset))]
 
         logger.debug('waiting on set {} of {}'.format(j, niters))
