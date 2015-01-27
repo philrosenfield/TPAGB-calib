@@ -106,6 +106,8 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
     sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
     logging.debug('{} prefs, {} niters'.format(len(prefs), niters))
     
+    cmd1 = '{0} {1} {2} {3} {4} -kroupa -zinc > {5}'
+    cmd2 = '{0} {1} -bestonly > {2}'
     # in case it takes more than start sec to spin up clusters, set up as
     # late as possible
     clients = setup_parallel()
@@ -115,8 +117,15 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
         iset = iset[iset < len(prefs)]
 
         # parallel call to run
-        res = [clients[i].map_async(run_once, prefs[i],)
-               for i in range(len(iset))]
+        res = []
+        for i in range(len(iset)):
+            clients[i].block = True
+            param, match, fake = existing_files(prefs[i])
+            out, scrn, sfh = new_files(pref)
+            clients[i].apply(cmd1.format(calcsfh, param, match, fake, out, scrn))
+            clients[i].apply(cmd2.format(zcombine, out, sfh))
+            logger.info(cmd1)
+            logger.info(cmd2)
 
         logger.debug('waiting on set {} of {}'.format(j, niters))
         while False in [r.ready() for r in res]:
