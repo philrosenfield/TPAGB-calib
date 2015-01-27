@@ -4,8 +4,10 @@ import os
 import sys
 import time
 
+from IPython.config import Application
 from IPython import parallel
 import numpy as np
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -52,8 +54,8 @@ def run_once(pref, dry_run=False):
                                                             match, fake, out,
                                                             scrn)
     cmd2 = '{0} {1} -bestonly > {2}'.format(zcombine, out, sfh)
-    logger.debug(cmd1)
-    logger.debug(cmd2)
+    print(cmd1)
+    print(cmd2)
 
     if not dry_run:
         rc1 = os.system(cmd1)
@@ -78,10 +80,11 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
         clients[:].execute('import os')
         clients[:].execute('import logging')
         clients[:].execute('import numpy as np')
+        clients[:].execute('from IPython.config import Application')
         clients[:]['run_once'] = run_once
         clients[:]['new_files'] = new_files
         clients[:]['existing_files'] = existing_files
-        clients[:].execute('logger = logging.getLogger(__name__)')
+        clients[:].execute('logger = Application.instance().log')
         return clients
 
     try:
