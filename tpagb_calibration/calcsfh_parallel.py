@@ -1,7 +1,7 @@
 import argparse
 import logging
 import os
-import shelex
+import shlex
 import subprocess
 import sys
 import time
