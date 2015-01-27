@@ -5,6 +5,7 @@ import sys
 import time
 
 from IPython import parallel
+import numpy as np
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -73,6 +74,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=30, timeout=45):
             clients[:].use_dill()
             clients[:].execute('import os')
             clients[:].execute('import logging')
+            clients[:].execute('import numpy as np')
             clients[:]['run_once'] = run_once
             clients[:]['new_files'] = new_files
             clients[:]['existing_files'] = existing_files
@@ -107,7 +109,8 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=30, timeout=45):
             while False in [r.ready() for r in res]:
                 time.sleep(1)
             logger.debug('set {} complete'.format(j))
-
+        
+    os.system('ipcluster stop')
 
 def main(argv):
     parser = argparse.ArgumentParser(description="Run calcsfh in parallel")
