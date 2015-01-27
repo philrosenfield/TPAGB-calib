@@ -59,9 +59,9 @@ def run_once(pref, dry_run=False):
     logger.info(shlex.split(cmd2))
 
     #if not dry_run:
-    p = subprocess.Popen(cmd1)
+    p = subprocess.Popen(shlex.split(cmd1), shell=True)
     p.wait()
-    q = subprocess.Popen(cmd2)
+    q = subprocess.Popen(shlex.split(cmd2), shell=True)
     q.Popen.wait()
     return
 
