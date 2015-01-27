@@ -60,7 +60,7 @@ def run_once(pref, dry_run=False):
     return
 
 
-def run_parallel(prefs, dry_run=False, nproc=8, start=30, timeout=45):
+def run_parallel(prefs, dry_run=False, nproc=8, start=45):
     """
     """
     retrun_code = test_files(prefs)
@@ -123,11 +123,12 @@ def main(argv):
     parser.add_argument('-n', '--nproc', type=int, default=8,
                         help='number of processors')
 
-    parser.add_argument('prefs', nargs='*', type=str, help='prefixs for param, \
-                        match, fake, etc files')
+    parser.add_argument('pref_list', type=argparse.FileType('r'),
+                        help="list of prefixs, try: ls */*match | sed 's/.match//' > pref_list")
 
     args = parser.parse_args(argv)
-
+    prefs = args.pref_list.readlines()
+    
     handler = logging.FileHandler('calcsfh_parallel.log')
     if args.verbose:
         handler.setLevel(logging.DEBUG)
@@ -137,7 +138,7 @@ def main(argv):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    run_parallel(args.prefs, dry_run=args.dry_run, nproc=args.nproc)
+    run_parallel(prefs, dry_run=args.dry_run, nproc=args.nproc)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
