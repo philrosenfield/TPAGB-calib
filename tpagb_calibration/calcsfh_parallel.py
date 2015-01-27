@@ -55,14 +55,14 @@ def run_once(pref, dry_run=False):
                                                             match, fake, out,
                                                             scrn)
     cmd2 = '{0} {1} -bestonly > {2}'.format(zcombine, out, sfh)
-    logger.info(shlex.split(cmd1))
-    logger.info(shlex.split(cmd2))
+    logger.info(cmd1)
+    logger.info(cmd2)
 
     #if not dry_run:
-    p = subprocess.Popen(shlex.split(cmd1), shell=True)
+    p = subprocess.Popen(cmd1, shell=True)
     p.wait()
-    q = subprocess.Popen(shlex.split(cmd2), shell=True)
-    q.Popen.wait()
+    q = subprocess.Popen(cmd2, shell=True)
+    q.wait()
     return
 
 
@@ -96,6 +96,9 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
 
     # find looping parameters. How many sets of calls to the max number of
     # processors
+    if len(prefs) <= 1:
+        run_once(prefs, dry_run=dry_run)
+        return
     niters = np.ceil(len(prefs) / float(nproc))
     sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
     logging.debug('{} prefs, {} niters, {} sets'.format(len(prefs), niters, sets))
