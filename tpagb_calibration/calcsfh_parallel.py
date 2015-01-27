@@ -81,7 +81,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
         clients[:]['run_once'] = run_once
         clients[:]['new_files'] = new_files
         clients[:]['existing_files'] = existing_files
-        clients[:]['logger'] = logger
+        clients[:].execute('logger = logging.getLogger(__name__)')
         return clients
 
     try:
