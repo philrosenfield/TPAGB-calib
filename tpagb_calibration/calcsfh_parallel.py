@@ -98,8 +98,9 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
     # processors
     niters = np.ceil(len(prefs) / float(nproc))
     sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
-
-    # in case it takes more than 45 s to spin up clusters, set up as
+    logging.debug('{} prefs, {} niters, {} sets'.format(len(prefs), niters, sets))
+    
+    # in case it takes more than start sec to spin up clusters, set up as
     # late as possible
     clients = setup_parallel()
 
