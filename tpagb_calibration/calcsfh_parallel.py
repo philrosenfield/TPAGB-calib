@@ -1,6 +1,8 @@
 import argparse
 import logging
 import os
+import shelex
+import subprocess
 import sys
 import time
 
@@ -47,29 +49,26 @@ def new_files(pref):
 
 
 def run_once(pref, dry_run=False):
-
     param, match, fake = existing_files(pref)
     out, scrn, sfh = new_files(pref)
     cmd1 = '{0} {1} {2} {3} {4} -kroupa -zinc > {5}'.format(calcsfh, param,
                                                             match, fake, out,
                                                             scrn)
     cmd2 = '{0} {1} -bestonly > {2}'.format(zcombine, out, sfh)
-    logger.info(cmd1)
-    logger.info(cmd2)
+    logger.info(shlex.split(cmd1))
+    logger.info(shlex.split(cmd2))
 
     if not dry_run:
-        rc1 = os.system(cmd1)
-        logger.debug('return code calcsfh: {}'.format(rc1))
-        rc2 = os.system(cmd2)
-        logger.debug('return code zcombine: {}'.format(rc2))
+        subprocess.Popen(cmd1)
+        subprocess.Popen.wait()
+        subprocess.Popen(cmd2)
+        subprocess.Popen.wait()
     return
 
 
 def run_parallel(prefs, dry_run=False, nproc=8, start=45):
     """
     """
-    retrun_code = test_files(prefs)
-    
     def setup_parallel():
         """
         I would love a better way to do this.
@@ -87,6 +86,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
         clients[:].execute('logger = Application.instance().log')
         return clients
 
+    test_files(prefs)
     try:
         clients = parallel.Client()
     except IOError:
