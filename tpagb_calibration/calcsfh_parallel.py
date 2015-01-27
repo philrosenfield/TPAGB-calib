@@ -122,8 +122,8 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
             clients[i].block = True
             param, match, fake = existing_files(prefs[i])
             out, scrn, sfh = new_files(prefs[i])
-            clients[i].apply(cmd1.format(calcsfh, param, match, fake, out, scrn))
-            clients[i].apply(cmd2.format(zcombine, out, sfh))
+            clients[i].apply(subprocess.Popen(cmd1.format(calcsfh, param, match, fake, out, scrn), shell=True))
+            clients[i].apply(subprocess.Popen(cmd2.format(zcombine, out, sfh), shell=True))
             logger.info(cmd1)
             logger.info(cmd2)
 
