@@ -115,7 +115,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
         iset = iset[iset < len(prefs)]
 
         # parallel call to run
-        res = [clients[i].map_async(run_once, prefs[i], dry_run=dry_run,)
+        res = [clients[i].apply(run_once, prefs[i], dry_run=dry_run,)
                for i in range(len(iset))]
 
         logger.debug('waiting on set {} of {}'.format(j, niters))
