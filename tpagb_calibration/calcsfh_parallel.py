@@ -109,7 +109,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=30, timeout=45):
             while False in [r.ready() for r in res]:
                 time.sleep(1)
             logger.debug('set {} complete'.format(j))
-        
+
     os.system('ipcluster stop')
 
 def main(argv):
