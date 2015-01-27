@@ -23,6 +23,7 @@ def test_files(prefs):
         test = [os.path.isfile(f) for f in [p, m, f]]
         if False in test:
             logger.error('missing a file in {}'.format(pref))
+            logger.error(p, m, f)
             return_code += 1
     if return_code > 0:
         sys.exit(2)
