@@ -1,15 +1,10 @@
 import argparse
 import logging
 import os
-import shlex
 import subprocess
 import sys
-import time
 
-from IPython.config import Application
-from IPython import parallel
 import numpy as np
-
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -18,9 +13,7 @@ calcsfh = '$HOME/research/match2.5/bin/calcsfh'
 zcombine = '$HOME/research/match2.5/bin/zcombine'
 
 def test_files(prefs):
-    """
-    make sure match input files exist
-    """
+    """make sure match input files exist"""
     return_code = 0
     for pref in prefs:
         p, m, f = existing_files(pref)
@@ -33,14 +26,18 @@ def test_files(prefs):
         sys.exit(2)
     return
 
+
 def existing_files(pref):
+    """file formats for param match and matchfake"""
     pref = pref.strip()
     param = pref + '.param'
     match = pref + '.match'
     fake = pref + '.matchfake'
     return (param, match, fake)
-    
+
+
 def new_files(pref):
+    """file formats for match grid, sdout, and sfh file"""
     pref = pref.strip()
     out = pref + '.out'
     scrn = pref + '.scrn'
@@ -48,90 +45,49 @@ def new_files(pref):
     return (out, scrn, sfh)
 
 
-def run_once(pref, dry_run=False):
-    param, match, fake = existing_files(pref)
-    out, scrn, sfh = new_files(pref)
-    cmd1 = '{0} {1} {2} {3} {4} -kroupa -zinc > {5}'.format(calcsfh, param,
-                                                            match, fake, out,
-                                                            scrn)
-    cmd2 = '{0} {1} -bestonly > {2}'.format(zcombine, out, sfh)
-    logger.info(cmd1)
-    logger.info(cmd2)
-
-    #if not dry_run:
-    p = subprocess.Popen(cmd1, shell=True)
-    p.wait()
-    q = subprocess.Popen(cmd2, shell=True)
-    q.wait()
-    return
-
-
-def run_parallel(prefs, dry_run=False, nproc=8, start=45):
+def run_parallel(prefs, dry_run=False, nproc=8):
     """
+    run calcsfh and zcombine in parallel, flags are currently hardcoded.
     """
-    def setup_parallel():
-        """
-        I would love a better way to do this.
-        """
-        clients = parallel.Client()
-        clients.block = False
-        clients[:].use_dill()
-        clients[:].execute('import os')
-        clients[:].execute('import logging')
-        clients[:].execute('import numpy as np')
-        clients[:].execute('from IPython.config import Application')
-        clients[:]['run_once'] = run_once
-        clients[:]['new_files'] = new_files
-        clients[:]['existing_files'] = existing_files
-        clients[:].execute('logger = Application.instance().log')
-        return clients
-
     test_files(prefs)
-
-    if len(prefs) == 1:
-        run_once(prefs[0], dry_run=dry_run)
-        return
-
-    #try:
-    #    clients = parallel.Client()
-    #except IOError:
-    #    logger.debug('Starting ipcluster. Waiting {}s for spin up'.format(start))
-    #    os.system('ipcluster start --n={} &'.format(nproc))
-    #    time.sleep(start)
-
-    # find looping parameters. How many sets of calls to the max number of
-    # processors
+    
+    # calcsfh
+    cmd1 = '{0} {1} {2} {3} {4} -kroupa -zinc > {5}'
+    # zcombine
+    cmd2 = '{0} {1} -bestonly > {2}'
 
     niters = np.ceil(len(prefs) / float(nproc))
     sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
     logging.debug('{} prefs, {} niters'.format(len(prefs), niters))
-    
-    cmd1 = '{0} {1} {2} {3} {4} -kroupa -zinc > {5}'
-    cmd2 = '{0} {1} -bestonly > {2}'
-    # in case it takes more than start sec to spin up clusters, set up as
-    # late as possible
-    #clients = setup_parallel()
 
     for j, iset in enumerate(sets):
         # don't use not needed procs
         iset = iset[iset < len(prefs)]
 
-        # parallel call to run
-        res = []
+        # run calcsfh
         procs = []
         for i in range(len(iset)):
             param, match, fake = existing_files(prefs[i])
             out, scrn, sfh = new_files(prefs[i])
-            procs.append(subprocess.Popen(cmd1.format(calcsfh, param, match, fake, out, scrn), shell=True))
+            csfh = cmd1.format(calcsfh, param, match, fake, out, scrn)
+            procs.append(subprocess.Popen(csfh, shell=True))
+            logger.debug(csfh)
         
+        # wait for calcsfh
         [p.wait() for p in procs]
+        
+        # run zcombine
         procs = []
         for i in range(len(iset)):
-            procs.append(subprocess.Popen(cmd2.format(zcombine, out, sfh), shell=True))
+            zcom = cmd2.format(zcombine, out, sfh)
+            procs.append(subprocess.Popen(zcom, shell=True))
+            logger.debug(zcom)
+        
+        # wait for zcombine
         [p.wait() for p in procs]
         
         logger.debug('set {} complete'.format(j))
-    #os.system('ipcluster stop')
+
 
 def main(argv):
     parser = argparse.ArgumentParser(description="Run calcsfh in parallel")
@@ -146,7 +102,7 @@ def main(argv):
                         help='number of processors')
 
     parser.add_argument('pref_list', type=argparse.FileType('r'),
-                        help="list of prefixs, try: ls */*match | sed 's/.match//' > pref_list")
+                        help="list of prefixs, to make try: ls */*.match | sed 's/.match//' > pref_list")
 
     args = parser.parse_args(argv)
     prefs = args.pref_list.readlines()
@@ -161,6 +117,7 @@ def main(argv):
     logger.addHandler(handler)
 
     run_parallel(prefs, dry_run=args.dry_run, nproc=args.nproc)
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
