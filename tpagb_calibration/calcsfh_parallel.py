@@ -121,7 +121,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, start=45):
         for i in range(len(iset)):
             clients[i].block = True
             param, match, fake = existing_files(prefs[i])
-            out, scrn, sfh = new_files(pref)
+            out, scrn, sfh = new_files(prefs[i])
             clients[i].apply(cmd1.format(calcsfh, param, match, fake, out, scrn))
             clients[i].apply(cmd2.format(zcombine, out, sfh))
             logger.info(cmd1)
