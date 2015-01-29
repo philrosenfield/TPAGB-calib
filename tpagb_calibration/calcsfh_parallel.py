@@ -63,10 +63,11 @@ def run_parallel(prefs, dry_run=False, nproc=8):
     for j, iset in enumerate(sets):
         # don't use not needed procs
         iset = iset[iset < len(prefs)]
-
+        print j, iset
         # run calcsfh
         procs = []
         for i in range(len(iset)):
+            print prefs[i]
             param, match, fake = existing_files(prefs[i])
             out, scrn, sfh = new_files(prefs[i])
             csfh = cmd1.format(calcsfh, param, match, fake, out, scrn)
@@ -79,6 +80,7 @@ def run_parallel(prefs, dry_run=False, nproc=8):
         # run zcombine
         procs = []
         for i in range(len(iset)):
+            out, scrn, sfh = new_files(prefs[i])
             zcom = cmd2.format(zcombine, out, sfh)
             #procs.append(subprocess.Popen(zcom, shell=True))
             logger.debug(zcom)
