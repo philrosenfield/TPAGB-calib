@@ -70,21 +70,21 @@ def run_parallel(prefs, dry_run=False, nproc=8):
             param, match, fake = existing_files(prefs[i])
             out, scrn, sfh = new_files(prefs[i])
             csfh = cmd1.format(calcsfh, param, match, fake, out, scrn)
-            procs.append(subprocess.Popen(csfh, shell=True))
+            #procs.append(subprocess.Popen(csfh, shell=True))
             logger.debug(csfh)
         
         # wait for calcsfh
-        [p.wait() for p in procs]
+        #[p.wait() for p in procs]
         
         # run zcombine
         procs = []
         for i in range(len(iset)):
             zcom = cmd2.format(zcombine, out, sfh)
-            procs.append(subprocess.Popen(zcom, shell=True))
+            #procs.append(subprocess.Popen(zcom, shell=True))
             logger.debug(zcom)
         
         # wait for zcombine
-        [p.wait() for p in procs]
+        #[p.wait() for p in procs]
         
         logger.debug('set {} complete'.format(j))
 
