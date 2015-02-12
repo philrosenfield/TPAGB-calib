@@ -1,14 +1,16 @@
-#import sfh_tests_multi_proc
-import numpy as np
-import ResolvedStellarPops as rsp
-#import galaxy_tests
-import os
-#import tables
-import matplotlib.pylab as plt
-from TPAGBparams import snap_src
 import logging
+import os
+
+import numpy as np
+import matplotlib.pyplt as plt
+import ResolvedStellarPops as rsp
+
+from TPAGBparams import snap_src
+
 logger = logging.getLogger()
+
 angst_data = rsp.angst_tables.angst_table.AngstTables()
+
 def narratio_table(self):
     narratio_files = rsp.fileIO.get_files(self.outfile_dir, '*narratio*dat')
     stats.narratio_table(narratio_files)
@@ -433,6 +435,7 @@ def narratio_table(narratio_files, table_file='default'):
 
 
 def data_table(targets, table_file='default'):
+    """latex data table """
     # target, av, dist, [opt: frac comp, trgb, nrgb, nagb ratio] [ir: ..]
     if table_file == 'default':
         table_file = snap_src + '/tables/ancients_0.1_0.2_galaxies.dat'
