@@ -25,7 +25,7 @@ __all__ = ['VarySFHs', 'run_once']
 
 def initialize_inputs():
     return {'ast_corr': True,
-            'cmd_input_file': 'cmd_input_parsecCAF09_V1.2S_M36_S12D2_MAR13.dat',
+            'cmd_input_file': 'cmd_input_parsecCAF09_V1.2S_M36_S12D2.dat',
             'extra_str': '',
             'file_origin': None,
             'filter1': None,
@@ -124,9 +124,8 @@ class VarySFHs(StarFormationHistories):
             del do_norm_kw['sgal']
         except:
             pass
-        result = run_once(do_norm=do_norm, dry_run=dry_run,
-                          do_norm_kw=do_norm_kw)
-        
+        run_once(do_norm=do_norm, dry_run=dry_run, do_norm_kw=do_norm_kw)
+        """
         self.ast_corr = False
         if result[1] is True:
             self.ast_corr = True
@@ -145,7 +144,10 @@ class VarySFHs(StarFormationHistories):
                                       extra_str=self.extra_str)
                 [self.__setattr__(k, v) for k, v in fdict.items()]
             final_result = self.__dict__
+        
         return final_result
+        """
+        return
 
     def run_parallel(self, do_norm=True, dry_run=False, max_proc=8, start=30,
                      timeout=45, cleanup=False):
@@ -234,7 +236,7 @@ class VarySFHs(StarFormationHistories):
             while False in [r.ready() for r in res]:
                 time.sleep(1)
             logger.debug('set {} complete'.format(j))
-
+            """
             if do_norm:
                 for r in res:
                     logging.info(r.result)
@@ -254,12 +256,12 @@ class VarySFHs(StarFormationHistories):
                     if i != self.nsfhs - 1:
                         if os.path.isfile(triout_fmt % i):
                             os.remove(triout_fmt % i)
-
+            
             # write the new "input file"
             for i in range(len(res)):
                 out_obj.add_params(res[i].result)
                 out_obj.write_params(outparam % i, loud=True)
-
+            """
         #os.system('ipcluster stop')
 
 
@@ -375,7 +377,8 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
 
     rsp.trilegal.utils.run_trilegal(cmd_input_file, galaxy_input, triout,
                                     rmfiles=rmfiles, dry_run=dry_run)
-
+    rsp.trilegal.utils.trilegal2hdf5(triout)
+    """
     if ast_corr is True and dry_run is False:
         assert fake_file is not None, 'Need fake file for ast corrections'
         logger.info('adding ast corrections to {}'.format(triout))
@@ -403,7 +406,7 @@ def run_once(cmd_input_file=None, galaxy_input=None, triout=None, rmfiles=False,
             #                   **do_norm_kw)
             #import pdb; pdb.set_trace()
         return result_dict, ast_corr
-
+    """
 
 def load_trilegal_catalog(trilegal_output, filter1, filter2,
                           only_keys='default'):

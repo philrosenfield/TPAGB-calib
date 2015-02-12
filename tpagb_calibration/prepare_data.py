@@ -167,9 +167,8 @@ def prepare_for_varysfh(inps, outfile):
         target_row = angst_data.__getattribute__(angst_target)
         inps.trgb = target_row['%s,%s' % (inps.filter1, inps.filter2)]['mTRGB']
         if inps.photsys is None:
-            inps.photsys = angst_data.get_item(angst_target, 'camera').lower()
-            if inps.photsys == 'acs':
-                inps.photsys = 'acs_wfc'
+            inps.photsys = 'wfc3snap'
+            logger.warnging('using default {} as photsys'.format(inps.photsys)
     except AttributeError:
         logger.error('{} not found in angst tables, \
                      using M=-4 to find mTRGB'.format(angst_target))
@@ -220,8 +219,8 @@ def prepare_galaxy_inputfile(inps):
          'photsys': inps.photsys,
          'object_mass': inps.object_mass or load_sim_masses(inps.target),
          'object_sfr_file': inps.object_sfr_file,
-         'file_imf': inps.file_imf or 'tab_imf/imf_salpeter.dat',
-         'binary_frac': inps.binary_frac or 0.,
+         'file_imf': inps.file_imf or 'tab_imf/imf_kroupa_match.dat',
+         'binary_frac': inps.binary_frac or 0.35,
          'object_cutoffmass': inps.object_cutoffmass or 0.8}
 
     # filter1 is used here to find the mag depth for trilegal input.
