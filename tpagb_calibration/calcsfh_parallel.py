@@ -103,7 +103,7 @@ def main(argv):
                         help='number of processors')
 
     parser.add_argument('pref_list', type=argparse.FileType('r'),
-                        help="list of prefixs, to make try: ls */*.match | sed 's/.match//' > pref_list")
+                        help="list of prefixs, to make try: ls */*.match | sed 's/.match//' > pref_list recal that bg cmds, if in use, need to be in the current folder")
 
     args = parser.parse_args(argv)
     prefs = args.pref_list.readlines()
