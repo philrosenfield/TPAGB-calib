@@ -54,7 +54,6 @@ def load_sim_masses(target):
     return mass
 
 
-
 def possible_inputs():
     return {'Av': 0.,
             'binary_frac': 0.35,
@@ -66,7 +65,7 @@ def possible_inputs():
             'Mtrgb': None,
             'nrgbs': None,
             'offset': None,
-            'photsys': None,
+            'photsys': 'wfc3snap',
             'target': None,
             'trgb_exclude': .1,
             'col_max': None,
@@ -82,7 +81,9 @@ def possible_inputs():
             'object_mass': None,
             'outfile_loc': os.getcwd(),
             'file_imf': None,
-            'object_cutoffmass': None}
+            'object_cutoffmass': None,
+            'cmd_input_file': 'cmd_input_parsecCAF09_V1.2S_M36_S12D2.dat',
+            'nsfhs': 1}
 
 def prepare_from_directory(args, search_str, inp_extra):
     """
@@ -166,9 +167,6 @@ def prepare_for_varysfh(inps, outfile):
     try:
         target_row = angst_data.__getattribute__(angst_target)
         inps.trgb = target_row['%s,%s' % (inps.filter1, inps.filter2)]['mTRGB']
-        if inps.photsys is None:
-            inps.photsys = 'wfc3snap'
-            logger.warnging('using default {} as photsys'.format(inps.photsys)
     except AttributeError:
         logger.error('{} not found in angst tables, \
                      using M=-4 to find mTRGB'.format(angst_target))
@@ -200,10 +198,7 @@ def prepare_for_varysfh(inps, outfile):
     inps.write_params(outfile)
 
 def prepare_galaxy_inputfile(inps):
-    """
-    Make a galaxy input file for trilegal
-    TODO: Better object_mass selection based on target
-    """
+    """Make a galaxy input file for trilegal"""
     # If match was run with setz, this is the logz dispersion.
     # Only useful for clusters, also it is not saved in the match output files
     # Only set in the match parameter file.
@@ -283,6 +278,9 @@ def main(argv):
     parser.add_argument('-f', '--filter', type=str, default=None,
                         help='V filter (if more than one in directory)')
 
+    parser.add_argument('-n', '--nsfhs', type=str, default=1,
+                        help='Number of sampled SFHs to run')
+    
     parser.add_argument('name', type=str,
                         help='partial input file or if using -d, \
                              directory name')
@@ -298,7 +296,6 @@ def main(argv):
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
 
     if args.directory:
         if args.filter is not None:
