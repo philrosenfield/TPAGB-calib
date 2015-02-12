@@ -18,6 +18,7 @@ from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 from ..plotting.plotting import model_cmd_withasts
 from star_formation_histories import StarFormationHistories
 
+<<<<<<< HEAD
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,14 @@ def initialize_inputs():
             'sfh_file': None,
             'target': None,
             'trgb_exclude': .1}
+=======
+def load_lf_file(lf_file):
+    with open(lf_file, 'r') as lff:
+        lines = [l.strip() for l in lff.readlines() if not l.startswith('#')]
+    hists = [np.array(l.split(), dtype=float) for l in lines[0::2]]
+    binss = [np.array(l.split(), dtype=float) for l in lines[1::2]]
+    return hists, binss
+>>>>>>> master
 
 class VarySFHs(StarFormationHistories):
     '''
@@ -62,6 +71,7 @@ class VarySFHs(StarFormationHistories):
         if inp_obj is not None:
             indict = inp_obj.__dict__
 
+<<<<<<< HEAD
         if inp_obj.nsfhs > 1:
             StarFormationHistories.__init__(self, inp_obj.hmc_file,
                                             inp_obj.file_origin)
@@ -71,6 +81,77 @@ class VarySFHs(StarFormationHistories):
         cmd_input_file = os.path.split(self.cmd_input_file)[1]
         self.agb_mod = \
             cmd_input_file.replace('.dat', '').lower().replace('cmd_input_', '')
+=======
+        default_kwargs = dict({'agb_mod': None,
+                               'Av': 0.,
+                               'cmd_input_file': None,
+                               'dmod': 0.,
+                               'extra_str': '',
+                               'file_origin': None,
+                               'opt_filter1': None,
+                               'opt_filter2': None,
+                               'ir_filter1': None,
+                               'ir_filter2': None,
+                               'galaxy_input': None,
+                               'ir_bins': None,
+                               'ir_color_min': -99.,
+                               'ir_trgb': None,
+                               'just_once': False,
+                               'Mtrgb': None,
+                               'nir_rgb': None,
+                               'nopt_rgb': None,
+                               'nsfhs': None,
+                               'offsets': [-2., -1.5],
+                               'opt_bins': None,
+                               'opt_color_min': -99.,
+                               'opt_trgb': None,
+                               'outfile_loc': os.getcwd(),
+                               'photsys': None,
+                               'sfh_file': None,
+                               'target': None,
+                               'trgb_excludes': [.1, .2]}.items()
+                               + kwargs.items())
+
+        [self.__setattr__(k, v) for k, v in default_kwargs.items()]
+
+        if not self.just_once:
+            StarFormationHistories.__init__(self, self.sfh_file,
+                                            self.file_origin)
+
+        if self.agb_mod is None:
+            self.agb_mod = \
+                os.path.split(self.cmd_input_file)[1].replace('.dat', '').lower()
+
+        if None in [self.ir_trgb, self.opt_trgb]:
+            if self.Mtrgb is not None:
+                self.ir_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb,
+                                                           self.ir_filter2,
+                                                           self.photsys,
+                                                           dmod=self.dmod,
+                                                           Av=self.Av)
+                self.opt_trgb = rsp.astronomy_utils.Mag2mag(self.Mtrgb,
+                                                            self.opt_filter2,
+                                                            self.photsys,
+                                                            dmod=self.dmod,
+                                                            Av=self.Av)
+
+    def prepare_outfiles(self):
+        # setup the locations all the files to write and read from
+        self.fnames =  setup_files(self.agb_mod, self.target, self.outfile_loc,
+                                   extra_str=self.extra_str)
+
+        # header files are needed in two cases
+        # nagb/nrgb ratio file
+        self.narratio_header = '# target nopt_rgb nopt_agb nir_rgb nir_agb '
+        self.narratio_header += 'opt_ar_ratio ir_ar_ratio opt_ar_ratio_err '
+        self.narratio_header += 'ir_ar_ratio_err \n'
+
+        # contamination of phases in rgb and agb region file
+        # (changing the self.regions will disrupt calculation of
+        # rheb_eagb_contamination -- see contamination_by_phases code)
+        self.regions = ['MS', 'RGB', 'HEB', 'BHEB', 'RHEB', 'EAGB', 'TPAGB']
+        self.contam_header = '# %s %s \n' % (' '.join(self.regions),'Total')
+>>>>>>> master
 
     def prepare_galaxy_input(self, object_mass=None, dry_run=False):
         '''
@@ -234,6 +315,7 @@ class VarySFHs(StarFormationHistories):
                 time.sleep(1)
             logger.debug('set {} complete'.format(j))
 
+<<<<<<< HEAD
             if do_norm:
                 for r in res:
                     logging.info(r.result)
@@ -473,6 +555,31 @@ def write_results(res_dict, agb_mod, target, outfile_loc, filter2, filter1,
                   extra_str=''):
     '''
     Write results of VSFH output dict to files.
+=======
+    def write_truncated_file(self, triout, cols=['F110W', 'F160W']):
+
+        def load_model(fname, cols=['F110W', 'F160W']):
+            # all the columns
+            with open(fname, 'r') as f:
+                col_keys = f.readline().strip().split()
+
+            # the columns I want
+            usecols = [col_keys.index(c) for c in cols]
+            data = np.genfromtxt(fname, usecols=usecols, names=cols)
+            return data
+
+        def write_model(fname, data):
+            header = '# %s \n' % ' '.join(data.dtype.names)
+            with open(fname, 'w') as f:
+                f.write(header)
+                np.savetxt(f, data, fmt='%.4f')
+
+        write_model(triout, load_model(triout, cols=cols))
+
+
+    def write_results(self, res_dict):
+        '''writes out the results to self.fnames (see __init__)'''
+>>>>>>> master
 
     Paramaters
     ----------
@@ -485,6 +592,7 @@ def write_results(res_dict, agb_mod, target, outfile_loc, filter2, filter1,
     outfile_loc : string
         path to write output file
 
+<<<<<<< HEAD
     Returns
     -------
     fdict : dictionary
@@ -556,3 +664,89 @@ def main(argv):
 
 if __name__ == '__main__':
     main(sys.argv[1:])
+=======
+    def load_lf_file(self, lf_file):
+        return load_lf_file(lf_file)
+
+    def contamination_by_phases(self, sopt_rgb, sopt_agb, sir_rgb, sir_agb,
+                                diag_plot=False):
+        self.sgal.all_stages()
+        indss = [self.sgal.__getattribute__('i%s' % r.lower())
+                 for r in self.regions]
+        line = ''
+        contam_line = []
+        if diag_plot is True:
+            fig, (axs) = plt.subplots(ncols=2)
+        for i, (rgb, agb, inds) in enumerate(zip([sopt_rgb, sir_rgb],
+                                                 [sopt_agb, sir_agb],
+                                                 [self.opt_color_cut,
+                                                  self.ir_color_cut])):
+            if i == 1:
+                band = 'ir'
+                mag = self.sgal.data[self.ir_filter2][inds]
+            else:
+                band = 'opt'
+                mag = self.sgal.data[self.opt_filter2][inds]
+
+            ncontam_rgb = [list(set(s) & set(inds) & set(rgb)) for s in indss]
+            ncontam_agb = [list(set(s) & set(inds) & set(agb)) for s in indss]
+
+            rheb_eagb_contam = len(ncontam_rgb[4]) + len(ncontam_rgb[5])
+            frac_rheb_eagb = float(rheb_eagb_contam) / \
+                float(np.sum([len(n) for n in ncontam_rgb]))
+
+            heb_rgb_contam = len(ncontam_rgb[2])
+            frac_heb_rgb_contam = float(heb_rgb_contam) / \
+                float(np.sum([len(n) for n in ncontam_rgb]))
+
+            mags = [mag[n] if len(n) > 0 else np.zeros(10) for n in ncontam_rgb]
+
+            mms = np.concatenate(mags)
+            ms, = np.nonzero(mms > 0)
+            bins = np.linspace(np.min(mms[ms]), np.max(mms[ms]), 10)
+            if diag_plot is True:
+                [axs[i].hist(mags, bins=bins, alpha=0.5, stacked=True,
+                             label=self.regions)]
+
+            nrgb_cont = np.array([len(n) for n in ncontam_rgb], dtype=int)
+            nagb_cont = np.array([len(n) for n in ncontam_agb], dtype=int)
+
+            line += 'rgb %s %s %i \n' % (band, ' '.join(map(str, nrgb_cont)),
+                                        np.sum(nrgb_cont))
+            line += 'agb %s %s %i \n' % (band, ' '.join(map(str, nagb_cont)),
+                                         np.sum(nagb_cont))
+
+            line += '# rgb eagb contamination: %i \n' % rheb_eagb_contam
+            line += '# frac of total in rgb region: %.3f \n' % frac_rheb_eagb
+            line += '# rc contamination: %i \n' % heb_rgb_contam
+            line += '# frac of total in rgb region: %.3f \n' % \
+                    frac_heb_rgb_contam
+
+            print line
+
+        contam_line.append(line)
+
+        if diag_plot is True:
+            axs[0].legend(numpoints=1, loc=0)
+            axs[0].set_title(self.target)
+            plt.savefig('contamination_%s.png' % self.target, dpi=150)
+
+        return line
+
+def narratio_table(self):
+    narratio_files = rsp.fileIO.get_files(self.outfile_dir, '*narratio*dat')
+    stats.narratio_table(narratio_files)
+    return
+
+def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+                                            outfile_loc=outfile_dir,
+                                            extra_str=extra_str)
+    chi2_dicts = stats.result2dict(chi2_files)
+    stats.chi2plot(chi2_dicts, outfile_loc=outfile_dir)
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+                                            outfile_loc=outfile_dir,
+                                            extra_str=extra_str,
+                                            just_gauss=True)
+    return
+>>>>>>> master
