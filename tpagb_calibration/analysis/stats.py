@@ -1,15 +1,32 @@
-#import sfh_tests_multi_proc
-import numpy as np
-import ResolvedStellarPops as rsp
-#import galaxy_tests
-import os
-#import tables
-import matplotlib.pylab as plt
-from TPAGBparams import snap_src
 import logging
-logger = logging.getLogger()
-angst_data = rsp.angst_tables.angst_tables.AngstTables()
+import os
 
+import numpy as np
+import matplotlib.pyplt as plt
+import ResolvedStellarPops as rsp
+
+from TPAGBparams import snap_src
+
+logger = logging.getLogger()
+
+angst_data = rsp.angst_tables.angst_table.AngstTables()
+
+def narratio_table(self):
+    narratio_files = rsp.fileIO.get_files(self.outfile_dir, '*narratio*dat')
+    stats.narratio_table(narratio_files)
+    return
+
+def chi2_stats(targets, cmd_inputs, outfile_dir='default', extra_str=''):
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+                                            outfile_loc=outfile_dir,
+                                            extra_str=extra_str)
+    chi2_dicts = stats.result2dict(chi2_files)
+    stats.chi2plot(chi2_dicts, outfile_loc=outfile_dir)
+    chi2_files = stats.write_chi2_table(targets, cmd_inputs,
+                                            outfile_loc=outfile_dir,
+                                            extra_str=extra_str,
+                                            just_gauss=True)
+    return
 def contamination_files(filenames):
     opt_eagb_contam = np.array([])
     opt_rheb_contam = np.array([])
@@ -418,6 +435,7 @@ def narratio_table(narratio_files, table_file='default'):
 
 
 def data_table(targets, table_file='default'):
+    """latex data table """
     # target, av, dist, [opt: frac comp, trgb, nrgb, nagb ratio] [ir: ..]
     if table_file == 'default':
         table_file = snap_src + '/tables/ancients_0.1_0.2_galaxies.dat'

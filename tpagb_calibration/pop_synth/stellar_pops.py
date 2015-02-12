@@ -1,51 +1,108 @@
+import logging
+import os
 import numpy as np
 from ResolvedStellarPops.galaxies.starpop import stars_in_region
+from ResolvedStellarPops.galaxies.asts import ASTs
 
-def rgb_agb_regions(offsets, trgb_excludes, opt_trgb,
-                    ir_trgb, opt_mag, ir_mag):
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def rgb_agb_regions(offset, trgb_exclude, trgb, mag, col_min=None,
+                    col_max=None, mag1=None, mag_bright=None,
+                    mag_faint=None):
     # define RGB regions
-    opt_low = offsets[0]
-    opt_mid = opt_trgb + trgb_excludes[0]
-
-    ir_low = offsets[1]
-    ir_mid = ir_trgb + trgb_excludes[1]
+    if mag_bright is not None:
+        low = mag_faint
+        mid = mag_bright
+    else:
+        assert offset is not None, \
+            'rgb_agb_regions: need either offset or mag limits'
+        low = trgb + offset
+        mid = trgb + trgb_exclude
 
     # Recovered stars in simulated RGB region.
-    sopt_rgb = stars_in_region(opt_mag, opt_low, opt_mid)
-    sir_rgb = stars_in_region(ir_mag, ir_low, ir_mid)
+    srgb = stars_in_region(mag, low, mid, col_min=col_min, col_max=col_max,
+                           mag1=mag1)
 
     # define AGB regions
-    opt_mid = opt_trgb - trgb_excludes[0]
-    opt_high = 10.
-
-    ir_mid = ir_trgb - trgb_excludes[1]
-    ir_high = 10.
+    mid = trgb - trgb_exclude
+    high = 10
 
     # Recovered stars in simulated AGB region.
-    sopt_agb = stars_in_region(opt_mag, opt_mid, opt_high)
-    sir_agb = stars_in_region(ir_mag, ir_mid, ir_high)
-    return sopt_rgb, sir_rgb, sopt_agb, sir_agb
+    sagb = stars_in_region(mag, mid, high)
+
+    return srgb, sagb
 
 
-def normalize_simulation(opt_mag, ir_mag, nopt_rgb, nir_rgb, sopt_rgb, sir_rgb,
-                         sopt_agb, sir_agb):
-    opt_norm = nopt_rgb / float(len(sopt_rgb))
-    ir_norm = nir_rgb / float(len(sir_rgb))
+def normalize_simulation(mag, nrgb, srgb, sagb):
+    norm = nrgb / float(len(srgb))
 
-    print 'OPT Normalization: %f' % opt_norm
-    print 'IR Normalization: %f' % ir_norm
+    logger.info('Normalization: %f' % norm)
 
     # random sample the data distribution
-    rands = np.random.random(len(opt_mag))
-    opt_ind, = np.nonzero(rands < opt_norm)
-    rands = np.random.random(len(ir_mag))
-    ir_ind, = np.nonzero(rands < ir_norm)
+    rands = np.random.random(len(mag))
+    ind, = np.nonzero(rands < norm)
 
     # scaled rgb: norm + in rgb
-    opt_rgb = list(set(opt_ind) & set(sopt_rgb))
-    ir_rgb = list(set(ir_ind) & set(sir_rgb))
+    rgb = list(set(ind) & set(srgb))
 
     # scaled agb
-    opt_agb = list(set(opt_ind) & set(sopt_agb))
-    ir_agb = list(set(ir_ind) & set(sir_agb))
-    return opt_norm, ir_norm, opt_rgb, ir_rgb, opt_agb, ir_agb
+    agb = list(set(ind) & set(sagb))
+    return norm, ind, rgb, agb
+
+
+def limiting_mag(fakefile, comp_frac):
+    """
+    find the completeness fraction in each filter of the fake file
+    for details see ResolvedStellarPops.galaxies.asts.ASTs.__doc__.
+
+    Parameters
+    ----------
+    fakefile : str
+        match fake file (mag1in, mag2in, mag1diff, mag2diff)
+    comp_frac : float
+        completeness fraction e.g, 0.9 means 90% completeness
+
+    Returns
+    -------
+    comp1, comp2 : float, float
+        the completeness fraction in each filter
+    """
+    assert os.path.isfile(fakefile), \
+        'limiting mag: fakefile %s not found' % fakefile
+    ast = ASTs(fakefile)
+    ast.completeness(combined_filters=True, interpolate=True)
+    comp1, comp2 = ast.get_completeness_fraction(comp_frac)
+    return comp1, comp2
+
+
+def completeness_corrections(fakefile, mag_bins, mag2=True):
+    '''
+    get the completeness fraction for a given list of magnitudes.
+    for details see ResolvedStellarPops.galaxies.asts.ASTs.__doc__.
+
+    Parameters
+    ----------
+    fakefile : str
+        match fake file (mag1in, mag2in, mag1diff, mag2diff)
+    mag_bins : array
+        array of magnitudes to find completeness interpolation
+    mag2 : bool
+        True use fcomp2, False use fcomp1
+
+    Returns
+    -------
+    ast_c : array len(mag_bins)
+        completeness corrections to mag_bins
+    '''
+    assert os.path.isfile(fakefile), \
+        'completeness corrections: fakefile %s not found' % fakefile
+    ast = ASTs(fakefile)
+    ast.completeness(combined_filters=True, interpolate=True)
+
+    if mag2:
+        ast_c = ast.fcomp2(mag_bins)
+    else:
+        ast_c = ast.fcomp1(mag_bins)
+
+    return ast_c

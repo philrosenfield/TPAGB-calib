@@ -2,11 +2,17 @@ from IPython import parallel
 import time
 import numpy as np
 
+def caller(func, kw={}):
+    return func(**kw)
 
-def caller(vsfh, vsfh_kw={}):
-    return vsfh.vary_the_SFH(**vsfh_kw)
+def cleanup(func, kw={}):
+    return func(**kw)
 
-def main(vsfhs, vsfh_kws=None, timeout=900, dry_run=False):
+def writer(func, kw={}):
+    return func(**kw)
+
+def main(runit, cleanit, writeit, rkw=None, ckw=None, wkw=None, timeout=900,
+         dry_run=False):
     '''
     calls sfh_tests_multi_proc.sfh_tests_multi_proc in most basic way possible
     for up to 2 * available processors. Target & cmd_inputs are distributed and
@@ -25,12 +31,16 @@ def main(vsfhs, vsfh_kws=None, timeout=900, dry_run=False):
     # find a better way to run this all at once, what if I need three times
     # through?
     nprocs = len(clients)
-    nvsfhs = len(vsfhs)
-    ntimes = np.min([nprocs, nvsfhs])
-    ndiff = np.abs(nvsfhs - nprocs)
+    nruns = len(runit)
+    ntimes = np.min([nprocs, nruns])
+    ndiff = np.abs(nruns - nprocs)
 
-    if vsfh_kws is None:
-        vsfh_kws = [{}] * nvsfhs
+    if rkw is None:
+        rkw = [{}] * nruns
+    if ckw is None:
+        ckw = [{}] * nruns
+    if wkw is None:
+        wkw = [{}] * nruns
 
     if ndiff > nprocs:
         print 'need a for loop, too many processes code code code man'
@@ -38,7 +48,7 @@ def main(vsfhs, vsfh_kws=None, timeout=900, dry_run=False):
         sys.exit()
 
     print 'calling first set'
-    res = [clients[i].apply(caller, vsfhs[i], vsfh_kws[i],)
+    res = [clients[i].apply(caller, runit[i], rkw[i],)
            for i in range(ntimes)]
 
     while False in [r.ready() for r in res]:
@@ -46,8 +56,13 @@ def main(vsfhs, vsfh_kws=None, timeout=900, dry_run=False):
         time.sleep(timeout)
         print 'checking first set...'
 
+    wri = [clients[i].apply(writer, cleanit[i], ckw[i],)
+           for i in range(ntimes)]
     #print 'writing first set'
     #[vsfhs[i].write_results(res[i].result) for i in range(ntimes)]
+    out = [clients[i].apply(cleanup, writeit[i], wkw[i],)
+           for i in range(ntimes)]
+
 
     print 'calling second set'
     res2 = [clients[i].apply(caller, vsfhs[i+ntimes], vsfh_kws[i+ntimes],)

@@ -1,9 +1,17 @@
-import ResolvedStellarPops as rsp
+from __future__ import print_function
+import logging
 import os
-import numpy as np
-from ResolvedStellarPops.convertz import convertz
-import matplotlib.pylab as plt
 
+import matplotlib.pylab as plt
+import numpy as np
+import ResolvedStellarPops as rsp
+
+from ResolvedStellarPops.convertz import convertz
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+__all__ = ['StarFormationHistories', 'parse_sfh_data']
 
 def parse_sfh_data(filename, file_origin, frac=0.2):
     '''
@@ -36,10 +44,10 @@ def parse_sfh_data(filename, file_origin, frac=0.2):
     elif 'match-old' == file_origin.lower():
         data = rsp.match.utils.read_match_old(filename)
     else:
-        print 'please add a new data reader'
+        logger.error('please add a new data reader')
 
     if 'grid' in file_origin.lower():
-        print 'CONSTANT %f SFR ERROR' % frac
+        logger.warning('CONSTANT %f SFR ERROR' % frac)
         # at least have a uniform error that is 20% the smallest sfr.
         data.sfr_errp = np.min(data.sfr[data.sfr > 0]) * frac
         # now take 10% as nominal error in each sfr bin.
@@ -51,7 +59,7 @@ def parse_sfh_data(filename, file_origin, frac=0.2):
 class StarFormationHistories(object):
     '''Make TRILEGAL star formation history files from MATCH'''
     def __init__(self, sfh_file, file_origin, sfr_files=None, sfr_file_loc=None,
-                 sfr_file_search_fmt=None, sfh_ext='.sfh'):
+                 sfr_file_search_fmt=None, sfh_ext='.sfh', **kwargs):
         self.base, self.name = os.path.split(sfh_file)
         self.data = parse_sfh_data(sfh_file, file_origin)
         self.file_origin = file_origin
@@ -91,7 +99,7 @@ class StarFormationHistories(object):
         If they are both zero, well, just returns attr.
         '''
         if attr == 'mh':
-            print 'WARNING this method was designed for sfr, not [M/H]'
+            logger.warning('this method was designed for sfr, not [M/H]')
         # load in values this way in case I want to move this to its own
         # function
         if hasattr(self.data, attr):
@@ -130,7 +138,7 @@ class StarFormationHistories(object):
                 new_arr = pos_gauss[pos_gauss >= val]
             else:
                 # um.. no errors, why was this called
-                print 'WARNING no uncertainties'
+                logger.warning('no uncertainties')
                 new_arr = np.ones(4) * val
             new_arr = new_arr[new_arr > lowlim]
             rand_arr = np.append(rand_arr, np.random.choice(new_arr))

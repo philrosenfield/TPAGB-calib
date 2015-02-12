@@ -225,11 +225,16 @@ def do_everything(infile):
     return infile.cmd_input_file
 
 def examine_1TP(agb_mix, set_name):
-    here = os.getcwd()
-    os.chdir(os.environ['TRILEGAL_ROOT'])
     outfile = 'examine1TP_%s_%s.dat' % (agb_mix, set_name)
     infile = 'cmd_input_%s_%s.dat' % (agb_mix, set_name)
-    os.system('./examine1TP.pl %s > %s' % (infile, outfile))
+    run_examine_1TP(infile, outfile=outfile)
+
+def run_examine_1TP(cmd_inp_file, outfile=None):
+    if outfile is None:
+        outfile = '%s_examine1TP.dat' % cmd_inp_file
+    here = os.getcwd()
+    os.chdir(os.environ['TRILEGAL_ROOT'])
+    os.system('./examine1TP.pl %s > %s' % (cmd_inp_file, outfile))
     lines = open(outfile, 'r').readlines()
     warns = [l for l in lines if 'Warning' in l]
     print 'Found %i warnings' % len(warns)
@@ -246,6 +251,7 @@ def examine_1TP(agb_mix, set_name):
             print data[i].strip()
 
     os.chdir(here)
+
 
 if __name__ == "__main__":
     try:
@@ -274,4 +280,3 @@ if __name__ == "__main__":
         plt_dir = os.path.join(diagnostic_dir, agb_mix, set_name, track_set)
         trilegal_diagnostics.main(track_set, sfh_dir, tri_dir, plt_dir,
                                   over_write=infile.over_write, multi=False)
-
