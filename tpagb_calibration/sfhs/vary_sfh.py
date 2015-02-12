@@ -229,7 +229,7 @@ def main(argv):
     vsh = VarySFHs(inp_obj=inp_obj)
     import pdb; pdb.set_trace()
     dry_run = args.dry_run
-    vsh.run(dry_run=dry_run, max_proc=args.nproc)
+    vsh.run(dry_run=False, max_proc=args.nproc)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
