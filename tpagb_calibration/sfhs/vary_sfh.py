@@ -129,7 +129,7 @@ class VarySFHs(StarFormationHistories):
                           triout=self.tname + '_bestsfr.dat')
         else:
             self.run_parallel(dry_run=dry_run, max_proc=max_proc, start=start,
-                              timeout=timeout, cleanup=cleanup)
+                              timeout=timeout)
         return
 
     def run_parallel(self, dry_run=False, max_proc=8, start=30,
