@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import argparse
 import matplotlib.pylab as plt
 import numpy as np
@@ -10,7 +10,7 @@ from astropy.io import fits
 from ResolvedStellarPops.tpagb_path_config import tpagb_path
 
 def move_on(ok, msg='0 to move on: '):
-    #ok = int(raw_input(msg))
+    ok = int(raw_input(msg))
     time.sleep(1)
     return ok
 
@@ -61,7 +61,7 @@ def find_match_limits(phot, phot_ext, comp1=99., comp2=None, color_only=False,
             mag1max, mag2max = pts[0]
             ax.plot(mag1max, mag2max, 'o', color='r')
             plt.draw()
-            ok = move_on(0)
+            ok = move_on(ok)
 
         plt.close()
 
@@ -86,44 +86,58 @@ def find_match_limits(phot, phot_ext, comp1=99., comp2=None, color_only=False,
 
 def find_gates(target):
     import glob
-    target = 'ddo82'
     here = os.getcwd()
     os.chdir(target)
     # read match file for mag1, mag2
-    phot, = glob.glob1('.', '*match')
-    mag1, mag2 = np.genfromtxt(phot, unpack=True)
-    col = mag1 - mag2
-    # read param file
-    param, = glob.glob1('.', '*param')
-    lines = open(param, 'r').readlines()
-    colmin, colmax = map(float, lines[4].split()[3:-1])
-    mag1min, mag1max = map(float, lines[5].split()[:-1])
-    #mag2min, mag2max = map(float, lines[5].split()[:-1])
-    # click around
-    fig, ax = plt.subplots()
-    ax.plot(col, mag2, ',', color='k', alpha=0.1)
-    ax.set_ylim(mag1max, mag1min)
-    ax.set_xlim(colmin, colmax)
+    phot = glob.glob1('.', '*match')
+    params = glob.glob1('.', '*param')
+    for i, param in enumerate(params):
+        # read param file
+        mag1, mag2 = np.genfromtxt(phot[i], unpack=True)
+        col = mag1 - mag2
 
-    ok = 1
-    while ok == 1:
-        print 'click '
-        pts = plt.ginput(-1, timeout=-1)
-        mag1max, mag2max = pts[0]
-        ax.plot(mag1max, mag2max, 'o', color='r')
-        plt.draw()
-        ok = move_on(0)
-    # not so simple ... need them to be parallelograms.
-
-    # write new param file with exclude/include gate
+        lines = open(param, 'r').readlines()
+        colmin, colmax = map(float, lines[4].split()[3:-1])
+        mag1min, mag1max = map(float, lines[5].split()[:-1])
+        #mag2min, mag2max = map(float, lines[5].split()[:-1])
+        # click around
+        fig, ax = plt.subplots()
+        ax.plot(col, mag2, ',', color='k', alpha=0.2)
+        ax.set_ylim(mag1max, mag1min)
+        ax.set_xlim(colmin, colmax)
+    
+        ok = 1
+        while ok == 1:
+            print 'click '
+            pts = np.asarray(plt.ginput(n=4, timeout=-1))
+            exclude_gate = '1 {} 0 \n'.format(' '.join(['%.4f' % p for p in pts.flatten()]))
+            pts = np.append(pts, pts[0]).reshape(5,2)
+            ax.plot(pts[:,0], pts[:,1], color='r', lw=3, alpha=0.3)
+            plt.draw()
+            ok = move_on(0)
+        lines[7] = exclude_gate
+        # not so simple ... need them to be parallelograms.
+        # PASS!
+        
+        # write new param file with exclude/include gate
+        os.system('mv {0} {0}_bkup'.format(param))
+        with open(param, 'w') as outp:
+            [outp.write(l) for l in lines]
+        print('wrote %s' % param)
+    
     os.chdir(here)
     
 
-def match_limits(color_only=False, data_file='snap_galaxies.dat'):
+def match_limits(color_only=False, data_file='snap_galaxies.dat',
+                 target=None):
     plt.ion()
     new_lines = '# target comp_nir1 comp_nir2 comp_opt1 comp_opt2 Av mTRGB mTRGBerr dmod colmin colmax mag1max mag2max opt1 opt2 opt_phot opt_fake\n'
     data_loc = os.path.join(tpagb_path, 'SNAP/data/angst_no_trim')
     lines = open(os.path.join(tpagb_path, 'SNAP/tables/{}'.format(data_file)), 'r').readlines()
+
+    if target is not None:
+        lines = [l for l in lines if target in l]
+
     for line in lines:
         if line.startswith('#'):
             continue
@@ -178,9 +192,20 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--pdb', action='store_true',
                         help='toggle debugging')
 
+    parser.add_argument('-t', '--target', type=str, default=None,
+                        help='name of one target in the data_file')
+
+    parser.add_argument('-e', '--exgates', action='store_true',
+                        help='Do exclude gates instead of match_limits')
+
     args = parser.parse_args(sys.argv[1:])
     color_only = args.color_only
     if args.pdb:
         import pdb
         pdb.set_trace()
-    match_limits(color_only=color_only, data_file=args.data_file)
+    if args.exgates:
+        assert args.target is not None, \
+            'Must supply target if finding exclude gates'
+        find_gates(args.target)
+    else:
+        match_limits(color_only=color_only, data_file=args.data_file, target=args.target)
