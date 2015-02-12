@@ -259,7 +259,7 @@ class VarySFHs(StarFormationHistories):
                 out_obj.add_params(res[i].result)
                 out_obj.write_params(outparam % i, loud=True)
 
-        os.system('ipcluster stop')
+        #os.system('ipcluster stop')
 
 
 def contamination_by_phases(sgal, srgb, sagb, filter2, diag_plot=False,
