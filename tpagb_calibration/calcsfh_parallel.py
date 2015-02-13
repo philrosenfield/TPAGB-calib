@@ -152,7 +152,7 @@ def main(argv):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    logger.info('running on {}'.format(', '.join(prefs)))
+    logger.info('running on {}'.format(', '.join([p.strip() for p in prefs])))
     run_parallel(prefs, dry_run=args.dry_run, nproc=args.nproc, run_calcsfh=args.hmc)
 
 
