@@ -108,7 +108,7 @@ def run_parallel(prefs, dry_run=False, nproc=8, run_calcsfh=True):
         procs = []
         for i in iset:
             if run_calcsfh:
-                out, scrn, sfh = new_files(prefs[i])
+                out, scrn, sfh = calcsfh_new_files(prefs[i])
                 zcom = cmd2.format(zcombine, out, sfh)
             else:
                 zcom = cmd4.format(zcombine, mcmc, mczc)
