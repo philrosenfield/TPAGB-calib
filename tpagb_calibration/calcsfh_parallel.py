@@ -1,3 +1,4 @@
+"""Run calcsfh or hybridMC in Parallel (using subprocess)"""
 import argparse
 import logging
 import os
@@ -9,6 +10,7 @@ import numpy as np
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# Could be in a config or environ
 calcsfh = '$HOME/research/match2.5/bin/calcsfh'
 zcombine = '$HOME/research/match2.5/bin/zcombine'
 hybridmc = '$HOME/research/match2.5/bin/hybridMC'
@@ -30,6 +32,7 @@ def test_files(prefs, run_calcsfh=True):
         sys.exit(2)
     return
 
+
 def calcsfh_existing_files(pref):
     """file formats for param match and matchfake"""
     pref = pref.strip()
@@ -47,11 +50,13 @@ def calcsfh_new_files(pref):
     sfh = pref + '.sfh'
     return (out, scrn, sfh)
 
+
 def hybridmc_existing_files(pref):
     """file formats for the HMC, based off of calcsfh_new_files"""
     pref = pref.strip()
     mcin = pref + '.out.dat'
     return mcin
+
 
 def hybridmc_new_files(pref):
     """file formats for HybridMC output and the following zcombine output"""
@@ -61,10 +66,9 @@ def hybridmc_new_files(pref):
     mczc = mcmc + '.zc'
     return (mcmc, mcscrn, mczc)
 
+
 def run_parallel(prefs, dry_run=False, nproc=8, run_calcsfh=True):
-    """
-    run calcsfh and zcombine in parallel, flags are currently hardcoded.
-    """
+    """run calcsfh and zcombine in parallel, flags are hardcoded."""
     test_files(prefs, run_calcsfh)
 
     # calcsfh
@@ -123,7 +127,8 @@ def run_parallel(prefs, dry_run=False, nproc=8, run_calcsfh=True):
 
 
 def main(argv):
-    parser = argparse.ArgumentParser(description="Run calcsfh in parallel")
+    """parse in put args, setup logger, and call run_parallel"""
+    parser = argparse.ArgumentParser(description="Run calcsfh in parallel. Note: bg cmd, if in use, need to be in the current folder")
 
     parser.add_argument('-d', '--dry_run', action='store_true',
                         help='only print commands')
@@ -137,13 +142,16 @@ def main(argv):
     parser.add_argument('-m', '--hmc',  action='store_false',
                         help='run hybridMC (must be after a calcsfh run)')
 
+    parser.add_argument('-f', '--logfile', type=str, default='calcsfh_parallel.log',
+                        help='log file name')
+
     parser.add_argument('pref_list', type=argparse.FileType('r'),
-                        help="list of prefixs, to make try: ls */*.match | sed 's/.match//' > pref_list recall that bg cmds, if in use, need to be in the current folder")
+                        help="list of prefixs to run on. E.g., ls */*.match | sed 's/.match//' > pref_list")
 
     args = parser.parse_args(argv)
     prefs = args.pref_list.readlines()
     
-    handler = logging.FileHandler('calcsfh_parallel.log')
+    handler = logging.FileHandler(args.logfile)
     if args.verbose:
         handler.setLevel(logging.DEBUG)
     else:
