@@ -48,11 +48,13 @@ def calcsfh_new_files(pref):
     return (out, scrn, sfh)
 
 def hybridmc_existing_files(pref):
+    """file formats for the HMC, based off of calcsfh_new_files"""
     pref = pref.strip()
     mcin = pref + '.out.dat'
     return mcin
 
 def hybridmc_new_files(pref):
+    """file formats for HybridMC output and the following zcombine output"""
     pref = pref.strip()
     mcmc = pref + '.mcmc'
     mcscrn = mcmc + '.scrn'
@@ -132,11 +134,11 @@ def main(argv):
     parser.add_argument('-n', '--nproc', type=int, default=8,
                         help='number of processors')
 
-    parser.add_argument('-m', '--hmc',  action='store_true',
+    parser.add_argument('-m', '--hmc',  action='store_false',
                         help='run hybridMC (must be after a calcsfh run)')
 
     parser.add_argument('pref_list', type=argparse.FileType('r'),
-                        help="list of prefixs, to make try: ls */*.match | sed 's/.match//' > pref_list recal that bg cmds, if in use, need to be in the current folder")
+                        help="list of prefixs, to make try: ls */*.match | sed 's/.match//' > pref_list recall that bg cmds, if in use, need to be in the current folder")
 
     args = parser.parse_args(argv)
     prefs = args.pref_list.readlines()
@@ -150,7 +152,8 @@ def main(argv):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    run_parallel(prefs, dry_run=args.dry_run, nproc=args.nproc)
+    logger.info('running on {}'.format(', '.join(prefs)))
+    run_parallel(prefs, dry_run=args.dry_run, nproc=args.nproc, run_calcsfh=args.hmc)
 
 
 if __name__ == '__main__':
