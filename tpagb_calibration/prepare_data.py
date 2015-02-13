@@ -309,7 +309,7 @@ def main(argv):
     else:
         partial_inpfile = args.name
 
-    possible_inputs = (possible_inputs().items() + {'nsfhs': args.nsfhs}.items())
+    possible_inputs = dict(possible_inputs().items() + {'nsfhs': args.nsfhs}.items())
     inps = rsp.fileio.InputParameters(default_dict=possible_inputs)
     inps.add_params(rsp.fileio.load_input(partial_inpfile), loud=args.pdb)
 
