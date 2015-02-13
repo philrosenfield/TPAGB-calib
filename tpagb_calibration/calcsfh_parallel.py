@@ -11,23 +11,26 @@ logger = logging.getLogger(__name__)
 
 calcsfh = '$HOME/research/match2.5/bin/calcsfh'
 zcombine = '$HOME/research/match2.5/bin/zcombine'
+hybridmc = '$HOME/research/match2.5/bin/hybridMC'
 
-def test_files(prefs):
+def test_files(prefs, run_calcsfh=True):
     """make sure match input files exist"""
     return_code = 0
     for pref in prefs:
-        p, m, f = existing_files(pref)
-        test = [os.path.isfile(f) for f in [p, m, f]]
+        if run_calcsfh:
+            pfiles = calcsfh_existing_files(pref)
+        else:
+            pfiles = [hybridmc_existing_files(pref)]
+        test = [os.path.isfile(f) for f in pfiles]
         if False in test:
             logger.error('missing a file in {}'.format(pref))
-            logger.error('{} {} {}'.format(p, m, f))
+            logger.error(pfiles)
             return_code += 1
     if return_code > 0:
         sys.exit(2)
     return
 
-
-def existing_files(pref):
+def calcsfh_existing_files(pref):
     """file formats for param match and matchfake"""
     pref = pref.strip()
     param = pref + '.param'
@@ -36,7 +39,7 @@ def existing_files(pref):
     return (param, match, fake)
 
 
-def new_files(pref):
+def calcsfh_new_files(pref):
     """file formats for match grid, sdout, and sfh file"""
     pref = pref.strip()
     out = pref + '.out'
@@ -44,17 +47,32 @@ def new_files(pref):
     sfh = pref + '.sfh'
     return (out, scrn, sfh)
 
+def hybridmc_existing_files(pref):
+    pref = pref.strip()
+    mcin = pref + '.out.dat'
+    return mcin
 
-def run_parallel(prefs, dry_run=False, nproc=8):
+def hybridmc_new_files(pref):
+    pref = pref.strip()
+    mcmc = pref + '.mcmc'
+    mcscrn = mcmc + '.scrn'
+    mczc = mcmc + '.zc'
+    return (mcmc, mcscrn, mczc)
+
+def run_parallel(prefs, dry_run=False, nproc=8, run_calcsfh=True):
     """
     run calcsfh and zcombine in parallel, flags are currently hardcoded.
     """
-    test_files(prefs)
-    
+    test_files(prefs, run_calcsfh)
+
     # calcsfh
-    cmd1 = '{0} {1} {2} {3} {4} -kroupa -zinc > {5}'
+    cmd1 = '{0} {1} {2} {3} {4} -PARSEC -mcdata -kroupa -zinc -sub=v2 > {5}'
     # zcombine
     cmd2 = '{0} {1} -bestonly > {2}'
+    # hybridmc
+    cmd3 = '{0} {1} {2} -tint=2.0 -nmc=10000 -dt=0.015 > {3}'
+    # zcombine w/ hybrid mc
+    cmd4 = '{0} {1} -unweighted -medbest -jeffreys -best={2}'
 
     niters = np.ceil(len(prefs) / float(nproc))
     sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
@@ -67,27 +85,39 @@ def run_parallel(prefs, dry_run=False, nproc=8):
         # run calcsfh
         procs = []
         for i in iset:
-            param, match, fake = existing_files(prefs[i])
-            out, scrn, sfh = new_files(prefs[i])
-            csfh = cmd1.format(calcsfh, param, match, fake, out, scrn)
-            procs.append(subprocess.Popen(csfh, shell=True))
-            logger.debug(csfh)
+            if run_calcsfh:
+                param, match, fake = calcsfh_existing_files(prefs[i])
+                out, scrn, sfh = calcsfh_new_files(prefs[i])
+                cmd = cmd1.format(calcsfh, param, match, fake, out, scrn)
+            else:
+                mcin = hybridmc_existing_files(pref)
+                mcmc, mcscrn, mczc = hybridmc_new_files(pref)
+                cmd = cmd3.format(hybridmc, mcin, mcmc, mcscrn)
+            if not dry_run:
+                procs.append(subprocess.Popen(cmd, shell=True))
+            logger.info(cmd)
         
         # wait for calcsfh
-        [p.wait() for p in procs]
+        if not dry_run:
+            [p.wait() for p in procs]
+            logger.debug('calcsfh or hybridMC set {} complete'.format(j))
         
         # run zcombine
         procs = []
         for i in iset:
-            out, scrn, sfh = new_files(prefs[i])
-            zcom = cmd2.format(zcombine, out, sfh)
-            procs.append(subprocess.Popen(zcom, shell=True))
-            logger.debug(zcom)
+            if run_calcsfh:
+                out, scrn, sfh = new_files(prefs[i])
+                zcom = cmd2.format(zcombine, out, sfh)
+            else:
+                zcom = cmd4.format(zcombine, mcmc, mczc)
+            if not dry_run:
+                procs.append(subprocess.Popen(zcom, shell=True))
+            logger.info(zcom)
         
         # wait for zcombine
-        [p.wait() for p in procs]
-        
-        logger.debug('set {} complete'.format(j))
+        if not dry_run:
+            [p.wait() for p in procs]
+            logger.debug('zcombine set {} complete'.format(j))
 
 
 def main(argv):
@@ -101,6 +131,9 @@ def main(argv):
 
     parser.add_argument('-n', '--nproc', type=int, default=8,
                         help='number of processors')
+
+    parser.add_argument('-m', '--hmc',  action='store_true',
+                        help='run hybridMC (must be after a calcsfh run)')
 
     parser.add_argument('pref_list', type=argparse.FileType('r'),
                         help="list of prefixs, to make try: ls */*.match | sed 's/.match//' > pref_list recal that bg cmds, if in use, need to be in the current folder")
