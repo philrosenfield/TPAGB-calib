@@ -96,8 +96,8 @@ def run_parallel(prefs, dry_run=False, nproc=8, run_calcsfh=True):
                 out, scrn, sfh = calcsfh_new_files(prefs[i])
                 cmd = cmd1.format(calcsfh, param, match, fake, out, scrn)
             else:
-                mcin = hybridmc_existing_files(pref)
-                mcmc, mcscrn, mczc = hybridmc_new_files(pref)
+                mcin = hybridmc_existing_files(prefs[i])
+                mcmc, mcscrn, mczc = hybridmc_new_files(prefs[i])
                 cmd = cmd3.format(hybridmc, mcin, mcmc, mcscrn)
             if not dry_run:
                 procs.append(subprocess.Popen(cmd, shell=True))
