@@ -120,7 +120,7 @@ def prepare_from_directory(args, search_str, inp_extra):
 
     gal_file = os.path.join(tpagb_path,
                             'SNAP/tables/snap_galaxies.dat')
-    gal_table = rsp.fileio.readfile(gal_file, string_column=[0, -2, -1],
+    gal_table = rsp.fileio.readfile(gal_file, string_column=[0, -4, -3, -2, -1],
                                     string_length=216)
 
     target = os.path.split(args.name)[1]
