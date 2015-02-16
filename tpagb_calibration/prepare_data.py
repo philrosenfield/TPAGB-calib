@@ -272,7 +272,7 @@ def main(argv):
                               specified directory')
 
     parser.add_argument('-v', '--pdb', action='store_true',
-                        help='debugging mode')
+                        help='verbose mode')
 
     parser.add_argument('-f', '--filter', type=str, default=None,
                         help='V filter (if more than one in directory)')
@@ -316,12 +316,8 @@ def main(argv):
 
     # varysfh input file name
     outfile = partial_inpfile.replace('.inp', '.vsfhinp')
-    
-    if args.pdb:
-        import pdb
-        pdb.run(prepare_for_varysfh(inps, outfile))
-    else:
-        prepare_for_varysfh(inps, outfile)
+            
+    prepare_for_varysfh(inps, outfile)
     return
 
 
