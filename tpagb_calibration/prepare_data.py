@@ -124,14 +124,23 @@ def prepare_from_directory(args, search_str, inp_extra):
                                     string_length=216)
 
     target = os.path.split(args.name)[1]
-    target = difflib.get_close_matches(target, gal_table['target'])[0]
+    targets = difflib.get_close_matches(target, gal_table['target'])
+    itarg = [i for i, t in enumerate(targets) if t == target]
+    if len(itarg) == 1:
+        target = targets[itarg[0]]
+    
+    if len(itarg) > 1:
+        assert args.filter is not None, \
+            'More than one filter found for {} must choose filter'.format(target)
+        
     logger.info('using target: {}'.format(target))
 
     row = gal_table[np.where(gal_table['target']==target)]
     if args.filter is not None:
         row = row[[i for i, r in enumerate(row)
-                   if args.filter.lower() in r['opt_phot']]]
-
+                   if args.filter.lower() in r['opt1']]]
+    
+    logger.info('using filter: {}'.format(row['opt1']))
     # write partial varysfh input file
     newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
     rsp.fileio.ensure_dir(newdir)
