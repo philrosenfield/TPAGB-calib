@@ -118,9 +118,8 @@ def prepare_from_directory(args, search_str, inp_extra):
     _, pars['mag_limit_val'] = \
         np.array(open(matchpar).readlines()[5].split()[:-1], dtype=float)
 
-    # get col_min, col_max from saved table (COULD BE AN ARG=filename LATER)
     gal_file = os.path.join(tpagb_path,
-                            'SNAP/tables/paperII_varsfh_table.dat')
+                            'SNAP/tables/snap_galaxies.dat')
     gal_table = rsp.fileio.readfile(gal_file, string_column=[0, -2, -1],
                                     string_length=216)
 
