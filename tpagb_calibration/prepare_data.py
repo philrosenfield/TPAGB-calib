@@ -138,9 +138,9 @@ def prepare_from_directory(args, search_str, inp_extra):
     row = gal_table[np.where(gal_table['target']==target)]
     if args.filter is not None:
         row = row[[i for i, r in enumerate(row)
-                   if args.filter.lower() in r['opt1']]]
-    
-    logger.info('using filter: {}'.format(row['opt1']))
+                   if args.filter.lower() in r['opt1']]]    
+        logger.info('user supplied {}, using filter: {}'.format(args.filter,
+                                                                row['opt1']))
     # write partial varysfh input file
     newdir = os.path.join(tpagb_path, 'SNAP/varysfh', target)
     rsp.fileio.ensure_dir(newdir)
