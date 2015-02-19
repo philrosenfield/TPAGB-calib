@@ -27,4 +27,4 @@ for extra_str, galaxies in zip(extra_strs, galaxy_lists):
         input_file = os.path.join(vsfhpath, galaxy,
                                   '{}{}.vsfhinp'.format(galaxy, extra_str))
 
-        call_VarySFH(input_file, loud=True, dry_run=True, max_proc=8)
+        call_VarySFH(input_file, loud=True, dry_run=False, max_proc=8)
