@@ -1,6 +1,8 @@
 #!/bin/bash
 # should be in code directory
-# usage: ./firstrun_vary_sfh.sh
+# usage: ./firstrun_vary_sfh.sh nprocs
+
+ipcluster start -n=$1 &
 
 # only one filter in SNAP/tables/snap_galaxies.dat
 for galaxy in eso540-030 scl-de1 ugc-04459 ugc-4305-2 ugc-5139 ugc8508 ddo78 kdg73 kkh37 ngc3741 hs117 ngc2403-deep
@@ -35,4 +37,4 @@ do
     wait
 done
 
-
+ipcluster stop

@@ -115,7 +115,7 @@ class VarySFHs(StarFormationHistories):
         rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
                                         triout,
                                         dry_run=dry_run)
-        rsp.trilegal.utils.trilegal2hdf5(triout)
+        rsp.trilegal.utils.trilegal2hdf5(triout, overwrite=True)
         return
 
     def call_run(self, dry_run=False, max_proc=8, start=30, timeout=45):
