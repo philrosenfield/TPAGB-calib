@@ -190,6 +190,28 @@ class VarySFHs(StarFormationHistories):
         #os.system('ipcluster stop')
         return
 
+def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
+    # set up logging
+    handler = logging.FileHandler('{}_vary_sfh.log'.format(input_file))
+    if loud:
+        handler.setLevel(logging.DEBUG)
+    else:
+        handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    # set up input parameters
+    inp_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
+    inp_obj.input_file = input_file
+    inp_obj.add_params(rsp.fileio.load_input(inp_obj.input_file), loud=loud)
+
+    #  do it!
+    vsh = VarySFHs(inp_obj=inp_obj)
+    #import pdb; pdb.set_trace()
+    vsh.call_run(dry_run=dry_run, max_proc=max_proc)
+    return
+
 def main(argv):
     """
     call vsfh.run_parallel with command line options and set up logger.
@@ -210,25 +232,9 @@ def main(argv):
 
     args = parser.parse_args(argv)
 
-    # set up logging
-    handler = logging.FileHandler('{}_vary_sfh.log'.format(args.name))
-    if args.verbose:
-        handler.setLevel(logging.DEBUG)
-    else:
-        handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    call_VarySFH(args.name, loud=args.verbose, dry_run=args.dry_run,
+                 max_proc=args.nproc)
 
-    # set up input parameters
-    inp_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
-    inp_obj.input_file = args.name
-    inp_obj.add_params(rsp.fileio.load_input(inp_obj.input_file), loud=args.verbose)
-
-    #  do it!
-    vsh = VarySFHs(inp_obj=inp_obj)
-    #import pdb; pdb.set_trace()
-    vsh.call_run(dry_run=args.dry_run, max_proc=args.nproc)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
