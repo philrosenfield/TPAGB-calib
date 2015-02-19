@@ -1,7 +1,7 @@
 import os
 
-from .sfhs.vary_sfh import call_VarySFH
-from .TPAGBparams import snap_src
+from sfhs.vary_sfh import call_VarySFH
+from TPAGBparams import snap_src
 
 extra_strs = ['', '_555', '_475', '_606']
 
