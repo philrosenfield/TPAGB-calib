@@ -13,7 +13,7 @@ def rgb_agb_regions(offset, trgb_exclude, trgb, mag):
         low = offset
     else:
         low = offset + trgb
-    mid = trgb + trgb_exclude
+    mid = trgb + trgb_excludew
 
     # Recovered stars in simulated RGB region.
     srgb = rsp.starpop.stars_in_region(mag, low, mid)

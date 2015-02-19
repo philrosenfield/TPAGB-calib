@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 def rgb_agb_regions(offset, trgb_exclude, trgb, mag, col_min=None,
                     col_max=None, mag1=None, mag_bright=None,
                     mag_faint=None):
+    """the indices of mag in rgb and agb regions"""
     # define RGB regions
     if mag_bright is not None:
         low = mag_faint
@@ -35,6 +36,8 @@ def rgb_agb_regions(offset, trgb_exclude, trgb, mag, col_min=None,
 
 
 def normalize_simulation(mag, nrgb, srgb, sagb):
+    """normalization factor, all indices of a random sample of the distribution
+       random sample of the rgb and agb"""
     norm = nrgb / float(len(srgb))
 
     logger.info('Normalization: %f' % norm)
