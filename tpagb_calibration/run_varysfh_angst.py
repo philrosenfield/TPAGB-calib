@@ -21,7 +21,7 @@ galaxy_lists = [['eso540-030',
                 ['ugca292', 'ngc300-wide1'],
                 ['ugca292', 'ngc300-wide1']]
 
-vsfhpath = os.join(snap_src, 'varysfh')
+vsfhpath = os.path.join(snap_src, 'varysfh')
 for extra_str, galaxies in zip(extra_strs, galaxy_lists):
     for galaxy in galaxies:
         input_file = os.path.join(vsfhpath, galaxy,
