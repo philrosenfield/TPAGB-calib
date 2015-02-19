@@ -1,7 +1,7 @@
 import os
 
-from tpagb_calibration.sfhs.vary_sfh import call_VarySFH
-from tpagb_calibration.TPAGBparams import snap_src
+from .sfhs.vary_sfh import call_VarySFH
+from .TPAGBparams import snap_src
 
 extra_strs = ['', '_555', '_475', '_606']
 
@@ -24,6 +24,7 @@ galaxy_lists = [['eso540-030',
 vsfhpath = os.join(snap_src, 'varysfh')
 for extra_str, galaxies in zip(extra_strs, galaxy_lists):
     for galaxy in galaxies:
-        input_file = os.path.join(vsfhpath, galaxy, '{}{}.vsfhinp'.format(galaxy, extra_str))
+        input_file = os.path.join(vsfhpath, galaxy,
+                                  '{}{}.vsfhinp'.format(galaxy, extra_str))
 
-    call_VarySFH(loud=True, dry_run=True, max_proc=11)
+        call_VarySFH(input_file, loud=True, dry_run=True, max_proc=8)
