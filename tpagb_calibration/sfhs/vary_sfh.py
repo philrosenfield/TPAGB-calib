@@ -11,7 +11,7 @@ import time
 import ResolvedStellarPops as rsp
 
 from IPython import parallel
-from star_formation_histories import StarFormationHistories
+from .star_formation_histories import StarFormationHistories
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -153,7 +153,7 @@ class VarySFHs(StarFormationHistories):
                 import numpy as np
                 import os
                 import logging
-                from star_formation_histories import StarFormationHistories
+                from .star_formation_histories import StarFormationHistories
 
             #clients[:]['logger'] = logger
             return clients
