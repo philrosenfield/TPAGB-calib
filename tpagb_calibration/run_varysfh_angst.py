@@ -24,6 +24,7 @@ galaxy_lists = [['eso540-030',
 vsfhpath = os.path.join(snap_src, 'varysfh')
 for extra_str, galaxies in zip(extra_strs, galaxy_lists):
     for galaxy in galaxies:
+        print galaxy
         input_file = os.path.join(vsfhpath, galaxy,
                                   '{}{}.vsfhinp'.format(galaxy, extra_str))
 
