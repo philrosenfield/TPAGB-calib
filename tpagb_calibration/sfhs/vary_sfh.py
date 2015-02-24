@@ -187,8 +187,8 @@ class VarySFHs(StarFormationHistories):
             #    logger.info(['client %i galaxy_inp %s triout %s' %
             #                 (i, self.galaxy_inputs[iset[i]],
             #                 self.triout_fmt % iset[i]) for i in range(len(iset))])
-            res = [clients[i].apply(self.run_once, self.galaxy_inputs[iset[i]],
-                                    self.triout_fmt % iset[i], dry_run,)
+            res = [clients[i].apply_sync(self.run_once, (self.galaxy_inputs[iset[i]],
+                                    self.triout_fmt % iset[i], dry_run), block=False)
                    for i in range(len(iset))]
             logger.debug('{} {}'.format(j, iset))
             logger.debug('waiting on set {} of {}'.format(j, niters))
