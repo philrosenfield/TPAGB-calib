@@ -3,14 +3,14 @@
 # usage: ./firstrun_vary_sfh.sh nprocs
 
 #ipcluster start -n=$1 &
-cmd="nice -n 19 python -m tpagb_calibration.sfhs.vary_sfh"
+CMD="nice -n 19 python -m tpagb_calibration.sfhs.vary_sfh"
 loc="/home/rosenfield/research/TP-AGBcalib/SNAP/varysfh"
 # only one filter in SNAP/tables/snap_galaxies.dat
 for galaxy in eso540-030 scl-de1 ugc-04459 ugc-4305-2 ugc-5139 ugc8508 ddo78 kdg73 kkh37 ngc3741 hs117 ngc2403-deep
 do
     echo $galaxy
     #python /home/rosenfield/research/TP-AGBcalib/code/TPAGB-calib/tpagb_calibration/prepare_data.py -n $1 -d $galaxy
-    echo "$cmd $loc/$galaxy/$galaxy.vsfhinp > $loc/$galaxy/$galaxy.vsfhout"
+    echo "$CMD $loc/$galaxy/$galaxy.vsfhinp > $loc/$galaxy/$galaxy.vsfhout"
     #> $galaxy_vsfh.sh
     #python -m tpagb_calibration.plotting.plotting /home/rosenfield/research/TP-AGBcalib/SNAP/varysfh/$galaxy/$galaxy.plotinp
 done
