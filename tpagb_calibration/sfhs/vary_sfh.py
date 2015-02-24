@@ -149,6 +149,8 @@ class VarySFHs(StarFormationHistories):
             clients[:].execute('import numpy as np')
             clients[:].execute('import os')
             clients[:].execute('import logging')
+            from IPython.config import Application
+            logger = Application.instance().log
             clients[:]['logger'] = logger
             return clients
 
