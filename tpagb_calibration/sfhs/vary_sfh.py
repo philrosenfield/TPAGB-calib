@@ -112,7 +112,7 @@ class VarySFHs(StarFormationHistories):
 
     def run_once(self, galaxy_input=None, triout=None, dry_run=False):
         """call trilegal and convert the output file to hdf5"""
-        logger.debug('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file, galaxy_input, triout, dry_run))
+        logger.info('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file, galaxy_input, triout, dry_run))
         rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
                                         triout, dry_run=dry_run)
         rsp.trilegal.utils.trilegal2hdf5(triout, overwrite=True)
