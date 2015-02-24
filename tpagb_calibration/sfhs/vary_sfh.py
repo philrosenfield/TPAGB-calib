@@ -201,7 +201,7 @@ def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
     if loud:
         handler.setLevel(logging.DEBUG)
     else:
-        handler.setLevel(logging.INFO)
+        handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
