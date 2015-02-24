@@ -149,8 +149,6 @@ class VarySFHs(StarFormationHistories):
             clients[:].execute('import numpy as np')
             clients[:].execute('import os')
             clients[:].execute('import logging')
-            from IPython.config import Application
-            logger = Application.instance().log
             clients[:]['logger'] = logger
             return clients
 
@@ -196,6 +194,8 @@ class VarySFHs(StarFormationHistories):
 
 def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
     # set up logging
+    from IPython.config import Application
+    logger = Application.instance().log
     handler = logging.FileHandler('{}_vary_sfh.log'.format(input_file))
     logger.setLevel(logging.DEBUG)
     if loud:
