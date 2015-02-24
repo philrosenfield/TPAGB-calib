@@ -23,7 +23,7 @@ for galaxy in ugca292 ngc300-wide1
 do
     echo $galaxy
     #python /home/rosenfield/research/TP-AGBcalib/code/TPAGB-calib/tpagb_calibration/prepare_data.py -n $1 -df 475 $galaxy
-    ech "python -m tpagb_calibration.sfhs.vary_sfh --dry_run /home/rosenfield/research/TP-AGBcalib/SNAP/varysfh/$galaxy/$galaxy_475.vsfhinp > /home/rosenfield/research/TP-AGBcalib/SNAP/varysfh/$galaxy/$galaxy_475.vsfhout &"
+    echo "python -m tpagb_calibration.sfhs.vary_sfh --dry_run /home/rosenfield/research/TP-AGBcalib/SNAP/varysfh/$galaxy/$galaxy_475.vsfhinp > /home/rosenfield/research/TP-AGBcalib/SNAP/varysfh/$galaxy/$galaxy_475.vsfhout &"
     wait
 done
 
