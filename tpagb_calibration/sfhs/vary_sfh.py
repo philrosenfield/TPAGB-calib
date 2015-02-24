@@ -112,6 +112,7 @@ class VarySFHs(StarFormationHistories):
 
     def run_once(self, galaxy_input=None, triout=None, dry_run=False):
         """call trilegal and convert the output file to hdf5"""
+        import ResolvedStellarPops as rsp
         print('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file,
                                                              galaxy_input,
                                                              triout,
@@ -148,6 +149,7 @@ class VarySFHs(StarFormationHistories):
             clients = parallel.Client()
             clients.block = False
             clients[:].use_dill()
+
             with clients[:].sync_imports():
                 import ResolvedStellarPops as rsp
                 import numpy as np
