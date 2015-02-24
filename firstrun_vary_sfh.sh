@@ -1,8 +1,6 @@
 #!/bin/bash
 # should be in code directory
-# usage: ./firstrun_vary_sfh.sh nprocs
 
-#ipcluster start -n=$1 &
 CMD="nice -n 19 python -m tpagb_calibration.sfhs.vary_sfh"
 LOC="/home/rosenfield/research/TP-AGBcalib/SNAP/varysfh"
 EXT="_vsfh.sh"
@@ -35,7 +33,5 @@ for galaxy in ugca292 ngc300-wide1 ddo82 ngc4163
 do
     echo $galaxy
     #python /home/rosenfield/research/TP-AGBcalib/code/TPAGB-calib/tpagb_calibration/prepare_data.py -n $1 -df 606 $galaxy
-    echo "$CMD $LOC/$galaxy/$galaxy$FILT.vsfhinp > $LOC/$galaxy/$galaxy$FILT.vsfhout &" > $galaxy$FILT$EXT"
+    echo "$CMD $LOC/$galaxy/$galaxy$FILT.vsfhinp > $LOC/$galaxy/$galaxy$FILT.vsfhout &" > $galaxy$FILT$EXT
 done
-
-#ipcluster stop
