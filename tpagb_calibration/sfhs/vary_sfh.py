@@ -176,17 +176,14 @@ class VarySFHs(StarFormationHistories):
         for j, iset in enumerate(sets):
             # don't use not needed procs
             iset = iset[iset < self.nsfhs]
-
             # parallel call to run
-            if dry_run:
-                logger.info(['client %i galaxy_inp %s triout %s' %
-                             (i, self.galaxy_inputs[iset[i]],
-                             self.triout_fmt % iset[i]) for i in range(len(iset))])
-
+            #if dry_run:
+            #    logger.info(['client %i galaxy_inp %s triout %s' %
+            #                 (i, self.galaxy_inputs[iset[i]],
+            #                 self.triout_fmt % iset[i]) for i in range(len(iset))])
             res = [clients[i].apply(self.run_once, self.galaxy_inputs[iset[i]],
                                     self.triout_fmt % iset[i], dry_run,)
                    for i in range(len(iset))]
-
             logger.debug('waiting on set {} of {}'.format(j, niters))
             while False in [r.ready() for r in res]:
                 time.sleep(1)
