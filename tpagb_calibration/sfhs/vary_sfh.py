@@ -112,6 +112,7 @@ class VarySFHs(StarFormationHistories):
 
     def run_once(self, galaxy_input=None, triout=None, dry_run=False):
         """call trilegal and convert the output file to hdf5"""
+        logger.debug('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file, galaxy_input, triout, dry_run))
         rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
                                         triout, dry_run=dry_run)
         rsp.trilegal.utils.trilegal2hdf5(triout, overwrite=True)
@@ -198,7 +199,6 @@ def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
     # set up logging
     handler = logging.FileHandler('{}_vary_sfh.log'.format(input_file))
     logger.setLevel(logging.DEBUG)
-    logger.info('logger writing to {}_vary_sfh.log'.format(input_file))
     if loud:
         handler.setLevel(logging.DEBUG)
     else:
@@ -206,7 +206,7 @@ def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
+    logger.info('logger writing to {}_vary_sfh.log'.format(input_file))
     # set up input parameters
     inp_obj = rsp.fileio.InputParameters(default_dict=initialize_inputs())
     inp_obj.input_file = input_file
