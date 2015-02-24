@@ -153,7 +153,8 @@ class VarySFHs(StarFormationHistories):
                 import numpy as np
                 import os
                 import logging
-            
+                from star_formation_histories import StarFormationHistories
+
             #clients[:]['logger'] = logger
             return clients
 
