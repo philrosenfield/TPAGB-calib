@@ -147,7 +147,7 @@ class VarySFHs(StarFormationHistories):
             I would love a better way to do this.
             """
             clients = parallel.Client()
-            clients.block = False
+            clients.block = True
             clients[:].use_dill()
 
             with clients[:].sync_imports():
@@ -190,8 +190,7 @@ class VarySFHs(StarFormationHistories):
             #                 (i, self.galaxy_inputs[iset[i]],
             #                 self.triout_fmt % iset[i]) for i in range(len(iset))])
             res = [clients[i].apply_sync(self.run_once, self.galaxy_inputs[iset[i]],
-                                    self.triout_fmt % iset[i],
-                                    dry_run,)
+                                    self.triout_fmt % iset[i], dry_run,)
                    for i in range(len(iset))]
             logger.debug('{} {}'.format(j, iset))
             logger.debug('waiting on set {} of {}'.format(j, niters))
