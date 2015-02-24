@@ -112,7 +112,10 @@ class VarySFHs(StarFormationHistories):
 
     def run_once(self, galaxy_input=None, triout=None, dry_run=False):
         """call trilegal and convert the output file to hdf5"""
-        print('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file, galaxy_input, triout, dry_run))
+        print('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file,
+                                                             galaxy_input,
+                                                             triout,
+                                                             dry_run))
         rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
                                         triout, dry_run=dry_run)
         rsp.trilegal.utils.trilegal2hdf5(triout, overwrite=True)
@@ -142,13 +145,16 @@ class VarySFHs(StarFormationHistories):
             """
             I would love a better way to do this.
             """
+            
             clients = parallel.Client()
             clients.block = False
-            clients[:].use_dill()
-            clients[:].execute('import ResolvedStellarPops as rsp')
-            clients[:].execute('import numpy as np')
-            clients[:].execute('import os')
-            clients[:].execute('import logging')
+            with clients[:].sync_imports():
+                import ResolvedStellarPops as rsp
+                import numpy as np
+                import os
+                import logging
+            #clients[:].use_dill()
+
             clients[:]['logger'] = logger
             return clients
 
@@ -160,8 +166,6 @@ class VarySFHs(StarFormationHistories):
             os.system('ipcluster start --n={} &'.format(max_proc))
             time.sleep(start)
 
-        from IPython.config import Application
-        logger = Application.instance().log
         # create the sfr and galaxy input files
         self.vary_the_SFH(random_sfr=True, random_z=False, zdisp=False,
                           dry_run=dry_run, object_mass=None)
@@ -197,7 +201,8 @@ class VarySFHs(StarFormationHistories):
 
 def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
     # set up logging
-
+    from IPython.config import Application
+    logger = Application.instance().log
     handler = logging.FileHandler('{}_vary_sfh.log'.format(input_file))
     logger.setLevel(logging.DEBUG)
     if loud:
