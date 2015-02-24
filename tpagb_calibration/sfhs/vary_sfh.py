@@ -95,7 +95,7 @@ class VarySFHs(StarFormationHistories):
             self.galaxy_inputs.append(new_out)
 
     def vary_the_SFH(self, random_sfr=True, random_z=False,
-                     zdisp=True, dry_run=False, object_mass=None):
+                     zdisp=False, dry_run=False, object_mass=None):
         '''make the sfhs, make the galaxy inputs'''
         new_fmt = '{}{}_tri_%003i.sfr'.format(self.target, self.filter1) 
         outfile_fmt = os.path.join(self.outfile_loc, new_fmt)
