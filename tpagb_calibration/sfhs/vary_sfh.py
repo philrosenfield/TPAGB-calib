@@ -197,6 +197,7 @@ class VarySFHs(StarFormationHistories):
 def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
     # set up logging
     handler = logging.FileHandler('{}_vary_sfh.log'.format(input_file))
+    logger.info('logger writing to {}_vary_sfh.log'.format(input_file))
     if loud:
         handler.setLevel(logging.DEBUG)
     else:
