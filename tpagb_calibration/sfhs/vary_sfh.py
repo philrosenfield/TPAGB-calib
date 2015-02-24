@@ -160,7 +160,7 @@ class VarySFHs(StarFormationHistories):
             time.sleep(start)
 
         # create the sfr and galaxy input files
-        self.vary_the_SFH(random_sfr=True, random_z=False, zdisp=True,
+        self.vary_the_SFH(random_sfr=True, random_z=False, zdisp=False,
                           dry_run=dry_run, object_mass=None)
 
         # find looping parameters. How many sets of calls to the max number of
