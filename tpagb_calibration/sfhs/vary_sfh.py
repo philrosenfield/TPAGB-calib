@@ -161,7 +161,7 @@ class VarySFHs(StarFormationHistories):
             time.sleep(start)
 
         from IPython.config import Application
-        logger.addHandler(Application.instance().log)
+        logger = Application.instance().log
         # create the sfr and galaxy input files
         self.vary_the_SFH(random_sfr=True, random_z=False, zdisp=False,
                           dry_run=dry_run, object_mass=None)
@@ -186,7 +186,7 @@ class VarySFHs(StarFormationHistories):
             res = [clients[i].apply(self.run_once, self.galaxy_inputs[iset[i]],
                                     self.triout_fmt % iset[i], dry_run,)
                    for i in range(len(iset))]
-            logger.debug('{}{}'.format(j, iset))
+            logger.debug('{} {}'.format(j, iset))
             logger.debug('waiting on set {} of {}'.format(j, niters))
             while False in [r.ready() for r in res]:
                 time.sleep(1)
