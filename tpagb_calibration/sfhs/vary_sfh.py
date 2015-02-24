@@ -160,6 +160,8 @@ class VarySFHs(StarFormationHistories):
             os.system('ipcluster start --n={} &'.format(max_proc))
             time.sleep(start)
 
+        from IPython.config import Application
+        logger.addHandler(Application.instance().log)
         # create the sfr and galaxy input files
         self.vary_the_SFH(random_sfr=True, random_z=False, zdisp=False,
                           dry_run=dry_run, object_mass=None)
@@ -194,8 +196,7 @@ class VarySFHs(StarFormationHistories):
 
 def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
     # set up logging
-    from IPython.config import Application
-    logger = Application.instance().log
+
     handler = logging.FileHandler('{}_vary_sfh.log'.format(input_file))
     logger.setLevel(logging.DEBUG)
     if loud:
