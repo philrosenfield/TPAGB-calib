@@ -145,17 +145,16 @@ class VarySFHs(StarFormationHistories):
             """
             I would love a better way to do this.
             """
-            
             clients = parallel.Client()
             clients.block = False
+            clients[:].use_dill()
             with clients[:].sync_imports():
                 import ResolvedStellarPops as rsp
                 import numpy as np
                 import os
                 import logging
-            #clients[:].use_dill()
-
-            clients[:]['logger'] = logger
+            
+            #clients[:]['logger'] = logger
             return clients
 
         # check for clusters.
