@@ -178,8 +178,8 @@ class VarySFHs(StarFormationHistories):
             iset = iset[iset < self.nsfhs]
 
             # parallel call to run
-            res = [clients[i].apply(self.run_once, self.galaxy_inputs[i],
-                                    self.triout_fmt % i, dry_run,)
+            res = [clients[i].apply(self.run_once, self.galaxy_inputs[iset[i]],
+                                    self.triout_fmt % iset[i], dry_run,)
                    for i in range(len(iset))]
 
             logger.debug('waiting on set {} of {}'.format(j, niters))
