@@ -110,16 +110,23 @@ class VarySFHs(StarFormationHistories):
 
         return
 
-    def run_once(self, galaxy_input=None, triout=None, dry_run=False):
+    def run_once(self, galaxy_input=None, triout=None, dry_run=False, ite=0):
         """call trilegal and convert the output file to hdf5"""
         import ResolvedStellarPops as rsp
         print('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file,
                                                              galaxy_input,
                                                              triout,
                                                              dry_run))
-        rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
-                                        triout, dry_run=dry_run)
-        rsp.trilegal.utils.trilegal2hdf5(triout, overwrite=True)
+        #rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
+        #                                triout, dry_run=dry_run)
+        ver = 2.3
+        cmd = 'taskset -c %i code_%.1f/main -f %s -a -l %s %s > %s.scrn' % (ite, ver, self.cmd_input_file,
+                                                              galaxy_input, triout,
+                                                              triout)
+        with open('trilegal_script.sh', 'a') as out:
+            write(cmd + '\n')
+
+        #rsp.trilegal.utils.trilegal2hdf5(triout, overwrite=True)
         return
 
     def call_run(self, dry_run=False, max_proc=8, start=30, timeout=45):
@@ -192,6 +199,7 @@ class VarySFHs(StarFormationHistories):
             res = [clients[i].apply_sync(self.run_once, self.galaxy_inputs[iset[i]],
                                     self.triout_fmt % iset[i], dry_run,)
                    for i in range(len(iset))]
+
             logger.debug('{} {}'.format(j, iset))
             logger.debug('waiting on set {} of {}'.format(j, niters))
             while False in [r.ready() for r in res]:
