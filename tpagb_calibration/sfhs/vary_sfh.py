@@ -168,12 +168,12 @@ class VarySFHs(StarFormationHistories):
             return clients
 
         # check for clusters.
-        try:
-            clients = parallel.Client()
-        except IOError:
-            logger.debug('Starting ipcluster... waiting {} s for spin up'.format(start))
-            os.system('ipcluster start --n={} &'.format(max_proc))
-            time.sleep(start)
+        #try:
+        #    clients = parallel.Client()
+        #except IOError:
+        #    logger.debug('Starting ipcluster... waiting {} s for spin up'.format(start))
+        #    os.system('ipcluster start --n={} &'.format(max_proc))
+        #    time.sleep(start)
 
         # create the sfr and galaxy input files
         self.vary_the_SFH(random_sfr=True, random_z=False, zdisp=False,
@@ -186,8 +186,8 @@ class VarySFHs(StarFormationHistories):
 
         # in case it takes more than 45 s to spin up clusters, set up as
         # late as possible
-        clients = setup_parallel()
-        logger.debug('ready to go!')
+        #clients = setup_parallel()
+        #logger.debug('ready to go!')
         for j, iset in enumerate(sets):
             # don't use not needed procs
             iset = iset[iset < self.nsfhs]
@@ -196,14 +196,16 @@ class VarySFHs(StarFormationHistories):
             #    logger.info(['client %i galaxy_inp %s triout %s' %
             #                 (i, self.galaxy_inputs[iset[i]],
             #                 self.triout_fmt % iset[i]) for i in range(len(iset))])
-            res = [clients[i].apply_sync(self.run_once, self.galaxy_inputs[iset[i]],
-                                    self.triout_fmt % iset[i], dry_run,)
+            #res = [clients[i].apply_sync(self.run_once, self.galaxy_inputs[iset[i]],
+            #                        self.triout_fmt % iset[i], dry_run,)
+            #       for i in range(len(iset))]
+            res = [self.run_once(galaxy_input=self.galaxy_inputs[iset[i]],
+                                 triout=self.triout_fmt % iset[i], ite=i)
                    for i in range(len(iset))]
-
             logger.debug('{} {}'.format(j, iset))
             logger.debug('waiting on set {} of {}'.format(j, niters))
-            while False in [r.ready() for r in res]:
-                time.sleep(1)
+            #while False in [r.ready() for r in res]:
+            #    time.sleep(1)
             logger.debug('set {} complete'.format(j))
 
         #os.system('ipcluster stop')
