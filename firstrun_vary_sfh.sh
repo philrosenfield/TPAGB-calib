@@ -1,7 +1,7 @@
 #!/bin/bash
 # should be in code directory
 
-CMD="nice -n 19 python tpagb_calibration/sfhs/vary_sfh -n 8"
+CMD="nice -n 19 python -m tpagb_calibration.sfhs.vary_sfh -n 8"
 LOC="/home/rosenfield/research/TP-AGBcalib/SNAP/varysfh"
 EXT="_vsfh.sh"
 # only one filter in SNAP/tables/snap_galaxies.dat
