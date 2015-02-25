@@ -124,7 +124,7 @@ class VarySFHs(StarFormationHistories):
                                                               galaxy_input, triout,
                                                               triout)
         with open('trilegal_script.sh', 'a') as out:
-            write(cmd + '\n')
+            out.write(cmd + '\n')
 
         #rsp.trilegal.utils.trilegal2hdf5(triout, overwrite=True)
         return
