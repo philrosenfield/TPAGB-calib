@@ -127,8 +127,15 @@ def main(argv):
 
     args = parser.parse_args(argv)
 
+
+    if not args.target:   
+        if args.directory:
+            target = os.path.split(args.name[0])[1]
+        else:
+            target = tricat.split('_')[1]
+
     # set up logging
-    handler = logging.FileHandler('analyze.log')
+    handler = logging.FileHandler('{}_analyze.log'.format(target))
     if args.verbose:
         handler.setLevel(logging.DEBUG)
     else:
@@ -141,12 +148,6 @@ def main(argv):
         tricats = rsp.fileio.get_files(args.name[0], '*dat')
     else:
         tricats = args.name
-    
-    if not args.target:   
-        if args.directory:
-            target = os.path.split(args.name[0])[1]
-        else:
-            target = tricat.split('_')[1]
         
     if args.verbose:
         logger.info('working on target: {}'.format(target))
