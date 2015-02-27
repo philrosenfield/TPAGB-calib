@@ -143,7 +143,7 @@ def main(argv):
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    import pdb; pdb.set_trace()
+    
     if args.directory:
         tricats = rsp.fileio.get_files(args.name[0], '*dat')
     else:
