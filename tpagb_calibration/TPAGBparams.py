@@ -13,7 +13,7 @@ else:
             research_path = '/home/rosenfield/research/'
     else:
         # mac
-        research_path = '/Users/phil/research/'
+        research_path = '/Users/rosenfield/research/'
 
 tpcalib_dir = research_path + 'TP-AGBcalib'
 

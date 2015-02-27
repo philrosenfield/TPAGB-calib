@@ -8,7 +8,6 @@ import os
 import sys
 import time
 
-from astropy.table import Table
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pylab as plt
@@ -17,34 +16,45 @@ import ResolvedStellarPops as rsp
 from IPython import parallel
 from ..pop_synth.stellar_pops import normalize_simulation, rgb_agb_regions
 from ..plotting.plotting import model_cmd_withasts
-from star_formation_histories import StarFormationHistories
+from ..sfhs.star_formation_histories import StarFormationHistories
+from ..TPAGBparams import snap_src
+
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def load_trilegal_catalog(trilegal_catalog):
-    '''read an hdf5 formatted trilegal catalog'''
-    sgal = rsp.StarPop()
-    sgal.base, sgal.name = os.path.split(trilegal_catalog)
-    sgal.data = Table.read(trilegal_catalog, path='data')
-    return sgal
+    '''read a table into a SimGalaxy object'''
+    return rsp.SimGalaxy(trilegal_catalog)
 
 
-def ast_correction(sgal, fake_file, outfile='default', diag_plot=False,
-                   overwrite=True):
-    """ call rsp.ast_correct_starpop """
-    if type(sgal) is str:
-        if outfile == 'default':
-            outfile = sgal
-        sgal = load_trilegal_catalog(sgal)
+def make_ast_corrections(trilegal_catalogs, target, outfile='default',
+                         diag_plot=False, overwrite=True):
+    """
+    apply ast corrections from fake files found in matchfake_loc/*[target]*
+    see rsp.ast_correct_starpop
+    """
+    # where the matchfake files live
+    matchfake_loc = os.path.join(snap_src, 'data', 'galaxies')
     
-    if hasattr(sgal.data, '{}_cor'.format(filter2)):
-        logger.warning('call to ast correct, but {}_cor found in data file'.format(filter2))
-    else:
+    # search string for fake files
+    search_str = '*{}*.matchfake'.format(target.upper())
+    
+    fakes = rsp.fileio.get_files(matchfake_loc, search_str)
+    logger.info('fake files found: {}'.format(fakes))
+    asts = [rsp.ASTs(f) for f in fakes]
+    
+    for trilegal_catalog in trilegal_catalogs:
+        logger.info('working on {}'.format(trilegal_catalog))
+        sgal = load_trilegal_catalog(trilegal_catalog)
+        # "overwrite" (append columns) to the existing catalog by default
         if outfile == 'default':
-            outfile = os.path.join(sgal.base, sgal.name)
-        rsp.ast_correct_starpop(sgal, overwrite=overwrite, outfile=outfile,
-                                fake_file=fake_file, diag_plot=diag_plot)
+            outfile = trilegal_catalog
+
+        # do the ast corrections
+        [rsp.ast_correct_starpop(sgal, asts_obj=ast, overwrite=overwrite,
+                                 outfile=outfile, diag_plot=diag_plot)
+         for ast in asts]
     return
 
 
@@ -102,32 +112,48 @@ def main(argv):
                                                   trilegal catalog")
 
     parser.add_argument('-d', '--directory', action='store_true',
-                        help='create partial input file from \
-                              specified directory')
+                        help='opperate on all files in a directory')
 
-    parser.add_argument('-v', '--pdb', action='store_true',
+    parser.add_argument('-v', '--verbose', action='store_true',
                         help='verbose mode')
 
-    parser.add_argument('-f', '--filter', type=str, default=None,
-                        help='V filter (if more than one in directory)')
+    parser.add_argument('-a', '--ast', action='store_true',
+                        help='make ast corrections to file(s)')
 
-    parser.add_argument('-n', '--nsfhs', type=str, default=1,
-                        help='Number of sampled SFHs to run')
-    
-    parser.add_argument('name', type=str,
-                        help='trilegal catalog (hdf5)')
+    parser.add_argument('-t', '--target', type=str, help='target name')
+
+    parser.add_argument('name', type=str, nargs='*',
+                        help='trilegal catalog or directory if -d flag')
 
     args = parser.parse_args(argv)
 
     # set up logging
-    handler = logging.FileHandler('{}_prepare_data.log'.format(args.name))
-    if args.pdb:
+    handler = logging.FileHandler('analyze.log')
+    if args.verbose:
         handler.setLevel(logging.DEBUG)
     else:
         handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+    import pdb; pdb.set_trace()
+    if args.directory:
+        tricats = rsp.fileio.get_files(args.name[0], '*dat')
+    else:
+        tricats = args.name
+    
+    if not args.target:   
+        if args.directory:
+            target = os.path.split(args.name[0])[1]
+        else:
+            target = tricat.split('_')[1]
+        
+    if args.verbose:
+        logger.info('working on target: {}'.format(target))
+        
+    make_ast_corrections(tricats, target)
+
+    """
     if indict['ast_corr']:
         if not hasattr(sgal.data, '{}_cor'.format(filter2)):
             assert indict['fake_file'] is not None, \
@@ -157,9 +183,12 @@ def main(argv):
                               indict['filter2'])
     
     # add file_dict to plotinp
-    
+    """
     return
-                  
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+
 def gather_results(sgal, norm, target, filter1, filter2,
                    mass_met=True, tpagb_lf=True, narratio_dict=None):
     '''gather results into strings or lists of strings for writing.'''
@@ -209,7 +238,6 @@ def gather_results(sgal, norm, target, filter1, filter2,
         result_dict['narratio_line'] = narratio_fmt % out_dict
 
     return result_dict
-
 
 def write_results(res_dict, agb_mod, target, outfile_loc, filter1, filter2,
                   extra_str=''):
