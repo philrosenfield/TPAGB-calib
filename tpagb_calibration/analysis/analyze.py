@@ -133,6 +133,8 @@ def main(argv):
             target = os.path.split(args.name[0])[1]
         else:
             target = tricat.split('_')[1]
+    else:
+        target = args.target
 
     # set up logging
     handler = logging.FileHandler('{}_analyze.log'.format(target))
