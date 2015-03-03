@@ -120,7 +120,7 @@ class VarySFHs(StarFormationHistories):
         #rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
         #                                triout, dry_run=dry_run)
         ver = 2.3
-        cmd = 'taskset -c %i code_%.1f/main -f %s -a -l %s %s > %s.scrn' % (ite, ver, self.cmd_input_file,
+        cmd = 'nice -n +19 taskset -c %i code_%.1f/main -f %s -a -l %s %s > %s.scrn' % (ite, ver, self.cmd_input_file,
                                                               galaxy_input, triout,
                                                               triout)
         with open('trilegal_script.sh', 'a') as out:

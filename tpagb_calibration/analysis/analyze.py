@@ -1,5 +1,5 @@
 """
-A dump of snippets from vary_sfh that shouldn't have been in there!
+Utilities to analyze trilegal output catalogs of TPAGB models
 """
 import argparse
 import logging
@@ -19,64 +19,26 @@ from ..plotting.plotting import model_cmd_withasts
 from ..sfhs.star_formation_histories import StarFormationHistories
 from ..TPAGBparams import snap_src
 
-
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
-# getting:
-# `rank` is deprecated; use the `ndim` attribute or function instead.
-# To find the rank of a matrix see `numpy.linalg.matrix_rank`.
-# waaay to many times
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 
 def load_trilegal_catalog(trilegal_catalog):
     '''read a table into a SimGalaxy object'''
     return rsp.SimGalaxy(trilegal_catalog)
 
-
-def make_ast_corrections(trilegal_catalogs, target, outfiles='default',
-                         diag_plot=False, overwrite=True):
-    """
-    apply ast corrections from fake files found in matchfake_loc/*[target]*
-    see rsp.ast_correct_starpop
-    """
-    if type(outfiles) is str:
-        outfmt = 'default'
-    else:
-        outfmt = 'supplied'
-    # where the matchfake files live
-    matchfake_loc = os.path.join(snap_src, 'data', 'galaxies')
-    
-    # search string for fake files
-    search_str = '*{}*.matchfake'.format(target.upper())
-    
-    fakes = rsp.fileio.get_files(matchfake_loc, search_str)
-    logger.info('fake files found: {}'.format(fakes))
-    asts = [rsp.ASTs(f) for f in fakes]
-    
-    for i, trilegal_catalog in enumerate(trilegal_catalogs):
-        logger.info('working on {}'.format(trilegal_catalog))
-        sgal = load_trilegal_catalog(trilegal_catalog)
-        # "overwrite" (append columns) to the existing catalog by default
-        if outfmt == 'default':
-            outfile = trilegal_catalog
-        else:
-            outfile = outfiles[i]
-
-        # do the ast corrections
-        [rsp.ast_correct_starpop(sgal, asts_obj=ast, overwrite=overwrite,
-                                 outfile=outfile, diag_plot=diag_plot)
-         for ast in asts]
-    return
-
 def cutheb(sgal, filter1, filter2):
     """
+    Mark HeB stars as unrecovered from observations
+    
+    i.e.:
     assign 99. to sgal.data[f] where sgal.data['stage'] is between 4 and 6.
     f = filter1, filter2, filter1_cor, and filter2_cor (if they all exist)
-    i.e, assuming stages ordered (indexed 0) =
+    Assuming stages ordered (indexed 0) =
     PMS, MS, SUBGIANT, RGB, HEB, RHEB, BHEB, EAGB, TPAGB, POSTAGB, WD
+    
+    To do:
+    Add mbol or logl limit on where to apply this correction
     """
     filters = [filter1, filter2]
     for filt in filters:
@@ -84,7 +46,8 @@ def cutheb(sgal, filter1, filter2):
             fmt = filt + '_cor'
             if fmt in sgal.data.keys():
                 filters.append(fmt)
-
+    
+    # HeB, RHeB, BHeB
     sgal.iheb, = np.nonzero((sgal.data['stage'] >= 4) & \
                             (sgal.data['stage'] <= 6))
     
@@ -118,6 +81,9 @@ def do_normalization(filter1=None, filter2=None, sgal=None, tricat=None,
 
     return sgal, norm, idx_norm, (sgal_rgb, sgal_agb), (sim_rgb, sim_agb)
 
+def makelf(trilegal_catalogs, target, heb=True, norm=True, ast=True,
+           completeness=True, data=True, norm_kw={}):
+    pass
 
 
 # main
@@ -146,6 +112,14 @@ def main(argv):
     # mag_bright,
     # mag_faint,
     # need ir stuff too! -- fill out table...
+    """
+    Example Usage: Make AST corrections and leave
+    python analyze -vda ~/research/TP-AGBcalib/SNAP/varysfh/kkh37
+    
+    if the target directory is different than the target in the matchfake filename:
+    python analyze -vda -t ugc4459 ~/research/TP-AGBcalib/SNAP/varysfh/ugc-04459
+
+    """
     parser = argparse.ArgumentParser(description="Cull useful info from \
                                                   trilegal catalog")
 
@@ -154,9 +128,6 @@ def main(argv):
 
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='verbose mode')
-
-    parser.add_argument('-a', '--ast', action='store_true',
-                        help='make ast corrections to file(s)')
 
     parser.add_argument('-t', '--target', type=str, help='target name')
 
@@ -192,7 +163,6 @@ def main(argv):
     if args.verbose:
         logger.info('working on target: {}'.format(target))
         
-    make_ast_corrections(tricats, target)
 
     """
     if indict['ast_corr']:
