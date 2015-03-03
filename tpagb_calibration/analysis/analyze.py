@@ -23,6 +23,14 @@ from ..TPAGBparams import snap_src
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# getting:
+# `rank` is deprecated; use the `ndim` attribute or function instead.
+# To find the rank of a matrix see `numpy.linalg.matrix_rank`.
+# waaay to many times
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+
+
 def load_trilegal_catalog(trilegal_catalog):
     '''read a table into a SimGalaxy object'''
     return rsp.SimGalaxy(trilegal_catalog)
