@@ -28,12 +28,16 @@ def load_trilegal_catalog(trilegal_catalog):
     return rsp.SimGalaxy(trilegal_catalog)
 
 
-def make_ast_corrections(trilegal_catalogs, target, outfile='default',
+def make_ast_corrections(trilegal_catalogs, target, outfiles='default',
                          diag_plot=False, overwrite=True):
     """
     apply ast corrections from fake files found in matchfake_loc/*[target]*
     see rsp.ast_correct_starpop
     """
+    if type(outfiles) is str:
+        outfmt = 'default'
+    else:
+        outfmt = 'supplied'
     # where the matchfake files live
     matchfake_loc = os.path.join(snap_src, 'data', 'galaxies')
     
@@ -44,12 +48,14 @@ def make_ast_corrections(trilegal_catalogs, target, outfile='default',
     logger.info('fake files found: {}'.format(fakes))
     asts = [rsp.ASTs(f) for f in fakes]
     
-    for trilegal_catalog in trilegal_catalogs:
+    for i, trilegal_catalog in enumerate(trilegal_catalogs):
         logger.info('working on {}'.format(trilegal_catalog))
         sgal = load_trilegal_catalog(trilegal_catalog)
         # "overwrite" (append columns) to the existing catalog by default
-        if outfile == 'default':
+        if outfmt == 'default':
             outfile = trilegal_catalog
+        else:
+            outfile = outfiles[i]
 
         # do the ast corrections
         [rsp.ast_correct_starpop(sgal, asts_obj=ast, overwrite=overwrite,
@@ -57,14 +63,38 @@ def make_ast_corrections(trilegal_catalogs, target, outfile='default',
          for ast in asts]
     return
 
+def cutheb(sgal, filter1, filter2):
+    """
+    assign 99. to sgal.data[f] where sgal.data['stage'] is between 4 and 6.
+    f = filter1, filter2, filter1_cor, and filter2_cor (if they all exist)
+    i.e, assuming stages ordered (indexed 0) =
+    PMS, MS, SUBGIANT, RGB, HEB, RHEB, BHEB, EAGB, TPAGB, POSTAGB, WD
+    """
+    filters = [filter1, filter2]
+    for filt in filters:
+        if not filt.endswith('cor'):
+            fmt = filt + '_cor'
+            if fmt in sgal.data.keys():
+                filters.append(fmt)
+
+    sgal.iheb, = np.nonzero((sgal.data['stage'] >= 4) & \
+                            (sgal.data['stage'] <= 6))
+    
+    # flag heb star magnitudes as "unrecovered"
+    for f in filters:
+        sgal.data[f][sgal.iheb] = 99.
+    return sgal
 
 def do_normalization(filter1=None, filter2=None, sgal=None, tricat=None,
                      offset=None, trgb_exclude=None, trgb=None, nrgbs=None,
                      col_min=None, col_max=None, mag_bright=None,
-                     mag_faint=None):
+                     mag_faint=None, cutheb=False):
     '''Do the normalization and save small part of outputs.'''
     if sgal is None:
         sgal = load_trilegal_catalog(tricat)
+
+    if cutheb:
+        sgal = cutheb(sgal, filter1, filter2)
 
     # select rgb and agb regions
     sgal_rgb, sgal_agb = rgb_agb_regions(offset, trgb_exclude, trgb,
