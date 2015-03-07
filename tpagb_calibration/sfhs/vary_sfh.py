@@ -125,9 +125,9 @@ class VarySFHs(StarFormationHistories):
         #                                                     galaxy_input,
         #                                                     triout,
         #                                                     dry_run))
-        if os.path.isfile(triout) and not overwrite:
-            logger.warning('{} exists, will overwrite if no hdf5 file found'.format(triout))
-            #flag += 1
+        #if os.path.isfile(triout) and not overwrite:
+        #    logger.warning('{} exists, will overwrite if no hdf5 file found'.format(triout))
+        #    flag += 1
 
         hdf5file = rsp.fileio.replace_ext(triout, 'hdf5')
         if os.path.isfile(hdf5file) and not overwrite:
