@@ -129,7 +129,7 @@ class VarySFHs(StarFormationHistories):
 
         return cmd
 
-    def call_run(self, dry_run=False, max_proc=8, start=30, timeout=45):
+    def call_run(self, dry_run=False, nproc=8):
         """Call run_once or run_parallel depending on self.nsfh value"""
 
         self.prepare_trilegal_output()
@@ -139,24 +139,21 @@ class VarySFHs(StarFormationHistories):
             cmd = self.run_once(galaxy_input=self.galaxy_input,
                           triout=self.tname + '_bestsfr.dat')
         else:
-            cmd = self.run_parallel(dry_run=dry_run, max_proc=max_proc, start=start,
-                              timeout=timeout)
+            cmd = self.run_many(dry_run=dry_run, nproc=nproc)
         return cmd
 
-    def run_parallel(self, dry_run=False, max_proc=8, start=30,
-                     timeout=45):
+    def run_many(self, dry_run=False, nproc=8):
         """
-        Call self.run in parallel... or if only self.nsfhs == 1, hop out and
-        do not run in parallel.
+        Call self.run_once a bunch of times
         """
         self.vary_the_SFH(random_sfr=True, random_z=False, zdisp=False,
                           dry_run=dry_run, object_mass=None)
 
         # find looping parameters. How many sets of calls to the max number of
         # processors
-        niters = np.ceil(self.nsfhs / float(max_proc))
-        sets = np.arange(niters * max_proc, dtype=int).reshape(niters, max_proc)
-
+        niters = np.ceil(self.nsfhs / float(nproc))
+        sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
+        print(sets)
         line = ''
         for j, iset in enumerate(sets):
             # don't use not needed procs
@@ -167,8 +164,6 @@ class VarySFHs(StarFormationHistories):
                                     triout=self.triout_fmt % iset[i], ite=i)
                 line += '{}\n'.format(cmd)
             line += jobwait(line)
-
-            logger.debug('set {} complete'.format(j))
 
         return line
 
