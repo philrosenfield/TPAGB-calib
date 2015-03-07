@@ -140,7 +140,7 @@ class VarySFHs(StarFormationHistories):
                                                                triout))
         return call
 
-    def call_run(self, dry_run=False, nproc=8, overwrite=overwrite):
+    def call_run(self, dry_run=False, nproc=8, overwrite=False):
         """Call run_once or run_parallel depending on self.nsfh value"""
 
         self.prepare_trilegal_output()
