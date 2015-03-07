@@ -37,17 +37,22 @@ def make_ast_corrections(trilegal_catalogs, target, outfiles='default',
     logger.info('{}'.format(trilegal_catalogs))
     for i, trilegal_catalog in enumerate(trilegal_catalogs):
         logger.info('working on {}'.format(trilegal_catalog))
-        sgal = rsp.SimGalaxy(trilegal_catalog)
-        # "overwrite" (append columns) to the existing catalog by default
-        if outfmt == 'default':
-            outfile = trilegal_catalog
+        header = open(trilegal_catalog, 'r').readline()
+        test = [n for n in header.split() if '_cor' in n]
+        if len(test) > 0:
+            logger.warning('{} seems to have asts: {}'.format(trilegal_catalog, test))
         else:
-            outfile = outfiles[i]
-        # do the ast corrections
-        [rsp.ast_correct_starpop(sgal, asts_obj=ast, overwrite=overwrite,
-                                 outfile=outfile, diag_plot=diag_plot,
-                                 hdf5=hdf5)
-         for ast in asts]
+            sgal = rsp.SimGalaxy(trilegal_catalog)
+            # "overwrite" (append columns) to the existing catalog by default
+            if outfmt == 'default':
+                outfile = trilegal_catalog
+            else:
+                outfile = outfiles[i]
+            # do the ast corrections
+            [rsp.ast_correct_starpop(sgal, asts_obj=ast, overwrite=overwrite,
+                                     outfile=outfile, diag_plot=diag_plot,
+                                     hdf5=hdf5)
+             for ast in asts]
     return
 
 
