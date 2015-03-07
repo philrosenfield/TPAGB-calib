@@ -123,10 +123,10 @@ class VarySFHs(StarFormationHistories):
                                                              dry_run))
 
         ver = 2.3
-        cmd = 'nice -n +19 taskset -c %i code_%.1f/main -f %s -a -l %s %s > %s.scrn' % (ite, ver, self.cmd_input_file,
-                                                              galaxy_input, triout,
-                                                              triout)
-
+        call = 'nice -n +19 taskset -c %i code_%.1f/main' % (ite, ver)
+        cmd =  call + ' -f %s -a -l %s %s > %s.scrn' % (self.cmd_input_file,
+                                                        galaxy_input, triout,
+                                                        triout)
         return cmd
 
     def call_run(self, dry_run=False, nproc=8):
@@ -153,12 +153,12 @@ class VarySFHs(StarFormationHistories):
         # processors
         niters = np.ceil(self.nsfhs / float(nproc))
         sets = np.arange(niters * nproc, dtype=int).reshape(niters, nproc)
-        print(sets)
+
         line = ''
         for j, iset in enumerate(sets):
             # don't use not needed procs
             iset = iset[iset < self.nsfhs]
-
+            print(iset)
             for i in range(len(iset)):
                 cmd = self.run_once(galaxy_input=self.galaxy_inputs[iset[i]],
                                     triout=self.triout_fmt % iset[i], ite=i)
