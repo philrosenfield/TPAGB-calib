@@ -160,6 +160,7 @@ class VarySFHs(StarFormationHistories):
             iset = iset[iset < self.nsfhs]
             print(iset)
             for i in range(len(iset)):
+                print(iset[i], i)
                 cmd = self.run_once(galaxy_input=self.galaxy_inputs[iset[i]],
                                     triout=self.triout_fmt % iset[i], ite=i)
                 line += '{}\n'.format(cmd)
