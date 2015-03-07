@@ -306,11 +306,10 @@ def main(argv):
     parser.add_argument('-m', '--maglimits', type=str, default=None,
                         help='comma separated mag faint, mag bright, opt then nir')
 
-    parser.add_argument('-o', '--trgboffsets', type=str, default=None,
+    parser.add_argument('-o', '--trgboffsets', type=str, default='2.0,1.5',
                         help='comma separated trgb offsets')
 
-    parser.add_argument('-t', '--target', type=str, 
-                        help='target name')
+    parser.add_argument('-t', '--target', type=str, help='target name')
     
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='verbose mode')

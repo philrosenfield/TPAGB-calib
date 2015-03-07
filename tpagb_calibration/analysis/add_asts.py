@@ -61,10 +61,10 @@ def main(argv):
     Make AST corrections to trilegal catalog(s)
     
     usage:
-    python add_asts.py -vda ~/research/TP-AGBcalib/SNAP/varysfh/kkh37
+    python add_asts.py -vd ~/research/TP-AGBcalib/SNAP/varysfh/kkh37
     
     if the target directory name is different than it is in the matchfake file name:
-    python analyze.py -vda -t ugc4459 ~/research/TP-AGBcalib/SNAP/varysfh/ugc-04459
+    python analyze.py -vd -t ugc4459 ~/research/TP-AGBcalib/SNAP/varysfh/ugc-04459
     """
     parser = argparse.ArgumentParser(description="Cull useful info from \
                                                   trilegal catalog")
@@ -81,7 +81,6 @@ def main(argv):
                         help='trilegal catalog or directory if -d flag')
 
     args = parser.parse_args(argv)
-
 
     if not args.target:   
         if args.directory:
@@ -104,6 +103,8 @@ def main(argv):
     
     # assume trilegal was run with outfile extension == .dat
     if args.directory:
+        if args.name[0].endswith('/'):
+            args.name[0] = args.name[0][:-1]
         tricats = rsp.fileio.get_files(args.name[0], '*dat')
     else:
         tricats = args.name
