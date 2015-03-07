@@ -233,9 +233,8 @@ def main(argv):
 
     args = parser.parse_args(argv)
 
-    call_VarySFH(args.name, loud=args.verbose, dry_run=args.dry_run,
-                 nproc=args.nproc, outfile=args.outfile,
-                 overwrite=args.overwrite)
+    call_VarySFH(args.name, loud=args.verbose, nproc=args.nproc,
+                 outfile=args.outfile, overwrite=args.overwrite)
 
 
 if __name__ == '__main__':
