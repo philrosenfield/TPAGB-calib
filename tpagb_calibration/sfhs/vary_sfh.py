@@ -135,10 +135,10 @@ class VarySFHs(StarFormationHistories):
             flag += 1
         
         if flag < 1:
-            call = 'nice -n +19 taskset -c {} code_{}/main'.format((ite, ver))
-            call += ' -f {0} -a -l {1} {2} > {2}.scrn'.format((self.cmd_input_file,
+            call = 'nice -n +19 taskset -c {0} code_{1}/main'.format(ite, ver)
+            call += ' -f {0} -a -l {1} {2} > {2}.scrn'.format(self.cmd_input_file,
                                                                galaxy_input,
-                                                               triout))
+                                                               triout)
         return call
 
     def call_run(self, dry_run=False, nproc=8, overwrite=False):
