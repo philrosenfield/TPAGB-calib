@@ -1,6 +1,6 @@
 """
 Add AST corrections to trilegal catalogs
-Note: single catalog mode is untested
+Note: single catalog mode is untested (assumes a directory full of trilegal outputs)
 """
 import argparse
 import logging
@@ -9,18 +9,12 @@ import sys
 
 import ResolvedStellarPops as rsp
 
+# where the matchfake files live
 from ..TPAGBparams import snap_src
+matchfake_loc = os.path.join(snap_src, 'data', 'galaxies')
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
-# where the matchfake files live
-matchfake_loc = os.path.join(snap_src, 'data', 'galaxies')
-
-
-def load_trilegal_catalog(trilegal_catalog):
-    '''read a table into a SimGalaxy object'''
-    return rsp.SimGalaxy(trilegal_catalog)
 
 
 def make_ast_corrections(trilegal_catalogs, target, outfiles='default',
@@ -40,22 +34,22 @@ def make_ast_corrections(trilegal_catalogs, target, outfiles='default',
     fakes = rsp.fileio.get_files(matchfake_loc, search_str)
     logger.info('fake files found: {}'.format(fakes))
     asts = [rsp.ASTs(f) for f in fakes]
-    
+    logger.info('{}'.format(trilegal_catalogs))
     for i, trilegal_catalog in enumerate(trilegal_catalogs):
         logger.info('working on {}'.format(trilegal_catalog))
-        sgal = load_trilegal_catalog(trilegal_catalog)
+        sgal = rsp.SimGalaxy(trilegal_catalog)
         # "overwrite" (append columns) to the existing catalog by default
         if outfmt == 'default':
             outfile = trilegal_catalog
         else:
             outfile = outfiles[i]
-
         # do the ast corrections
         [rsp.ast_correct_starpop(sgal, asts_obj=ast, overwrite=overwrite,
                                  outfile=outfile, diag_plot=diag_plot,
                                  hdf5=hdf5)
          for ast in asts]
     return
+
 
 def main(argv):
     """
@@ -114,7 +108,6 @@ def main(argv):
         logger.info('working on target: {}'.format(target))
         
     make_ast_corrections(tricats, target)
-
     return
 
 if __name__ == "__main__":
