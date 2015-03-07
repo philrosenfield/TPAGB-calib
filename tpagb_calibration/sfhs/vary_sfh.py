@@ -114,22 +114,33 @@ class VarySFHs(StarFormationHistories):
 
         return
 
-    def run_once(self, galaxy_input=None, triout=None, dry_run=False, ite=0):
+    def run_once(self, galaxy_input=None, triout=None, dry_run=False, ite=0,
+                 overwrite=False):
         """call trilegal and convert the output file to hdf5"""
         import ResolvedStellarPops as rsp
-        print('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file,
-                                                             galaxy_input,
-                                                             triout,
-                                                             dry_run))
-
+        flag = 0
         ver = 2.3
-        call = 'nice -n +19 taskset -c %i code_%.1f/main' % (ite, ver)
-        cmd =  call + ' -f %s -a -l %s %s > %s.scrn' % (self.cmd_input_file,
-                                                        galaxy_input, triout,
-                                                        triout)
-        return cmd
+        #print('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file,
+        #                                                     galaxy_input,
+        #                                                     triout,
+        #                                                     dry_run))
+        if os.path.isfile(triout) and not overwrite:
+            logger.warning('not overwritting {}'.format(triout))
+            flag += 1
 
-    def call_run(self, dry_run=False, nproc=8):
+        hdf5file = rsp.fileio.replace_ext(triout, 'hdf5')
+        if os.path.isfile(hdf5file) and not overwrite:
+            logger.warning('{} already exists, not calling trilegal'.format(hdf5file))
+            flag += 1
+        
+        if flag < 1:
+            call = 'nice -n +19 taskset -c {} code_{}/main'.format((ite, ver))
+            call += ' -f {0} -a -l {1} {2} > {2}.scrn'.format((self.cmd_input_file,
+                                                               galaxy_input,
+                                                               triout))
+        return call
+
+    def call_run(self, dry_run=False, nproc=8, overwrite=overwrite):
         """Call run_once or run_parallel depending on self.nsfh value"""
 
         self.prepare_trilegal_output()
@@ -137,12 +148,14 @@ class VarySFHs(StarFormationHistories):
         if self.nsfhs <= 1:
             # don't run parallel.
             cmd = self.run_once(galaxy_input=self.galaxy_input,
-                          triout=self.tname + '_bestsfr.dat')
+                          triout=self.tname + '_bestsfr.dat',
+                          overwrite=overwrite)
         else:
-            cmd = self.run_many(dry_run=dry_run, nproc=nproc)
+            cmd = self.run_many(dry_run=dry_run, nproc=nproc,
+                                overwrite=overwrite)
         return cmd
 
-    def run_many(self, dry_run=False, nproc=8):
+    def run_many(self, dry_run=False, nproc=8, overwrite=False):
         """
         Call self.run_once a bunch of times
         """
@@ -157,18 +170,17 @@ class VarySFHs(StarFormationHistories):
         for j, iset in enumerate(sets):
             # don't use not needed procs
             iset = iset[iset < self.nsfhs]
-            print(iset)
             for i in range(len(iset)):
-                print(iset[i], i)
                 cmd = self.run_once(galaxy_input=self.galaxy_inputs[iset[i]],
-                                    triout=self.triout_fmt % iset[i], ite=i)
+                                    triout=self.triout_fmt % iset[i], ite=i,
+                                    overwrite=overwrite)
                 line += '{}\n'.format(cmd)
             line += jobwait()
 
         return line
 
 def call_VarySFH(input_file, loud=False, dry_run=False, nproc=8,
-                 outfile=None):
+                 outfile=None, overwrite=False):
     # set up logging
     from IPython.config import Application
     logger = Application.instance().log
@@ -194,6 +206,7 @@ def call_VarySFH(input_file, loud=False, dry_run=False, nproc=8,
     if outfile is None:
         print(line)
     else:
+        logger.info('output file: {}'.format(outfile))
         with open(outfile, 'a') as out:
             out.write(line)
     return
@@ -217,12 +230,16 @@ def main(argv):
     parser.add_argument('-o', '--outfile', type=str, default='trilegal_script.sh',
                         help='name of output script')
 
+    parser.add_argument('-f', '--overwrite', action='store_true',
+                        help='write call to trilegal even if output file exists')
+
     parser.add_argument('name', type=str, help='input file')
 
     args = parser.parse_args(argv)
 
     call_VarySFH(args.name, loud=args.verbose, dry_run=args.dry_run,
-                 nproc=args.nproc, outfile=args.outfile)
+                 nproc=args.nproc, outfile=args.outfile,
+                 overwrite=args.overwrite)
 
 
 if __name__ == '__main__':
