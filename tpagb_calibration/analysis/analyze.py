@@ -8,8 +8,8 @@ import os
 import sys
 import time
 
-import matplotlib as mpl
-mpl.use('Agg')
+#import matplotlib as mpl
+#mpl.use('Agg')
 import matplotlib.pylab as plt
 import ResolvedStellarPops as rsp
 
@@ -22,236 +22,197 @@ from ..TPAGBparams import snap_src
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+optfilter2 = 'F814W'
+nirfilter2 = 'F160W'
+nirfilter1 = 'F110W'
+
+data_loc = os.path.join(snap_src, 'data', 'galaxies')
 
 def load_trilegal_catalog(trilegal_catalog):
     '''read a table into a SimGalaxy object'''
     return rsp.SimGalaxy(trilegal_catalog)
 
-def cutheb(sgal, filter1, filter2):
+
+def cutheb(sgal):
     """
-    Mark HeB stars as unrecovered from observations
+    Mark HeB stars as unrecovered from observations -- assumes filters start
+    with "F" as in F110W or F814W_cor.
     
     i.e.:
     assign 99. to sgal.data[f] where sgal.data['stage'] is between 4 and 6.
-    f = filter1, filter2, filter1_cor, and filter2_cor (if they all exist)
-    Assuming stages ordered (indexed 0) =
-    PMS, MS, SUBGIANT, RGB, HEB, RHEB, BHEB, EAGB, TPAGB, POSTAGB, WD
+    where f is any array that begins with "F"
     
+    4-5 is based on stages ordered (indexed 0) =
+    PMS, MS, SUBGIANT, RGB, HEB, RHEB, BHEB, EAGB, TPAGB, POSTAGB, WD
+
     To do:
     Add mbol or logl limit on where to apply this correction
     """
-    filters = [filter1, filter2]
-    for filt in filters:
-        if not filt.endswith('cor'):
-            fmt = filt + '_cor'
-            if fmt in sgal.data.keys():
-                filters.append(fmt)
-    
     # HeB, RHeB, BHeB
     sgal.iheb, = np.nonzero((sgal.data['stage'] >= 4) & \
                             (sgal.data['stage'] <= 6))
     
+    filters = [f for f in sgal.data.dtype.names if f.startswith('F')]
+    
     # flag heb star magnitudes as "unrecovered"
     for f in filters:
         sgal.data[f][sgal.iheb] = 99.
+    
     return sgal
 
-def do_normalization(filter1=None, filter2=None, sgal=None, tricat=None,
-                     offset=None, trgb_exclude=None, trgb=None, nrgbs=None,
-                     col_min=None, col_max=None, mag_bright=None,
-                     mag_faint=None, cutheb=False):
-    '''Do the normalization and save small part of outputs.'''
+
+def check_astcor(filters):
+    """add _cor to filter names if it isn't already there"""
+    if type(filters) is str:
+        filters = [filters]
+
+    for i, f in enumerate(filters):
+        if not f.endswith('cor'):
+            filters[i] = f + '_cor'
+    return filters
+
+
+def do_normalization(opt=True, ast_cor=True, optfilter1=None, sgal=None,
+                     tricat=None, nrgbs=None, cut_heb=False, regions_kw={}):
+    '''Do the normalization: call rgb_agb_regions and normalize_simulations.'''
+
+    if opt:
+        filter1 = optfilter1
+        filter2 = optfilter2
+    else:
+        filter1 = nirfilter1
+        filter2 = nirfilter2
+
+    if ast_cor:
+        filter1, filter2 = check_astcor([filter1, filter2])
+
     if sgal is None:
         sgal = load_trilegal_catalog(tricat)
 
-    if cutheb:
-        sgal = cutheb(sgal, filter1, filter2)
+    if cut_heb:
+        sgal = cutheb(sgal)
 
     # select rgb and agb regions
-    sgal_rgb, sgal_agb = rgb_agb_regions(offset, trgb_exclude, trgb,
-                                         sgal.data[filter2], col_min=col_min,
-                                         col_max=col_max, mag_bright=mag_bright,
-                                         mag_faint=mag_faint,
-                                         mag1=sgal.data[filter1])
+    sgal_rgb, sgal_agb = rgb_agb_regions(sgal.data[filter2],
+                                         mag1=sgal.data[filter1],
+                                         **regions_kw)
 
     # normalization
     norm, idx_norm, sim_rgb, sim_agb = normalize_simulation(sgal.data[filter2],
                                                             nrgbs, sgal_rgb,
                                                             sgal_agb)
 
-    return sgal, norm, idx_norm, (sgal_rgb, sgal_agb), (sim_rgb, sim_agb)
+    if opt:
+        norm_dict = {'optnorm': norm,
+                     'optsim_rgb': sim_rgb,
+                     'optsim_agb': sim_agb,
+                     'optsgal_rgb': sgal_rgb,
+                     'optsgal_agb': sgal_agb,
+                     'optidx_norm': idx_norm}
+    else:
+        norm_dict = {'nirnorm': norm,
+                     'nirsim_rgb': sim_rgb,
+                     'nirsim_agb': sim_agb,
+                     'nirsgal_rgb': sgal_rgb,
+                     'nirsgal_agb': sgal_agb,
+                     'niridx_norm': idx_norm}
+        
+    return sgal, norm_dict
 
-def makelf(trilegal_catalogs, target, heb=True, norm=True, ast=True,
-           completeness=True, data=True, norm_kw={}):
+
+def makelf(trilegal_catalogs, target, heb=True, norm=True, ast_cor=True,
+           completeness=True, data=True, norm_kw={}, lf_line=''):
     pass
 
 
-# main
-#-d directory or trilegal catalog name
-# just do ast_correction and leave
-# output lf or cmd optical or ir
-# settings for normalization
-# read in observations table
+def tpagb_lf(sgal, narratio_dict, optfilt1, optfilt2, nirfilt1, nirfilt2,
+             lf_line=''):
+    """format a narratio_dict for a line in the LF output file"""
+    optrgb = narratio_dict['optsim_rgb']
+    optagb = narratio_dict['optsim_agb']
+    nirrgb = narratio_dict['nirsim_rgb']
+    niragb = narratio_dict['optsim_agb']
 
-def main(argv):
-    # indict:
-    # ast_corr bool
-    # fake_file if ast_corr true
-    # filter1
-    # filter2
-    # target
-    # agb_mod
-    # outfile loc
-    # extra_str
-    # nrgbs
-    # offset,
-    # trgb_exclude,
-    # trgb,
-    # col_min,
-    # col_max,
-    # mag_bright,
-    # mag_faint,
-    # need ir stuff too! -- fill out table...
-    """
-    Example Usage: Make AST corrections and leave
-    python analyze -vda ~/research/TP-AGBcalib/SNAP/varysfh/kkh37
+    header = '# {} {} {} {} '.format(optfilt1, optfilt2, nirfilt1,
+                                     nirfilt2)
+    header += 'optsim_rgb optsim_agb optsgal_rgb optsgal_agb '
+    header += 'optidx_norm optnorm nirsim_rgb nirsim_agb nirsgal_rgb '
+    header += 'nirsgal_agb niridx_norm nirnorm\n'
     
-    if the target directory is different than the target in the matchfake filename:
-    python analyze -vda -t ugc4459 ~/research/TP-AGBcalib/SNAP/varysfh/ugc-04459
+    if len(lf_line) == 0:
+        lf_line = header
+    lf_line += '\n'.join([' '.join(['%g' % m for m in sgal.data[optfilt1]]),
+                          ' '.join(['%g' % m for m in sgal.data[optfilt2]]),
+                          ' '.join(['%g' % m for m in sgal.data[nirfilt1]]),
+                          ' '.join(['%g' % m for m in sgal.data[nirfilt2]]),
+                          ' '.join(['%i' % m for m in optrgb]),
+                          ' '.join(['%i' % m for m in optagb]),
+                          ' '.join(['%i' % m for m in narratio_dict['optsgal_rgb']]),
+                          ' '.join(['%i' % m for m in narratio_dict['optsgal_agb']]),
+                          ' '.join(['%i' % m for m in narratio_dict['optidx_norm']]),
+                          '%.4f' % narratio_dict['optnorm'],
+                          ' '.join(['%i' % m for m in nirrgb]),
+                          ' '.join(['%i' % m for m in niragb]),
+                          ' '.join(['%i' % m for m in narratio_dict['nirsgal_rgb']]),
+                          ' '.join(['%i' % m for m in narratio_dict['nirsgal_rgb']]),
+                          ' '.join(['%i' % m for m in narratio_dict['niridx_norm']]),
+                          '%.4f' % narratio_dict['nirnorm']])
+    return lf_line
 
-    """
-    parser = argparse.ArgumentParser(description="Cull useful info from \
-                                                  trilegal catalog")
 
-    parser.add_argument('-d', '--directory', action='store_true',
-                        help='opperate on all files in a directory')
-
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='verbose mode')
-
-    parser.add_argument('-t', '--target', type=str, help='target name')
-
-    parser.add_argument('name', type=str, nargs='*',
-                        help='trilegal catalog or directory if -d flag')
-
-    args = parser.parse_args(argv)
-
-
-    if not args.target:   
-        if args.directory:
-            target = os.path.split(args.name[0])[1]
-        else:
-            target = tricat.split('_')[1]
-    else:
-        target = args.target
-
-    # set up logging
-    handler = logging.FileHandler('{}_analyze.log'.format(target))
-    if args.verbose:
-        handler.setLevel(logging.DEBUG)
-    else:
-        handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    
-    if args.directory:
-        tricats = rsp.fileio.get_files(args.name[0], '*dat')
-    else:
-        tricats = args.name
-        
-    if args.verbose:
-        logger.info('working on target: {}'.format(target))
-        
-
-    """
-    if indict['ast_corr']:
-        if not hasattr(sgal.data, '{}_cor'.format(filter2)):
-            assert indict['fake_file'] is not None, \
-                'No ast correction in {}, need a fake file to make them on the fly'.format(sgal.name)
-            ast_correction(sgal, indict['fake_file'], outfile='default',
-                           diag_plot=False, overwrite=True)
-            indict['filter1'] += '_cor'
-            indict['filter2'] += '_cor'
-
-    sgal, norm, idx_norm, (sgal_rgb, sgal_agb), (sim_rgb, sim_agb) = \
-        do_normalization(**indict)
-        
-    result_dict = gather_results(sgal, norm, indict['target'],
-                                 indict['filter1'],
-                                 indict['filter2'],
-                                 narratio_dict={'sim_rgb': rgb,
-                                                'sim_agb': agb,
-                                                'sgal_rgb': srgb,
-                                                'sgal_agb': sagb,
-                                                'idx_norm': inorm})
-    
-    result_dict['contam_line'] = contamination_by_phases(sgal, sgal_rgb,
-                                                         sgal_agb, filter2)
-
-    file_dict = write_results(result_dict, agb_mod, indict['target'],
-                              indict['outfile_loc'], indict['filter1'],
-                              indict['filter2'])
-    
-    # add file_dict to plotinp
-    """
-    return
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
-
-def gather_results(sgal, norm, target, filter1, filter2,
-                   mass_met=True, tpagb_lf=True, narratio_dict=None):
-    '''gather results into strings or lists of strings for writing.'''
-    result_dict = {}
-
-    if tpagb_lf:
-        result_dict['lf_line'] = '# norm mag2 mag1 sim_rgb sim_agb sgal_rgb sgal_agb idx_norm\n' + \
-            '\n'.join(['%.4f' % norm,
-                       ' '.join(['%g' % m for m in sgal.data[filter2]]),
-                       ' '.join(['%g' % m for m in sgal.data[filter1]]),
-                       ' '.join(['%i' % m for m in narratio_dict['rgb']]),
-                       ' '.join(['%i' % m for m in narratio_dict['agb']]),
-                       ' '.join(['%i' % m for m in narratio_dict['srgb']]),
-                       ' '.join(['%i' % m for m in narratio_dict['sagb']]),
-                       ' '.join(['%i' % m for m in narratio_dict['inorm']])])
-
-    #if mass_met is True:
-    #    sgal.all_stages('TPAGB')
-    #    inds = sgal.itpagb
-    #    mag = sgal.mag2
-
-    #    key = 'mass_met_line'
-    #    mass = sgal.data.m_ini[inds]
-    #    mag = mag[inds]
-    #    mh = sgal.data.MH[inds]
-    #    result_dict[key] = \
-    #        '\n'.join([' '.join(['%g' % t for t in mag]),
-    #                   ' '.join(['%g' % t for t in mass]),
-    #                   ' '.join(['%.3f' % t for t in mh])])
-
+def narratio(target, optnrgb, optnagb, nirnrgb, nirnagb, optfilt2, nirfilt2,
+             narratio_line=''):
+    """format numbers of stars for the narratio table"""
     # N agb/rgb ratio file
-    if len(narratio_dict) > 0:
-        narratio_fmt = '%(target)s %(filter2)s %(nrgb)i %(nagb)i '
-        narratio_fmt += '%(ar_ratio).3f %(ar_ratio_err).3f'
+    narratio_fmt = '%(target)s %(optfilter2)s %(optnrgb)i %(optnagb)i '
+    narratio_fmt += '%(optar_ratio).3f %(optar_ratio_err).3f '
+    narratio_fmt += '%(nirfilter2)s %(nirnrgb)i %(nirnagb)i '
+    narratio_fmt += '%(nirar_ratio).3f %(nirar_ratio_err).3f\n'
 
-        rgb = narratio_dict['rgb']
-        agb = narratio_dict['agb']
+    out_dict = {'target': target,
+                'optfilter2': optfilt2,
+                'optar_ratio': optnagb / optnrgb,
+                'optar_ratio_err': rsp.utils.count_uncert_ratio(optnagb, optnrgb),
+                'optnrgb': optnrgb,
+                'optnagb': optnagb,
+                'nirfilter2': nirfilt2,
+                'nirar_ratio': nirnagb / nirnrgb,
+                'nirar_ratio_err': rsp.utils.count_uncert_ratio(nirnagb, nirnrgb),
+                'nirnrgb': nirnrgb,
+                'nirnagb': nirnagb}
+    narratio_line += narratio_fmt % out_dict
+    return narratio_line
 
-        nrgb = float(len(rgb))
-        nagb = float(len(agb))
-        out_dict = {'target': target,
-                    'filter2': filter2,
-                    'ar_ratio': nagb / nrgb,
-                    'ar_ratio_err': rsp.utils.count_uncert_ratio(nagb, nrgb),
-                    'nrgb': nrgb,
-                    'nagb': nagb}
-        result_dict['narratio_line'] = narratio_fmt % out_dict
 
-    return result_dict
+def gather_results(sgal, target, optfilter1, ast_cor=True, narratio_dict=None,
+                   lf_line='', narratio_line=''):
+    '''gather results into strings: call tpagb_lf and narratio'''
+    if ast_cor:
+        optfilt1, optfilt2, nirfilt1, nirfilt2 = check_astcor([optfilter1,
+                                                               optfilter2,
+                                                               nirfilter1,
+                                                               nirfilter2])
 
-def write_results(res_dict, agb_mod, target, outfile_loc, filter1, filter2,
-                  extra_str=''):
+    lf_line = tpagb_lf(sgal, narratio_dict, optfilt1, optfilt2, nirfilt1, nirfilt2,
+                       lf_line=lf_line)
+
+    optrgb = narratio_dict['optsim_rgb']
+    optagb = narratio_dict['optsim_agb']
+    nirrgb = narratio_dict['nirsim_rgb']
+    niragb = narratio_dict['optsim_agb']
+    
+    optnrgb = float(len(optrgb))
+    optnagb = float(len(optagb))
+    nirnrgb = float(len(nirrgb))
+    nirnagb = float(len(niragb))
+    
+    narratio_line = narratio(target, optnrgb, optnagb, nirnrgb, nirnagb,
+                             optfilt2, nirfilt2, narratio_line=narratio_line)
+
+    return lf_line, narratio_line
+
+
+def write_results(res_dict, target, outfile_loc, optfilter1, extra_str=''):
     '''
     Write results of VSFH output dict to files.
 
@@ -272,13 +233,17 @@ def write_results(res_dict, agb_mod, target, outfile_loc, filter1, filter2,
         file and path to file
         ex: lf_file: <path_to_lf_file>
     '''
-    fmt = '%s_%s_%s_%s_%s%s.dat'
-    narratio_header = '# target nrgb nagb ar_ratio ar_ratio_err \n'
+    narratio_header = '# target optnrgb optnagb optar_ratio optar_ratio_err '
+    narratio_header += 'nirnrgb nirnagb nirar_ratio nirar_ratio_err \n'
+
     fdict = {}
     for key, line in res_dict.items():
         name = key.replace('_line', '')
-        fname = (fmt % (agb_mod, target, filter1, filter2, name, extra_str)).lower()
-        fname = os.path.join(outfile_loc, fname)
+        fname = ('_'.join(['%s' % s for s in (target, optfilter1,
+                                              optfilter2, nirfilter1,
+                                              nirfilter2, name)])).lower()
+
+        fname = os.path.join(outfile_loc, '%s%s.dat' % (fname, extra_str))
         with open(fname, 'a') as fh:
             if 'narratio' in key:
                 fh.write(narratio_header)
@@ -287,6 +252,198 @@ def write_results(res_dict, agb_mod, target, outfile_loc, filter1, filter2,
             [fh.write('%s \n' % l) for l in line]
         fdict['%s_file' % name] = fname
     return fdict
+
+
+def get_trgb(target, optfilter1=None):
+    import difflib
+    angst_data = rsp.angst_tables.angst_data
+
+    angst_target = difflib.get_close_matches(target.upper(),
+                                             angst_data.targets)[0].replace('-', '_')
+    
+    target_row = angst_data.__getattribute__(angst_target)
+    opt_trgb = target_row['%s,%s' % (optfilter1, optfilter2)]['mTRGB']
+
+    nir_trgb = angst_data.get_snap_trgb_av_dmod(target.upper())[0]
+    return opt_trgb, nir_trgb
+
+
+def laad_obs(target, optfilter1=''):
+    """load in NIR and OPT galaxy as StarPop objects"""
+    from astropy.io import fits
+    nirgalname, = rsp.fileio.get_files(data_loc, '*{}*fits'.format(target.upper()))
+    optgalname, = rsp.fileio.get_files(data_loc, ('*{}*{}*fits'.format(target, optfilter1).lower()))
+    nirgal = rsp.StarPop()
+    nirgal.data = fits.getdata(nirgalname)
+
+    optgal = rsp.StarPop()
+    optgal.data = fits.getdata(optgalname)
+    return optgal, nirgal
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(description="Cull useful info from \
+                                                  trilegal catalog")
+
+    parser.add_argument('-a', '--ast_cor', action='store_true',
+                        help='use ast corrected mags')
+    
+    parser.add_argument('-c', '--colorlimits', type=str, default=None,
+                        help='comma separated color min, color max, opt then nir')
+
+    parser.add_argument('-d', '--directory', action='store_true',
+                        help='opperate on *hdf5 files in a directory')
+
+    parser.add_argument('-e', '--trgbexclude', type=str, default='0.1,0.2',
+                        help='comma separated regions around trgb to exclude')
+
+    parser.add_argument('-f', '--optfilter1', type=str,
+                        help='optical V filter')
+
+    parser.add_argument('-z', '--cut_heb', action='store_true',
+                        help='cut HeB files from analysis')
+
+    parser.add_argument('-m', '--maglimits', type=str, default=None,
+                        help='comma separated mag faint, mag bright, opt then nir')
+
+    parser.add_argument('-o', '--trgboffsets', type=str, default=None,
+                        help='comma separated trgb offsets')
+
+    parser.add_argument('-t', '--target', type=str, 
+                        help='target name')
+    
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='verbose mode')
+    
+    parser.add_argument('name', type=str, nargs='*',
+                        help='trilegal catalog(s) or directory if -d flag')
+
+    args = parser.parse_args(argv)
+
+
+    if not args.target:   
+        if args.directory:
+            target = os.path.split(args.name[0])[1]
+        else:
+            target = args.name[0].split('_')[1]
+    else:
+        target = args.target
+
+    if args.directory:
+        tricats = rsp.fileio.get_files(args.name[0], '*_???.hdf5')
+        outfile_loc = args.name[0]
+    else:
+        tricats = args.name
+        outfile_loc = os.path.split(args.name[0])[0]
+        
+    # set up logging
+    logfile = os.path.join(outfile_loc, '{}_analyze.log'.format(target))
+    handler = logging.FileHandler(logfile)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)    
+    
+    logger.info('command: {}'.format(' '.join(argv)))
+    logger.info('logfile: {}'.format(logfile))
+    logger.debug('working on target: {}'.format(target))
+
+    # need the following in opt and nir
+    if args.trgboffsets is not None:
+        opt_offset, nir_offset = map(float, args.trgboffsets.split(','))
+    else:
+        opt_offset, nir_offset = None, None
+    
+    if args.colorlimits is not None:
+        opt_colmin, opt_colmax, nir_colmin, nir_colmax = \
+            map(float, args.colorlimits.split(','))
+    else:
+        opt_colmin, opt_colmax, nir_colmin, nir_colmax = None, None, None, None
+
+    if args.maglimits is not None:
+        opt_magfaint, opt_magbright, nir_magfaint, nir_magbright = \
+            map(float, args.colorlimits.split(','))
+    else:
+        opt_magfaint, opt_magbright, nir_magfaint, nir_magbright = None, None, None, None
+
+    opt_trgbexclude, nir_trgbexclude = map(float, args.trgbexclude.split(','))
+
+    # get the number of rgb and agb stars from the observations
+    opt_trgb, nir_trgb = get_trgb(target, optfilter1=args.optfilter1)
+    optgal, nirgal = laad_obs(target, optfilter1=args.optfilter1)
+
+    optregions_kw = {'offset': opt_offset,
+                     'trgb_exclude': opt_trgbexclude,
+                     'trgb': opt_trgb,
+                     'col_min': opt_colmin,
+                     'col_max': opt_colmax,
+                     'mag_bright': opt_magbright,
+                     'mag_faint': opt_magfaint}
+
+    nirregions_kw = {'offset': nir_offset,
+                     'trgb_exclude': nir_trgbexclude,
+                     'trgb': nir_trgb,
+                     'col_min': nir_colmin,
+                     'col_max': nir_colmax,
+                     'mag_bright': nir_magbright,
+                     'mag_faint': nir_magfaint}
+
+    optgal_rgb, optgal_agb = rgb_agb_regions(optgal.data['MAG2_ACS'],
+                                             mag1=optgal.data['MAG1_ACS'],
+                                             **optregions_kw)
+
+    nirgal_rgb, nirgal_agb = rgb_agb_regions(nirgal.data['MAG2_IR'],
+                                             mag1=nirgal.data['MAG1_IR'],
+                                             **nirregions_kw)
+    
+    obs_optnrgbs = float(len(optgal_rgb))
+    obs_nirnrgbs = float(len(nirgal_rgb))
+    obs_optnagbs = float(len(optgal_agb))
+    obs_nirnagbs = float(len(nirgal_agb))
+
+    narratio_line = narratio('data', obs_optnrgbs, obs_optnagbs, obs_nirnrgbs,
+                             obs_nirnagbs, optfilter2, nirfilter2)
+
+    # normalize each trilegal catalog    
+    norm_kws = {'cut_heb': args.cut_heb, 'ast_cor': args.ast_cor}
+    lf_line = ''
+    for tricat in tricats:
+        logger.debug('normalizing: {}'.format(tricat))
+        sgal, optnorm_dict = do_normalization(opt=True, tricat=tricat,
+                                              optfilter1=args.optfilter1,
+                                              nrgbs=obs_optnrgbs,
+                                              regions_kw=optregions_kw,
+                                              **norm_kws)
+
+        sgal, nirnorm_dict = do_normalization(opt=False, sgal=sgal,
+                                              nrgbs=obs_nirnrgbs,
+                                              regions_kw=nirregions_kw,
+                                              **norm_kws)
+
+        narratio_dict = dict(optnorm_dict.items() + nirnorm_dict.items())
+        
+        lf_line, narratio_line = gather_results(sgal, target, args.optfilter1,
+                                                narratio_dict=narratio_dict,
+                                                lf_line=lf_line,
+                                                narratio_line=narratio_line)
+    
+    result_dict = {'lf_line': lf_line, 'narratio_line': narratio_line}
+    #result_dict['contam_line'] = contamination_by_phases(sgal, sgal_rgb,
+    #                                                     sgal_agb, filter2)
+    
+    # write the output files
+    file_dict = write_results(result_dict, target, outfile_loc,
+                              args.optfilter1)
+    print file_dict
+    # plot?
+    return
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
 
 
 ### Snippets below ###

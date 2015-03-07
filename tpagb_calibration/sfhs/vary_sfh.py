@@ -27,6 +27,10 @@ def initialize_inputs():
             'target': None}
 
 
+def jobwait(line=''):
+    line += "\nfor job in `jobs -p`\ndo\n    echo $job\n    wait $job\ndone\n"
+    return line
+
 class VarySFHs(StarFormationHistories):
     '''
     run several variations of the age sfr z from MATCH SFH to produce
@@ -123,11 +127,9 @@ class VarySFHs(StarFormationHistories):
         cmd = 'nice -n +19 taskset -c %i code_%.1f/main -f %s -a -l %s %s > %s.scrn' % (ite, ver, self.cmd_input_file,
                                                               galaxy_input, triout,
                                                               triout)
-        with open('trilegal_script.sh', 'a') as out:
-            out.write(cmd + '\n')
 
         #rsp.trilegal.utils.trilegal2hdf5(triout, overwrite=True)
-        return
+        return cmd
 
     def call_run(self, dry_run=False, max_proc=8, start=30, timeout=45):
         """Call run_once or run_parallel depending on self.nsfh value"""
@@ -188,6 +190,7 @@ class VarySFHs(StarFormationHistories):
         # late as possible
         #clients = setup_parallel()
         #logger.debug('ready to go!')
+        line = ''
         for j, iset in enumerate(sets):
             # don't use not needed procs
             iset = iset[iset < self.nsfhs]
@@ -199,19 +202,22 @@ class VarySFHs(StarFormationHistories):
             #res = [clients[i].apply_sync(self.run_once, self.galaxy_inputs[iset[i]],
             #                        self.triout_fmt % iset[i], dry_run,)
             #       for i in range(len(iset))]
-            res = [self.run_once(galaxy_input=self.galaxy_inputs[iset[i]],
-                                 triout=self.triout_fmt % iset[i], ite=i)
-                   for i in range(len(iset))]
-            logger.debug('{} {}'.format(j, iset))
-            logger.debug('waiting on set {} of {}'.format(j, niters))
+            for i in range(len(iset)):
+                cmd = self.run_once(galaxy_input=self.galaxy_inputs[iset[i]],
+                                    triout=self.triout_fmt % iset[i], ite=i)
+                line += '{}\n'.format(cmd)
+                line += jobwait(line)
+            #logger.debug('{} {}'.format(j, iset))
+            #logger.debug('waiting on set {} of {}'.format(j, niters))
             #while False in [r.ready() for r in res]:
             #    time.sleep(1)
             logger.debug('set {} complete'.format(j))
 
         #os.system('ipcluster stop')
-        return
+        return line
 
-def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
+def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8,
+                 outfile=None):
     # set up logging
     from IPython.config import Application
     logger = Application.instance().log
@@ -233,7 +239,12 @@ def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8):
     #  do it!
     vsh = VarySFHs(inp_obj=inp_obj)
     #import pdb; pdb.set_trace()
-    vsh.call_run(dry_run=dry_run, max_proc=max_proc)
+    line = vsh.call_run(dry_run=dry_run, max_proc=max_proc)
+    if outfile is None:
+        print(line)
+    else:
+        with open(outfile, 'a') as out:
+            out.write(line)
     return
 
 def main(argv):
@@ -252,12 +263,15 @@ def main(argv):
     parser.add_argument('-n', '--nproc', type=int, default=8,
                         help='number of processors')
 
+    parser.add_argument('-o', '--outfile', type=str, default='trilegal_script.sh',
+                        help='name of output script')
+
     parser.add_argument('name', type=str, help='input file')
 
     args = parser.parse_args(argv)
 
     call_VarySFH(args.name, loud=args.verbose, dry_run=args.dry_run,
-                 max_proc=args.nproc)
+                 max_proc=args.nproc, outfile=args.outfile)
 
 
 if __name__ == '__main__':

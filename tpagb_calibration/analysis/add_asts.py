@@ -70,13 +70,10 @@ def main(argv):
                                                   trilegal catalog")
 
     parser.add_argument('-d', '--directory', action='store_true',
-                        help='opperate on all files in a directory')
+                        help='opperate on *.dat files in a directory')
 
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='verbose mode')
-
-    parser.add_argument('-a', '--ast', action='store_true',
-                        help='make ast corrections to file(s)')
 
     parser.add_argument('-t', '--target', type=str, help='target name')
 
@@ -104,6 +101,8 @@ def main(argv):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.info('using matchfake location: {}'.format(matchfake_loc))
+    
+    # assume trilegal was run with outfile extension == .dat
     if args.directory:
         tricats = rsp.fileio.get_files(args.name[0], '*dat')
     else:

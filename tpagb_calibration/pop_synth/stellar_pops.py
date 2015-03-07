@@ -7,7 +7,7 @@ from ResolvedStellarPops.galaxies.asts import ASTs
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def rgb_agb_regions(offset, trgb_exclude, trgb, mag, col_min=None,
+def rgb_agb_regions(mag, offset=None, trgb_exclude=None, trgb=None, col_min=None,
                     col_max=None, mag1=None, mag_bright=None,
                     mag_faint=None):
     """the indices of mag in rgb and agb regions"""

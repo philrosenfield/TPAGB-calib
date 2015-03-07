@@ -1,18 +1,26 @@
 #!/usr/bin/env python
 import argparse
+import matplotlib as mpl
+
 import matplotlib.pylab as plt
 import numpy as np
 import os
 import sys
 import time
 
+import ResolvedStellarPops as rsp
 from astropy.io import fits
 from ResolvedStellarPops.tpagb_path_config import tpagb_path
 
+from ..TPAGBparams import snap_src
+
+data_loc = os.path.join(snap_src, 'data', 'galaxies')
+    
 def move_on(ok, msg='0 to move on: '):
     ok = int(raw_input(msg))
     time.sleep(1)
     return ok
+
 
 def find_match_limits(phot, phot_ext, comp1=99., comp2=None, color_only=False,
                       xlim=None, ylim=None):
@@ -84,6 +92,7 @@ def find_match_limits(phot, phot_ext, comp1=99., comp2=None, color_only=False,
 
     return data
 
+
 def find_gates(target):
     import glob
     here = os.getcwd()
@@ -126,7 +135,27 @@ def find_gates(target):
         print('wrote %s' % param)
     
     os.chdir(here)
+
+
+def laad_obs(target, optfilter1=''):
+    """load in NIR and OPT galaxy"""
+    nirgalname, = rsp.fileio.get_files(data_loc, '*{}*fits'.format(target.upper()))
+    optgalname, = rsp.fileio.get_files(data_loc, ('*{}*{}*fits'.format(target, optfilter1).lower()))
+
+    nirphot = fits.getdata(nirgalname)
+
+    optphot = fits.getdata(optgalname)
+    return optphot, nirphot
+
+def find_normalization_limits(target, optfilter1=''):
+    optphot, nirphot = laad_obs(target, optfilter1=optfilter1)
+    phot_ext = 'acs'
+    if 'wfpc2' in optphot:
+        phot_ext = 'wfpc2'
     
+    optcolmin, optcolmax = find_match_limits(optphot, phot_ext, color_only=True)
+    nircolmin, nircolmax = find_match_limits(nirphot, 'ir', color_only=True)
+    print ','.join('%.2f' % m for m in [optcolmin, optcolmax, nircolmin, nircolmax])
 
 def match_limits(color_only=False, data_file='snap_galaxies.dat',
                  target=None):
@@ -196,8 +225,14 @@ if __name__ == "__main__":
                         help='name of one target in the data_file')
 
     parser.add_argument('-e', '--exgates', action='store_true',
-                        help='Do exclude gates instead of match_limits')
+                        help='Find exclude gates instead')
 
+    parser.add_argument('-n', '--norm', action='store_true',
+                        help='Find normalization color limits')
+    
+    parser.add_argument('-f', '--optfilter1', type=str, default='',
+                        help='optical V filter')
+    
     args = parser.parse_args(sys.argv[1:])
     color_only = args.color_only
     if args.pdb:
@@ -207,5 +242,7 @@ if __name__ == "__main__":
         assert args.target is not None, \
             'Must supply target if finding exclude gates'
         find_gates(args.target)
+    elif args.norm:
+        find_normalization_limits(args.target, optfilter1='')
     else:
         match_limits(color_only=color_only, data_file=args.data_file, target=args.target)
