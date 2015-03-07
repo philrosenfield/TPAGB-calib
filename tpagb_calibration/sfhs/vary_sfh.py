@@ -40,15 +40,15 @@ class VarySFHs(StarFormationHistories):
     needed to cull the model output down to what is necessary for the
     analysis.
     '''
-    def __init__(self, inp_obj=None, input_file=None, kwargs={}):
+    def __init__(self, inp_obj=None, input_file=None):
         '''
         galaxy_input is a template.
         '''
         # load SFH instance to make lots of trilegal runs
         self.input_file = input_file
         if input_file is not None:
-            kwargs.update(rsp.fileio.load_input(input_file))
-            indict = dict(initialize_inputs.items() + kwargs.items())
+            indict = rsp.fileio.load_input(input_file)
+            indict = dict(initialize_inputs.items() + indict.items())
         if inp_obj is not None:
             indict = inp_obj.__dict__
 
@@ -68,7 +68,6 @@ class VarySFHs(StarFormationHistories):
                              'output_%s_%s_%s_%s' % (self.target, self.filter1,
                                                      self.filter2, self.agb_mod))
         self.triout_fmt = self.tname + '_%003i.dat'
-
         
     def prepare_galaxy_input(self, object_mass=None, overwrite=False):
         '''
@@ -96,7 +95,9 @@ class VarySFHs(StarFormationHistories):
                 with open(new_out, 'w') as f:
                     f.write(''.join(lines))
                 logger.info('wrote {}'.format(new_out))
-                self.galaxy_inputs.append(new_out)
+            else:
+                logger.info('not overwritting {}'.format(new_out))
+            self.galaxy_inputs.append(new_out)
 
     def vary_the_SFH(self, random_sfr=True, random_z=False,
                      zdisp=False, overwrite=False, object_mass=None):
@@ -178,8 +179,8 @@ class VarySFHs(StarFormationHistories):
 
         return line
 
-def call_VarySFH(input_file, loud=False, dry_run=False, nproc=8,
-                 outfile=None, overwrite=False):
+def call_VarySFH(input_file, loud=False, nproc=8, outfile=None,
+                 overwrite=False):
     # set up logging
     from IPython.config import Application
     logger = Application.instance().log
@@ -201,7 +202,7 @@ def call_VarySFH(input_file, loud=False, dry_run=False, nproc=8,
     #  do it!
     vsh = VarySFHs(inp_obj=inp_obj)
     #import pdb; pdb.set_trace()
-    line = vsh.call_run(dry_run=dry_run, nproc=nproc)
+    line = vsh.call_run(nproc=nproc, overwrite=overwrite)
     if outfile is None:
         print(line)
     else:
