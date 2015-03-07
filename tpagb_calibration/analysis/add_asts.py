@@ -34,13 +34,14 @@ def make_ast_corrections(trilegal_catalogs, target, outfiles='default',
     fakes = rsp.fileio.get_files(matchfake_loc, search_str)
     logger.info('fake files found: {}'.format(fakes))
     asts = [rsp.ASTs(f) for f in fakes]
-    logger.info('{}'.format(trilegal_catalogs))
+    logger.debug('{}'.format(trilegal_catalogs))
     for i, trilegal_catalog in enumerate(trilegal_catalogs):
         logger.info('working on {}'.format(trilegal_catalog))
         header = open(trilegal_catalog, 'r').readline()
         test = [n for n in header.split() if '_cor' in n]
         if len(test) > 0:
-            logger.warning('{} seems to have asts: {}'.format(trilegal_catalog, test))
+            logger.warning('{} seems to have asts: {}'.format(trilegal_catalog,
+                                                              test))
         else:
             sgal = rsp.SimGalaxy(trilegal_catalog)
             # "overwrite" (append columns) to the existing catalog by default
@@ -105,7 +106,7 @@ def main(argv):
     if args.directory:
         if args.name[0].endswith('/'):
             args.name[0] = args.name[0][:-1]
-        tricats = rsp.fileio.get_files(args.name[0], '*dat')
+        tricats = rsp.fileio.get_files(args.name[0], '*_???.dat')
     else:
         tricats = args.name
         
