@@ -28,7 +28,7 @@ def initialize_inputs():
 
 
 def jobwait(line=''):
-    line += "\nfor job in `jobs -p`\ndo\n    echo $job\n    wait $job\ndone\n"
+    line += "\nfor job in `jobs -p`\ndo\n    echo $job\n    wait $job\ndone\n\n"
     return line
 
 class VarySFHs(StarFormationHistories):
@@ -121,14 +121,12 @@ class VarySFHs(StarFormationHistories):
                                                              galaxy_input,
                                                              triout,
                                                              dry_run))
-        #rsp.trilegal.utils.run_trilegal(self.cmd_input_file, galaxy_input,
-        #                                triout, dry_run=dry_run)
+
         ver = 2.3
         cmd = 'nice -n +19 taskset -c %i code_%.1f/main -f %s -a -l %s %s > %s.scrn' % (ite, ver, self.cmd_input_file,
                                                               galaxy_input, triout,
                                                               triout)
 
-        #rsp.trilegal.utils.trilegal2hdf5(triout, overwrite=True)
         return cmd
 
     def call_run(self, dry_run=False, max_proc=8, start=30, timeout=45):
@@ -151,33 +149,6 @@ class VarySFHs(StarFormationHistories):
         Call self.run in parallel... or if only self.nsfhs == 1, hop out and
         do not run in parallel.
         """
-        def setup_parallel():
-            """
-            I would love a better way to do this.
-            """
-            clients = parallel.Client()
-            clients.block = True
-            clients[:].use_dill()
-
-            with clients[:].sync_imports():
-                import ResolvedStellarPops as rsp
-                import numpy as np
-                import os
-                import logging
-                from .star_formation_histories import StarFormationHistories
-
-            #clients[:]['logger'] = logger
-            return clients
-
-        # check for clusters.
-        #try:
-        #    clients = parallel.Client()
-        #except IOError:
-        #    logger.debug('Starting ipcluster... waiting {} s for spin up'.format(start))
-        #    os.system('ipcluster start --n={} &'.format(max_proc))
-        #    time.sleep(start)
-
-        # create the sfr and galaxy input files
         self.vary_the_SFH(random_sfr=True, random_z=False, zdisp=False,
                           dry_run=dry_run, object_mass=None)
 
@@ -186,34 +157,19 @@ class VarySFHs(StarFormationHistories):
         niters = np.ceil(self.nsfhs / float(max_proc))
         sets = np.arange(niters * max_proc, dtype=int).reshape(niters, max_proc)
 
-        # in case it takes more than 45 s to spin up clusters, set up as
-        # late as possible
-        #clients = setup_parallel()
-        #logger.debug('ready to go!')
         line = ''
         for j, iset in enumerate(sets):
             # don't use not needed procs
             iset = iset[iset < self.nsfhs]
-            # parallel call to run
-            #if dry_run:
-            #    logger.info(['client %i galaxy_inp %s triout %s' %
-            #                 (i, self.galaxy_inputs[iset[i]],
-            #                 self.triout_fmt % iset[i]) for i in range(len(iset))])
-            #res = [clients[i].apply_sync(self.run_once, self.galaxy_inputs[iset[i]],
-            #                        self.triout_fmt % iset[i], dry_run,)
-            #       for i in range(len(iset))]
+
             for i in range(len(iset)):
                 cmd = self.run_once(galaxy_input=self.galaxy_inputs[iset[i]],
                                     triout=self.triout_fmt % iset[i], ite=i)
                 line += '{}\n'.format(cmd)
-                line += jobwait(line)
-            #logger.debug('{} {}'.format(j, iset))
-            #logger.debug('waiting on set {} of {}'.format(j, niters))
-            #while False in [r.ready() for r in res]:
-            #    time.sleep(1)
+            line += jobwait(line)
+
             logger.debug('set {} complete'.format(j))
 
-        #os.system('ipcluster stop')
         return line
 
 def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8,
