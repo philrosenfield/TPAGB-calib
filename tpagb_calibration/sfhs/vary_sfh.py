@@ -70,7 +70,7 @@ class VarySFHs(StarFormationHistories):
         self.triout_fmt = self.tname + '_%003i.dat'
 
         
-    def prepare_galaxy_input(self, object_mass=None, dry_run=False):
+    def prepare_galaxy_input(self, object_mass=None, overwrite=False):
         '''
         write the galaxy input file from a previously written template.
         simply overwrites the filename line to link to the new sfr
@@ -85,21 +85,21 @@ class VarySFHs(StarFormationHistories):
 
         if object_mass is not None:
             extra2 = ' '.join(lines[-6].split()[1:])
-
+        
         for i in range(len(self.sfr_files)):
             lines[-3] = ' '.join([self.sfr_files[i], extra])
             if object_mass is not None:
                 lines[-6] = ' '.join(['%.4e' % object_mass, extra2]) + '\n'
             new_name = os.path.split(galaxy_input)[1].replace(ext, '_%003i' % i + ext)
             new_out = os.path.join(self.outfile_loc, new_name)
-            if dry_run is False:
+            if not os.path.isfile(new_out) or overwrite:
                 with open(new_out, 'w') as f:
                     f.write(''.join(lines))
                 logger.info('wrote {}'.format(new_out))
-            self.galaxy_inputs.append(new_out)
+                self.galaxy_inputs.append(new_out)
 
     def vary_the_SFH(self, random_sfr=True, random_z=False,
-                     zdisp=False, dry_run=False, object_mass=None):
+                     zdisp=False, overwrite=False, object_mass=None):
         '''make the sfhs, make the galaxy inputs'''
         new_fmt = '{}{}_tri_%003i.sfr'.format(self.target, self.filter1) 
         outfile_fmt = os.path.join(self.outfile_loc, new_fmt)
@@ -108,18 +108,18 @@ class VarySFHs(StarFormationHistories):
                                                       random_sfr=random_sfr,
                                                       random_z=random_z,
                                                       zdisp=zdisp,
-                                                      dry_run=dry_run)
+                                                      dry_run=overwrite)
 
-        self.prepare_galaxy_input(dry_run=dry_run, object_mass=object_mass)
+        self.prepare_galaxy_input(overwrite=overwrite, object_mass=object_mass)
 
         return
 
-    def run_once(self, galaxy_input=None, triout=None, dry_run=False, ite=0,
-                 overwrite=False):
+    def run_once(self, galaxy_input=None, triout=None, ite=0, overwrite=False):
         """call trilegal and convert the output file to hdf5"""
         import ResolvedStellarPops as rsp
         flag = 0
         ver = 2.3
+        call = ''
         #print('cmd: {} galinp: {} out: {} dryrun: {}'.format(self.cmd_input_file,
         #                                                     galaxy_input,
         #                                                     triout,
@@ -151,16 +151,15 @@ class VarySFHs(StarFormationHistories):
                           triout=self.tname + '_bestsfr.dat',
                           overwrite=overwrite)
         else:
-            cmd = self.run_many(dry_run=dry_run, nproc=nproc,
-                                overwrite=overwrite)
+            cmd = self.run_many(nproc=nproc, overwrite=overwrite)
         return cmd
 
-    def run_many(self, dry_run=False, nproc=8, overwrite=False):
+    def run_many(self, nproc=8, overwrite=False):
         """
         Call self.run_once a bunch of times
         """
         self.vary_the_SFH(random_sfr=True, random_z=False, zdisp=False,
-                          dry_run=dry_run, object_mass=None)
+                          overwrite=overwrite, object_mass=None)
 
         # How many sets of calls to the max number of processors
         niters = np.ceil(self.nsfhs / float(nproc))
@@ -217,9 +216,6 @@ def main(argv):
     """
     parser = argparse.ArgumentParser(description="Run trilegal many times by \
                                      randomly sampling SFH uncertainies")
-
-    parser.add_argument('-d', '--dry_run', action='store_true',
-                        help='do not call trilegal')
 
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='verbose mode')
