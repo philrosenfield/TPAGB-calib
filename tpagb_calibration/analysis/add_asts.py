@@ -24,7 +24,7 @@ def load_trilegal_catalog(trilegal_catalog):
 
 
 def make_ast_corrections(trilegal_catalogs, target, outfiles='default',
-                         diag_plot=False, overwrite=True):
+                         diag_plot=False, overwrite=True, hdf5=False):
     """
     apply ast corrections from fake files found in matchfake_loc/*[target]*
     see rsp.ast_correct_starpop
@@ -52,7 +52,8 @@ def make_ast_corrections(trilegal_catalogs, target, outfiles='default',
 
         # do the ast corrections
         [rsp.ast_correct_starpop(sgal, asts_obj=ast, overwrite=overwrite,
-                                 outfile=outfile, diag_plot=diag_plot)
+                                 outfile=outfile, diag_plot=diag_plot,
+                                 hdf5=hdf5)
          for ast in asts]
     return
 

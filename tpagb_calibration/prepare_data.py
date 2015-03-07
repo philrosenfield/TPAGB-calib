@@ -50,6 +50,7 @@ def load_sim_masses(target):
     elif target in ['ugc-5139']:
         mass = 1.0e+09
     else:
+        logger.warning('no info on object mass for {}, assuming 1e8Msun'.format(target))
         mass = 1.0e+08
     return mass
 
@@ -120,7 +121,8 @@ def prepare_from_directory(args, search_str, inp_extra):
 
     gal_file = os.path.join(tpagb_path,
                             'SNAP/tables/snap_galaxies.dat')
-    gal_table = rsp.fileio.readfile(gal_file, string_column=[0, -6, -5, -4, -3, -2, -1],
+    gal_table = rsp.fileio.readfile(gal_file,
+                                    string_column=[0, -6, -5, -4, -3, -2, -1],
                                     string_length=216)
 
     target = os.path.split(args.name)[1]
