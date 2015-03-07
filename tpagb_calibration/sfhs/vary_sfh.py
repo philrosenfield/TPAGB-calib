@@ -167,7 +167,7 @@ class VarySFHs(StarFormationHistories):
 
         return line
 
-def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8,
+def call_VarySFH(input_file, loud=False, dry_run=False, nproc=8,
                  outfile=None):
     # set up logging
     from IPython.config import Application
@@ -190,7 +190,7 @@ def call_VarySFH(input_file, loud=False, dry_run=False, max_proc=8,
     #  do it!
     vsh = VarySFHs(inp_obj=inp_obj)
     #import pdb; pdb.set_trace()
-    line = vsh.call_run(dry_run=dry_run, max_proc=max_proc)
+    line = vsh.call_run(dry_run=dry_run, nproc=nproc)
     if outfile is None:
         print(line)
     else:
@@ -222,7 +222,7 @@ def main(argv):
     args = parser.parse_args(argv)
 
     call_VarySFH(args.name, loud=args.verbose, dry_run=args.dry_run,
-                 max_proc=args.nproc, outfile=args.outfile)
+                 nproc=args.nproc, outfile=args.outfile)
 
 
 if __name__ == '__main__':
