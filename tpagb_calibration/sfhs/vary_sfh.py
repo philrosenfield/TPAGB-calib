@@ -138,12 +138,12 @@ class VarySFHs(StarFormationHistories):
 
         if self.nsfhs <= 1:
             # don't run parallel.
-            self.run_once(galaxy_input=self.galaxy_input,
+            cmd = self.run_once(galaxy_input=self.galaxy_input,
                           triout=self.tname + '_bestsfr.dat')
         else:
-            self.run_parallel(dry_run=dry_run, max_proc=max_proc, start=start,
+            cmd = self.run_parallel(dry_run=dry_run, max_proc=max_proc, start=start,
                               timeout=timeout)
-        return
+        return cmd
 
     def run_parallel(self, dry_run=False, max_proc=8, start=30,
                      timeout=45):
